@@ -55,6 +55,8 @@ const STALE_CACHE_TTL_SECONDS = 900;
 const CI_STATUS_TTL_SECONDS = 7200;
 const WORKER_JOB_CACHE_TTL_SECONDS = 60;
 const WORKER_JOB_IDLE_CACHE_TTL_SECONDS = 10;
+const WORKER_TARGET_CACHE_TTL_SECONDS = 900;
+const WORKER_TARGET_BATCH_SIZE = 50;
 const DEFAULT_WORKER_DETAIL_RUN_LIMIT = 32;
 const SUPPORT_WORKFLOW_NAMES = new Set([
   "CI",
@@ -1998,6 +2000,7 @@ async function activeWorkerSnapshot(env, repo, runs) {
       laneRank(left.mode) - laneRank(right.mode) ||
       Date.parse(left.started_at || "") - Date.parse(right.started_at || ""),
   );
+  await attachWorkerTargets(env, workers, errors);
   return {
     count: workers.length,
     workers,
@@ -2014,6 +2017,127 @@ async function activeWorkerSnapshot(env, repo, runs) {
     rate: null,
     errors,
   };
+}
+
+async function attachWorkerTargets(env, workers, errors) {
+  const references = new Map();
+  for (const worker of workers) {
+    for (const number of worker.item_numbers || []) {
+      if (!worker.repository || !Number.isInteger(number) || number <= 0) continue;
+      const key = workerTargetKey(worker.repository, number);
+      if (!references.has(key)) {
+        references.set(key, {
+          repository: worker.repository,
+          number,
+        });
+      }
+    }
+  }
+  if (!references.size) return;
+
+  const targets = new Map();
+  await Promise.all(
+    [...references.keys()].map(async (key) => {
+      const cached = await readStoredJson(env, `worker-target:${key}`);
+      if (cached?.title) targets.set(key, cached);
+    }),
+  );
+
+  const missingByRepository = new Map();
+  for (const [key, reference] of references) {
+    if (targets.has(key)) continue;
+    const bucket = missingByRepository.get(reference.repository) || [];
+    bucket.push(reference);
+    missingByRepository.set(reference.repository, bucket);
+  }
+
+  if (missingByRepository.size && hasGithubAuth(env)) {
+    await Promise.all(
+      [...missingByRepository.entries()].flatMap(([repository, repoReferences]) =>
+        chunk(repoReferences, WORKER_TARGET_BATCH_SIZE).map(async (batch) => {
+          try {
+            const fetched = await fetchWorkerTargetBatch(env, repository, batch);
+            for (const target of fetched) {
+              const key = workerTargetKey(target.repository, target.number);
+              targets.set(key, target);
+            }
+            await Promise.all(
+              fetched.map((target) =>
+                writeStoredJson(
+                  env,
+                  `worker-target:${workerTargetKey(target.repository, target.number)}`,
+                  target,
+                  numberFrom(env.WORKER_TARGET_CACHE_TTL_SECONDS, WORKER_TARGET_CACHE_TTL_SECONDS),
+                ),
+              ),
+            );
+          } catch (error) {
+            errors.push(
+              `worker target titles ${repository}: ${
+                error instanceof Error ? error.message : String(error)
+              }`,
+            );
+          }
+        }),
+      ),
+    );
+  }
+
+  for (const worker of workers) {
+    worker.target_items = (worker.item_numbers || [])
+      .map((number) => targets.get(workerTargetKey(worker.repository, number)))
+      .filter(Boolean);
+  }
+}
+
+async function fetchWorkerTargetBatch(env, repository, references) {
+  const [owner, name] = String(repository || "").split("/");
+  if (!owner || !name || !references.length) return [];
+  const aliases = references
+    .map(
+      (reference, index) => `
+        target${index}: issueOrPullRequest(number: ${Number(reference.number)}) {
+          __typename
+          ... on Issue { title url }
+          ... on PullRequest { title url }
+        }`,
+    )
+    .join("\n");
+  const data = await githubGraphql(
+    env,
+    `query WorkerTargetTitles($owner: String!, $name: String!) {
+      repository(owner: $owner, name: $name) {
+        ${aliases}
+      }
+    }`,
+    { owner, name },
+  );
+  const repo = data?.repository || {};
+  return references.flatMap((reference, index) => {
+    const item = repo[`target${index}`];
+    if (!item?.title || !item?.url) return [];
+    return [
+      {
+        repository,
+        number: reference.number,
+        title: String(item.title),
+        url: String(item.url),
+        type: item.__typename === "PullRequest" ? "pull_request" : "issue",
+      },
+    ];
+  });
+}
+
+function workerTargetKey(repository, number) {
+  return `${String(repository || "").toLowerCase()}#${number}`;
+}
+
+function chunk(items, size) {
+  const chunks = [];
+  for (let index = 0; index < items.length; index += size) {
+    chunks.push(items.slice(index, index + size));
+  }
+  return chunks;
 }
 
 async function workflowJobsForRun(env, repo, runId) {
@@ -4344,11 +4468,22 @@ h2 {
   color: var(--muted);
   font-size: 12px;
 }
-.worker-card-meta span {
+.worker-card-meta > span {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.worker-target-title {
+  display: -webkit-box;
+  margin-top: 7px;
+  overflow: hidden;
+  color: #dcecff;
+  font-size: 13px;
+  line-height: 1.35;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.worker-target-ref { flex: 0 0 auto; }
 .worker-card-step {
   margin-top: 11px;
   color: var(--blue);
@@ -4861,6 +4996,12 @@ function workerTarget(worker) {
   if (worker.repository) return worker.repository;
   return compactText(worker.workflow_title || worker.name);
 }
+function workerTargetTitle(worker) {
+  const targets = (worker.target_items || []).filter(target => compactText(target.title));
+  if (!targets.length) return "";
+  const title = compactText(targets[0].title);
+  return targets.length > 1 ? title + " +" + (targets.length - 1) + " more" : title;
+}
 function renderSystemMap(data) {
   const workers = data.workers || [];
   const pipeline = data.pipeline || [];
@@ -4909,17 +5050,19 @@ function renderWorkers(rows) {
   document.getElementById("workers").innerHTML = '<div class="worker-grid">' + visible.map(worker => {
     const progress = worker.progress?.total ? Math.round((worker.progress.completed / worker.progress.total) * 100) : 0;
     const kind = workerKindLabel(worker.work_kind);
-    return '<button type="button" class="worker-card" data-worker-id="' + esc(worker.id) + '" aria-label="Open details for ' + esc(worker.name) + '"><div class="worker-card-top"><span><span class="pill"><i class="status-dot ' + workerStatusClass(worker.status) + '"></i>' + esc(modeLabel(worker.mode)) + '</span>' + (kind ? ' <span class="pill">' + esc(kind) + '</span>' : '') + '</span><span class="muted mono">' + elapsed(worker.elapsed_ms) + '</span></div><div class="worker-name">' + esc(worker.name) + '</div><div class="worker-card-meta"><span>' + esc(workerTarget(worker)) + '</span></div><div class="worker-card-step"><span>↳ ' + esc(worker.current_step || worker.stage) + '</span></div><div class="worker-progress"><i style="width:' + progress + '%"></i></div></button>';
+    const targetTitle = workerTargetTitle(worker);
+    return '<button type="button" class="worker-card" data-worker-id="' + esc(worker.id) + '" aria-label="Open details for ' + esc(targetTitle || worker.name) + '"><div class="worker-card-top"><span><span class="pill"><i class="status-dot ' + workerStatusClass(worker.status) + '"></i>' + esc(modeLabel(worker.mode)) + '</span>' + (kind ? ' <span class="pill">' + esc(kind) + '</span>' : '') + '</span><span class="muted mono">' + elapsed(worker.elapsed_ms) + '</span></div><div class="worker-name">' + esc(worker.name) + '</div><div class="worker-card-meta"><span class="worker-target-ref">' + esc(workerTarget(worker)) + '</span></div>' + (targetTitle ? '<div class="worker-target-title" title="' + esc(targetTitle) + '">' + esc(targetTitle) + '</div>' : '') + '<div class="worker-card-step"><span>↳ ' + esc(worker.current_step || worker.stage) + '</span></div><div class="worker-progress"><i style="width:' + progress + '%"></i></div></button>';
   }).join("") + '</div>';
 }
 function renderWorkerDialog(worker) {
   const dialog = document.getElementById("worker-dialog");
   const statusClass = workerStatusClass(worker.status);
   document.getElementById("worker-dialog-heading").innerHTML = '<div><span class="pill"><i class="status-dot ' + statusClass + '"></i>' + esc(worker.status) + '</span> <span class="pill">' + esc(modeLabel(worker.mode)) + '</span></div><h3 id="worker-dialog-title">' + esc(worker.name) + '</h3><div class="muted">' + esc(compactText(worker.workflow_title)) + '</div>';
+  const targetItems = new Map((worker.target_items || []).map(target => [Number(target.number), target]));
   const targetUrls = worker.repository
     ? (worker.item_numbers || (worker.item_number ? [worker.item_number] : [])).map(number => ({
-        url: "https://github.com/" + worker.repository + "/" + (worker.work_kind === "pr_repair" ? "pull" : "issues") + "/" + number,
-        label: "Open #" + number
+        url: targetItems.get(Number(number))?.url || "https://github.com/" + worker.repository + "/" + (worker.work_kind === "pr_repair" ? "pull" : "issues") + "/" + number,
+        label: "#" + number + (targetItems.get(Number(number))?.title ? " · " + compactText(targetItems.get(Number(number)).title) : "")
       }))
     : [];
   const stepRows = (worker.steps || []).map(step => '<li class="step-row ' + esc(step.status) + '"><i class="step-mark"></i><strong>' + esc(step.name) + '</strong><span>' + esc(step.conclusion || step.status) + '</span></li>').join("");

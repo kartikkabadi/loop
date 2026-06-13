@@ -70,6 +70,7 @@ test("dashboard HTML preserves UTF-8 emoji labels", async () => {
   assert.match(html, /Active Workers/);
   assert.match(html, /id="worker-dialog"/);
   assert.match(html, /Step Timeline/);
+  assert.match(html, /worker-target-title/);
   assert.match(html, /🔎 Cluster Intake/);
   assert.match(html, /🌀 Active Pipeline/);
   assert.match(html, /✅ Closed by ClawSweeper/);
@@ -106,6 +107,7 @@ test("dashboard exposes active worker jobs and their current steps", async () =>
     created_at: isoAgo(30_000),
     updated_at: isoAgo(5_000),
   };
+  let graphqlRequests = 0;
   globalThis.fetch = async (input) => {
     const url = new URL(String(input));
     if (url.pathname === "/repos/openclaw/clawsweeper/actions/runs") {
@@ -164,6 +166,30 @@ test("dashboard exposes active worker jobs and their current steps", async () =>
     if (url.pathname === "/repos/openclaw/clawsweeper/actions/runs/43/jobs") {
       return jsonResponse({ jobs: [] });
     }
+    if (url.pathname === "/graphql") {
+      graphqlRequests += 1;
+      return jsonResponse({
+        data: {
+          repository: {
+            target0: {
+              __typename: "Issue",
+              title: "Preserve terminal resize state",
+              url: "https://github.com/openclaw/openclaw/issues/92521",
+            },
+            target1: {
+              __typename: "PullRequest",
+              title: "Repair terminal resize state",
+              url: "https://github.com/openclaw/openclaw/pull/92522",
+            },
+            target2: {
+              __typename: "Issue",
+              title: "Queued terminal resize follow-up",
+              url: "https://github.com/openclaw/openclaw/issues/92523",
+            },
+          },
+        },
+      });
+    }
     if (
       url.pathname ===
       "/repos/openclaw/clawsweeper/actions/workflows/repair-cluster-intake.yml/runs"
@@ -182,6 +208,7 @@ test("dashboard exposes active worker jobs and their current steps", async () =>
         CLAWSWEEPER_REPO: "openclaw/clawsweeper",
         TARGET_REPOS: "openclaw/openclaw",
         CACHE_TTL_SECONDS: "0",
+        GITHUB_TOKEN: "test-token",
       },
       {
         waitUntil: () => undefined,
@@ -200,9 +227,42 @@ test("dashboard exposes active worker jobs and their current steps", async () =>
     assert.equal(status.workers[0].current_step, "Review shard");
     assert.deepEqual(status.workers[0].progress, { completed: 2, total: 3 });
     assert.equal(status.workers[0].steps[2].status, "in_progress");
+    assert.deepEqual(status.workers[0].target_items, [
+      {
+        repository: "openclaw/openclaw",
+        number: 92521,
+        title: "Preserve terminal resize state",
+        url: "https://github.com/openclaw/openclaw/issues/92521",
+        type: "issue",
+      },
+      {
+        repository: "openclaw/openclaw",
+        number: 92522,
+        title: "Repair terminal resize state",
+        url: "https://github.com/openclaw/openclaw/pull/92522",
+        type: "pull_request",
+      },
+    ]);
     assert.equal(status.workers[1].id, "run-43");
     assert.equal(status.workers[1].source, "workflow-fallback");
     assert.equal(status.workers[1].current_step, "reviewing");
+    assert.equal(status.workers[1].target_items[0].title, "Queued terminal resize follow-up");
+
+    const cachedResponse = await worker.fetch(
+      new Request("https://clawsweeper.openclaw.ai/api/status"),
+      {
+        CLAWSWEEPER_REPO: "openclaw/clawsweeper",
+        TARGET_REPOS: "openclaw/openclaw",
+        CACHE_TTL_SECONDS: "0",
+        GITHUB_TOKEN: "test-token",
+      },
+      {
+        waitUntil: () => undefined,
+      },
+    );
+    const cachedStatus = await cachedResponse.json();
+    assert.equal(cachedStatus.workers[0].target_items[0].title, "Preserve terminal resize state");
+    assert.equal(graphqlRequests, 1);
   } finally {
     globalThis.fetch = originalFetch;
     Object.defineProperty(globalThis, "caches", { configurable: true, value: originalCaches });
