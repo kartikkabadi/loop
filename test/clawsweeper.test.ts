@@ -18042,7 +18042,7 @@ test("sweep workflow runs exact event reviews without a global worker gate", () 
   assert.match(exactReviewStep, /--shard-count 1/);
   assert.match(
     exactReviewStep,
-    /CODEX_TIMEOUT_MS: \$\{\{ github\.event\.client_payload\.codex_timeout_ms \|\| vars\.CLAWSWEEPER_CODEX_TIMEOUT_MS \|\| '900000' \}\}/,
+    /CODEX_TIMEOUT_MS: \$\{\{ github\.event\.client_payload\.codex_timeout_ms \|\| vars\.CLAWSWEEPER_CODEX_TIMEOUT_MS \|\| '1200000' \}\}/,
   );
   assert.match(exactReviewStep, /review_timeout_seconds=\$\(\(codex_timeout_seconds \+ 180\)\)/);
   assert.match(exactReviewStep, /--codex-timeout-ms "\$CODEX_TIMEOUT_MS"/);
@@ -18052,14 +18052,14 @@ test("sweep workflow runs exact event reviews without a global worker gate", () 
   assert.doesNotMatch(eventReviewBlock, /Waiting for review capacity/);
 });
 
-test("sweep workflow gives high-context Codex reviews fifteen minutes by default", () => {
+test("sweep workflow gives high-context Codex reviews twenty minutes by default", () => {
   const workflow = readFileSync(".github/workflows/sweep.yml", "utf8");
 
   assert.match(
     workflow,
-    /codex_timeout_ms:\n\s+description: "Per-item Codex timeout in milliseconds"\n\s+required: false\n\s+default: "900000"/,
+    /codex_timeout_ms:\n\s+description: "Per-item Codex timeout in milliseconds"\n\s+required: false\n\s+default: "1200000"/,
   );
-  assert.doesNotMatch(workflow, /codex_timeout_ms=600000/);
+  assert.doesNotMatch(workflow, /codex_timeout_ms=(?:600000|900000)/);
 });
 
 test("Codex workflows install pinned CLI releases and keep the model secret", () => {
