@@ -119,7 +119,7 @@ maintainer-visible work. The checked-in default comes from
 CLAWSWEEPER_COMMIT_REVIEW_PAGE_SIZE=1
 ```
 
-The receiver clamps this between 1 and 24. Setting the variable bypasses the
+The receiver clamps this between 1 and 32. Setting the variable bypasses the
 dynamic default for that run; leave it unset when the central scheduler should
 decide. Large push ranges continue in later workflow pages.
 

@@ -55,6 +55,16 @@ const expectations: { file: string; label: string; pattern: RegExp }[] = [
     ),
   },
   {
+    file: "dashboard/wrangler.toml",
+    label: "dashboard worker budget",
+    pattern: new RegExp(`WORKER_BUDGET = "${config.workers.max}"`),
+  },
+  {
+    file: "dashboard/worker.ts",
+    label: "dashboard worker budget fallback",
+    pattern: new RegExp(`numberFrom\\(env\\.WORKER_BUDGET, ${config.workers.max}\\)`),
+  },
+  {
     file: "README.md",
     label: "manual plan shard-count example",
     pattern: new RegExp(`--shard-count ${limits.review_shards.normal_default}\\b`),

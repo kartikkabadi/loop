@@ -262,12 +262,12 @@ pnpm run repair:import-gitcrawl -- --from-gitcrawl --limit 40 --mode autonomous 
 
 # Dispatch reviewed jobs. Dispatch derives its default live-worker cap from the
 # job's job_intent and config/automation-limits.json. Existing repair lanes
-# keep the normal 40%-of-workers.max cap, currently 9; imported gitcrawl
+# keep the normal 40%-of-workers.max cap, currently 12; imported gitcrawl
 # cluster jobs default to lanes.repair.cluster_max_live_runs, currently 1.
 # Use CLAWSWEEPER_MAX_LIVE_WORKERS/--max-live-workers for a one-lane override.
 # With --wait-for-capacity, dispatch can drain a larger file
 # list in capacity-sized waves instead of refusing the whole batch.
-CLAWSWEEPER_MAX_LIVE_WORKERS=9 pnpm run repair:dispatch -- jobs/openclaw/inbox/ordinary-example.md \
+CLAWSWEEPER_MAX_LIVE_WORKERS=12 pnpm run repair:dispatch -- jobs/openclaw/inbox/ordinary-example.md \
   --mode autonomous \
   --runner blacksmith-4vcpu-ubuntu-2404 \
   --execution-runner blacksmith-16vcpu-ubuntu-2404
@@ -334,7 +334,7 @@ CLAWSWEEPER_ALLOW_EXECUTE=1 pnpm run repair:tag-clawsweeper -- --live --apply
 # Retry failed jobs once. This briefly opens the execution gate, waits for the
 # dispatched workers to start, records the self-heal ledger, and closes the gate.
 pnpm run repair:self-heal -- --execute --open-execute-window --max-jobs 5 \
-  --max-live-workers 9 \
+  --max-live-workers 12 \
   --runner blacksmith-4vcpu-ubuntu-2404 \
   --execution-runner blacksmith-16vcpu-ubuntu-2404
 ```

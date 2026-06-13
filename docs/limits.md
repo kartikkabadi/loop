@@ -33,10 +33,10 @@ The mental model:
 
 | Name | Current | Meaning |
 | --- | ---: | --- |
-| `workers.max` | 24 | Maximum global Codex worker budget used to derive lane limits. |
-| `workers.reserve_for_interactive` | 10 | Worker slots background lanes leave open for exact/manual/urgent work. |
-| `workers.expansion_reserve` | 10 | Extra slots background lanes leave open for independently planned matrix expansion. |
-| `workers.minimum_background` | 2 | Target floor for background progress when enough global capacity is available. |
+| `workers.max` | 32 | Maximum global Codex worker budget used to derive lane limits. |
+| `workers.reserve_for_interactive` | 8 | Worker slots background lanes leave open for exact/manual/urgent work. |
+| `workers.expansion_reserve` | 12 | Extra slots background lanes leave open for independently planned matrix expansion. |
+| `workers.minimum_background` | 4 | Target floor for background progress when enough global capacity is available. |
 | `lanes.assist.max` | 5 | Maximum concurrent lightweight assist jobs. |
 | `lanes.repair.cluster_max_live_runs` | 1 | Default live repair workflow cap for imported gitcrawl cluster dispatches. |
 
@@ -44,25 +44,25 @@ The mental model:
 
 Review, commit, and existing repair limits are intentionally percentages of
 `workers.max`; imported cluster repair has its own lane knob. With
-`workers.max = 24`, normal review can use 16 workers, hot intake can use 8,
-commit review can use 1 commit per page, existing repair lanes dispatch 9
+`workers.max = 32`, normal review can use 22 workers, hot intake can use 11,
+commit review can use 1 commit per page, existing repair lanes dispatch 12
 live workers by default, and imported cluster repair dispatches one live worker
 by default.
 
 | Name | Current | Meaning |
 | --- | ---: | --- |
 | `assist.default` | 5 | Maintainer assist job cap. |
-| `review_shards.normal_default` | 16 | Quiet-system normal review shard ceiling. |
-| `review_shards.normal_active_floor` | 7 | Minimum active normal review shards to keep queued for `openclaw/openclaw`. |
-| `review_shards.hot_intake_default` | 8 | Quiet-system broad hot-intake review shard ceiling. |
+| `review_shards.normal_default` | 22 | Quiet-system normal review shard ceiling. |
+| `review_shards.normal_active_floor` | 9 | Minimum active normal review shards to keep queued for `openclaw/openclaw`. |
+| `review_shards.hot_intake_default` | 11 | Quiet-system broad hot-intake review shard ceiling. |
 | `review_shards.exact_item_default` | 1 | Exact-item hot-intake shard count. |
-| `review_shards.hard_cap` | 24 | Maximum accepted review shard count. |
+| `review_shards.hard_cap` | 32 | Maximum accepted review shard count. |
 | `commit_review.page_size_default` | 1 | Commits selected per commit-review page. |
-| `commit_review.page_size_hard_cap` | 24 | Maximum commit-review page size. |
-| `repair_live_runs.default` | 9 | Default live repair workflow run cap for manual dispatch/requeue/self-heal. |
-| `repair_live_runs.hard_cap` | 24 | Absolute live repair run cap accepted by explicit CLI/env overrides with this config. |
-| `repair_live_runs.automerge_default` | 9 | Live repair run cap for automerge comment-router dispatches. |
-| `repair_live_runs.issue_implementation_default` | 9 | Live repair run cap for issue-to-PR implementation intake. |
+| `commit_review.page_size_hard_cap` | 32 | Maximum commit-review page size. |
+| `repair_live_runs.default` | 12 | Default live repair workflow run cap for manual dispatch/requeue/self-heal. |
+| `repair_live_runs.hard_cap` | 32 | Absolute live repair run cap accepted by explicit CLI/env overrides with this config. |
+| `repair_live_runs.automerge_default` | 12 | Live repair run cap for automerge comment-router dispatches. |
+| `repair_live_runs.issue_implementation_default` | 12 | Live repair run cap for issue-to-PR implementation intake. |
 | `repair_live_runs.cluster_default` | 1 | Live repair run cap for imported gitcrawl cluster dispatches. |
 | `issue_implementation.dispatches_per_sweep_default` | 1 | Maximum implementation intake jobs queued from one review publish run. |
 
@@ -109,12 +109,12 @@ priority work.
 
 Examples with the current config:
 
-- Quiet system: manual normal review can request 16 shards; scheduled normal
-  review gets 4 after reserving 10 slots for exact/manual/urgent work and 10
+- Quiet system: manual normal review can request 22 shards; scheduled normal
+  review gets 12 after reserving 8 slots for exact/manual/urgent work and 12
   slots for in-flight matrix expansion.
 - 1 active repair worker and 13 active background workers: normal review gets
-  1 because `24 - 10 interactive reserve - 10 expansion reserve - 1 priority
-  - 13 background = -10`, and enabled background lanes keep one slow-progress worker.
+  1 because `32 - 8 interactive reserve - 12 expansion reserve - 1 priority
+  - 13 background = -2`, and enabled background lanes keep one slow-progress worker.
 - 22 active priority workers: commit review gets 1, so commit review yields but
   does not fully stall.
 
