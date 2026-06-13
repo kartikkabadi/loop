@@ -13253,6 +13253,7 @@ test("apply-decisions counts advisory label-only syncs against the processed lim
         reviewed_at: "2026-05-01T00:00:00Z",
         item_snapshot_hash: "reviewed-snapshot-321",
         item_updated_at: "2026-05-01T00:00:00Z",
+        labels: JSON.stringify(["stale"]),
       }),
       321,
     );
@@ -13303,7 +13304,7 @@ if (args[0] === "api" && commentMatch) {
     active_lock_reason: null,
     author_association: "CONTRIBUTOR",
     user: { login: "reporter" },
-    labels: [],
+    labels: number === 321 ? ["stale"] : [],
     pull_request: null
   }));
 } else if (args[0] === "issue" && args[1] === "view") {
@@ -13329,6 +13330,14 @@ if (args[0] === "api" && commentMatch) {
     const editCalls = calls.filter((args) => args[0] === "issue" && args[1] === "edit");
     assert.ok(editCalls.length > 0);
     assert.deepEqual([...new Set(editCalls.map((args) => args[2]))], ["321"]);
+    assert.ok(
+      calls.some((args) => args[0] === "label" && args[1] === "create" && args[2] === "no-stale"),
+    );
+    assert.ok(editCalls.some((args) => args.includes("--add-label") && args.includes("no-stale")));
+    assert.ok(
+      editCalls.some((args) => args.includes("--remove-label") && args.includes("stale")),
+      JSON.stringify(editCalls),
+    );
     assert.equal(
       calls.some((args) => args.some((arg) => arg.includes("/issues/322"))),
       false,
@@ -17200,6 +17209,7 @@ test("ClawSweeper issue advisory labels expose work-lane routing state", () => {
     }),
     [
       "clawsweeper",
+      "no-stale",
       "issue-rating: 🧂 unranked krab",
       "clawsweeper:queueable-fix",
       "clawsweeper:fix-shape-clear",
@@ -17238,6 +17248,90 @@ test("ClawSweeper issue advisory labels expose work-lane routing state", () => {
       "clawsweeper:needs-maintainer-review",
     ],
   );
+});
+
+test("ClawSweeper issue advisory labels protect queueable issues from stale automation", () => {
+  const queueableLabels = issueAdvisoryLabelsForTest(["bug", "stale"], {
+    type: "issue",
+    workCandidate: "queue_fix_pr",
+    workStatus: "candidate",
+    workConfidence: "high",
+    hasWorkShape: true,
+  });
+
+  assert.equal(queueableLabels.includes("stale"), false);
+  assert.equal(queueableLabels.includes("no-stale"), true);
+  assert.equal(queueableLabels.includes("clawsweeper:queueable-fix"), true);
+  assert.equal(queueableLabels.includes("clawsweeper:fix-shape-clear"), true);
+
+  const alreadyProtectedLabels = issueAdvisoryLabelsForTest(["bug", "no-stale"], {
+    type: "issue",
+    workCandidate: "queue_fix_pr",
+    workStatus: "candidate",
+    workConfidence: "high",
+  });
+
+  assert.equal(alreadyProtectedLabels.includes("stale"), false);
+  assert.equal(alreadyProtectedLabels.filter((label) => label === "no-stale").length, 1);
+  assert.equal(alreadyProtectedLabels.includes("clawsweeper:queueable-fix"), true);
+});
+
+test("ClawSweeper issue advisory labels do not stale-proof non-queueable issues", () => {
+  const lowerConfidenceLabels = issueAdvisoryLabelsForTest(["bug", "stale"], {
+    type: "issue",
+    workCandidate: "queue_fix_pr",
+    workStatus: "candidate",
+    workConfidence: "medium",
+    hasWorkShape: true,
+  });
+
+  assert.equal(lowerConfidenceLabels.includes("stale"), true);
+  assert.equal(lowerConfidenceLabels.includes("no-stale"), false);
+  assert.equal(lowerConfidenceLabels.includes("clawsweeper:queueable-fix"), false);
+
+  const manualReviewLabels = issueAdvisoryLabelsForTest(["bug", "stale"], {
+    type: "issue",
+    workCandidate: "manual_review",
+    workConfidence: "high",
+    hasWorkShape: true,
+  });
+
+  assert.equal(manualReviewLabels.includes("stale"), true);
+  assert.equal(manualReviewLabels.includes("no-stale"), false);
+  assert.equal(manualReviewLabels.includes("clawsweeper:queueable-fix"), false);
+  assert.equal(manualReviewLabels.includes("clawsweeper:fix-shape-clear"), true);
+  assert.equal(manualReviewLabels.includes("clawsweeper:needs-maintainer-review"), true);
+
+  const demotedQueueableLabels = issueAdvisoryLabelsForTest(
+    ["bug", "no-stale", "clawsweeper:queueable-fix"],
+    {
+      type: "issue",
+      workCandidate: "queue_fix_pr",
+      workStatus: "candidate",
+      workConfidence: "medium",
+    },
+  );
+
+  assert.equal(demotedQueueableLabels.includes("no-stale"), false);
+  assert.equal(demotedQueueableLabels.includes("clawsweeper:queueable-fix"), false);
+
+  const manuallyProtectedLabels = issueAdvisoryLabelsForTest(["bug", "no-stale"], {
+    type: "issue",
+    workCandidate: "manual_review",
+  });
+
+  assert.equal(manuallyProtectedLabels.includes("no-stale"), true);
+  assert.equal(manuallyProtectedLabels.includes("clawsweeper:needs-maintainer-review"), true);
+
+  const pullRequestLabels = issueAdvisoryLabelsForTest(["bug", "stale"], {
+    type: "pull_request",
+    workCandidate: "queue_fix_pr",
+    workStatus: "candidate",
+    workConfidence: "high",
+    hasWorkShape: true,
+  });
+
+  assert.deepEqual(pullRequestLabels, ["bug", "stale"]);
 });
 
 test("ClawSweeper issue advisory labels expose linked PR and human decision blockers", () => {

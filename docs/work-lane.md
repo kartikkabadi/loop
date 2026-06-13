@@ -58,9 +58,18 @@ label-only apply pass does not immediately queue another review of the same item
 | `clawsweeper:needs-product-decision`  | `requires_product_decision: true`                                                                                             |
 | `clawsweeper:needs-security-review`   | `item_category: security` or a `securityReview` status of `needs_attention`                                                   |
 
-The advisory-label sync owns only this label group. Reruns add labels that match
-the latest report, remove stale labels from this group, and preserve unrelated
-labels plus action/proof labels such as `clawsweeper:autofix`,
+When the advisory sync marks an issue `clawsweeper:queueable-fix`, it also adds
+the target repository's durable `no-stale` exemption and removes an existing
+`stale` label. Lower-confidence, manual-review, or otherwise non-queueable
+advisory states do not receive stale protection from this sync. If a later sync
+clears an existing `clawsweeper:queueable-fix` advisory label, it also clears
+the `no-stale` exemption added for that queueable state; existing `no-stale`
+labels without prior queueable advisory state are preserved as unrelated labels.
+
+Except for that queueable-issue stale transition, the advisory-label sync owns
+only this label group. Reruns add labels that match the latest report, remove
+stale labels from this group, and preserve unrelated labels plus action/proof
+labels such as `clawsweeper:autofix`,
 `clawsweeper:automerge`, `clawsweeper:human-review`,
 `clawsweeper:merge-ready`, `proof: sufficient`, and
 `mantis: telegram-visible-proof`.

@@ -1433,6 +1433,14 @@ const ISSUE_ADVISORY_LABELS = [
 const ISSUE_ADVISORY_LABEL_NAMES = new Set(
   ISSUE_ADVISORY_LABELS.map((label) => label.name.toLowerCase()),
 );
+const STALE_LABEL = "stale";
+const NO_STALE_LABEL = "no-stale";
+const QUEUEABLE_FIX_LABEL = "clawsweeper:queueable-fix";
+const ISSUE_STALE_PROTECTION_LABEL = {
+  name: NO_STALE_LABEL,
+  color: "6E7781",
+  description: "Exempts this issue from stale automation.",
+} as const;
 const PROTECTED_LABELS = new Set(["security", "beta-blocker", "release-blocker", "maintainer"]);
 const ALLOWED_REASONS = new Set<CloseReason>([
   "implemented_on_main",
@@ -10152,7 +10160,7 @@ function wantedIssueAdvisoryLabels(state: IssueAdvisoryLabelState): Set<string> 
     state.workStatus === "candidate" &&
     state.workConfidence === "high"
   ) {
-    labels.add("clawsweeper:queueable-fix");
+    labels.add(QUEUEABLE_FIX_LABEL);
   }
   if (
     state.workConfidence === "high" &&
@@ -10183,12 +10191,35 @@ function wantedIssueAdvisoryLabels(state: IssueAdvisoryLabelState): Set<string> 
   return labels;
 }
 
+function issueAdvisoryStateNeedsStaleProtection(state: IssueAdvisoryLabelState): boolean {
+  return (
+    state.type === "issue" &&
+    state.workCandidate === "queue_fix_pr" &&
+    state.workStatus === "candidate" &&
+    state.workConfidence === "high"
+  );
+}
+
+function issueAdvisoryLabelsHadQueueableProtection(labels: readonly string[]): boolean {
+  return labels.some((label) => label.toLowerCase() === QUEUEABLE_FIX_LABEL);
+}
+
 function nextIssueAdvisoryLabels(
   labels: readonly string[],
   state: IssueAdvisoryLabelState,
 ): string[] {
   const wantedLabels = wantedIssueAdvisoryLabels(state);
-  const nextLabels = labels.filter((label) => !isIssueAdvisoryLabel(label));
+  const needsStaleProtection = issueAdvisoryStateNeedsStaleProtection(state);
+  const hadQueueableProtection = issueAdvisoryLabelsHadQueueableProtection(labels);
+  const nextLabels = labels.filter(
+    (label) =>
+      !isIssueAdvisoryLabel(label) &&
+      !(needsStaleProtection && label.toLowerCase() === STALE_LABEL) &&
+      !(!needsStaleProtection && hadQueueableProtection && label.toLowerCase() === NO_STALE_LABEL),
+  );
+  if (needsStaleProtection && !nextLabels.some((label) => label.toLowerCase() === NO_STALE_LABEL)) {
+    nextLabels.push(NO_STALE_LABEL);
+  }
   for (const label of ISSUE_ADVISORY_LABELS) {
     if (wantedLabels.has(label.name)) nextLabels.push(label.name);
   }
@@ -10236,8 +10267,12 @@ function issueAdvisoryLabelStateFromReport(
   };
 }
 
-function ensureIssueAdvisoryLabel(name: string): void {
-  const definition = ISSUE_ADVISORY_LABELS.find((label) => label.name === name);
+function ensureIssueAdvisorySyncLabel(name: string): void {
+  const definition =
+    ISSUE_ADVISORY_LABELS.find((label) => label.name === name) ??
+    (name.toLowerCase() === ISSUE_STALE_PROTECTION_LABEL.name
+      ? ISSUE_STALE_PROTECTION_LABEL
+      : undefined);
   if (!definition) return;
   try {
     ghWithRetry(
@@ -10355,16 +10390,22 @@ function syncIssueAdvisoryLabels(options: {
   const currentLabelKeys = new Set(options.labels.map((label) => label.toLowerCase()));
   const nextLabelKeys = new Set(nextLabels.map((label) => label.toLowerCase()));
   const labelsToAdd = nextLabels.filter(
-    (label) => isIssueAdvisoryLabel(label) && !currentLabelKeys.has(label.toLowerCase()),
+    (label) =>
+      (isIssueAdvisoryLabel(label) || label.toLowerCase() === NO_STALE_LABEL) &&
+      !currentLabelKeys.has(label.toLowerCase()),
   );
   const labelsToRemove = options.labels.filter(
-    (label) => isIssueAdvisoryLabel(label) && !nextLabelKeys.has(label.toLowerCase()),
+    (label) =>
+      (isIssueAdvisoryLabel(label) ||
+        label.toLowerCase() === STALE_LABEL ||
+        label.toLowerCase() === NO_STALE_LABEL) &&
+      !nextLabelKeys.has(label.toLowerCase()),
   );
   const changed = labelsToAdd.length > 0 || labelsToRemove.length > 0;
   if (!changed) return { labels: nextLabels, changed };
   if (options.dryRun) return { labels: nextLabels, changed };
   for (const label of labelsToAdd) {
-    ensureIssueAdvisoryLabel(label);
+    ensureIssueAdvisorySyncLabel(label);
     ghWithRetry(["issue", "edit", String(options.number), "--add-label", label]);
   }
   for (const label of labelsToRemove) {
