@@ -1,8 +1,53 @@
+const CODEX_MODEL_ACCESS_PREFIX = "the model ";
+const CODEX_MODEL_ACCESS_SUFFIX = " does not exist or you do not have access to it";
+
 export function isRetryableCodexTransportError(value: string | null | undefined): boolean {
   const message = value ?? "";
   return /write_stdin failed: stdin is closed|stdin is closed for this session|rate limit reached|tokens per min|\bTPM\b|requests per min|\b429\b|temporarily unavailable|overloaded|stream disconnected|reconnecting|please try again in \d+(?:\.\d+)?(?:ms|s)/i.test(
     message,
   );
+}
+
+export function isRetryableCodexErrorMessage(value: string | null | undefined): boolean {
+  return !isTerminalCodexErrorMessage(value) && isRetryableCodexTransportError(value);
+}
+
+export function isTerminalCodexErrorMessage(value: string | null | undefined): boolean {
+  return Boolean(codexTerminalErrorDetail(value));
+}
+
+export function codexTerminalErrorDetail(value: string | null | undefined): string {
+  const finalLine =
+    (value ?? "")
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .at(-1) ?? "";
+  const normalized = finalLine.toLowerCase();
+  const prefixIndex = normalized.indexOf(CODEX_MODEL_ACCESS_PREFIX);
+  if (prefixIndex === -1) return "";
+  const modelStart = prefixIndex + CODEX_MODEL_ACCESS_PREFIX.length;
+  return normalized.indexOf(CODEX_MODEL_ACCESS_SUFFIX, modelStart) > modelStart ? finalLine : "";
+}
+
+export function codexJsonlFailureDetail(value: string | null | undefined): string {
+  const messages: string[] = [];
+  for (const line of (value ?? "").split(/\r?\n/)) {
+    if (!line.trim()) continue;
+    let event;
+    try {
+      event = JSON.parse(line);
+    } catch {
+      continue;
+    }
+    if (event?.type === "error" && typeof event.message === "string") {
+      messages.push(event.message);
+    }
+    if (event?.type === "turn.failed" && typeof event.error?.message === "string") {
+      messages.push(event.error.message);
+    }
+  }
+  return messages.at(-1) ?? "";
 }
 
 export function isCodexContextLimitError(value: string | null | undefined): boolean {
