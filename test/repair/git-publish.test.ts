@@ -136,7 +136,7 @@ test("publishMainCommit resolves apply record delete conflicts during rebase", (
   );
 });
 
-test("publishMainCommit rebuilds generated state commits after rebase conflicts", () => {
+test("publishMainCommit rebuilds generated state commits without deleting concurrent records", () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-publish-"));
   const origin = path.join(root, "origin.git");
   const work = path.join(root, "work");
@@ -188,8 +188,9 @@ test("publishMainCommit rebuilds generated state commits after rebase conflicts"
     run("git", ["--git-dir", origin, "show", "main:records/openclaw-openclaw/items/1.md"], root),
     "record local\n",
   );
-  assert.throws(() =>
+  assert.equal(
     run("git", ["--git-dir", origin, "show", "main:records/openclaw-openclaw/items/2.md"], root),
+    "remote only\n",
   );
   assert.equal(run("git", ["--git-dir", origin, "show", "main:keep.txt"], root), "keep remote\n");
 });
@@ -229,6 +230,95 @@ test("publishMainCommit publishes generated paths to state branch when state roo
     "ledger\n",
   );
   assert.throws(() => run("git", ["--git-dir", origin, "show", "main:results/ledger.txt"], root));
+});
+
+test("publishMainCommit preserves concurrent records from a newer state snapshot", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-publish-"));
+  const origin = path.join(root, "origin.git");
+  const work = path.join(root, "work");
+  const state = path.join(root, "state");
+  run("git", ["init", "--bare", origin], root);
+  run("git", ["clone", origin, state], root);
+  configureUser(state);
+  write(path.join(state, "records/openclaw-openclaw/items/1.md"), "record old\n");
+  write(path.join(state, "records/openclaw-openclaw/items/2.md"), "concurrent record\n");
+  run("git", ["add", "."], state);
+  run("git", ["commit", "-m", "initial state"], state);
+  run("git", ["push", "origin", "HEAD:state"], state);
+  run("git", ["--git-dir", origin, "symbolic-ref", "HEAD", "refs/heads/state"], root);
+  run("git", ["checkout", "-B", "state", "origin/state"], state);
+
+  fs.mkdirSync(work);
+  write(path.join(work, "records/openclaw-openclaw/items/1.md"), "record updated\n");
+
+  const result = withEnv({ CLAWSWEEPER_STATE_DIR: state }, () =>
+    withCwd(work, () =>
+      publishMainCommit({
+        message: "chore: update sweep records",
+        paths: ["records/openclaw-openclaw"],
+        maxAttempts: 1,
+        pushAttempts: 1,
+      }),
+    ),
+  );
+
+  assert.equal(result, "committed");
+  assert.equal(
+    run("git", ["--git-dir", origin, "show", "state:records/openclaw-openclaw/items/1.md"], root),
+    "record updated\n",
+  );
+  assert.equal(
+    run("git", ["--git-dir", origin, "show", "state:records/openclaw-openclaw/items/2.md"], root),
+    "concurrent record\n",
+  );
+});
+
+test("publishMainCommit preserves record moves while merging concurrent records", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-publish-"));
+  const origin = path.join(root, "origin.git");
+  const work = path.join(root, "work");
+  const state = path.join(root, "state");
+  run("git", ["init", "--bare", origin], root);
+  run("git", ["clone", origin, state], root);
+  configureUser(state);
+  write(path.join(state, "records/openclaw-openclaw/items/1.md"), "open\n");
+  write(path.join(state, "records/openclaw-openclaw/items/2.md"), "concurrent record\n");
+  write(path.join(state, "records/openclaw-openclaw/plans/1.md"), "plan\n");
+  run("git", ["add", "."], state);
+  run("git", ["commit", "-m", "initial state"], state);
+  run("git", ["push", "origin", "HEAD:state"], state);
+  run("git", ["--git-dir", origin, "symbolic-ref", "HEAD", "refs/heads/state"], root);
+  run("git", ["checkout", "-B", "state", "origin/state"], state);
+
+  fs.mkdirSync(work);
+  write(path.join(work, "records/openclaw-openclaw/closed/1.md"), "closed\n");
+
+  const result = withEnv({ CLAWSWEEPER_STATE_DIR: state }, () =>
+    withCwd(work, () =>
+      publishMainCommit({
+        message: "chore: reconcile sweep records",
+        paths: ["records/openclaw-openclaw"],
+        maxAttempts: 1,
+        pushAttempts: 1,
+      }),
+    ),
+  );
+
+  assert.equal(result, "committed");
+  assert.throws(() =>
+    run("git", ["--git-dir", origin, "show", "state:records/openclaw-openclaw/items/1.md"], root),
+  );
+  assert.throws(() =>
+    run("git", ["--git-dir", origin, "show", "state:records/openclaw-openclaw/plans/1.md"], root),
+  );
+  assert.equal(
+    run("git", ["--git-dir", origin, "show", "state:records/openclaw-openclaw/closed/1.md"], root),
+    "closed\n",
+  );
+  assert.equal(
+    run("git", ["--git-dir", origin, "show", "state:records/openclaw-openclaw/items/2.md"], root),
+    "concurrent record\n",
+  );
 });
 
 test("publishMainCommit preserves state-only queued jobs on broad jobs publishes", () => {

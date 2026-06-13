@@ -242,8 +242,10 @@ function preserveStateOnlyFiles({
   const files: string[] = [];
   for (const file of listFiles(destination)) {
     const rel = relative(destination, file);
-    if (!shouldPreserveStateOnlyFile(path, rel)) continue;
     if (existsSync(resolve(source, rel))) continue;
+    if (!shouldPreserveStateOnlyFile(path, rel, (candidate) => existsSync(resolve(candidate)))) {
+      continue;
+    }
     const target = resolve(root, rel);
     mkdirSync(dirname(target), { recursive: true });
     cpSync(file, target);
@@ -252,9 +254,29 @@ function preserveStateOnlyFiles({
   return { root, files };
 }
 
-function shouldPreserveStateOnlyFile(path: string, rel: string): boolean {
+function shouldPreserveStateOnlyFile(
+  path: string,
+  rel: string,
+  sourceHasPath: (path: string) => boolean,
+): boolean {
   if (path === "jobs") return /^[^/]+\/inbox\/(?:automerge|issue|self-heal)-.+\.md$/.test(rel);
-  return false;
+  const publishedPath = joinedPublishPath(path, rel);
+  if (!publishedPath.startsWith("records/")) return false;
+  const counterpart = recordCounterpartPath(publishedPath);
+  return !counterpart || !sourceHasPath(counterpart);
+}
+
+function joinedPublishPath(path: string, rel: string): string {
+  return [path.replace(/\/+$/, ""), rel.replace(/^\/+/, "")].filter(Boolean).join("/");
+}
+
+function recordCounterpartPath(path: string): string | undefined {
+  const match = /^records\/([^/]+)\/(items|closed|plans)\/([^/]+\.md)$/.exec(path);
+  if (!match) return undefined;
+  const [, repository, section, file] = match;
+  if (section === "items") return `records/${repository}/closed/${file}`;
+  if (section === "closed") return `records/${repository}/items/${file}`;
+  return `records/${repository}/closed/${file}`;
 }
 
 function preserveStateOnlyCommitFiles({
@@ -272,8 +294,13 @@ function preserveStateOnlyCommitFiles({
   const commitPathPrefix = path.replace(/\/+$/, "");
   for (const file of listFiles(source)) {
     const rel = relative(source, file);
-    if (!shouldPreserveStateOnlyFile(path, rel)) continue;
-    if (commitHasPath(sourceCommit, `${commitPathPrefix}/${rel}`)) continue;
+    const commitPath = joinedPublishPath(commitPathPrefix, rel);
+    if (commitHasPath(sourceCommit, commitPath)) continue;
+    if (
+      !shouldPreserveStateOnlyFile(path, rel, (candidate) => commitHasPath(sourceCommit, candidate))
+    ) {
+      continue;
+    }
     const target = resolve(root, rel);
     mkdirSync(dirname(target), { recursive: true });
     cpSync(file, target);
