@@ -113,6 +113,14 @@ The Worker fetches job details only for the bounded active-run set and caches
 each run's jobs for 60 seconds. If GitHub job telemetry is unavailable, the API
 and UI retain the workflow-level fallback rather than hiding active work.
 
+Status responses use stale-while-revalidate delivery. After the 20-second fresh
+window expires, the Worker immediately returns the last good snapshot, marks it
+with `X-ClawSweeper-Cache: stale`, and coalesces one background refresh per
+isolate. Recent automerge timing is cached for five minutes and recent
+ClawSweeper-owned closes for one minute because those historical sections do
+not need worker-step freshness. The deployment smoke output includes cache
+state, fetch time, and current diagnostics.
+
 ## Boundaries
 
 Do not move these into the dashboard:

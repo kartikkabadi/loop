@@ -71,6 +71,7 @@ test("dashboard HTML preserves UTF-8 emoji labels", async () => {
   assert.match(html, /id="worker-dialog"/);
   assert.match(html, /Step Timeline/);
   assert.match(html, /worker-target-title/);
+  assert.match(html, /Refreshing live status in the background/);
   assert.match(html, /🔎 Cluster Intake/);
   assert.match(html, /🌀 Active Pipeline/);
   assert.match(html, /✅ Closed by ClawSweeper/);
@@ -495,6 +496,205 @@ test("dashboard falls back to edge cache storage when KV is not bound", async ()
     assert.equal(status.pipeline[0].ci.state, "pending");
     assert.equal(status.pipeline[0].ci.source, "github-checks");
     assert.equal(status.pipeline[0].ci.pending, 2);
+  } finally {
+    globalThis.fetch = originalFetch;
+    Object.defineProperty(globalThis, "caches", { configurable: true, value: originalCaches });
+  }
+});
+
+test("dashboard serves stale status while coalescing one background refresh", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalCaches = globalThis.caches;
+  const cache = new MemoryCache();
+  Object.defineProperty(globalThis, "caches", {
+    configurable: true,
+    value: { default: cache },
+  });
+  await cache.put(
+    new Request("https://clawsweeper.openclaw.ai/api/status-cache/stale"),
+    jsonResponse({
+      schema_version: 1,
+      generated_at: "2026-06-13T18:00:00Z",
+      source: {
+        clawsweeper_repo: "openclaw/clawsweeper",
+        target_repositories: ["openclaw/openclaw"],
+      },
+      fleet: { active_workflow_runs: 1 },
+      workers: [],
+      pipeline: [{ id: "stale-row" }],
+      diagnostics: { errors: [] },
+    }),
+  );
+
+  let releaseFetch!: () => void;
+  const fetchGate = new Promise<void>((resolve) => {
+    releaseFetch = resolve;
+  });
+  let unfilteredRunRequests = 0;
+  globalThis.fetch = async (input) => {
+    const url = new URL(String(input));
+    await fetchGate;
+    if (url.pathname.includes("/actions/")) {
+      if (url.pathname.endsWith("/actions/runs") && !url.searchParams.has("status")) {
+        unfilteredRunRequests += 1;
+      }
+      return jsonResponse({ workflow_runs: [] });
+    }
+    if (url.pathname === "/search/issues") return jsonResponse({ items: [] });
+    if (url.pathname === "/repos/openclaw/openclaw/issues") return jsonResponse([]);
+    return new Response(JSON.stringify({ message: "not found" }), { status: 404 });
+  };
+
+  try {
+    const waitUntilPromises: Promise<unknown>[] = [];
+    const env = {
+      CLAWSWEEPER_REPO: "openclaw/clawsweeper",
+      TARGET_REPOS: "openclaw/openclaw",
+      CACHE_TTL_SECONDS: "20",
+    };
+    const context = {
+      waitUntil(promise: Promise<unknown>) {
+        waitUntilPromises.push(promise);
+      },
+    };
+    const request = new Request("https://clawsweeper.openclaw.ai/api/status");
+    const [first, second] = await Promise.all([
+      worker.fetch(request, env, context),
+      worker.fetch(request, env, context),
+    ]);
+
+    assert.equal(first.headers.get("x-clawsweeper-cache"), "stale");
+    assert.equal(second.headers.get("x-clawsweeper-cache"), "stale");
+    assert.equal((await first.json()).pipeline[0].id, "stale-row");
+    assert.equal(waitUntilPromises.length, 2);
+
+    releaseFetch();
+    await Promise.all(waitUntilPromises);
+    assert.equal(unfilteredRunRequests, 1);
+
+    const refreshed = await worker.fetch(request, env);
+    assert.equal(refreshed.headers.get("x-clawsweeper-cache"), "fresh");
+    assert.deepEqual((await refreshed.json()).pipeline, []);
+  } finally {
+    globalThis.fetch = originalFetch;
+    Object.defineProperty(globalThis, "caches", { configurable: true, value: originalCaches });
+  }
+});
+
+test("dashboard status survives cache persistence failures", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalCaches = globalThis.caches;
+  Object.defineProperty(globalThis, "caches", {
+    configurable: true,
+    value: {
+      default: {
+        match: async () => undefined,
+        put: async (request: Request) => {
+          if (
+            request.url.includes("/api/status-cache/") ||
+            request.url.includes("recent-automerge") ||
+            request.url.includes("recent-closed")
+          ) {
+            throw new Error("cache unavailable");
+          }
+        },
+      },
+    },
+  });
+  globalThis.fetch = activePrFetch;
+
+  try {
+    const response = await worker.fetch(new Request("https://clawsweeper.openclaw.ai/api/status"), {
+      CLAWSWEEPER_REPO: "openclaw/clawsweeper",
+      TARGET_REPOS: "openclaw/openclaw",
+      CACHE_TTL_SECONDS: "0",
+    });
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get("x-clawsweeper-cache"), "miss");
+    const status = await response.json();
+    assert.equal(status.fleet.active_workflow_runs, 1);
+    assert.deepEqual(status.diagnostics.errors, []);
+  } finally {
+    globalThis.fetch = originalFetch;
+    Object.defineProperty(globalThis, "caches", { configurable: true, value: originalCaches });
+  }
+});
+
+test("dashboard parallelizes and caches historical GitHub telemetry", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalCaches = globalThis.caches;
+  Object.defineProperty(globalThis, "caches", {
+    configurable: true,
+    value: {
+      default: {
+        match: async () => undefined,
+        put: async () => undefined,
+      },
+    },
+  });
+  let searchRequests = 0;
+  let closedRequests = 0;
+  let activeDetails = 0;
+  let maxActiveDetails = 0;
+  globalThis.fetch = async (input) => {
+    const url = new URL(String(input));
+    if (url.pathname.includes("/actions/")) return jsonResponse({ workflow_runs: [] });
+    if (url.pathname === "/search/issues") {
+      searchRequests += 1;
+      return jsonResponse({
+        items: [101, 102, 103, 104].map((number) => ({
+          number,
+          title: `Merged PR ${number}`,
+          html_url: `https://github.com/openclaw/openclaw/pull/${number}`,
+        })),
+      });
+    }
+    if (/^\/repos\/openclaw\/openclaw\/(?:pulls\/\d+|issues\/\d+\/comments)$/.test(url.pathname)) {
+      activeDetails += 1;
+      maxActiveDetails = Math.max(maxActiveDetails, activeDetails);
+      await new Promise((resolve) => setTimeout(resolve, 5));
+      activeDetails -= 1;
+      if (url.pathname.includes("/comments")) {
+        return jsonResponse([
+          {
+            body: "@clawsweeper automerge",
+            created_at: "2026-06-13T18:00:00Z",
+          },
+        ]);
+      }
+      return jsonResponse({
+        merged_at: "2026-06-13T18:01:00Z",
+        merge_commit_sha: "abc123",
+      });
+    }
+    if (url.pathname === "/repos/openclaw/openclaw/issues") {
+      closedRequests += 1;
+      return jsonResponse([]);
+    }
+    return new Response(JSON.stringify({ message: "not found" }), { status: 404 });
+  };
+
+  try {
+    const env = {
+      STATUS_STORE: new MemoryKv(),
+      CLAWSWEEPER_REPO: "openclaw/clawsweeper",
+      TARGET_REPOS: "openclaw/openclaw",
+      CACHE_TTL_SECONDS: "-1",
+    };
+    const request = new Request("https://clawsweeper.openclaw.ai/api/status");
+    const first = await worker.fetch(request, env);
+    assert.equal(first.status, 200);
+    assert.equal((await first.json()).averages.automerge_samples, 4);
+    assert.ok(maxActiveDetails >= 4);
+    assert.equal(searchRequests, 1);
+    assert.equal(closedRequests, 1);
+
+    await new Promise((resolve) => setTimeout(resolve, 2));
+    const second = await worker.fetch(request, env);
+    assert.equal(second.status, 200);
+    assert.equal((await second.json()).averages.automerge_samples, 4);
+    assert.equal(searchRequests, 1);
+    assert.equal(closedRequests, 1);
   } finally {
     globalThis.fetch = originalFetch;
     Object.defineProperty(globalThis, "caches", { configurable: true, value: originalCaches });

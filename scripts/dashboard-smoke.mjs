@@ -7,7 +7,14 @@ async function main() {
   const health = await fetchJson(`${baseUrl}/api/health`);
   if (health.ok !== true) throw new Error("health endpoint did not return ok");
 
-  const status = await fetchJson(`${baseUrl}/api/status`);
+  const statusStartedAt = Date.now();
+  const statusResponse = await fetch(`${baseUrl}/api/status`);
+  if (!statusResponse.ok) {
+    throw new Error(`${baseUrl}/api/status returned ${statusResponse.status}`);
+  }
+  const status = await statusResponse.json();
+  const statusFetchMs = Date.now() - statusStartedAt;
+  const cacheState = statusResponse.headers.get("x-clawsweeper-cache") || "unknown";
   if (status.schema_version !== 1) throw new Error("unexpected status schema");
   if (!status.fleet || typeof status.fleet.active_workflow_runs !== "number") {
     throw new Error("status response is missing fleet metrics");
@@ -29,6 +36,9 @@ async function main() {
         active_codex_jobs: status.fleet.active_codex_jobs,
         worker_details: status.workers.length,
         pipeline_rows: status.pipeline.length,
+        cache_state: cacheState,
+        status_fetch_ms: statusFetchMs,
+        diagnostic_errors: status.diagnostics?.errors || [],
       },
       null,
       2,

@@ -57,6 +57,8 @@ const WORKER_JOB_CACHE_TTL_SECONDS = 60;
 const WORKER_JOB_IDLE_CACHE_TTL_SECONDS = 10;
 const WORKER_TARGET_CACHE_TTL_SECONDS = 900;
 const WORKER_TARGET_BATCH_SIZE = 50;
+const AUTOMERGE_CACHE_TTL_SECONDS = 300;
+const RECENT_CLOSED_CACHE_TTL_SECONDS = 60;
 const DEFAULT_WORKER_DETAIL_RUN_LIMIT = 32;
 const SUPPORT_WORKFLOW_NAMES = new Set([
   "CI",
@@ -198,6 +200,7 @@ const PR_PROOF_VIEWS = [
 ];
 
 let githubAppTokenCache = null;
+let statusRefresh = null;
 
 export default {
   async fetch(request: Request, env: DashboardEnv = {}, ctx?: DashboardContext) {
@@ -230,51 +233,93 @@ export default {
 };
 
 async function statusJson(request, env, ctx) {
-  const ttl = numberFrom(env.CACHE_TTL_SECONDS, 20);
-  const staleTtl = numberFrom(env.STALE_CACHE_TTL_SECONDS, STALE_CACHE_TTL_SECONDS);
   const cache = caches.default;
   const cached = await cache.match(statusCacheRequest(request, "fresh"));
-  if (cached) return cors(new Response(cached.body, cached));
+  if (cached) return cachedStatusResponse(cached, "fresh");
 
-  const snapshot = await statusSnapshot(env, ctx);
+  const stale = await cache.match(statusCacheRequest(request, "stale"));
+  if (stale && ctx?.waitUntil) {
+    ctx.waitUntil(refreshStatus(request, env).catch(() => undefined));
+    return cachedStatusResponse(stale, "stale");
+  }
+
+  const refreshed = await refreshStatus(request, env);
+  if (refreshed.looksEmpty && stale) return cachedStatusResponse(stale, "stale");
+  return cors(
+    new Response(refreshed.body, {
+      headers: {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+        "x-clawsweeper-cache": "miss",
+      },
+    }),
+  );
+}
+
+function cachedStatusResponse(cached, cacheState) {
+  const headers = new Headers(cached.headers);
+  headers.set("x-clawsweeper-cache", cacheState);
+  if (cacheState === "stale") headers.set("cache-control", "no-store");
+  return cors(new Response(cached.body, { status: cached.status, headers }));
+}
+
+function refreshStatus(request, env) {
+  const key = [
+    new URL(request.url).origin,
+    env.CLAWSWEEPER_REPO || "openclaw/clawsweeper",
+    env.TARGET_REPOS || "openclaw/openclaw",
+    env.CLAWSWEEPER_STATE_REPO || CLAWSWEEPER_STATE_REPO,
+    env.WORKER_BUDGET || "",
+    env.WORKER_DETAIL_RUN_LIMIT || "",
+    env.INCLUDE_CI_STATUS || "",
+    env.CACHE_TTL_SECONDS || "",
+    env.STALE_CACHE_TTL_SECONDS || "",
+  ].join("|");
+  if (statusRefresh?.key === key) return statusRefresh.promise;
+
+  const promise = refreshStatusCaches(request, env);
+  statusRefresh = { key, promise };
+  promise
+    .finally(() => {
+      if (statusRefresh?.promise === promise) statusRefresh = null;
+    })
+    .catch(() => undefined);
+  return promise;
+}
+
+async function refreshStatusCaches(request, env) {
+  const ttl = numberFrom(env.CACHE_TTL_SECONDS, 20);
+  const staleTtl = numberFrom(env.STALE_CACHE_TTL_SECONDS, STALE_CACHE_TTL_SECONDS);
+  const snapshot = await statusSnapshot(env);
   const body = JSON.stringify(snapshot, null, 2);
   const hasErrors = Boolean(snapshot.diagnostics?.errors?.length);
   const looksEmpty =
     !snapshot.pipeline.length && snapshot.fleet.active_workflow_runs === 0 && hasErrors;
-  if (looksEmpty) {
-    const stale = await cache.match(statusCacheRequest(request, "stale"));
-    if (stale) return cors(new Response(stale.body, stale));
-  }
   if (!looksEmpty) {
-    const responseHeaders = {
-      "content-type": "application/json; charset=utf-8",
-      "cache-control": `public, max-age=${ttl}`,
-    };
-    const staleResponseHeaders = {
-      "content-type": "application/json; charset=utf-8",
-      "cache-control": `public, max-age=${staleTtl}`,
-    };
-    ctx?.waitUntil?.(
-      Promise.all([
-        cache.put(
-          statusCacheRequest(request, "fresh"),
-          new Response(body, { headers: responseHeaders }),
-        ),
-        cache.put(
-          statusCacheRequest(request, "stale"),
-          new Response(body, { headers: staleResponseHeaders }),
-        ),
-      ]),
-    );
+    const writes = [
+      caches.default.put(
+        statusCacheRequest(request, "fresh"),
+        new Response(body, {
+          headers: {
+            "content-type": "application/json; charset=utf-8",
+            "cache-control": `public, max-age=${ttl}`,
+          },
+        }),
+      ),
+      caches.default.put(
+        statusCacheRequest(request, "stale"),
+        new Response(body, {
+          headers: {
+            "content-type": "application/json; charset=utf-8",
+            "cache-control": `public, max-age=${staleTtl}`,
+          },
+        }),
+      ),
+    ];
+    if (env.STATUS_STORE) writes.push(env.STATUS_STORE.put("snapshot", body));
+    await Promise.allSettled(writes);
   }
-  return cors(
-    new Response(body, {
-      headers: {
-        "content-type": "application/json; charset=utf-8",
-        "cache-control": "no-store",
-      },
-    }),
-  );
+  return { snapshot, body, looksEmpty };
 }
 
 function statusCacheRequest(request, bucket) {
@@ -977,7 +1022,7 @@ function constantTimeEqual(left, right) {
   return diff === 0;
 }
 
-async function statusSnapshot(env, ctx) {
+async function statusSnapshot(env) {
   const ttl = numberFrom(env.CACHE_TTL_SECONDS, 20);
   const cached = await readCachedSnapshot(env, ttl);
   if (cached) return cached;
@@ -1089,9 +1134,6 @@ async function statusSnapshot(env, ctx) {
       errors: errors.slice(0, 20),
     },
   };
-  if (env.STATUS_STORE) {
-    ctx?.waitUntil?.(env.STATUS_STORE.put("snapshot", JSON.stringify(snapshot)));
-  }
   return snapshot;
 }
 
@@ -2490,40 +2532,53 @@ async function attachCiStatus(env, item) {
 }
 
 async function recentAutomerge(env, repo) {
+  const cacheKey = `recent-automerge:${String(repo).toLowerCase()}`;
+  const cached = await readStoredJson(env, cacheKey);
+  if (cached?.items && Array.isArray(cached.items)) return cached;
+
   const search = await githubJson(
     env,
     `/search/issues?q=${encodeURIComponent(`repo:${repo} is:pr is:merged label:clawsweeper:automerge sort:updated-desc`)}&per_page=${AVERAGE_LIMIT}`,
   );
-  const items = [];
-  for (const issue of Array.isArray(search?.items) ? search.items : []) {
-    const number = issue.number;
-    const [pr, comments] = await Promise.all([
-      githubJson(env, `/repos/${repo}/pulls/${number}`),
-      githubJson(env, `/repos/${repo}/issues/${number}/comments?per_page=100`),
-    ]);
-    const commandAt = firstAutomergeCommandAt(comments);
-    const mergedAt = pr?.merged_at || null;
-    const durationMs = commandAt && mergedAt ? Date.parse(mergedAt) - Date.parse(commandAt) : null;
-    items.push({
-      url: issue.html_url,
-      title: issue.title,
-      number,
-      command_at: commandAt,
-      merged_at: mergedAt,
-      duration_ms: durationMs,
-      merge_commit_sha: pr?.merge_commit_sha || null,
-    });
-  }
+  const items = await Promise.all(
+    (Array.isArray(search?.items) ? search.items : []).map(async (issue) => {
+      const number = issue.number;
+      const [pr, comments] = await Promise.all([
+        githubJson(env, `/repos/${repo}/pulls/${number}`),
+        githubJson(env, `/repos/${repo}/issues/${number}/comments?per_page=100`),
+      ]);
+      const commandAt = firstAutomergeCommandAt(comments);
+      const mergedAt = pr?.merged_at || null;
+      const durationMs =
+        commandAt && mergedAt ? Date.parse(mergedAt) - Date.parse(commandAt) : null;
+      return {
+        url: issue.html_url,
+        title: issue.title,
+        number,
+        command_at: commandAt,
+        merged_at: mergedAt,
+        duration_ms: durationMs,
+        merge_commit_sha: pr?.merge_commit_sha || null,
+      };
+    }),
+  );
   const durations = items
     .map((item) => item.duration_ms)
     .filter((value) => Number.isFinite(value) && value >= 0);
-  return {
+  const result = {
     average_ms: durations.length
       ? Math.round(durations.reduce((sum, value) => sum + value, 0) / durations.length)
       : null,
     samples: durations.length,
     items,
   };
+  await writeStoredJson(
+    env,
+    cacheKey,
+    result,
+    numberFrom(env.AUTOMERGE_CACHE_TTL_SECONDS, AUTOMERGE_CACHE_TTL_SECONDS),
+  ).catch(() => undefined);
+  return result;
 }
 
 async function clusterRepairStatus(env, repo, targetRepos, activeRuns) {
@@ -2628,18 +2683,33 @@ function decodeGithubContent(value) {
 }
 
 async function recentClawsweeperClosed(env, repos) {
-  const since = new Date(Date.now() - CLOSED_STATS_HOURS * 60 * 60 * 1000).toISOString();
   const trustedBotLogins = clawsweeperBotLogins(env);
+  const cacheKey = [
+    "recent-closed",
+    repos.map((repo) => String(repo).toLowerCase()).join(","),
+    [...trustedBotLogins].sort().join(","),
+  ].join(":");
+  const cached = await readStoredJson(env, cacheKey);
+  if (cached?.items && Array.isArray(cached.items) && cached?.stats) return cached;
+
+  const since = new Date(Date.now() - CLOSED_STATS_HOURS * 60 * 60 * 1000).toISOString();
   const rows = await Promise.all(
     repos.map((repo) => recentClawsweeperClosedForRepo(env, repo, since, trustedBotLogins)),
   );
   const items = rows
     .flat()
     .sort((left, right) => Date.parse(right.closed_at || "") - Date.parse(left.closed_at || ""));
-  return {
+  const result = {
     items: items.slice(0, RECENT_CLOSED_LIMIT),
     stats: closedStats(items, since),
   };
+  await writeStoredJson(
+    env,
+    cacheKey,
+    result,
+    numberFrom(env.RECENT_CLOSED_CACHE_TTL_SECONDS, RECENT_CLOSED_CACHE_TTL_SECONDS),
+  ).catch(() => undefined);
+  return result;
 }
 
 async function recentClawsweeperClosedForRepo(env, repo, since, trustedBotLogins) {
@@ -5111,6 +5181,7 @@ async function load() {
   const response = await fetch("/api/status", { cache: "no-store" });
   if (!response.ok) throw new Error("/api/status returned " + response.status);
   data = await response.json();
+  const cacheState = response.headers.get("x-clawsweeper-cache");
   const hasErrors = Boolean(data.diagnostics && Array.isArray(data.diagnostics.errors) && data.diagnostics.errors.length);
   const looksEmpty = !data.pipeline?.length && data.fleet?.active_workflow_runs === 0 && hasErrors;
   if (looksEmpty && lastData) {
@@ -5119,7 +5190,14 @@ async function load() {
   }
   lastData = data;
   if (!looksEmpty) localStorage.setItem("clawsweeper:last-status", JSON.stringify(data));
-  renderDashboard(data, hasErrors ? "Updated with partial GitHub telemetry." : "");
+  renderDashboard(
+    data,
+    cacheState === "stale"
+      ? "Refreshing live status in the background."
+      : hasErrors
+        ? "Updated with partial GitHub telemetry."
+        : "",
+  );
   } catch (error) {
     if (lastData) {
       renderDashboard(lastData, "Live refresh failed; showing last good status.");
