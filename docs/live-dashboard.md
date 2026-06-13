@@ -112,7 +112,9 @@ is absent or a cache event lands in another Cloudflare colo.
 The Worker fetches job details only for the bounded active-run set, limits that
 GitHub fanout to 12 concurrent requests, and caches each run's jobs for 60
 seconds. This bounds telemetry pressure without reducing the 64-worker fleet
-budget. If GitHub job telemetry is unavailable, the API and UI retain the
+budget. Worker details finish before optional pipeline CI and historical
+enrichment begin, so those secondary lookups do not compete with active worker
+telemetry. If GitHub job telemetry is unavailable, the API and UI retain the
 workflow-level fallback rather than hiding active work.
 
 Status responses use stale-while-revalidate delivery. After the 20-second fresh

@@ -282,7 +282,7 @@ test("dashboard bounds worker job detail request concurrency", async () => {
   const runs = Array.from({ length: 12 }, (_, index) => ({
     id: 1000 + index,
     name: "Review ClawSweeper items",
-    display_title: `Review shard batch ${index}`,
+    display_title: `Review event item openclaw/openclaw#${9000 + index}`,
     status: "in_progress",
     conclusion: null,
     html_url: `https://github.com/openclaw/clawsweeper/actions/runs/${1000 + index}`,
@@ -291,6 +291,7 @@ test("dashboard bounds worker job detail request concurrency", async () => {
   }));
   let activeJobRequests = 0;
   let maxActiveJobRequests = 0;
+  let pipelineRequestsWhileJobsActive = 0;
   globalThis.fetch = async (input) => {
     const url = new URL(String(input));
     if (url.pathname === "/repos/openclaw/clawsweeper/actions/runs") {
@@ -332,6 +333,14 @@ test("dashboard bounds worker job detail request concurrency", async () => {
         ],
       });
     }
+    if (/^\/repos\/openclaw\/openclaw\/pulls\/\d+$/.test(url.pathname)) {
+      if (activeJobRequests) pipelineRequestsWhileJobsActive += 1;
+      return jsonResponse({ head: { sha: `head-${url.pathname.split("/").at(-1)}` } });
+    }
+    if (/^\/repos\/openclaw\/openclaw\/commits\/head-\d+\/check-runs$/.test(url.pathname)) {
+      if (activeJobRequests) pipelineRequestsWhileJobsActive += 1;
+      return jsonResponse({ check_runs: [] });
+    }
     if (
       url.pathname ===
       "/repos/openclaw/clawsweeper/actions/workflows/repair-cluster-intake.yml/runs"
@@ -352,6 +361,7 @@ test("dashboard bounds worker job detail request concurrency", async () => {
         WORKER_DETAIL_RUN_LIMIT: "12",
         WORKER_JOB_FETCH_CONCURRENCY: "3",
         CACHE_TTL_SECONDS: "0",
+        INCLUDE_CI_STATUS: "1",
       },
       {
         waitUntil: () => undefined,
@@ -362,6 +372,7 @@ test("dashboard bounds worker job detail request concurrency", async () => {
     assert.equal(status.workers.length, 12);
     assert.equal(status.fleet.active_codex_jobs, 12);
     assert.equal(maxActiveJobRequests, 3);
+    assert.equal(pipelineRequestsWhileJobsActive, 0);
     assert.deepEqual(status.diagnostics.errors, []);
   } finally {
     globalThis.fetch = originalFetch;

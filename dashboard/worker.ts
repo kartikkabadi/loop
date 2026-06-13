@@ -1058,8 +1058,8 @@ async function statusSnapshot(env) {
   const failedRuns = workflowRuns.filter(
     (run) => run.status === "completed" && TERMINAL_BAD_CONCLUSIONS.has(String(run.conclusion)),
   );
-  const [activeJobs, pipeline, clusterRepair, automerge, closed, storedEvents] = await Promise.all([
-    activeWorkerSnapshot(env, repo, workerRuns),
+  const activeJobs = await activeWorkerSnapshot(env, repo, workerRuns);
+  const [pipeline, clusterRepair, automerge, closed, storedEvents] = await Promise.all([
     withTimeout(
       pipelineItems(env, workerRuns.slice(0, 30)),
       OPTIONAL_SECTION_TIMEOUT_MS,
