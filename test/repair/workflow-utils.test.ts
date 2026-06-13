@@ -47,6 +47,46 @@ test("workflow utilities accept positional automation limit CLI paths", () => {
   assert.equal(output, String(AUTOMATION_LIMITS.review_shards.normal_default));
 });
 
+test("workflow utility CLI initializes close-selection constants before preselecting", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-workflow-cli-"));
+  write(
+    path.join(root, "records/openclaw-clawhub/items/openclaw-clawhub-7.md"),
+    [
+      "---",
+      "repository: openclaw/clawhub",
+      "type: issue",
+      "decision: close",
+      "confidence: high",
+      "action_taken: skipped_invalid_decision",
+      "close_reason: implemented_on_main",
+      "item_created_at: 2024-01-01T00:00:00Z",
+      "---",
+      "",
+    ].join("\n"),
+  );
+
+  const output = execFileSync(
+    process.execPath,
+    [
+      path.resolve("dist/repair/workflow-utils.js"),
+      "proposed-pr-close-coverage-item-numbers",
+      "--target-repo",
+      "openclaw/clawhub",
+      "--apply-kind",
+      "all",
+      "--apply-close-reasons",
+      "all",
+      "--stale-min-age-days",
+      "60",
+      "--min-age-days",
+      "0",
+    ],
+    { cwd: root, encoding: "utf8" },
+  );
+
+  assert.equal(output, "");
+});
+
 test("worker scheduler lets background lanes yield to active work", () => {
   const quietBackgroundCapacity =
     WORKER_CONFIG.workers.max -

@@ -13,8 +13,6 @@ type ApplyAction = {
 
 const args = parseArgs(process.argv.slice(2));
 
-if (isCliEntrypoint()) runCli();
-
 function runCli(): void {
   const command = args._[0];
   if (!command) throw new Error("workflow utility command is required");
@@ -747,3 +745,5 @@ function isCliEntrypoint(): boolean {
   const entrypoint = process.argv[1];
   return Boolean(entrypoint && import.meta.url === pathToFileURL(entrypoint).href);
 }
+
+if (isCliEntrypoint()) runCli();

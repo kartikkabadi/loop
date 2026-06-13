@@ -62,6 +62,7 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Deferred workflow utility CLI execution until module initialization completes, preventing apply preselection from crashing on close-action constants.
 - Prevented verbose Codex review and repair subprocess output from overflowing memory, retained capped durable logs and bounded redacted diagnostic tails, stopped retrying terminal model-access failures, and pinned the CLI/proxy pair to compatible version 0.139.0. Thanks @fuller-stack-dev.
 - Hydrated generated pull request review findings into automerge repair jobs instead of routing repairs through the original issue-only artifact.
 - Rechecked stale active worker state and durably retried pending repair dispatches instead of leaving review-fix loops waiting after a worker finishes.
