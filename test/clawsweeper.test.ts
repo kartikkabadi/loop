@@ -6,6 +6,7 @@ import {
   existsSync,
   mkdirSync,
   mkdtempSync,
+  readdirSync,
   readFileSync,
   rmSync,
   statSync,
@@ -14670,6 +14671,127 @@ process.exit(1);
   }
 });
 
+test("runCodex accepts structured output after more than 128 MiB of process output", () => {
+  const root = mkdtempSync(tmpPrefix);
+  const openclawDir = join(root, "openclaw");
+  const workDir = join(root, "codex-work");
+  const binDir = join(root, "bin");
+  mkdirSync(openclawDir, { recursive: true });
+  mkdirSync(binDir, { recursive: true });
+  execFileSync("git", ["init"], { cwd: openclawDir, stdio: "ignore" });
+  const codexPath = join(binDir, "codex");
+  writeFileSync(
+    codexPath,
+    `#!/usr/bin/env node
+const fs = require("node:fs");
+const chunk = Buffer.alloc(1024 * 1024, "x");
+for (let index = 0; index < 129; index += 1) fs.writeSync(1, chunk);
+const outputIndex = process.argv.indexOf("--output-last-message");
+fs.writeFileSync(process.argv[outputIndex + 1], process.env.CODEX_DECISION_JSON);
+`,
+  );
+  chmodSync(codexPath, 0o755);
+  const originalPath = process.env.PATH;
+  const originalDecision = process.env.CODEX_DECISION_JSON;
+  process.env.PATH = `${binDir}${delimiter}${process.env.PATH ?? ""}`;
+  process.env.CODEX_DECISION_JSON = JSON.stringify(
+    closeDecision({
+      decision: "keep_open",
+      closeReason: "none",
+      confidence: "medium",
+      summary: "Review survived verbose Codex output.",
+      bestSolution: "Keep file-backed process output.",
+      closeComment: "",
+      workReason: "No additional implementation is required.",
+    }),
+  );
+  try {
+    const decision = runCodexForTest({
+      item: item({ number: 83395 }),
+      context: { issue: {}, comments: [], timeline: [] },
+      git: { mainSha: "abc123", latestRelease: null },
+      model: "gpt-test",
+      openclawDir,
+      reasoningEffort: "high",
+      sandboxMode: "read-only",
+      serviceTier: "",
+      timeoutMs: 20_000,
+      workDir,
+      prompt: "Return a review decision.",
+    });
+
+    assert.equal(decision.summary, "Review survived verbose Codex output.");
+    assert.equal(
+      readdirSync(workDir).some((file) => file.endsWith(".codex.stdout.log")),
+      false,
+    );
+  } finally {
+    if (originalPath === undefined) delete process.env.PATH;
+    else process.env.PATH = originalPath;
+    if (originalDecision === undefined) delete process.env.CODEX_DECISION_JSON;
+    else process.env.CODEX_DECISION_JSON = originalDecision;
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("runCodex does not retry output buffer failures as transport failures", () => {
+  const root = mkdtempSync(tmpPrefix);
+  const openclawDir = join(root, "openclaw");
+  const workDir = join(root, "codex-work");
+  const binDir = join(root, "bin");
+  const attemptsPath = join(root, "attempts");
+  mkdirSync(openclawDir, { recursive: true });
+  mkdirSync(binDir, { recursive: true });
+  execFileSync("git", ["init"], { cwd: openclawDir, stdio: "ignore" });
+  const codexPath = join(binDir, "codex");
+  writeFileSync(
+    codexPath,
+    `#!/usr/bin/env node
+const fs = require("node:fs");
+const attemptsPath = process.env.CODEX_ATTEMPTS_PATH;
+const attempt = fs.existsSync(attemptsPath) ? Number(fs.readFileSync(attemptsPath, "utf8")) + 1 : 1;
+fs.writeFileSync(attemptsPath, String(attempt));
+process.stderr.write("transport failure: ENOBUFS maxBuffer exceeded\\n");
+process.exit(1);
+`,
+  );
+  chmodSync(codexPath, 0o755);
+  const previous = {
+    PATH: process.env.PATH,
+    CODEX_ATTEMPTS_PATH: process.env.CODEX_ATTEMPTS_PATH,
+    CLAWSWEEPER_CODEX_REVIEW_ATTEMPTS: process.env.CLAWSWEEPER_CODEX_REVIEW_ATTEMPTS,
+    CLAWSWEEPER_CODEX_REVIEW_RETRY_DELAY_MS: process.env.CLAWSWEEPER_CODEX_REVIEW_RETRY_DELAY_MS,
+  };
+  process.env.PATH = `${binDir}${delimiter}${process.env.PATH ?? ""}`;
+  process.env.CODEX_ATTEMPTS_PATH = attemptsPath;
+  process.env.CLAWSWEEPER_CODEX_REVIEW_ATTEMPTS = "3";
+  process.env.CLAWSWEEPER_CODEX_REVIEW_RETRY_DELAY_MS = "1";
+  try {
+    assert.throws(() =>
+      runCodexForTest({
+        item: item({ number: 83396 }),
+        context: { issue: {}, comments: [], timeline: [] },
+        git: { mainSha: "abc123", latestRelease: null },
+        model: "gpt-test",
+        openclawDir,
+        reasoningEffort: "high",
+        sandboxMode: "read-only",
+        serviceTier: "",
+        timeoutMs: 10_000,
+        workDir,
+        prompt: "Return a review decision.",
+      }),
+    );
+    assert.equal(readFileSync(attemptsPath, "utf8"), "1");
+  } finally {
+    for (const [key, value] of Object.entries(previous)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
 test("codex failure decisions expose stderr and stdout separately", () => {
   const decision = codexFailureDecisionForTest(
     1,
@@ -17778,7 +17900,7 @@ test("sweep workflow runs exact event reviews without a global worker gate", () 
   assert.doesNotMatch(eventReviewBlock, /Waiting for review capacity/);
 });
 
-test("Codex workflows install latest CLI and keep the actual model secret", () => {
+test("Codex workflows pin compatible CLI versions and keep the actual model secret", () => {
   const action = readFileSync(".github/actions/setup-codex/action.yml", "utf8");
   const workflows = [
     ".github/workflows/assist.yml",
@@ -17789,8 +17911,9 @@ test("Codex workflows install latest CLI and keep the actual model secret", () =
     ".github/workflows/sweep.yml",
   ].map((file) => readFileSync(file, "utf8"));
 
-  assert.match(action, /@openai\/codex@latest/);
-  assert.match(action, /@openai\/codex-responses-api-proxy@latest/);
+  assert.match(action, /@openai\/codex@0\.139\.0/);
+  assert.match(action, /@openai\/codex-responses-api-proxy@0\.139\.0/);
+  assert.doesNotMatch(action, /@latest/);
   assert.match(action, /env -u OPENAI_API_KEY[\s\S]*-u CLAWSWEEPER_INTERNAL_MODEL/);
   assert.equal(action.match(/--ignore-scripts/g)?.length, 2);
   assert.doesNotMatch(action, /inputs\['version'\]/);

@@ -3,9 +3,13 @@ import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import {
   chmodSync,
+  closeSync,
   existsSync,
+  fstatSync,
   mkdirSync,
+  openSync,
   readFileSync,
+  readSync,
   readdirSync,
   renameSync,
   statSync,
@@ -6513,6 +6517,75 @@ function redactedOutputTail(value: string | Buffer | null | undefined, maxLength
   );
 }
 
+function readFileTail(path: string, maxBytes = 64 * 1024): string {
+  if (!existsSync(path)) return "";
+  const file = openSync(path, "r");
+  try {
+    const size = fstatSync(file).size;
+    const length = Math.min(size, maxBytes);
+    if (length === 0) return "";
+    const buffer = Buffer.alloc(length);
+    const bytesRead = readSync(file, buffer, 0, length, Math.max(0, size - length));
+    return buffer.subarray(0, bytesRead).toString("utf8");
+  } finally {
+    closeSync(file);
+  }
+}
+
+interface FileBackedSpawnResult {
+  error?: Error;
+  signal: NodeJS.Signals | null;
+  status: number | null;
+  stderr: string;
+  stdout: string;
+}
+
+function runCodexProcess(options: {
+  args: string[];
+  cwd: string;
+  env: NodeJS.ProcessEnv;
+  input: string;
+  stderrPath: string;
+  stdoutPath: string;
+  timeout: number;
+}): FileBackedSpawnResult {
+  let stdoutFile: number | undefined;
+  let stderrFile: number | undefined;
+  let result: ReturnType<typeof spawnSync> | undefined;
+  try {
+    stdoutFile = openSync(options.stdoutPath, "w", 0o600);
+    stderrFile = openSync(options.stderrPath, "w", 0o600);
+    result = spawnSync("codex", options.args, {
+      cwd: options.cwd,
+      env: options.env,
+      input: options.input,
+      stdio: ["pipe", stdoutFile, stderrFile],
+      timeout: options.timeout,
+    });
+  } finally {
+    if (stderrFile !== undefined) closeSync(stderrFile);
+    if (stdoutFile !== undefined) closeSync(stdoutFile);
+  }
+
+  let stdout = "";
+  let stderr = "";
+  try {
+    stdout = readFileTail(options.stdoutPath);
+    stderr = readFileTail(options.stderrPath);
+  } finally {
+    if (existsSync(options.stdoutPath)) unlinkSync(options.stdoutPath);
+    if (existsSync(options.stderrPath)) unlinkSync(options.stderrPath);
+  }
+  if (!result) throw new Error("Codex process did not start.");
+  return {
+    ...(result.error ? { error: result.error } : {}),
+    signal: result.signal,
+    status: result.status,
+    stderr,
+    stdout,
+  };
+}
+
 class CodexReviewError extends Error {
   readonly status: number | null;
   readonly stdout: string;
@@ -6644,9 +6717,8 @@ function runCodex(options: {
         `Codex review timed out for #${options.item.number} after ${options.timeoutMs}ms.`,
       );
     }
-    const result = spawnSync(
-      "codex",
-      [
+    const result = runCodexProcess({
+      args: [
         "exec",
         ...codexModelArgs(options.model),
         ...codexConfig.flatMap((config) => ["-c", config]),
@@ -6662,18 +6734,16 @@ function runCodex(options: {
         proofScratchDir,
         "-",
       ],
-      {
-        cwd: options.openclawDir,
-        encoding: "utf8",
-        env: {
-          ...codexEnv({ ghToken: process.env.CLAWSWEEPER_PROOF_INSPECTION_TOKEN }),
-          CLAWSWEEPER_PROOF_SCRATCH_DIR: proofScratchDir,
-        },
-        input: prompt,
-        maxBuffer: 128 * 1024 * 1024,
-        timeout: remainingMs,
+      cwd: options.openclawDir,
+      env: {
+        ...codexEnv({ ghToken: process.env.CLAWSWEEPER_PROOF_INSPECTION_TOKEN }),
+        CLAWSWEEPER_PROOF_SCRATCH_DIR: proofScratchDir,
       },
-    );
+      input: prompt,
+      stderrPath: join(options.workDir, `${options.item.number}.${attempt}.codex.stderr.log`),
+      stdoutPath: join(options.workDir, `${options.item.number}.${attempt}.codex.stdout.log`),
+      timeout: remainingMs,
+    });
     const dirtyAfter = openclawDirtyStatus(options.openclawDir);
     if (dirtyAfter) {
       throw new Error(
@@ -6715,13 +6785,15 @@ function runCodex(options: {
           : `Codex review failed for #${options.item.number} with exit ${result.status ?? "unknown"}.`;
     }
     const diagnosticDetail = `${failureDetail}\n${stderr}\n${stdout}`;
+    const outputBufferOverflow = /ENOBUFS|maxBuffer|output buffer overflow/i.test(diagnosticDetail);
     const retryable =
-      result.signal !== null ||
-      (result.status === 0 && !hasOutput) ||
-      isRetryableCodexTransportError(diagnosticDetail) ||
-      /\b(?:ETIMEDOUT|ECONNRESET|EAI_AGAIN|ENOTFOUND|socket hang up|fetch failed|transport failure)\b/i.test(
-        diagnosticDetail,
-      );
+      !outputBufferOverflow &&
+      (result.signal !== null ||
+        (result.status === 0 && !hasOutput) ||
+        isRetryableCodexTransportError(diagnosticDetail) ||
+        /\b(?:ETIMEDOUT|ECONNRESET|EAI_AGAIN|ENOTFOUND|socket hang up|fetch failed|transport failure)\b/i.test(
+          diagnosticDetail,
+        ));
     if (retryable && attempt < maxAttempts) {
       const delayMs = codexRetryDelayMs(diagnosticDetail, attempt);
       if (Date.now() - startedAt + delayMs < options.timeoutMs) {

@@ -62,6 +62,7 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Prevented verbose Codex review subprocess output from overflowing Node's synchronous capture buffer, retained bounded redacted diagnostic tails, stopped retrying buffer failures as transport failures, and pinned the review CLI/proxy pair to compatible version 0.139.0.
 - Hydrated generated pull request review findings into automerge repair jobs instead of routing repairs through the original issue-only artifact.
 - Rechecked stale active worker state and durably retried pending repair dispatches instead of leaving review-fix loops waiting after a worker finishes.
 - Released automerge repair workers immediately when an exact-head ClawSweeper review requests another repair, allowing the router to dispatch the next Codex worker without waiting for the shepherd timeout.
