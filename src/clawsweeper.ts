@@ -1039,6 +1039,7 @@ const RECENT_MISSING_OPEN_MS = DAY_MS;
 const DEFAULT_CODEX_MODEL = PUBLIC_CODEX_MODEL;
 const DEFAULT_REASONING_EFFORT = "high";
 const DEFAULT_SERVICE_TIER = "";
+const DEFAULT_REVIEW_CODEX_TIMEOUT_MS = 900_000;
 const REVIEW_POLICY_VERSION = "2026-05-30-policy-v19";
 const REVIEW_ITEM_PROMPT_PATH = join(ROOT, "prompts", "review-item.md");
 const CLAWSWEEPER_DECISION_SCHEMA_PATH = join(ROOT, "schema", "clawsweeper-decision.schema.json");
@@ -14940,7 +14941,7 @@ function reviewCommand(args: Args): void {
   const reasoningEffort = stringArg(args.codex_reasoning_effort, DEFAULT_REASONING_EFFORT);
   const sandboxMode = stringArg(args.codex_sandbox, "read-only");
   const serviceTier = stringArg(args.codex_service_tier, DEFAULT_SERVICE_TIER);
-  const timeoutMs = numberArg(args.codex_timeout_ms, 600_000);
+  const timeoutMs = numberArg(args.codex_timeout_ms, DEFAULT_REVIEW_CODEX_TIMEOUT_MS);
   const additionalPrompt = stringArg(
     args.additional_prompt,
     process.env.CLAWSWEEPER_ADDITIONAL_PROMPT ?? "",
@@ -15239,7 +15240,7 @@ function retryFailedReviewsCommand(args: Args): void {
     process.env.GITHUB_REPOSITORY ?? "openclaw/clawsweeper",
   );
   const workflowRef = stringArg(args.workflow_ref, "main");
-  const codexTimeoutMs = numberArg(args.codex_timeout_ms, 600_000);
+  const codexTimeoutMs = numberArg(args.codex_timeout_ms, DEFAULT_REVIEW_CODEX_TIMEOUT_MS);
   const requestedItemNumbers = itemNumbersArg(args.item_numbers, args.item_number);
   const requested = new Set(requestedItemNumbers);
   const now = Date.now();

@@ -70,7 +70,7 @@ on:
       codex_timeout_ms:
         description: "Per-item Codex timeout in milliseconds"
         required: false
-        default: "600000"
+        default: "900000"
       shard_count:
         description: "Parallel shards (capped by config/automation-limits.json)"
         required: false
@@ -351,14 +351,21 @@ jobs:
           CLAWSWEEPER_PROOF_INSPECTION_TOKEN: ${{ steps.target-read-token.outputs.token || github.token }}
           ADDITIONAL_PROMPT: ${{ github.event.client_payload.additional_prompt || '' }}
           CLAWSWEEPER_RELATED_GITHUB_SEARCH: ${{ vars.CLAWSWEEPER_RELATED_GITHUB_SEARCH || '1' }}
+          CODEX_TIMEOUT_MS: ${{ github.event.client_payload.codex_timeout_ms || vars.CLAWSWEEPER_CODEX_TIMEOUT_MS || '900000' }}
         run: |
           set -euo pipefail
           test -n "$GH_TOKEN"
+          if ! [[ "$CODEX_TIMEOUT_MS" =~ ^[0-9]+$ ]] || [ "$CODEX_TIMEOUT_MS" -lt 1 ]; then
+            echo "Invalid Codex timeout: $CODEX_TIMEOUT_MS" >&2
+            exit 1
+          fi
           additional_prompt_arg=()
           if [ -n "$ADDITIONAL_PROMPT" ]; then
             additional_prompt_arg=(--additional-prompt "$ADDITIONAL_PROMPT")
           fi
-          timeout --kill-after=30s 12m pnpm run review -- \
+          codex_timeout_seconds=$(((CODEX_TIMEOUT_MS + 999) / 1000))
+          review_timeout_seconds=$((codex_timeout_seconds + 180))
+          timeout --kill-after=30s "${review_timeout_seconds}s" pnpm run review -- \
             --target-repo "${{ steps.target.outputs.target_repo }}" \
             --target-dir "${{ steps.target.outputs.target_checkout_dir }}" \
             --artifact-dir artifacts/event \
@@ -367,7 +374,7 @@ jobs:
             --codex-model internal \
             --codex-reasoning-effort high \
             --codex-sandbox danger-full-access \
-            --codex-timeout-ms 600000 \
+            --codex-timeout-ms "$CODEX_TIMEOUT_MS" \
             --item-numbers "${{ steps.target.outputs.item_number }}" \
             --readonly-openclaw \
             --shard-index 0 \
@@ -924,7 +931,7 @@ jobs:
           fi
           {
             echo "batch_size=$batch_size"
-            echo "codex_timeout_ms=${{ github.event.client_payload.codex_timeout_ms || github.event.inputs.codex_timeout_ms || '600000' }}"
+            echo "codex_timeout_ms=${{ github.event.client_payload.codex_timeout_ms || github.event.inputs.codex_timeout_ms || vars.CLAWSWEEPER_CODEX_TIMEOUT_MS || '900000' }}"
             echo "hot_intake=$hot_intake"
             echo "max_pages=$max_pages"
             echo "min_active_shards=$min_active_shards"
@@ -1763,7 +1770,7 @@ jobs:
           RETRY_LIMIT: ${{ vars.CLAWSWEEPER_FAILED_REVIEW_RETRY_LIMIT || '3' }}
           RETRY_MAX_ATTEMPTS: ${{ vars.CLAWSWEEPER_FAILED_REVIEW_RETRY_MAX_ATTEMPTS || '2' }}
           RETRY_COOLDOWN_MINUTES: ${{ vars.CLAWSWEEPER_FAILED_REVIEW_RETRY_COOLDOWN_MINUTES || '45' }}
-          CODEX_TIMEOUT_MS: ${{ vars.CLAWSWEEPER_FAILED_REVIEW_RETRY_CODEX_TIMEOUT_MS || vars.CLAWSWEEPER_CODEX_TIMEOUT_MS || '600000' }}
+          CODEX_TIMEOUT_MS: ${{ vars.CLAWSWEEPER_FAILED_REVIEW_RETRY_CODEX_TIMEOUT_MS || vars.CLAWSWEEPER_CODEX_TIMEOUT_MS || '900000' }}
         run: |
           set -euo pipefail
           git pull --rebase --autostash
@@ -2459,7 +2466,7 @@ jobs:
               -f target_repo=openclaw/openclaw \
               -f batch_size=1 \
               -f shard_count="$hot_intake_shards" \
-              -f codex_timeout_ms=600000
+              -f codex_timeout_ms=900000
           fi
 
           if [ "$REVIEW_RECENT" != "true" ]; then
@@ -2471,5 +2478,5 @@ jobs:
               -f target_repo=openclaw/openclaw \
               -f batch_size=3 \
               -f shard_count="$normal_shards" \
-              -f codex_timeout_ms=600000
+              -f codex_timeout_ms=900000
           fi
