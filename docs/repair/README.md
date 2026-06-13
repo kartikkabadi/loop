@@ -8,6 +8,9 @@ It takes a curated GitHub issue/PR cluster, asks a Codex worker to classify the 
 
 For the canonical repair `job_intent` contract and workflow/TypeScript boundary,
 see [`docs/orchestration.md`](../orchestration.md).
+For the complete GitHub Actions, durable Codex thread, CrabFleet steering,
+GitCrawl intake, dashboard, completion, and recovery lifecycle, see
+[`docs/steerable-repair-automation.md`](../steerable-repair-automation.md).
 
 Allowed automated close reasons:
 
@@ -16,7 +19,7 @@ Allowed automated close reasons:
 - fixed by a specific candidate fix
 
 Manual backlog-cleanup jobs may also use
-[`instructions/low-signal-prs.md`](instructions/low-signal-prs.md) for
+[`instructions/low-signal-prs.md`](../../instructions/low-signal-prs.md) for
 drive-by PRs that are clearly blank-template, docs-only discoverability churn,
 test-only coverage spam, refactor-only noise, third-party capabilities that
 belong on ClawHub, risky unapproved infra, or dirty branches. This policy is
@@ -66,7 +69,7 @@ Live dashboard and generated state: https://github.com/openclaw/clawsweeper-stat
 ## How It Works
 
 For a maintainer-facing architecture map of the automation lanes, see
-[`docs/INTERNAL_FEATURES.md`](docs/INTERNAL_FEATURES.md).
+[`internal-features.md`](internal-features.md).
 
 For the ClawSweeper feedback loop that updates existing generated PRs, see
 [`docs/repair/auto-update-prs.md`](auto-update-prs.md).

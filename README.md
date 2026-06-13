@@ -31,6 +31,11 @@ At a high level ClawSweeper:
 - publishes dashboard, audit, repair, and activity state to
   `openclaw/clawsweeper-state`
 
+For the complete architecture and operator guide covering issue-to-PR work, PR
+repair, GitCrawl intake, durable Codex threads, CrabFleet steering, completion
+gates, quotas, dashboards, and recovery, see
+[`docs/steerable-repair-automation.md`](docs/steerable-repair-automation.md).
+
 ClawSweeper is not a generic auto-close bot. Review is proposal-only, apply is
 guarded, Codex never gets write credentials during review, and every GitHub
 mutation is rechecked against live target state immediately before it happens.
@@ -257,6 +262,8 @@ separate issue-to-PR and PR-repair worker views, repair/automerge pipeline rows,
 CI state, recent failures, and automerge timing without owning GitHub mutations.
 Its Live terminals link opens CrabFleet for browser steering of registered
 GitHub Actions sessions. See [`docs/live-dashboard.md`](docs/live-dashboard.md).
+The end-to-end session lifecycle is documented in
+[`docs/steerable-repair-automation.md`](docs/steerable-repair-automation.md).
 
 The optional triage dashboard page at `/triage` exposes ClawSweeper advisory
 issue labels as read-only maintainer views, backed by GitHub Search snapshots
@@ -672,6 +679,11 @@ Optional steerable Action setup:
   persistence and browser steering in the repair cluster workflow
 - variable `CLAWSWEEPER_CRABFLEET_URL`: optional CrabFleet API/dashboard base;
   defaults to `https://crabfleet.openclaw.ai`
+
+See
+[`docs/steerable-repair-automation.md`](docs/steerable-repair-automation.md)
+for the registration, token, heartbeat, thread-resume, steering, completion,
+dashboard, and recovery contracts.
 
 ClawSweeper no longer falls back to PAT-based write tokens. If the GitHub App
 installation does not grant the requested permission set, the workflow fails at

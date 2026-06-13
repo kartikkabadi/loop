@@ -9,6 +9,11 @@ Cloudflare Worker reads public GitHub workflow state, serves a compact pipeline
 view, exposes live worker/job drill-down, and optionally accepts signed status
 events from workflows.
 
+For the end-to-end relationship between GitHub Actions workers, durable jobs,
+CrabFleet action sessions, Codex steering, completion reasons, and dashboard
+rows, see
+[`steerable-repair-automation.md`](steerable-repair-automation.md).
+
 ## Deployment
 
 Cloudflare account:

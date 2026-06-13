@@ -9,6 +9,7 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Added
 
+- Added comprehensive documentation for steerable repair automation, covering issue-to-PR and PR-repair intake, GitCrawl Actions consumption, deduplication, opt-out labels, GitHub App token boundaries, durable Codex thread resumption, CrabFleet steering, worker budgets, completion gates, dashboards, and failure recovery.
 - Added steerable, resumable Codex app-server sessions for repair GitHub Actions, with CrabFleet terminal attach, durable thread restoration across planning/execution runners, work-state heartbeats, and deterministic completion reporting.
 - Added explicit issue-to-PR and PR-repair worker categories to the live dashboard, plus direct live-terminal fleet access and issue/PR-aware drill-down links.
 - Added organization-member issue implementation commands while keeping automatic issue pickup behind a new default-off master gate and honoring `clawsweeper:human-review` or `clawsweeper:manual-only` before branch pushes and PR creation.
