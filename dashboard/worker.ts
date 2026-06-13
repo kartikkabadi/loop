@@ -52,6 +52,9 @@ const CLAWSWEEPER_WEBHOOK_DENY_REPOS = new Set(["openclaw/clawsweeper-state", "o
 const OPTIONAL_SECTION_TIMEOUT_MS = 6000;
 const STALE_CACHE_TTL_SECONDS = 900;
 const CI_STATUS_TTL_SECONDS = 7200;
+const WORKER_JOB_CACHE_TTL_SECONDS = 60;
+const WORKER_JOB_IDLE_CACHE_TTL_SECONDS = 10;
+const DEFAULT_WORKER_DETAIL_RUN_LIMIT = 32;
 const SUPPORT_WORKFLOW_NAMES = new Set([
   "CI",
   "CodeQL",
@@ -1002,7 +1005,7 @@ async function statusSnapshot(env, ctx) {
     (run) => run.status === "completed" && TERMINAL_BAD_CONCLUSIONS.has(String(run.conclusion)),
   );
   const [activeJobs, pipeline, clusterRepair, automerge, closed, storedEvents] = await Promise.all([
-    estimateActiveCodexJobs(workerRuns),
+    activeWorkerSnapshot(env, repo, workerRuns),
     withTimeout(
       pipelineItems(env, workerRuns.slice(0, 30)),
       OPTIONAL_SECTION_TIMEOUT_MS,
@@ -1059,11 +1062,14 @@ async function statusSnapshot(env, ctx) {
       active_codex_jobs: activeJobs.count,
       failed_recent_runs: failedRuns.length,
       budget_used_percent: budget > 0 ? Math.round((activeJobs.count / budget) * 100) : 0,
+      worker_detail_runs: activeJobs.detailRuns,
+      worker_detail_fallbacks: activeJobs.fallbacks,
     },
     averages: {
       automerge_command_to_merge_ms: automerge.average_ms,
       automerge_samples: automerge.samples,
     },
+    workers: activeJobs.workers,
     pipeline,
     recent: {
       cluster_repair: clusterRepair,
@@ -1930,22 +1936,228 @@ function githubSearchUrl(query) {
   return `https://github.com/issues?q=${encodeURIComponent(query)}&s=created&o=desc`;
 }
 
-async function estimateActiveCodexJobs(runs) {
-  const codexRuns = runs.filter((run) =>
-    codexJobName(`${run.name || ""} ${run.display_title || ""}`),
+async function activeWorkerSnapshot(env, repo, runs) {
+  const detailRunLimit = Math.max(
+    1,
+    numberFrom(env.WORKER_DETAIL_RUN_LIMIT, DEFAULT_WORKER_DETAIL_RUN_LIMIT),
+  );
+  const detailRuns = runs.slice(0, detailRunLimit);
+  const results = await Promise.all(
+    detailRuns.map(async (run) => {
+      try {
+        const jobs = await workflowJobsForRun(env, repo, run.id);
+        return {
+          run,
+          workers: jobs
+            .filter((job) => isActiveWorkflowJob(job) && isCodexWorkerJob(job))
+            .map((job) => normalizeWorkerJob(run, job)),
+          hasWorkerJobs: jobs.some((job) => isCodexWorkerJob(job)),
+          error: null,
+        };
+      } catch (error) {
+        return {
+          run,
+          workers: [],
+          hasWorkerJobs: false,
+          error: error instanceof Error ? error.message : String(error),
+        };
+      }
+    }),
+  );
+  const workers = [];
+  const errors = [];
+  let fallbacks = 0;
+  for (const result of results) {
+    if (result.error) {
+      errors.push(`workflow jobs ${result.run.id}: ${result.error}`);
+      if (codexJobName(`${result.run.name || ""} ${result.run.display_title || ""}`)) {
+        workers.push(normalizeFallbackWorker(result.run));
+        fallbacks += 1;
+      }
+      continue;
+    }
+    if (result.workers.length) {
+      workers.push(...result.workers);
+    } else if (
+      !result.hasWorkerJobs &&
+      codexJobName(`${result.run.name || ""} ${result.run.display_title || ""}`)
+    ) {
+      workers.push(normalizeFallbackWorker(result.run));
+      fallbacks += 1;
+    }
+  }
+  for (const run of runs.slice(detailRunLimit)) {
+    if (!codexJobName(`${run.name || ""} ${run.display_title || ""}`)) continue;
+    workers.push(normalizeFallbackWorker(run));
+    fallbacks += 1;
+  }
+  workers.sort(
+    (left, right) =>
+      workerStatusRank(left.status) - workerStatusRank(right.status) ||
+      laneRank(left.mode) - laneRank(right.mode) ||
+      Date.parse(left.started_at || "") - Date.parse(right.started_at || ""),
   );
   return {
-    count: codexRuns.length,
-    sample: codexRuns.slice(0, 25).map((run) => ({
-      run_url: run.html_url,
-      run_title: run.display_title || run.name,
-      job: run.name,
-      status: run.status,
-      started_at: run.created_at,
+    count: workers.length,
+    workers,
+    detailRuns: detailRuns.length,
+    fallbacks,
+    sample: workers.slice(0, 25).map((worker) => ({
+      run_url: worker.run_url,
+      run_title: worker.workflow_title,
+      job: worker.name,
+      status: worker.status,
+      current_step: worker.current_step,
+      started_at: worker.started_at,
     })),
     rate: null,
-    errors: [],
+    errors,
   };
+}
+
+async function workflowJobsForRun(env, repo, runId) {
+  const key = `workflow-jobs:${repo}:${runId}`;
+  const cached = await readStoredJson(env, key);
+  if (Array.isArray(cached)) return cached;
+  const payload = await githubJson(
+    env,
+    `/repos/${repo}/actions/runs/${runId}/jobs?filter=latest&per_page=100`,
+  );
+  const jobs = Array.isArray(payload?.jobs) ? payload.jobs : [];
+  const hasActiveWorker = jobs.some((job) => isActiveWorkflowJob(job) && isCodexWorkerJob(job));
+  await writeStoredJson(
+    env,
+    key,
+    jobs,
+    hasActiveWorker
+      ? numberFrom(env.WORKER_JOB_CACHE_TTL_SECONDS, WORKER_JOB_CACHE_TTL_SECONDS)
+      : WORKER_JOB_IDLE_CACHE_TTL_SECONDS,
+  );
+  return jobs;
+}
+
+function isActiveWorkflowJob(job) {
+  return ACTIVE_RUN_STATUSES.has(String(job?.status || ""));
+}
+
+function isCodexWorkerJob(job) {
+  const name = String(job?.name || "");
+  const steps = Array.isArray(job?.steps) ? job.steps : [];
+  if (steps.some((step) => /setup-codex/i.test(String(step?.name || "")))) return true;
+  return /review shard|review, comment, and apply event item|review commit|plan and review cluster|execute and apply cluster actions|assist/i.test(
+    name,
+  );
+}
+
+function normalizeWorkerJob(run, job) {
+  const runItem = classifyRun(run);
+  const target = workerTargetFromJob(runItem, job.name);
+  const mode = workerMode(runItem.mode, job.name);
+  const steps = Array.isArray(job.steps)
+    ? job.steps.map((step) => ({
+        number: numberOrNull(step.number),
+        name: String(step.name || "Unnamed step"),
+        status: String(step.status || "unknown"),
+        conclusion: nullableString(step.conclusion),
+      }))
+    : [];
+  const current =
+    steps.find((step) => step.status === "in_progress") ||
+    steps.find((step) => QUEUED_RUN_STATUSES.has(step.status)) ||
+    null;
+  const completedSteps = steps.filter((step) => step.status === "completed").length;
+  const startedAt = job.started_at || run.created_at || null;
+  return {
+    id: job.id,
+    source: "job",
+    name: String(job.name || runItem.title || "Codex worker"),
+    mode,
+    stage: runItem.stage,
+    status: String(job.status || run.status || "unknown"),
+    conclusion: nullableString(job.conclusion),
+    repository: target.repository,
+    item_number: target.itemNumbers.length === 1 ? target.itemNumbers[0] : null,
+    item_numbers: target.itemNumbers,
+    workflow_title: runItem.title,
+    run_id: run.id,
+    run_url: run.html_url,
+    job_url: job.html_url || run.html_url,
+    started_at: startedAt,
+    updated_at: run.updated_at || null,
+    elapsed_ms: startedAt ? Math.max(0, Date.now() - Date.parse(startedAt)) : null,
+    current_step: current?.name || workerStatusLabel(job.status, job.conclusion),
+    progress: {
+      completed: completedSteps,
+      total: steps.length,
+    },
+    steps,
+  };
+}
+
+function workerMode(runMode, jobName) {
+  const name = String(jobName || "").toLowerCase();
+  if (name.includes("assist")) return "assist";
+  if (name.includes("review commit")) return "commit-review";
+  if (name.includes("cluster actions") || name.includes("review cluster")) return "repair";
+  return runMode;
+}
+
+function normalizeFallbackWorker(run) {
+  const item = classifyRun(run);
+  return {
+    id: `run-${run.id}`,
+    source: "workflow-fallback",
+    name: item.title || item.workflow || "Codex worker",
+    mode: item.mode,
+    stage: item.stage,
+    status: item.status,
+    conclusion: item.conclusion,
+    repository: item.repository,
+    item_number: item.item_number,
+    item_numbers: item.item_number ? [item.item_number] : [],
+    workflow_title: item.title,
+    run_id: item.id,
+    run_url: item.run_url,
+    job_url: item.run_url,
+    started_at: item.started_at,
+    updated_at: item.updated_at,
+    elapsed_ms: item.elapsed_ms,
+    current_step: item.stage,
+    progress: {
+      completed: 0,
+      total: 0,
+    },
+    steps: [],
+  };
+}
+
+function workerTargetFromJob(runItem, jobName) {
+  const match = String(jobName || "").match(
+    /([A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+)#([0-9]+(?:,[0-9]+)*)/,
+  );
+  return {
+    repository: match?.[1] || runItem.repository,
+    itemNumbers: match?.[2]
+      ? match[2]
+          .split(",")
+          .map((value) => Number(value))
+          .filter((value) => Number.isInteger(value) && value > 0)
+      : runItem.item_number
+        ? [runItem.item_number]
+        : [],
+  };
+}
+
+function workerStatusLabel(status, conclusion) {
+  if (status === "completed") return conclusion || "completed";
+  if (QUEUED_RUN_STATUSES.has(String(status || ""))) return "Waiting for runner";
+  return status || "Starting";
+}
+
+function workerStatusRank(status) {
+  if (status === "in_progress") return 0;
+  if (QUEUED_RUN_STATUSES.has(String(status || ""))) return 1;
+  return 2;
 }
 
 async function activeWorkflowRuns(env, repo, errors) {
@@ -3144,7 +3356,7 @@ body {
     radial-gradient(circle at 40% 40%, rgba(185, 156, 255, 0.02) 0%, transparent 50%);
   background-attachment: fixed;
   color: var(--text);
-  font: 14px/1.45 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font: 14px/1.45 "Avenir Next", "Helvetica Neue", sans-serif;
   letter-spacing: 0;
 }
 main { width: min(1560px, calc(100vw - 40px)); margin: 0 auto; padding: 28px 0 48px; }
@@ -3921,6 +4133,317 @@ h2 {
   100% { transform: translateX(100%); }
 }
 .band > i { display: block; height: 100%; background: var(--blue); width: 0; transition: width 0.6s ease; }
+.overview-shell {
+  margin-top: 18px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background:
+    linear-gradient(135deg, rgba(103, 183, 255, 0.06), transparent 42%),
+    var(--panel);
+  box-shadow: inset 0 1px rgba(255,255,255,0.025);
+}
+.overview-head,
+.workers-head,
+.worker-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.overview-head h2,
+.workers-head h2 { margin: 0; }
+.flow-map {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: 16px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--line);
+}
+.flow-node {
+  min-width: 0;
+  min-height: 112px;
+  padding: 14px;
+  background: #0d141d;
+  position: relative;
+}
+.flow-node:not(:last-child)::after {
+  content: "›";
+  position: absolute;
+  z-index: 2;
+  right: -8px;
+  top: calc(50% - 15px);
+  width: 16px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  color: var(--blue);
+  background: var(--line);
+  font: 20px/1 ui-monospace, monospace;
+}
+.flow-node span {
+  color: var(--muted);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+}
+.flow-node strong {
+  display: block;
+  margin-top: 7px;
+  font-size: 25px;
+  line-height: 1;
+}
+.flow-node p {
+  margin: 7px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+.capacity-rail {
+  display: grid;
+  grid-template-columns: repeat(16, minmax(0, 1fr));
+  gap: 4px;
+  margin-top: 14px;
+}
+.capacity-slot {
+  height: 8px;
+  border-radius: 2px;
+  background: #26313e;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+}
+.capacity-slot.active {
+  background: var(--green);
+  box-shadow: 0 0 12px rgba(78,216,145,0.32);
+}
+.capacity-slot.waiting {
+  background: var(--amber);
+  box-shadow: 0 0 12px rgba(243,183,89,0.25);
+}
+.capacity-legend {
+  display: flex;
+  gap: 14px;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.capacity-legend i,
+.status-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 5px;
+  border-radius: 50%;
+  background: #526172;
+}
+.capacity-legend .active,
+.status-dot.active { background: var(--green); }
+.capacity-legend .waiting,
+.status-dot.waiting { background: var(--amber); }
+.workers-head { margin-top: 24px; }
+.worker-toolbar { margin-top: 10px; align-items: flex-start; }
+.worker-filters { display: flex; flex-wrap: wrap; gap: 6px; }
+.filter-button {
+  appearance: none;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 5px 10px;
+  background: #0d141d;
+  color: var(--muted);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.filter-button:hover,
+.filter-button.active {
+  color: var(--text);
+  border-color: rgba(103,183,255,0.55);
+  background: rgba(103,183,255,0.1);
+}
+.worker-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+  margin-top: 12px;
+}
+.worker-card {
+  appearance: none;
+  width: 100%;
+  min-width: 0;
+  padding: 13px;
+  text-align: left;
+  color: var(--text);
+  background: #0d141d;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  cursor: pointer;
+  font: inherit;
+  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+.worker-card:hover,
+.worker-card:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(103,183,255,0.6);
+  background: #111b27;
+  outline: none;
+}
+.worker-card-top,
+.worker-card-meta,
+.worker-card-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.worker-card-top { justify-content: space-between; }
+.worker-name {
+  margin: 10px 0 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 650;
+}
+.worker-card-meta {
+  color: var(--muted);
+  font-size: 12px;
+}
+.worker-card-meta span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.worker-card-step {
+  margin-top: 11px;
+  color: var(--blue);
+  font-size: 12px;
+}
+.worker-card-step span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.worker-progress {
+  height: 3px;
+  margin-top: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #22303e;
+}
+.worker-progress i {
+  display: block;
+  height: 100%;
+  background: var(--blue);
+}
+dialog {
+  width: min(680px, calc(100vw - 28px));
+  max-height: calc(100vh - 28px);
+  margin: 14px 14px 14px auto;
+  padding: 0;
+  color: var(--text);
+  background: #0c121a;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow: 0 28px 90px rgba(0,0,0,0.55);
+}
+dialog::backdrop {
+  background: rgba(3,7,12,0.72);
+  backdrop-filter: blur(5px);
+}
+.drawer {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  max-height: calc(100vh - 30px);
+}
+.drawer-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 20px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(135deg, rgba(103,183,255,0.09), transparent 55%);
+}
+.drawer-head h3 {
+  margin: 9px 0 0;
+  font-size: 22px;
+  line-height: 1.2;
+}
+.drawer-close {
+  appearance: none;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--text);
+  background: #111b27;
+  cursor: pointer;
+  font-size: 18px;
+}
+.drawer-body {
+  min-height: 0;
+  padding: 20px;
+  overflow: auto;
+}
+.drawer-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.drawer-stat {
+  padding: 11px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+}
+.drawer-stat span {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.drawer-stat strong {
+  display: block;
+  margin-top: 5px;
+  overflow-wrap: anywhere;
+}
+.drawer-links { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+.step-list {
+  display: grid;
+  gap: 0;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.step-row {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  min-height: 37px;
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(42,54,70,0.65);
+}
+.step-row:last-child { border-bottom: 0; }
+.step-mark {
+  width: 9px;
+  height: 9px;
+  border: 2px solid #526172;
+  border-radius: 50%;
+}
+.step-row.completed .step-mark { border-color: var(--green); background: var(--green); }
+.step-row.in_progress .step-mark {
+  border-color: var(--blue);
+  background: var(--blue);
+  box-shadow: 0 0 0 5px rgba(103,183,255,0.12);
+}
+.step-row.queued .step-mark,
+.step-row.pending .step-mark,
+.step-row.waiting .step-mark { border-color: var(--amber); }
+.step-row strong { font-size: 12px; font-weight: 550; }
+.step-row span { color: var(--muted); font-size: 11px; }
 table {
   width: 100%;
   min-width: 0;
@@ -4129,9 +4652,10 @@ a:hover { color: #89c8ff; text-decoration: underline; }
   font-style: italic;
 }
 .empty::before { content: "🦀 "; opacity: 0.3; }
-@media (max-width: 1280px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .split { grid-template-columns: 1fr; } .left-col { order: 1; } .side-col { order: 2; } .cluster-col-desktop { display: none; } .cluster-col-mobile { display: block; order: 3; } header { align-items: start; flex-direction: column; } .top-links { justify-content: flex-start; } }
-@media (max-width: 760px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .work-row { grid-template-columns: 1fr; align-items: start; } .work-state, .stage-block, .timebox { justify-content: start; justify-items: start; } }
-@media (max-width: 560px) { main { width: min(100vw - 20px, 1440px); padding-top: 16px; } .grid, .closed-stats { grid-template-columns: 1fr; } .side-row { grid-template-columns: 1fr; } .side-meta { justify-content: flex-start; } }
+@media (max-width: 1280px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .split { grid-template-columns: 1fr; } .left-col { order: 1; } .side-col { order: 2; } .cluster-col-desktop { display: none; } .cluster-col-mobile { display: block; order: 3; } header { align-items: start; flex-direction: column; } .top-links { justify-content: flex-start; } .worker-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 900px) { .flow-map { grid-template-columns: 1fr; } .flow-node { min-height: 0; } .flow-node:not(:last-child)::after { content: "⌄"; right: 18px; top: auto; bottom: -16px; } }
+@media (max-width: 760px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .work-row { grid-template-columns: 1fr; align-items: start; } .work-state, .stage-block, .timebox { justify-content: start; justify-items: start; } .worker-grid { grid-template-columns: 1fr; } .worker-toolbar { align-items: stretch; flex-direction: column; } }
+@media (max-width: 560px) { main { width: min(100vw - 20px, 1440px); padding-top: 16px; } .grid, .closed-stats, .drawer-grid { grid-template-columns: 1fr; } .side-row { grid-template-columns: 1fr; } .side-meta { justify-content: flex-start; } .overview-shell { padding: 13px; } .capacity-rail { grid-template-columns: repeat(8, minmax(0, 1fr)); } dialog { margin: 7px; max-height: calc(100vh - 14px); } }
 </style>
 </head>
 <body>
@@ -4148,6 +4672,28 @@ a:hover { color: #89c8ff; text-decoration: underline; }
     </div>
   </header>
   <section class="grid" id="metrics"></section>
+  <section class="overview-shell" aria-labelledby="system-overview-title">
+    <div class="overview-head">
+      <h2 id="system-overview-title">System Overview</h2>
+      <span class="muted" id="overview-note">Live control-plane telemetry</span>
+    </div>
+    <div class="flow-map" id="flow-map"></div>
+    <div class="capacity-rail" id="capacity-rail"></div>
+    <div class="capacity-legend">
+      <span><i class="active"></i>running</span>
+      <span><i class="waiting"></i>waiting</span>
+      <span><i></i>available</span>
+    </div>
+    <div class="workers-head">
+      <h2>Active Workers</h2>
+      <span class="muted" id="worker-summary"></span>
+    </div>
+    <div class="worker-toolbar">
+      <div class="worker-filters" id="worker-filters" aria-label="Filter workers"></div>
+      <span class="muted">Select a worker for its live step timeline.</span>
+    </div>
+    <div id="workers"></div>
+  </section>
   <section class="split">
     <div class="left-col">
       <div class="pipeline-col">
@@ -4176,6 +4722,15 @@ a:hover { color: #89c8ff; text-decoration: underline; }
     </div>
   </section>
 </main>
+<dialog id="worker-dialog" aria-labelledby="worker-dialog-title">
+  <div class="drawer">
+    <div class="drawer-head">
+      <div id="worker-dialog-heading"></div>
+      <button class="drawer-close" id="worker-dialog-close" type="button" aria-label="Close worker details">×</button>
+    </div>
+    <div class="drawer-body" id="worker-dialog-body"></div>
+  </div>
+</dialog>
 <script>
 const fmt = new Intl.NumberFormat();
 const rel = new Intl.RelativeTimeFormat(undefined, { numeric: "auto" });
@@ -4240,6 +4795,120 @@ function ciBadge(ci) {
 }
 let lastData = null;
 let loading = false;
+let activeWorkerFilter = "all";
+let workerIndex = new Map();
+
+function workerGroup(worker) {
+  const text = (worker.mode + " " + worker.name + " " + worker.workflow_title).toLowerCase();
+  if (text.includes("assist")) return "assist";
+  if (text.includes("repair") || text.includes("automerge")) return "repair";
+  if (text.includes("commit")) return "commit";
+  if (text.includes("review")) return "review";
+  return "other";
+}
+function workerStatusClass(status) {
+  return status === "in_progress" ? "active" : ["queued", "waiting", "requested", "pending"].includes(status) ? "waiting" : "";
+}
+function workerTarget(worker) {
+  if (worker.repository && worker.item_numbers?.length) {
+    return worker.repository + "#" + worker.item_numbers.join(", #");
+  }
+  if (worker.repository && worker.item_number) return worker.repository + "#" + worker.item_number;
+  if (worker.repository) return worker.repository;
+  return compactText(worker.workflow_title || worker.name);
+}
+function renderSystemMap(data) {
+  const workers = data.workers || [];
+  const pipeline = data.pipeline || [];
+  const fleet = data.fleet || {};
+  const workerRunIds = new Set(workers.map(worker => String(worker.run_id)));
+  const planning = pipeline.filter(row => !workerRunIds.has(String(row.id))).length;
+  const applying = pipeline.filter(row => row.mode === "apply" || row.mode === "automerge").length;
+  const closed = data.recent?.closed_stats?.total || 0;
+  const nodes = [
+    ["01 · Intake", fleet.queued_workflow_runs || 0, "Events and scheduled sweeps waiting to start"],
+    ["02 · Plan", planning, "Runs selecting work or expanding a matrix"],
+    ["03 · Workers", workers.length, "Codex jobs reviewing, repairing, or assisting"],
+    ["04 · Apply", applying, "Deterministic comment, close, merge, and publish lanes"],
+    ["05 · Results", closed, (data.recent?.closed_stats?.window_hours || 24) + "h ClawSweeper closes"]
+  ];
+  document.getElementById("flow-map").innerHTML = nodes.map(node =>
+    '<div class="flow-node"><span>' + esc(node[0]) + '</span><strong>' + fmt.format(node[1]) + '</strong><p>' + esc(node[2]) + '</p></div>'
+  ).join("");
+  const running = workers.filter(worker => worker.status === "in_progress").length;
+  const waiting = workers.length - running;
+  const budget = Math.max(0, fleet.worker_budget || 0);
+  document.getElementById("capacity-rail").innerHTML = Array.from({ length: budget }, (_, index) => {
+    const state = index < running ? " active" : index < running + waiting ? " waiting" : "";
+    return '<i class="capacity-slot' + state + '"></i>';
+  }).join("");
+  const fallbacks = fleet.worker_detail_fallbacks || 0;
+  document.getElementById("overview-note").textContent = fallbacks
+    ? "Live jobs with " + fallbacks + " workflow fallback" + (fallbacks === 1 ? "" : "s")
+    : "Live GitHub job and step telemetry";
+}
+function renderWorkers(rows) {
+  workerIndex = new Map(rows.map(worker => [String(worker.id), worker]));
+  const groups = ["review", "repair", "commit", "assist", "other"];
+  const counts = Object.fromEntries(groups.map(group => [group, rows.filter(worker => workerGroup(worker) === group).length]));
+  const filters = [["all", "All", rows.length], ...groups.filter(group => counts[group]).map(group => [group, group[0].toUpperCase() + group.slice(1), counts[group]])];
+  if (!filters.some(filter => filter[0] === activeWorkerFilter)) activeWorkerFilter = "all";
+  document.getElementById("worker-filters").innerHTML = filters.map(filter =>
+    '<button type="button" class="filter-button' + (filter[0] === activeWorkerFilter ? " active" : "") + '" data-worker-filter="' + esc(filter[0]) + '">' + esc(filter[1]) + " " + fmt.format(filter[2]) + '</button>'
+  ).join("");
+  const visible = activeWorkerFilter === "all" ? rows : rows.filter(worker => workerGroup(worker) === activeWorkerFilter);
+  document.getElementById("worker-summary").textContent = fmt.format(rows.length) + " active · " + fmt.format(rows.filter(worker => worker.status === "in_progress").length) + " running";
+  if (!visible.length) {
+    document.getElementById("workers").innerHTML = '<div class="empty">No workers match this view.</div>';
+    return;
+  }
+  document.getElementById("workers").innerHTML = '<div class="worker-grid">' + visible.map(worker => {
+    const progress = worker.progress?.total ? Math.round((worker.progress.completed / worker.progress.total) * 100) : 0;
+    return '<button type="button" class="worker-card" data-worker-id="' + esc(worker.id) + '" aria-label="Open details for ' + esc(worker.name) + '"><div class="worker-card-top"><span class="pill"><i class="status-dot ' + workerStatusClass(worker.status) + '"></i>' + esc(modeLabel(worker.mode)) + '</span><span class="muted mono">' + elapsed(worker.elapsed_ms) + '</span></div><div class="worker-name">' + esc(worker.name) + '</div><div class="worker-card-meta"><span>' + esc(workerTarget(worker)) + '</span></div><div class="worker-card-step"><span>↳ ' + esc(worker.current_step || worker.stage) + '</span></div><div class="worker-progress"><i style="width:' + progress + '%"></i></div></button>';
+  }).join("") + '</div>';
+}
+function renderWorkerDialog(worker) {
+  const dialog = document.getElementById("worker-dialog");
+  const statusClass = workerStatusClass(worker.status);
+  document.getElementById("worker-dialog-heading").innerHTML = '<div><span class="pill"><i class="status-dot ' + statusClass + '"></i>' + esc(worker.status) + '</span> <span class="pill">' + esc(modeLabel(worker.mode)) + '</span></div><h3 id="worker-dialog-title">' + esc(worker.name) + '</h3><div class="muted">' + esc(compactText(worker.workflow_title)) + '</div>';
+  const targetUrls = worker.repository
+    ? (worker.item_numbers || (worker.item_number ? [worker.item_number] : [])).map(number => ({
+        url: "https://github.com/" + worker.repository + "/issues/" + number,
+        label: "Open #" + number
+      }))
+    : [];
+  const stepRows = (worker.steps || []).map(step => '<li class="step-row ' + esc(step.status) + '"><i class="step-mark"></i><strong>' + esc(step.name) + '</strong><span>' + esc(step.conclusion || step.status) + '</span></li>').join("");
+  document.getElementById("worker-dialog-body").innerHTML =
+    '<div class="drawer-grid">' +
+      '<div class="drawer-stat"><span>Current step</span><strong>' + esc(worker.current_step || worker.stage) + '</strong></div>' +
+      '<div class="drawer-stat"><span>Elapsed</span><strong>' + elapsed(worker.elapsed_ms) + '</strong></div>' +
+      '<div class="drawer-stat"><span>Target</span><strong>' + esc(workerTarget(worker)) + '</strong></div>' +
+      '<div class="drawer-stat"><span>Progress</span><strong>' + fmt.format(worker.progress?.completed || 0) + " / " + fmt.format(worker.progress?.total || 0) + ' steps</strong></div>' +
+    '</div>' +
+    '<div class="drawer-links">' +
+      linkClass(worker.job_url, "Open job", "pill run-link") +
+      linkClass(worker.run_url, "Open workflow run", "pill run-link") +
+      targetUrls.map(target => linkClass(target.url, target.label, "pill run-link")).join("") +
+    '</div>' +
+    '<h2>Step Timeline</h2>' +
+    (stepRows ? '<ol class="step-list">' + stepRows + '</ol>' : '<div class="empty">Job-level steps are unavailable; showing workflow fallback telemetry.</div>');
+  if (!dialog.open) dialog.showModal();
+  history.replaceState(null, "", "#worker-" + encodeURIComponent(worker.id));
+}
+function closeWorkerDialog() {
+  const dialog = document.getElementById("worker-dialog");
+  if (dialog.open) dialog.close();
+  if (location.hash.startsWith("#worker-")) history.replaceState(null, "", location.pathname + location.search);
+}
+function openWorkerFromHash() {
+  if (!location.hash.startsWith("#worker-")) return;
+  const worker = workerIndex.get(decodeURIComponent(location.hash.slice(8)));
+  if (worker) {
+    renderWorkerDialog(worker);
+  } else if (document.getElementById("worker-dialog").open) {
+    closeWorkerDialog();
+  }
+}
 
 try {
   lastData = JSON.parse(localStorage.getItem("clawsweeper:last-status") || "null");
@@ -4286,6 +4955,9 @@ function renderDashboard(data, note) {
     metric("⚡ Merge Speed", data.averages.automerge_command_to_merge_ms ? elapsed(data.averages.automerge_command_to_merge_ms) : "n/a", data.averages.automerge_samples + " samples", 60, "var(--violet)"),
     metric("🎯 Capacity", fleet.budget_used_percent + "%", "fleet utilization", fleet.budget_used_percent, "var(--green)")
   ].join("");
+  renderSystemMap(data);
+  renderWorkers(data.workers || []);
+  openWorkerFromHash();
   renderClusterRepair(data.recent?.cluster_repair);
   renderPipeline(data.pipeline || []);
   renderAutomerge(data.recent.automerge || []);
@@ -4363,6 +5035,25 @@ function renderEvents(rows) {
   }
   document.getElementById("events").innerHTML = '<div class="side-list">' + rows.map(row => '<article class="side-row"><div class="side-main"><div class="row-top"><span class="pill">' + esc(row.mode) + '</span><span class="item-link">' + esc(row.stage) + '</span></div><div class="muted side-title">' + (row.item_url ? link(row.item_url, row.title || row.item_url) : esc(row.title || row.event_type)) + '</div></div><div class="side-meta"><span>' + esc(row.status) + '</span><span>' + since(row.received_at) + '</span></div></article>').join("") + '</div>';
 }
+document.getElementById("worker-filters").addEventListener("click", event => {
+  const button = event.target.closest("button[data-worker-filter]");
+  if (!button) return;
+  activeWorkerFilter = button.dataset.workerFilter || "all";
+  renderWorkers(lastData?.workers || []);
+});
+document.getElementById("workers").addEventListener("click", event => {
+  const button = event.target.closest("button[data-worker-id]");
+  if (!button) return;
+  const worker = workerIndex.get(String(button.dataset.workerId));
+  if (worker) renderWorkerDialog(worker);
+});
+document.getElementById("worker-dialog-close").addEventListener("click", closeWorkerDialog);
+document.getElementById("worker-dialog").addEventListener("click", event => {
+  if (event.target === event.currentTarget) closeWorkerDialog();
+});
+document.getElementById("worker-dialog").addEventListener("close", () => {
+  if (location.hash.startsWith("#worker-")) history.replaceState(null, "", location.pathname + location.search);
+});
 load();
 setInterval(load, 15000);
 </script>

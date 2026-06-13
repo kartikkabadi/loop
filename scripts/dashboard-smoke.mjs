@@ -12,10 +12,13 @@ async function main() {
   if (!status.fleet || typeof status.fleet.active_workflow_runs !== "number") {
     throw new Error("status response is missing fleet metrics");
   }
+  if (!Array.isArray(status.workers)) throw new Error("status response is missing worker details");
   if (!Array.isArray(status.pipeline)) throw new Error("status response is missing pipeline rows");
 
   const html = await fetchText(`${baseUrl}/`);
   if (!html.includes("ClawSweeper Live")) throw new Error("dashboard HTML title missing");
+  if (!html.includes("System Overview")) throw new Error("dashboard system overview missing");
+  if (!html.includes('id="worker-dialog"')) throw new Error("dashboard worker drill-down missing");
 
   console.log(
     JSON.stringify(
@@ -24,6 +27,7 @@ async function main() {
         url: baseUrl,
         active_workflow_runs: status.fleet.active_workflow_runs,
         active_codex_jobs: status.fleet.active_codex_jobs,
+        worker_details: status.workers.length,
         pipeline_rows: status.pipeline.length,
       },
       null,

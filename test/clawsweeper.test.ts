@@ -18308,12 +18308,17 @@ test("sweep review recovery uses explicit failed shard artifacts", () => {
 
   assert.match(
     workflow,
+    /name: Review shard \$\{\{ matrix\.shard \}\} · \$\{\{ needs\.plan\.outputs\.target_repo \}\}#\$\{\{ matrix\.item_numbers \}\}/,
+  );
+  assert.match(
+    workflow,
     /- name: Review shard\r?\n\s+id: review-shard\r?\n\s+continue-on-error: true/,
   );
   assert.match(workflow, /- name: Record failed review shard/);
   assert.match(workflow, /steps\.review-shard\.outcome == 'failure'/);
   assert.match(workflow, /name: review-failed-shard-\$\{\{ matrix\.shard \}\}/);
   assert.match(workflow, /pattern: review-failed-shard-\*/);
+  assert.ok(workflow.includes('sub("^Review shard ([0-9]+).*$"; "\\\\1")'));
   assert.match(workflow, /needs\.review\.result != 'skipped'/);
   assert.doesNotMatch(
     workflow,

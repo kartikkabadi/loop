@@ -44,11 +44,147 @@ test("dashboard HTML preserves UTF-8 emoji labels", async () => {
   assert.match(html, /⚡ Merge Speed/);
   assert.match(html, /🎯 Capacity/);
   assert.match(html, /🌊 Loading pipeline state/);
+  assert.match(html, /System Overview/);
+  assert.match(html, /Active Workers/);
+  assert.match(html, /id="worker-dialog"/);
+  assert.match(html, /Step Timeline/);
   assert.match(html, /🔎 Cluster Intake/);
   assert.match(html, /🌀 Active Pipeline/);
   assert.match(html, /✅ Closed by ClawSweeper/);
   assert.match(html, /📡 Recent Activity/);
   assert.doesNotMatch(html, /ðŸ|â|âš|âœ/);
+});
+
+test("dashboard exposes active worker jobs and their current steps", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalCaches = globalThis.caches;
+  Object.defineProperty(globalThis, "caches", {
+    configurable: true,
+    value: {
+      default: new MemoryCache(),
+    },
+  });
+  const run = {
+    id: 42,
+    name: "Review ClawSweeper items",
+    display_title: "Review event item openclaw/openclaw#92521",
+    status: "in_progress",
+    conclusion: null,
+    html_url: "https://github.com/openclaw/clawsweeper/actions/runs/42",
+    created_at: isoAgo(120_000),
+    updated_at: isoAgo(10_000),
+  };
+  const queuedRun = {
+    id: 43,
+    name: "Review ClawSweeper items",
+    display_title: "Review event item openclaw/openclaw#92523",
+    status: "queued",
+    conclusion: null,
+    html_url: "https://github.com/openclaw/clawsweeper/actions/runs/43",
+    created_at: isoAgo(30_000),
+    updated_at: isoAgo(5_000),
+  };
+  globalThis.fetch = async (input) => {
+    const url = new URL(String(input));
+    if (url.pathname === "/repos/openclaw/clawsweeper/actions/runs") {
+      const status = url.searchParams.get("status");
+      return jsonResponse({
+        workflow_runs: !status
+          ? [run, queuedRun]
+          : status === "in_progress"
+            ? [run]
+            : status === "queued"
+              ? [queuedRun]
+              : [],
+      });
+    }
+    if (url.pathname === "/repos/openclaw/clawsweeper/actions/runs/42/jobs") {
+      return jsonResponse({
+        jobs: [
+          {
+            id: 4201,
+            name: "Review shard 0 · openclaw/openclaw#92521,92522",
+            status: "in_progress",
+            conclusion: null,
+            html_url: "https://github.com/openclaw/clawsweeper/actions/runs/42/job/4201",
+            started_at: isoAgo(90_000),
+            steps: [
+              {
+                number: 1,
+                name: "Set up job",
+                status: "completed",
+                conclusion: "success",
+              },
+              {
+                number: 2,
+                name: "Run ./clawsweeper/.github/actions/setup-codex",
+                status: "completed",
+                conclusion: "success",
+              },
+              {
+                number: 3,
+                name: "Review shard",
+                status: "in_progress",
+                conclusion: null,
+              },
+            ],
+          },
+          {
+            id: 4202,
+            name: "Publish review artifacts",
+            status: "queued",
+            conclusion: null,
+            steps: [],
+          },
+        ],
+      });
+    }
+    if (url.pathname === "/repos/openclaw/clawsweeper/actions/runs/43/jobs") {
+      return jsonResponse({ jobs: [] });
+    }
+    if (
+      url.pathname ===
+      "/repos/openclaw/clawsweeper/actions/workflows/repair-cluster-intake.yml/runs"
+    ) {
+      return jsonResponse({ workflow_runs: [] });
+    }
+    if (url.pathname === "/search/issues") return jsonResponse({ items: [] });
+    if (url.pathname === "/repos/openclaw/openclaw/issues") return jsonResponse([]);
+    throw new Error(`unexpected fetch ${url}`);
+  };
+
+  try {
+    const response = await worker.fetch(
+      new Request("https://clawsweeper.openclaw.ai/api/status"),
+      {
+        CLAWSWEEPER_REPO: "openclaw/clawsweeper",
+        TARGET_REPOS: "openclaw/openclaw",
+        CACHE_TTL_SECONDS: "0",
+      },
+      {
+        waitUntil: () => undefined,
+      },
+    );
+    const status = await response.json();
+    assert.equal(status.fleet.active_codex_jobs, 2);
+    assert.equal(status.fleet.worker_detail_runs, 2);
+    assert.equal(status.fleet.worker_detail_fallbacks, 1);
+    assert.equal(status.workers.length, 2);
+    assert.equal(status.workers[0].id, 4201);
+    assert.equal(status.workers[0].name, "Review shard 0 · openclaw/openclaw#92521,92522");
+    assert.equal(status.workers[0].repository, "openclaw/openclaw");
+    assert.equal(status.workers[0].item_number, null);
+    assert.deepEqual(status.workers[0].item_numbers, [92521, 92522]);
+    assert.equal(status.workers[0].current_step, "Review shard");
+    assert.deepEqual(status.workers[0].progress, { completed: 2, total: 3 });
+    assert.equal(status.workers[0].steps[2].status, "in_progress");
+    assert.equal(status.workers[1].id, "run-43");
+    assert.equal(status.workers[1].source, "workflow-fallback");
+    assert.equal(status.workers[1].current_step, "reviewing");
+  } finally {
+    globalThis.fetch = originalFetch;
+    Object.defineProperty(globalThis, "caches", { configurable: true, value: originalCaches });
+  }
 });
 
 test("dashboard exposes scheduled cluster intake markers and runs", async () => {

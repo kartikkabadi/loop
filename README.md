@@ -245,7 +245,8 @@ Live dashboard and generated state: https://github.com/openclaw/clawsweeper-stat
 
 Live pipeline dashboard: https://clawsweeper.openclaw.ai/
 
-The Cloudflare dashboard is observability-only: it shows active workers,
+The Cloudflare dashboard is observability-only: it shows the system flow, live
+worker capacity, per-worker current steps and drill-down timelines,
 repair/automerge pipeline rows, CI state, recent failures, and automerge timing
 without owning GitHub mutations. See [`docs/live-dashboard.md`](docs/live-dashboard.md).
 

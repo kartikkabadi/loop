@@ -1011,7 +1011,7 @@ jobs:
             --rebase-strategy theirs || echo "::warning::Skipped slow in-progress dashboard publish so review shards can start."
 
   review:
-    name: Review shard ${{ matrix.shard }}
+    name: Review shard ${{ matrix.shard }} · ${{ needs.plan.outputs.target_repo }}#${{ matrix.item_numbers }}
     needs: plan
     runs-on: ${{ vars.CLAWSWEEPER_REVIEW_RUNNER || 'ubuntu-latest' }}
     timeout-minutes: 75
@@ -1678,7 +1678,7 @@ jobs:
                 .jobs[]
                 | select((.conclusion == "failure" or .conclusion == "cancelled") and (.name | startswith("Review shard ")))
                 | .name
-                | sub("^Review shard "; "")
+                | sub("^Review shard ([0-9]+).*$"; "\\1")
               ' | paste -sd, -
             )"
           fi

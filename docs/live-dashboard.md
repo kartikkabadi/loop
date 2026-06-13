@@ -6,7 +6,8 @@ operator-facing ClawSweeper observability.
 The live dashboard is phase-one observability only. ClawSweeper still owns
 review, repair, apply, merge, comments, labels, and all GitHub mutations. The
 Cloudflare Worker reads public GitHub workflow state, serves a compact pipeline
-view, and optionally accepts signed status events from workflows.
+view, exposes live worker/job drill-down, and optionally accepts signed status
+events from workflows.
 
 ## Deployment
 
@@ -85,7 +86,11 @@ is absent or a cache event lands in another Cloudflare colo.
 ## What It Shows
 
 - active ClawSweeper workflow runs
-- estimated active Codex jobs from active workflow jobs
+- active Codex jobs, their current GitHub Actions step, elapsed time, target,
+  lane, and complete step timeline
+- a five-stage system overview from intake through results
+- a budget-sized capacity rail plus lane filters for review, repair, commit,
+  assist, and other workers
 - queued/waiting run count
 - recent failed/timed-out/action-required runs
 - active pipeline rows grouped as automerge, repair, exact review, hot review,
@@ -94,6 +99,10 @@ is absent or a cache event lands in another Cloudflare colo.
 - recent automerge command-to-merge timing samples
 - explicit workflow status events posted to the ingest API when KV ingest is
   enabled
+
+The Worker fetches job details only for the bounded active-run set and caches
+each run's jobs for 60 seconds. If GitHub job telemetry is unavailable, the API
+and UI retain the workflow-level fallback rather than hiding active work.
 
 ## Boundaries
 
