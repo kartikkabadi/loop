@@ -23,6 +23,10 @@ test("codexSubprocessEnv forces ClawSweeper git identity and strips tokens", () 
       OPENAI_API_KEY: "secret",
       CODEX_API_KEY: "secret",
       CLAWSWEEPER_INTERNAL_MODEL: "secret-model",
+      CLAWSWEEPER_CRABFLEET_AGENT_TOKEN: "agent-secret",
+      CLAWSWEEPER_CRABFLEET_SERVICE_TOKEN: "service-secret",
+      CLAWSWEEPER_CRABFLEET_RUNNER_PTY_URL: "wss://example.invalid/secret",
+      CLAWSWEEPER_CRABFLEET_WORK_STATE_URL: "https://example.invalid/secret",
     },
     () => {
       const env = codexSubprocessEnv();
@@ -37,6 +41,10 @@ test("codexSubprocessEnv forces ClawSweeper git identity and strips tokens", () 
       assert.equal(env.OPENAI_API_KEY, undefined);
       assert.equal(env.CODEX_API_KEY, undefined);
       assert.equal(env.CLAWSWEEPER_INTERNAL_MODEL, undefined);
+      assert.equal(env.CLAWSWEEPER_CRABFLEET_AGENT_TOKEN, undefined);
+      assert.equal(env.CLAWSWEEPER_CRABFLEET_SERVICE_TOKEN, undefined);
+      assert.equal(env.CLAWSWEEPER_CRABFLEET_RUNNER_PTY_URL, undefined);
+      assert.equal(env.CLAWSWEEPER_CRABFLEET_WORK_STATE_URL, undefined);
       assert.equal(internalCodexModel("internal"), "secret-model");
       assert.deepEqual(codexModelArgs("internal"), []);
       assert.deepEqual(codexModelArgs("secret-model"), []);

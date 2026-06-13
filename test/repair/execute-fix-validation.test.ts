@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   HUMAN_REVIEW_LABEL,
+  MANUAL_ONLY_LABEL,
   repairPauseLabel,
   validateAutonomousFixScope,
 } from "../../dist/repair/execute-fix-validation.js";
@@ -167,4 +168,5 @@ test("repair pause labels block live branch mutation", () => {
     HUMAN_REVIEW_LABEL,
   );
   assert.equal(repairPauseLabel(["clawsweeper:automerge"]), null);
+  assert.equal(repairPauseLabel(["bug", MANUAL_ONLY_LABEL]), MANUAL_ONLY_LABEL);
 });

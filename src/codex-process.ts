@@ -30,6 +30,40 @@ interface SerializedCodexProcessResult {
 const CODEX_PROCESS_WORKER_PATH = fileURLToPath(
   new URL("./codex-process-worker.js", import.meta.url),
 );
+const CODEX_APP_SERVER_WORKER_PATH = fileURLToPath(
+  new URL("./codex-app-server-worker.js", import.meta.url),
+);
+
+export interface CodexAppServerProcessOptions {
+  statePath: string;
+  label?: string;
+  runnerPtyUrl?: string;
+  workStateUrl?: string;
+  agentToken?: string;
+}
+
+export function codexAppServerProcessOptionsFromEnv(
+  label: string,
+  env: NodeJS.ProcessEnv = process.env,
+): CodexAppServerProcessOptions | undefined {
+  if (env.CLAWSWEEPER_STEERABLE_CODEX !== "1") return undefined;
+  const statePath =
+    env.CLAWSWEEPER_CODEX_THREAD_STATE?.trim() ||
+    join(env.CODEX_HOME?.trim() || tmpdir(), "clawsweeper-thread-state.json");
+  return {
+    statePath,
+    label,
+    ...(env.CLAWSWEEPER_CRABFLEET_RUNNER_PTY_URL?.trim()
+      ? { runnerPtyUrl: env.CLAWSWEEPER_CRABFLEET_RUNNER_PTY_URL.trim() }
+      : {}),
+    ...(env.CLAWSWEEPER_CRABFLEET_WORK_STATE_URL?.trim()
+      ? { workStateUrl: env.CLAWSWEEPER_CRABFLEET_WORK_STATE_URL.trim() }
+      : {}),
+    ...(env.CLAWSWEEPER_CRABFLEET_AGENT_TOKEN?.trim()
+      ? { agentToken: env.CLAWSWEEPER_CRABFLEET_AGENT_TOKEN.trim() }
+      : {}),
+  };
+}
 
 export function runCodexProcess(options: {
   args: readonly string[];
@@ -41,6 +75,7 @@ export function runCodexProcess(options: {
   outputFileBytes?: number;
   stdoutPath?: string;
   stderrPath?: string;
+  appServer?: CodexAppServerProcessOptions;
 }): CodexProcessResult {
   const workDir = mkdtempSync(join(tmpdir(), "clawsweeper-codex-process-"));
   const optionsPath = join(workDir, "options.json");
@@ -57,10 +92,12 @@ export function runCodexProcess(options: {
         stderrPath,
         tailBytes: normalizedTailBytes(options.tailBytes),
         maxOutputFileBytes: normalizedOutputFileBytes(options.outputFileBytes),
+        ...(options.appServer ? { appServer: options.appServer } : {}),
       }),
-      "utf8",
+      { encoding: "utf8", mode: 0o600 },
     );
-    const worker = spawnSync(process.execPath, [CODEX_PROCESS_WORKER_PATH, optionsPath], {
+    const workerPath = options.appServer ? CODEX_APP_SERVER_WORKER_PATH : CODEX_PROCESS_WORKER_PATH;
+    const worker = spawnSync(process.execPath, [workerPath, optionsPath], {
       cwd: options.cwd,
       env: options.env,
       input: options.input,

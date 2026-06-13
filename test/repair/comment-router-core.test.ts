@@ -42,6 +42,7 @@ import {
   latestRepairLoopResumeTime,
   isAuthorReadOnlyCommandAllowed,
   isMaintainerCommandAllowed,
+  isIssueImplementationCommandAllowed,
   maintainerAutomergeOptInApprovesNeedsHuman,
   parseCommand,
   parseRoutedCommentCommand,
@@ -2710,6 +2711,46 @@ test("maintainer command authorization requires maintainer repository permission
     }),
     true,
   );
+});
+
+test("organization members can explicitly request issue implementation", () => {
+  const allowedAssociations = new Set(["OWNER", "MEMBER", "COLLABORATOR"]);
+  assert.equal(
+    isIssueImplementationCommandAllowed({
+      authorAssociation: "MEMBER",
+      repositoryPermission: "read",
+      allowedAssociations,
+    }),
+    true,
+  );
+  assert.equal(
+    isIssueImplementationCommandAllowed({
+      authorAssociation: "COLLABORATOR",
+      repositoryPermission: "read",
+      allowedAssociations,
+    }),
+    false,
+  );
+  assert.equal(
+    isIssueImplementationCommandAllowed({
+      authorAssociation: "CONTRIBUTOR",
+      repositoryPermission: "write",
+      allowedAssociations,
+    }),
+    true,
+  );
+});
+
+test("manual issue implementation blocks linked pull requests before dispatch", () => {
+  const source = readFileSync("src/repair/comment-router.ts", "utf8");
+
+  assert.match(
+    source,
+    /issueImplementationLinkedPrSignal\(target\) && command\.operator_override !== true/,
+  );
+  assert.match(source, /implementation PR creation is blocked by an existing linked PR/);
+  assert.match(source, /addIssueReferenceNumbersFromText\(relatedIssues, text\)/);
+  assert.match(source, /searchOpenPullRequestsMentioningIssue\(relatedNumber\)/);
 });
 
 test("issue authors can request read-only re-review with trailing context", () => {

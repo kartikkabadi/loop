@@ -88,9 +88,13 @@ is absent or a cache event lands in another Cloudflare colo.
 - active ClawSweeper workflow runs
 - active Codex jobs, their current GitHub Actions step, elapsed time, target,
   lane, and complete step timeline
+- separate issue-to-PR and PR-repair worker filters, with issue or pull request
+  links chosen from the work kind
+- a Live terminals link to CrabFleet, where registered `github_actions`
+  sessions expose the current Codex thread for browser steering
 - a five-stage system overview from intake through results
-- a budget-sized capacity rail plus lane filters for review, repair, commit,
-  assist, and other workers
+- a budget-sized capacity rail plus lane filters for issue-to-PR, PR repair,
+  review, repair, commit, assist, and other workers
 - queued/waiting run count
 - recent failed/timed-out/action-required runs
 - active pipeline rows grouped as automerge, repair, exact review, hot review,

@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 
 import {
   parseReviewReport,
+  referencedIssueNumbers,
   referencedPullRequestCoordinates,
   reportOnlyDecision,
 } from "../../dist/repair/issue-implementation-intake.js";
@@ -262,6 +263,39 @@ test("viable review routing resolves full and shorthand pull request references"
   );
 });
 
+test("issue implementation deduplicates work across related issue references", () => {
+  assert.deepEqual(
+    referencedIssueNumbers({
+      targetRepo: "steipete/oracle",
+      itemNumber: 241,
+      references: [
+        "#241",
+        "Duplicate of #216",
+        "See steipete/oracle#217",
+        "https://github.com/steipete/oracle/issues/218",
+        "https://github.com/other/project/issues/219",
+      ],
+    }),
+    [216, 217, 218],
+  );
+
+  const markdown = report();
+  const decision = reportOnlyDecision({
+    targetRepo: "openclaw/openclaw",
+    report: parseReviewReport(markdown),
+    reportMarkdown: markdown,
+    live: {
+      issue: { state: "open", locked: false, labels: [], title: "Bug", body: "" },
+      existingPrs: [],
+      existingBranchPrs: [],
+      referencedPrs: [],
+      clusterExistingPrs: [{ number: 456, state: "open" }],
+    },
+  });
+  assert.equal(decision.shouldRepair, false);
+  assert.match(decision.reason, /related issue in this work cluster/);
+});
+
 test("viable live intake allows auth-provider prose but blocks explicit security signals", () => {
   const markdown = report({
     number: "241",
@@ -443,6 +477,7 @@ test("issue implementation intake checks generated branches through REST", () =>
   assert.match(source, /head=\$\{owner\}:\$\{branch\}/);
   assert.match(source, /open PR already mentions this issue/);
   assert.match(source, /existing ClawSweeper issue implementation PR is open/);
+  assert.match(source, /open PR already covers a related issue in this work cluster/);
   assert.match(source, /review report references an open or unverifiable pull request/);
   assert.match(source, /repos\/\$\{owner\}\/\$\{name\}\/issues\/\$\{number\}/);
   assert.match(source, /"search\/issues",\s+"--method",\s+"GET"/);

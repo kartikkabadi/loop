@@ -139,3 +139,101 @@ setInterval(() => {}, 1000);
     rmSync(root, { recursive: true, force: true });
   }
 });
+
+test("Codex app-server mode persists and resumes a thread", () => {
+  const root = mkdtempSync(tmpPrefix);
+  const binDir = join(root, "bin");
+  const statePath = join(root, "session", "state.json");
+  const outputPath = join(root, "last-message.json");
+  const requestsPath = join(root, "requests.jsonl");
+  mkdirSync(binDir, { recursive: true });
+  const codexPath = join(binDir, "codex");
+  writeFileSync(
+    codexPath,
+    `#!/usr/bin/env node
+const fs = require("node:fs");
+const readline = require("node:readline");
+const requestsPath = process.env.CODEX_TEST_REQUESTS_PATH;
+const rl = readline.createInterface({ input: process.stdin });
+function send(value) { process.stdout.write(JSON.stringify(value) + "\\n"); }
+rl.on("line", (line) => {
+  const message = JSON.parse(line);
+  fs.appendFileSync(requestsPath, JSON.stringify(message) + "\\n");
+  if (message.method === "initialize") {
+    send({ id: message.id, result: { userAgent: "fake", codexHome: "/tmp", platformFamily: "unix", platformOs: "linux" } });
+  } else if (message.method === "thread/start") {
+    send({ id: message.id, result: { thread: { id: "thread-1", sessionId: "session-1" } } });
+  } else if (message.method === "thread/resume") {
+    send({ id: message.id, result: { thread: { id: message.params.threadId, sessionId: "session-1" } } });
+  } else if (message.method === "turn/start") {
+    send({ id: message.id, result: { turn: { id: "turn-1", status: "inProgress", items: [] } } });
+    setTimeout(() => {
+      send({ method: "item/completed", params: {
+        threadId: "thread-1",
+        turnId: "turn-1",
+        completedAtMs: Date.now(),
+        item: { type: "agentMessage", id: "message-1", text: '{"status":"planned"}' }
+      } });
+      send({ method: "turn/completed", params: {
+        threadId: "thread-1",
+        turn: { id: "turn-1", status: "completed", items: [] }
+      } });
+    }, 5);
+  }
+});
+`,
+  );
+  chmodSync(codexPath, 0o755);
+  const env = {
+    ...process.env,
+    CODEX_TEST_REQUESTS_PATH: requestsPath,
+    PATH: `${binDir}${delimiter}${process.env.PATH ?? ""}`,
+  };
+
+  try {
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      const result = runCodexProcess({
+        args: [
+          "exec",
+          "--cd",
+          root,
+          "--sandbox",
+          "workspace-write",
+          "-c",
+          "sandbox_workspace_write.network_access=false",
+          "--output-last-message",
+          outputPath,
+          "--json",
+          "-",
+        ],
+        cwd: root,
+        env,
+        input: "Plan the repair.",
+        timeoutMs: 10_000,
+        appServer: { statePath, label: "test worker" },
+      });
+      assert.equal(result.status, 0, result.stderr);
+      assert.equal(result.error, undefined);
+      assert.equal(readFileSync(outputPath, "utf8"), '{"status":"planned"}');
+    }
+
+    const state = JSON.parse(readFileSync(statePath, "utf8"));
+    assert.equal(state.threadId, "thread-1");
+    const requests = readFileSync(requestsPath, "utf8")
+      .trim()
+      .split("\n")
+      .map((line) => JSON.parse(line));
+    assert.equal(requests.filter((request) => request.method === "thread/start").length, 1);
+    assert.equal(requests.filter((request) => request.method === "thread/resume").length, 1);
+    assert.equal(requests.filter((request) => request.method === "turn/start").length, 2);
+    for (const request of requests.filter((request) => request.method === "turn/start")) {
+      assert.deepEqual(request.params.sandboxPolicy, {
+        type: "workspaceWrite",
+        writableRoots: [root],
+        networkAccess: false,
+      });
+    }
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});

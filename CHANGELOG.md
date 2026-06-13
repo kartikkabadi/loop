@@ -9,6 +9,10 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Added
 
+- Added steerable, resumable Codex app-server sessions for repair GitHub Actions, with CrabFleet terminal attach, durable thread restoration across planning/execution runners, work-state heartbeats, and deterministic completion reporting.
+- Added explicit issue-to-PR and PR-repair worker categories to the live dashboard, plus direct live-terminal fleet access and issue/PR-aware drill-down links.
+- Added organization-member issue implementation commands while keeping automatic issue pickup behind a new default-off master gate and honoring `clawsweeper:human-review` or `clawsweeper:manual-only` before branch pushes and PR creation.
+- Doubled the global worker budget to 64 and the imported GitCrawl cluster-repair lane to 2 while preserving proportional interactive and expansion reserves.
 - Added a live fleet overview and per-worker dashboard drill-down with actual GitHub Actions job identity, current step, progress, target, lane, elapsed time, and full step timeline.
 - Added coverage-proof gating before duplicate or superseded PR close proposals, so ClawSweeper verifies a covering PR really subsumes the source before closing it. Thanks @jesse-merhi.
 - Added proof nudge reminders that periodically prompt PR authors to attach real behavior proof before review or merge automation can progress. Thanks @brokemac79.

@@ -83,6 +83,7 @@ function prepare() {
         existingPrs: [],
         existingBranchPrs: [],
         referencedPrs: [],
+        clusterExistingPrs: [],
       };
   const decision = intakeDecision({
     enabled,
@@ -375,6 +376,9 @@ function eligibilityDecision({
     if (Array.isArray(live.existingBranchPrs) && live.existingBranchPrs.length > 0) {
       blockers.push("existing ClawSweeper issue implementation PR is open");
     }
+    if (Array.isArray(live.clusterExistingPrs) && live.clusterExistingPrs.length > 0) {
+      blockers.push("open PR already covers a related issue in this work cluster");
+    }
     if (
       candidateKind === "viable" &&
       Array.isArray(live.referencedPrs) &&
@@ -616,12 +620,26 @@ function liveIssueContext({
     { attempts: 3 },
   );
   const existingPrs = searchOpenPullRequestsMentioningIssue(repo, number);
+  const clusterExistingPrs = referencedIssueNumbers({
+    targetRepo: repo,
+    itemNumber: number,
+    references,
+  })
+    .slice(0, 12)
+    .flatMap((relatedNumber) => searchOpenPullRequestsMentioningIssue(repo, relatedNumber));
   const referencedPrs = inspectReferencedPullRequests({
     targetRepo: repo,
     itemNumber: number,
     references,
   });
-  return { issue, comments, existingPrs, existingBranchPrs, referencedPrs };
+  return {
+    issue,
+    comments,
+    existingPrs,
+    existingBranchPrs,
+    referencedPrs,
+    clusterExistingPrs: dedupePullRequests(clusterExistingPrs),
+  };
 }
 
 function searchOpenPullRequestsMentioningIssue(repo: string, number: number): LooseRecord[] {
@@ -698,6 +716,43 @@ export function referencedPullRequestCoordinates({
     }
   }
   return [...pulls.values()];
+}
+
+export function referencedIssueNumbers({
+  targetRepo,
+  itemNumber,
+  references,
+}: {
+  targetRepo: string;
+  itemNumber: number;
+  references: string[];
+}): number[] {
+  const escapedRepo = targetRepo.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const numbers = new Set<number>();
+  for (const reference of references) {
+    for (const match of reference.matchAll(
+      new RegExp(`(?:https?:\\/\\/)?github\\.com\\/${escapedRepo}\\/issues\\/(\\d+)`, "gi"),
+    )) {
+      numbers.add(Number(match[1]));
+    }
+    for (const match of reference.matchAll(new RegExp(`\\b${escapedRepo}#(\\d+)\\b`, "gi"))) {
+      numbers.add(Number(match[1]));
+    }
+    for (const match of reference.matchAll(/(?:^|[^\w/])#(\d+)\b/g)) {
+      numbers.add(Number(match[1]));
+    }
+  }
+  numbers.delete(itemNumber);
+  return [...numbers].filter((number) => Number.isSafeInteger(number) && number > 0);
+}
+
+function dedupePullRequests(pulls: LooseRecord[]): LooseRecord[] {
+  const byKey = new Map<string, LooseRecord>();
+  for (const pull of pulls) {
+    const key = String(pull.url ?? pull.html_url ?? pull.number ?? "");
+    if (key && !byKey.has(key)) byKey.set(key, pull);
+  }
+  return [...byKey.values()];
 }
 
 function inspectReferencedPullRequests({
@@ -808,9 +863,14 @@ function writeStepOutputs(values: Record<string, JsonValue>) {
 }
 
 function isProtectedLabel(label: string): boolean {
-  return ["security", "beta-blocker", "release-blocker", "maintainer"].includes(
-    label.trim().toLowerCase(),
-  );
+  return [
+    "security",
+    "beta-blocker",
+    "release-blocker",
+    "maintainer",
+    "clawsweeper:human-review",
+    "clawsweeper:manual-only",
+  ].includes(label.trim().toLowerCase());
 }
 
 function visionFitItemCategoryAllowed(value: string | undefined): boolean {

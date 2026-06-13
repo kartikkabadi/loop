@@ -85,12 +85,11 @@ runs:
         export CODEX_HOME="${CODEX_HOME:?}"
         test -n "${OPENAI_API_KEY:-}"
         server_info="$CODEX_HOME/responses-proxy.json"
-        if [[ ! -s "$server_info" ]]; then
-          (
-            printenv OPENAI_API_KEY | env -u OPENAI_API_KEY -u CODEX_API_KEY -u PROXY_API_KEY \
-              codex-responses-api-proxy --http-shutdown --server-info "$server_info"
-          ) &
-        fi
+        node -e 'require("node:fs").rmSync(process.argv[1], { force: true })' "$server_info"
+        (
+          printenv OPENAI_API_KEY | env -u OPENAI_API_KEY -u CODEX_API_KEY -u PROXY_API_KEY \
+            codex-responses-api-proxy --http-shutdown --server-info "$server_info"
+        ) &
         for _ in {1..100}; do
           [[ -s "$server_info" ]] && break
           sleep 0.1

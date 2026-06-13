@@ -11,9 +11,10 @@ custom_domain = true
 [vars]
 CLAWSWEEPER_REPO = "openclaw/clawsweeper"
 CLAWSWEEPER_APP_CLIENT_ID = "Iv23liOECG0slfuhz093"
+CLAWSWEEPER_CRABFLEET_URL = "https://crabfleet.openclaw.ai"
 TARGET_REPOS = "openclaw/openclaw,openclaw/clawhub,openclaw/clawsweeper,openclaw/fs-safe"
-WORKER_BUDGET = "32"
-WORKER_DETAIL_RUN_LIMIT = "32"
+WORKER_BUDGET = "64"
+WORKER_DETAIL_RUN_LIMIT = "64"
 WORKER_JOB_CACHE_TTL_SECONDS = "60"
 CACHE_TTL_SECONDS = "20"
 INCLUDE_CI_STATUS = "1"

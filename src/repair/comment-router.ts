@@ -48,6 +48,7 @@ import {
   existingModeStatusBlocksReplay,
   isAuthorReadOnlyCommandAllowed,
   isMaintainerCommandAllowed,
+  isIssueImplementationCommandAllowed,
   issueImplementationClusterId,
   issueImplementationJobPath,
   maintainerAutomergeOptInApprovesNeedsHuman as maintainerAutomergeOptInApprovesNeedsHumanReason,
@@ -498,6 +499,32 @@ function classifyCommand(command: LooseRecord): JsonValue {
         status: "ready",
         reason:
           "implementation PR creation must be requested on an issue; use autofix or automerge for pull requests",
+        actions: [{ action: "comment", status: execute ? "pending" : "planned" }],
+      };
+    }
+    const pauseLabels = pauseLabelsOn(target);
+    if (pauseLabels.length > 0) {
+      return {
+        ...next,
+        status: "ready",
+        reason: `issue implementation is paused by ${pauseLabels.join(", ")}`,
+        actions: [{ action: "comment", status: execute ? "pending" : "planned" }],
+      };
+    }
+    if (issueImplementationLinkedPrSignal(target) && command.operator_override !== true) {
+      const linkedPrs = [
+        ...(Array.isArray(target.open_prs) ? target.open_prs : []),
+        ...(Array.isArray(target.linked_prs) ? target.linked_prs : []),
+        ...(Array.isArray(target.existing_prs) ? target.existing_prs : []),
+      ]
+        .map((value: JsonValue) => String(value))
+        .filter(Boolean);
+      return {
+        ...next,
+        status: "ready",
+        reason: `implementation PR creation is blocked by an existing linked PR${
+          linkedPrs.length ? ` (${linkedPrs.join(", ")})` : ""
+        }`,
         actions: [{ action: "comment", status: execute ? "pending" : "planned" }],
       };
     }
@@ -2678,14 +2705,34 @@ function classifyIssueTarget(issue: LooseRecord, issueNumber: JsonValue): JsonVa
 
 function issueLinkedOpenPrReferences(issue: LooseRecord, issueNumber: JsonValue) {
   const refs = new Set<number>();
+  const relatedIssues = new Set<number>();
   const comments = issueCommentsFor(issueNumber).map((comment) => comment.body);
   for (const text of [issue.title, issue.body, ...comments]) {
     addPullRequestReferenceNumbersFromText(refs, text);
+    addIssueReferenceNumbersFromText(relatedIssues, text);
   }
   for (const number of searchOpenPullRequestsMentioningIssue(Number(issueNumber))) {
     refs.add(number);
   }
   const current = Number(issueNumber);
+  for (const relatedNumber of [...relatedIssues]
+    .filter((number) => Number.isFinite(number) && number !== current)
+    .slice(0, 8)) {
+    try {
+      const related = fetchIssue(relatedNumber);
+      if (related.pull_request) {
+        if (String(related.state ?? "").toLowerCase() === "open") refs.add(relatedNumber);
+        continue;
+      }
+      for (const number of searchOpenPullRequestsMentioningIssue(relatedNumber)) refs.add(number);
+      const relatedComments = issueCommentsFor(relatedNumber).map((comment) => comment.body);
+      for (const text of [related.title, related.body, ...relatedComments]) {
+        addPullRequestReferenceNumbersFromText(refs, text);
+      }
+    } catch {
+      // A temporarily unreadable sibling must not make an unrelated number look like a PR.
+    }
+  }
   return [...refs]
     .filter((number) => Number.isFinite(number) && number !== current)
     .filter((number) => {
@@ -2729,6 +2776,21 @@ function addPullRequestReferenceNumbersFromText(numbers: Set<number>, text: Json
   );
   for (const match of value.matchAll(urlPattern)) numbers.add(Number(match[1]));
   for (const match of value.matchAll(/\b(?:pr|pull request)\s+#(\d+)\b/gi)) {
+    numbers.add(Number(match[1]));
+  }
+}
+
+function addIssueReferenceNumbersFromText(numbers: Set<number>, text: JsonValue) {
+  const value = String(text ?? "");
+  if (!value) return;
+  const issueUrlPattern = new RegExp(
+    `https://github\\.com/${escapeRegExp(targetRepo)}/issues/(\\d+)`,
+    "gi",
+  );
+  const repoReferencePattern = new RegExp(`\\b${escapeRegExp(targetRepo)}#(\\d+)\\b`, "gi");
+  for (const match of value.matchAll(issueUrlPattern)) numbers.add(Number(match[1]));
+  for (const match of value.matchAll(repoReferencePattern)) numbers.add(Number(match[1]));
+  for (const match of value.matchAll(/(?:^|[^\w/])#(\d+)\b/g)) {
     numbers.add(Number(match[1]));
   }
 }
@@ -3046,12 +3108,16 @@ function compactGhError(error: unknown): string {
 function resolveMaintainerCommandAuthorization(command: LooseRecord) {
   const login = String(command.author ?? "").trim();
   const repositoryPermission = login ? fetchCollaboratorPermission(login) : null;
-  const allowed = isMaintainerCommandAllowed({
+  const authorizationInput = {
     authorAssociation: command.author_association,
     repositoryPermission,
     allowedAssociations,
     allowedRepositoryPermissions: [...allowedRepositoryPermissions],
-  });
+  };
+  const allowed =
+    command.intent === "implement_issue"
+      ? isIssueImplementationCommandAllowed(authorizationInput)
+      : isMaintainerCommandAllowed(authorizationInput);
   if (allowed) return { allowed: true, repositoryPermission };
   const association = command.author_association || "unknown";
   const permission = repositoryPermission || "unknown";

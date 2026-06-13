@@ -73,6 +73,8 @@ jobs:
       CLAWSWEEPER_MAX_REVIEW_COMMENTS_PER_PR: ${{ vars.CLAWSWEEPER_MAX_REVIEW_COMMENTS_PER_PR || '50' }}
       CLAWSWEEPER_CODEX_TIMEOUT_MS: ${{ vars.CLAWSWEEPER_CODEX_TIMEOUT_MS || '1800000' }}
       CLAWSWEEPER_CODEX_REASONING_EFFORT: ${{ vars.CLAWSWEEPER_CODEX_REASONING_EFFORT || 'high' }}
+      CLAWSWEEPER_STEERABLE_CODEX: ${{ vars.CLAWSWEEPER_STEERABLE_CODEX || '0' }}
+      CLAWSWEEPER_CRABFLEET_URL: ${{ vars.CLAWSWEEPER_CRABFLEET_URL || 'https://crabfleet.openclaw.ai' }}
       OPENCLAW_LOCAL_CHECK: "0"
     steps:
       - uses: actions/checkout@v5
@@ -139,6 +141,19 @@ jobs:
             echo "allow_merge=${CLAWSWEEPER_ALLOW_MERGE}"
           } >> "$GITHUB_OUTPUT"
 
+      - name: Resolve Codex session cache
+        id: codex_session
+        if: ${{ steps.check_job.outputs.job_exists == '1' && env.CLAWSWEEPER_STEERABLE_CODEX == '1' }}
+        env:
+          JOB_PATH: ${{ inputs.job }}
+        run: |
+          set -euo pipefail
+          key="$(printf '%s' "$JOB_PATH" | sha256sum | cut -d' ' -f1)"
+          codex_home="$HOME/.clawsweeper-repair/codex-home/work-$key"
+          echo "key=$key" >> "$GITHUB_OUTPUT"
+          echo "codex_home=$codex_home" >> "$GITHUB_OUTPUT"
+          echo "CLAWSWEEPER_CODEX_THREAD_STATE=$codex_home/clawsweeper-thread-state.json" >> "$GITHUB_ENV"
+
       - uses: ./.github/actions/setup-pnpm
         if: ${{ steps.check_job.outputs.job_exists == '1' }}
         with:
@@ -149,6 +164,27 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           CLAWSWEEPER_INTERNAL_MODEL: ${{ secrets.CLAWSWEEPER_MODEL }}
+        with:
+          codex-home: ${{ steps.codex_session.outputs.codex_home }}
+
+      - name: Restore Codex session
+        id: restore_codex_session
+        if: ${{ steps.check_job.outputs.job_exists == '1' && env.CLAWSWEEPER_STEERABLE_CODEX == '1' }}
+        uses: actions/cache/restore@v5
+        with:
+          path: |
+            ${{ steps.codex_session.outputs.codex_home }}/sessions
+            ${{ steps.codex_session.outputs.codex_home }}/clawsweeper-thread-state.json
+          key: ${{ runner.os }}-clawsweeper-codex-thread-${{ steps.codex_session.outputs.key }}-${{ github.run_id }}-${{ github.run_attempt }}-cluster
+          restore-keys: |
+            ${{ runner.os }}-clawsweeper-codex-thread-${{ steps.codex_session.outputs.key }}-
+
+      - name: Register steerable Action session
+        id: crabfleet_session
+        if: ${{ steps.check_job.outputs.job_exists == '1' && env.CLAWSWEEPER_STEERABLE_CODEX == '1' && !inputs.dry_run }}
+        env:
+          CLAWSWEEPER_CRABFLEET_SERVICE_TOKEN: ${{ secrets.CLAWSWEEPER_CRABFLEET_SERVICE_TOKEN }}
+        run: pnpm run repair:action-session -- register "${{ inputs.job }}"
 
       - name: Verify GitHub read token
         if: ${{ steps.check_job.outputs.job_exists == '1' }}
@@ -239,6 +275,36 @@ jobs:
             .clawsweeper-repair/runs/**
           if-no-files-found: warn
 
+      - name: Save Codex session
+        if: ${{ always() && steps.check_job.outputs.job_exists == '1' && env.CLAWSWEEPER_STEERABLE_CODEX == '1' }}
+        uses: actions/cache/save@v5
+        with:
+          path: |
+            ${{ steps.codex_session.outputs.codex_home }}/sessions
+            ${{ steps.codex_session.outputs.codex_home }}/clawsweeper-thread-state.json
+          key: ${{ runner.os }}-clawsweeper-codex-thread-${{ steps.codex_session.outputs.key }}-${{ github.run_id }}-${{ github.run_attempt }}-cluster
+
+      - name: Record planning completion
+        if: ${{ success() && steps.crabfleet_session.outcome == 'success' }}
+        run: |
+          if [[ "${{ inputs.mode }}" == "plan" || "${{ inputs.dry_run }}" == "true" ]]; then
+            pnpm run repair:action-session -- update \
+              --state completed \
+              --phase done \
+              --summary "Planning and deterministic review completed" \
+              --completion-reason plan_complete
+          else
+            pnpm run repair:action-session -- update \
+              --state running \
+              --phase planned \
+              --summary "Planning completed; execution runner starting"
+          fi
+
+      - name: Record planning failure
+        if: ${{ failure() && steps.crabfleet_session.outcome == 'success' }}
+        continue-on-error: true
+        run: pnpm run repair:action-session -- update --state blocked --phase planning_failed --summary "Planning Action failed" --completion-reason action_failed
+
   execute:
     name: Execute and apply cluster actions
     needs: cluster
@@ -263,6 +329,8 @@ jobs:
       CLAWSWEEPER_CLOSE_SUPERSEDED_SOURCE_PRS: ${{ vars.CLAWSWEEPER_CLOSE_SUPERSEDED_SOURCE_PRS || '1' }}
       CLAWSWEEPER_GIT_USER_NAME: ${{ vars.CLAWSWEEPER_GIT_USER_NAME || 'clawsweeper[bot]' }}
       CLAWSWEEPER_GIT_USER_EMAIL: ${{ vars.CLAWSWEEPER_GIT_USER_EMAIL || '274271284+clawsweeper[bot]@users.noreply.github.com' }}
+      CLAWSWEEPER_STEERABLE_CODEX: ${{ vars.CLAWSWEEPER_STEERABLE_CODEX || '0' }}
+      CLAWSWEEPER_CRABFLEET_URL: ${{ vars.CLAWSWEEPER_CRABFLEET_URL || 'https://crabfleet.openclaw.ai' }}
       OPENCLAW_LOCAL_CHECK: "0"
     steps:
       - uses: actions/checkout@v5
@@ -333,6 +401,19 @@ jobs:
           JOB_PATH: ${{ inputs.job }}
         run: scripts/restore-repair-job.sh "$JOB_PATH" "execute"
 
+      - name: Resolve Codex session cache
+        id: codex_session
+        if: ${{ steps.check_job.outputs.job_exists == '1' && env.CLAWSWEEPER_STEERABLE_CODEX == '1' }}
+        env:
+          JOB_PATH: ${{ inputs.job }}
+        run: |
+          set -euo pipefail
+          key="$(printf '%s' "$JOB_PATH" | sha256sum | cut -d' ' -f1)"
+          codex_home="$HOME/.clawsweeper-repair/codex-home/work-$key"
+          echo "key=$key" >> "$GITHUB_OUTPUT"
+          echo "codex_home=$codex_home" >> "$GITHUB_OUTPUT"
+          echo "CLAWSWEEPER_CODEX_THREAD_STATE=$codex_home/clawsweeper-thread-state.json" >> "$GITHUB_ENV"
+
       - uses: ./.github/actions/setup-pnpm
         if: ${{ steps.check_job.outputs.job_exists == '1' }}
         with:
@@ -351,6 +432,25 @@ jobs:
           CLAWSWEEPER_INTERNAL_MODEL: ${{ secrets.CLAWSWEEPER_MODEL }}
         with:
           cache-suffix: target-pnpm
+          codex-home: ${{ steps.codex_session.outputs.codex_home }}
+
+      - name: Restore Codex session
+        if: ${{ steps.check_job.outputs.job_exists == '1' && env.CLAWSWEEPER_STEERABLE_CODEX == '1' }}
+        uses: actions/cache/restore@v5
+        with:
+          path: |
+            ${{ steps.codex_session.outputs.codex_home }}/sessions
+            ${{ steps.codex_session.outputs.codex_home }}/clawsweeper-thread-state.json
+          key: ${{ runner.os }}-clawsweeper-codex-thread-${{ steps.codex_session.outputs.key }}-${{ github.run_id }}-${{ github.run_attempt }}-cluster
+          restore-keys: |
+            ${{ runner.os }}-clawsweeper-codex-thread-${{ steps.codex_session.outputs.key }}-
+
+      - name: Resume steerable Action session
+        id: crabfleet_session
+        if: ${{ steps.check_job.outputs.job_exists == '1' && env.CLAWSWEEPER_STEERABLE_CODEX == '1' }}
+        env:
+          CLAWSWEEPER_CRABFLEET_SERVICE_TOKEN: ${{ secrets.CLAWSWEEPER_CRABFLEET_SERVICE_TOKEN }}
+        run: pnpm run repair:action-session -- register "${{ inputs.job }}"
 
       - name: Download worker artifacts
         if: ${{ steps.check_job.outputs.job_exists == '1' }}
@@ -380,6 +480,10 @@ jobs:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
           CLAWSWEEPER_ALLOWED_OWNER: ${{ steps.target.outputs.target_owner }}
         run: pnpm run repair:execute-fix -- "${{ inputs.job }}" --latest
+
+      - name: Record deterministic validation phase
+        if: ${{ success() && steps.crabfleet_session.outcome == 'success' }}
+        run: pnpm run repair:action-session -- update --state running --phase post_flight --summary "Codex changes validated; applying GitHub post-flight gates"
 
       - name: Apply safe closure actions
         if: ${{ steps.check_job.outputs.job_exists == '1' && steps.self_heal_head.outputs.matched != 'false' && env.CLAWSWEEPER_ALLOW_EXECUTE == '1' }}
@@ -435,6 +539,14 @@ jobs:
             --execution-runner "${{ inputs.execution_runner }}" \
             --model "${{ inputs.model }}"
 
+      - name: Record requeued work
+        if: ${{ success() && steps.crabfleet_session.outcome == 'success' && steps.repair_requeue.outputs.count != '' && steps.repair_requeue.outputs.count != '0' }}
+        run: pnpm run repair:action-session -- update --state running --phase requeued --summary "Source head changed; replacement Action dispatched"
+
+      - name: Record work completion
+        if: ${{ success() && steps.crabfleet_session.outcome == 'success' && (steps.repair_requeue.outputs.count == '' || steps.repair_requeue.outputs.count == '0') }}
+        run: pnpm run repair:action-session -- update --state completed --phase done --summary "Repair, validation, review, push, and post-flight gates completed" --completion-reason gates_passed
+
       - name: Collect Codex debug logs
         if: ${{ always() && steps.check_job.outputs.job_exists == '1' }}
         env:
@@ -466,3 +578,17 @@ jobs:
           path: |
             .clawsweeper-repair/runs/**
           if-no-files-found: warn
+
+      - name: Save Codex session
+        if: ${{ always() && steps.check_job.outputs.job_exists == '1' && env.CLAWSWEEPER_STEERABLE_CODEX == '1' }}
+        uses: actions/cache/save@v5
+        with:
+          path: |
+            ${{ steps.codex_session.outputs.codex_home }}/sessions
+            ${{ steps.codex_session.outputs.codex_home }}/clawsweeper-thread-state.json
+          key: ${{ runner.os }}-clawsweeper-codex-thread-${{ steps.codex_session.outputs.key }}-${{ github.run_id }}-${{ github.run_attempt }}-execute
+
+      - name: Record work failure
+        if: ${{ failure() && steps.crabfleet_session.outcome == 'success' }}
+        continue-on-error: true
+        run: pnpm run repair:action-session -- update --state blocked --phase action_failed --summary "Repair Action failed before all completion gates passed" --completion-reason action_failed

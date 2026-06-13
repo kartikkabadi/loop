@@ -130,3 +130,21 @@ test("repair Codex heartbeat wrapper uses bounded process capture", () => {
   assert.doesNotMatch(source, /CLAWSWEEPER_CODEX_STDIO_MAX_BUFFER_MB/);
   assert.doesNotMatch(source, /writeFileSync\([^)]*codexResult\.stdout/);
 });
+
+test("issue implementation rechecks opt-out labels immediately before branch pushes", () => {
+  const source = fs.readFileSync(
+    path.join(process.cwd(), "src/repair/execute-fix-artifact.ts"),
+    "utf8",
+  );
+  const pushStart = source.indexOf("function pushRecoverableBranch(");
+  const pushEnd = source.indexOf("function fetchRemoteRecoverableBranch(", pushStart);
+  const helperStart = source.indexOf("function assertIssueImplementationNotPaused(");
+  const helperEnd = source.indexOf("function fetchRemoteRecoverableBranch(", helperStart);
+
+  assert.notEqual(pushStart, -1);
+  assert.notEqual(pushEnd, -1);
+  assert.match(source.slice(pushStart, pushEnd), /assertIssueImplementationNotPaused\(\)/);
+  assert.notEqual(helperStart, -1);
+  assert.match(source.slice(helperStart, helperEnd), /repairPauseLabel\(issue\.labels\)/);
+  assert.match(source.slice(helperStart, helperEnd), /refusing to push or open a PR/);
+});

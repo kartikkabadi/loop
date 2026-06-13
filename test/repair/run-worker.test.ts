@@ -13,7 +13,8 @@ test("run-worker starts Codex in the target checkout when one is available", () 
   const targetCheckout = path.join(tmp, "target-openclaw");
   const cwdFile = path.join(tmp, "codex-cwd.txt");
   const argsFile = path.join(tmp, "codex-args.json");
-  const jobPath = path.join(tmp, "run-worker-target-checkout.md");
+  const jobName = `run-worker-target-checkout-${path.basename(tmp)}`;
+  const jobPath = path.join(tmp, `${jobName}.md`);
 
   fs.mkdirSync(fakeBin, { recursive: true });
   fs.mkdirSync(targetCheckout, { recursive: true });
@@ -103,9 +104,7 @@ test("run-worker starts Codex in the target checkout when one is available", () 
     assert.equal(args[args.indexOf("--cd") + 1], targetCheckout);
     assert.equal(args.includes("--model"), false);
     assert.equal(args.includes("secret-model-for-test"), false);
-    const runDirs = fs.globSync(
-      path.join(repoRoot, ".clawsweeper-repair/runs/run-worker-target-checkout-plan-*"),
-    );
+    const runDirs = fs.globSync(path.join(repoRoot, `.clawsweeper-repair/runs/${jobName}-plan-*`));
     assert.equal(runDirs.length, 1);
     const runDir = runDirs[0];
     assert.ok(runDir);
@@ -113,7 +112,7 @@ test("run-worker starts Codex in the target checkout when one is available", () 
     assert.equal(fs.statSync(path.join(runDir, "codex.stderr.log")).size, 2 * 1024 * 1024);
   } finally {
     for (const runDir of fs.globSync(
-      path.join(repoRoot, ".clawsweeper-repair/runs/run-worker-target-checkout-plan-*"),
+      path.join(repoRoot, `.clawsweeper-repair/runs/${jobName}-plan-*`),
     )) {
       fs.rmSync(runDir, { recursive: true, force: true });
     }

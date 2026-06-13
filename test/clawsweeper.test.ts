@@ -17994,6 +17994,14 @@ test("repair workers hydrate only durable jobs from generated state", () => {
       ?.length,
     2,
   );
+  assert.match(workflow, /CLAWSWEEPER_STEERABLE_CODEX/);
+  assert.match(workflow, /actions\/cache\/restore@v5/);
+  assert.match(workflow, /actions\/cache\/save@v5/);
+  assert.match(workflow, /repair:action-session -- register/);
+  assert.match(workflow, /completion-reason gates_passed/);
+  assert.equal(workflow.match(/id: crabfleet_session/g)?.length, 2);
+  assert.equal(workflow.match(/steps\.crabfleet_session\.outcome == 'success'/g)?.length, 6);
+  assert.doesNotMatch(workflow, /if: \$\{\{[^\n]*env\.CLAWSWEEPER_CRABFLEET_AGENT_TOKEN/);
 });
 
 test("reviewed viable issues dispatch the existing implementation and automerge lanes", () => {
@@ -18006,6 +18014,7 @@ test("reviewed viable issues dispatch the existing implementation and automerge 
   assert.match(workflow, /-f report_repo=openclaw\/clawsweeper-state/);
   assert.match(workflow, /steps\.target\.outputs\.target_repo != 'openclaw\/openclaw'/);
   assert.match(workflow, /steps\.target\.outputs\.target_repo != 'openclaw\/clawhub'/);
+  assert.equal(workflow.match(/vars\.CLAWSWEEPER_AUTO_IMPLEMENT_ISSUES == '1'/g)?.length, 4);
 });
 
 test("sweep workflow runs exact event reviews without a global worker gate", () => {
@@ -18382,6 +18391,10 @@ test("codex subprocess env strips GitHub and App credentials", () => {
     process.env.CLAWSWEEPER_PROOF_INSPECTION_TOKEN = "codex-target";
     process.env.CLAWSWEEPER_APP_ID = "123";
     process.env.CLAWSWEEPER_APP_PRIVATE_KEY = "private";
+    process.env.CLAWSWEEPER_CRABFLEET_AGENT_TOKEN = "agent";
+    process.env.CLAWSWEEPER_CRABFLEET_SERVICE_TOKEN = "service";
+    process.env.CLAWSWEEPER_CRABFLEET_RUNNER_PTY_URL = "wss://example.invalid/secret";
+    process.env.CLAWSWEEPER_CRABFLEET_WORK_STATE_URL = "https://example.invalid/secret";
     process.env.OPENAI_API_KEY = "openai";
     process.env.CODEX_API_KEY = "codex";
 
@@ -18393,6 +18406,10 @@ test("codex subprocess env strips GitHub and App credentials", () => {
     assert.equal(env.CLAWSWEEPER_PROOF_INSPECTION_TOKEN, undefined);
     assert.equal(env.CLAWSWEEPER_APP_ID, undefined);
     assert.equal(env.CLAWSWEEPER_APP_PRIVATE_KEY, undefined);
+    assert.equal(env.CLAWSWEEPER_CRABFLEET_AGENT_TOKEN, undefined);
+    assert.equal(env.CLAWSWEEPER_CRABFLEET_SERVICE_TOKEN, undefined);
+    assert.equal(env.CLAWSWEEPER_CRABFLEET_RUNNER_PTY_URL, undefined);
+    assert.equal(env.CLAWSWEEPER_CRABFLEET_WORK_STATE_URL, undefined);
     assert.equal(env.OPENAI_API_KEY, undefined);
     assert.equal(env.CODEX_API_KEY, undefined);
     assert.equal(env.GIT_OPTIONAL_LOCKS, "0");

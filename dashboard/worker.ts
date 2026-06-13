@@ -27,6 +27,7 @@ const DEFAULT_STALE_QUEUED_WORKFLOW_MS = 6 * 60 * 60 * 1000;
 const CLAWSWEEPER_REVIEW_REPO = "openclaw/clawsweeper";
 const CLAWSWEEPER_STATE_REPO = "openclaw/clawsweeper-state";
 const CLAWSWEEPER_STATE_REF = "state";
+const DEFAULT_CRABFLEET_URL = "https://crabfleet.openclaw.ai";
 const CLUSTER_REPAIR_INTAKE_WORKFLOW = "repair-cluster-intake.yml";
 const CLAWSWEEPER_ALLOWED_ASSOCIATIONS = new Set(["OWNER", "MEMBER", "COLLABORATOR"]);
 const CLAWSWEEPER_ISSUE_ITEM_ACTIONS = new Set([
@@ -217,7 +218,7 @@ export default {
     if (url.pathname === "/api/status") return statusJson(request, env, ctx);
     if (url.pathname === "/api/triage") return triageJson(request, env, ctx);
     if (url.pathname === "/api/pr-proof-triage") return prProofTriageJson(request, env, ctx);
-    if (url.pathname === "/" || url.pathname === "/index.html") return html(dashboardHtml());
+    if (url.pathname === "/" || url.pathname === "/index.html") return html(dashboardHtml(env));
     if (url.pathname === "/triage" || url.pathname === "/triage.html")
       return html(triageHtml(issueTriagePageConfig()));
     if (url.pathname === "/pr-proof-triage" || url.pathname === "/pr-proof-triage.html")
@@ -986,7 +987,7 @@ async function statusSnapshot(env, ctx) {
     .split(",")
     .map((value) => value.trim())
     .filter(Boolean);
-  const budget = numberFrom(env.WORKER_BUDGET, 32);
+  const budget = numberFrom(env.WORKER_BUDGET, 64);
   const [runs, filteredActiveRuns] = await Promise.all([
     githubJson(env, `/repos/${repo}/actions/runs?per_page=100`).catch((error) => {
       errors.push(`workflow runs: ${error.message}`);
@@ -2053,6 +2054,7 @@ function normalizeWorkerJob(run, job) {
   const runItem = classifyRun(run);
   const target = workerTargetFromJob(runItem, job.name);
   const mode = workerMode(runItem.mode, job.name);
+  const workKind = workerWorkKind(runItem, job.name);
   const steps = Array.isArray(job.steps)
     ? job.steps.map((step) => ({
         number: numberOrNull(step.number),
@@ -2072,6 +2074,7 @@ function normalizeWorkerJob(run, job) {
     source: "job",
     name: String(job.name || runItem.title || "Codex worker"),
     mode,
+    work_kind: workKind,
     stage: runItem.stage,
     status: String(job.status || run.status || "unknown"),
     conclusion: nullableString(job.conclusion),
@@ -2102,6 +2105,27 @@ function workerMode(runMode, jobName) {
   return runMode;
 }
 
+export function workerWorkKind(runItem, jobName) {
+  const text = `${runItem?.title || ""} ${runItem?.workflow || ""} ${jobName || ""}`.toLowerCase();
+  if (
+    text.includes("issue implementation") ||
+    /\bissue-[a-z0-9_.-]+-[a-z0-9_.-]+-\d+\b/.test(text)
+  ) {
+    return "issue_to_pr";
+  }
+  if (text.includes("automerge") || text.includes("autofix") || text.includes("pr repair")) {
+    return "pr_repair";
+  }
+  if (
+    text.includes("repair cluster") ||
+    text.includes("cluster actions") ||
+    text.includes("review cluster")
+  ) {
+    return "repair_cluster";
+  }
+  return "other";
+}
+
 function normalizeFallbackWorker(run) {
   const item = classifyRun(run);
   return {
@@ -2109,6 +2133,7 @@ function normalizeFallbackWorker(run) {
     source: "workflow-fallback",
     name: item.title || item.workflow || "Codex worker",
     mode: item.mode,
+    work_kind: workerWorkKind(item, ""),
     stage: item.stage,
     status: item.status,
     conclusion: item.conclusion,
@@ -3319,6 +3344,15 @@ function escapeHtml(value) {
   );
 }
 
+function externalHttpUrl(value, fallback) {
+  try {
+    const url = new URL(String(value ?? "").trim() || fallback);
+    return url.protocol === "https:" || url.protocol === "http:" ? url.toString() : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 function serializedPageConfig(config) {
   return JSON.stringify(config).replace(/</g, "\\u003c");
 }
@@ -4007,7 +4041,8 @@ setInterval(load, 120000);
 </html>`;
 }
 
-function dashboardHtml() {
+function dashboardHtml(env: DashboardEnv = {}) {
+  const crabfleetUrl = externalHttpUrl(env.CLAWSWEEPER_CRABFLEET_URL, DEFAULT_CRABFLEET_URL);
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -4668,6 +4703,7 @@ a:hover { color: #89c8ff; text-decoration: underline; }
     <div class="top-links">
       <a class="pill" href="/triage">Issue triage</a>
       <a class="pill" href="/pr-proof-triage">PR proof triage</a>
+      <a class="pill" href="${escapeHtml(crabfleetUrl)}">Live terminals</a>
       <span class="muted mono" id="updated"></span>
     </div>
   </header>
@@ -4800,11 +4836,19 @@ let workerIndex = new Map();
 
 function workerGroup(worker) {
   const text = (worker.mode + " " + worker.name + " " + worker.workflow_title).toLowerCase();
+  if (worker.work_kind === "issue_to_pr") return "issue-to-pr";
+  if (worker.work_kind === "pr_repair") return "pr-repair";
   if (text.includes("assist")) return "assist";
   if (text.includes("repair") || text.includes("automerge")) return "repair";
   if (text.includes("commit")) return "commit";
   if (text.includes("review")) return "review";
   return "other";
+}
+function workerKindLabel(kind) {
+  if (kind === "issue_to_pr") return "Issue to PR";
+  if (kind === "pr_repair") return "PR repair";
+  if (kind === "repair_cluster") return "Repair cluster";
+  return "";
 }
 function workerStatusClass(status) {
   return status === "in_progress" ? "active" : ["queued", "waiting", "requested", "pending"].includes(status) ? "waiting" : "";
@@ -4849,7 +4893,7 @@ function renderSystemMap(data) {
 }
 function renderWorkers(rows) {
   workerIndex = new Map(rows.map(worker => [String(worker.id), worker]));
-  const groups = ["review", "repair", "commit", "assist", "other"];
+  const groups = ["issue-to-pr", "pr-repair", "review", "repair", "commit", "assist", "other"];
   const counts = Object.fromEntries(groups.map(group => [group, rows.filter(worker => workerGroup(worker) === group).length]));
   const filters = [["all", "All", rows.length], ...groups.filter(group => counts[group]).map(group => [group, group[0].toUpperCase() + group.slice(1), counts[group]])];
   if (!filters.some(filter => filter[0] === activeWorkerFilter)) activeWorkerFilter = "all";
@@ -4864,7 +4908,8 @@ function renderWorkers(rows) {
   }
   document.getElementById("workers").innerHTML = '<div class="worker-grid">' + visible.map(worker => {
     const progress = worker.progress?.total ? Math.round((worker.progress.completed / worker.progress.total) * 100) : 0;
-    return '<button type="button" class="worker-card" data-worker-id="' + esc(worker.id) + '" aria-label="Open details for ' + esc(worker.name) + '"><div class="worker-card-top"><span class="pill"><i class="status-dot ' + workerStatusClass(worker.status) + '"></i>' + esc(modeLabel(worker.mode)) + '</span><span class="muted mono">' + elapsed(worker.elapsed_ms) + '</span></div><div class="worker-name">' + esc(worker.name) + '</div><div class="worker-card-meta"><span>' + esc(workerTarget(worker)) + '</span></div><div class="worker-card-step"><span>↳ ' + esc(worker.current_step || worker.stage) + '</span></div><div class="worker-progress"><i style="width:' + progress + '%"></i></div></button>';
+    const kind = workerKindLabel(worker.work_kind);
+    return '<button type="button" class="worker-card" data-worker-id="' + esc(worker.id) + '" aria-label="Open details for ' + esc(worker.name) + '"><div class="worker-card-top"><span><span class="pill"><i class="status-dot ' + workerStatusClass(worker.status) + '"></i>' + esc(modeLabel(worker.mode)) + '</span>' + (kind ? ' <span class="pill">' + esc(kind) + '</span>' : '') + '</span><span class="muted mono">' + elapsed(worker.elapsed_ms) + '</span></div><div class="worker-name">' + esc(worker.name) + '</div><div class="worker-card-meta"><span>' + esc(workerTarget(worker)) + '</span></div><div class="worker-card-step"><span>↳ ' + esc(worker.current_step || worker.stage) + '</span></div><div class="worker-progress"><i style="width:' + progress + '%"></i></div></button>';
   }).join("") + '</div>';
 }
 function renderWorkerDialog(worker) {
@@ -4873,7 +4918,7 @@ function renderWorkerDialog(worker) {
   document.getElementById("worker-dialog-heading").innerHTML = '<div><span class="pill"><i class="status-dot ' + statusClass + '"></i>' + esc(worker.status) + '</span> <span class="pill">' + esc(modeLabel(worker.mode)) + '</span></div><h3 id="worker-dialog-title">' + esc(worker.name) + '</h3><div class="muted">' + esc(compactText(worker.workflow_title)) + '</div>';
   const targetUrls = worker.repository
     ? (worker.item_numbers || (worker.item_number ? [worker.item_number] : [])).map(number => ({
-        url: "https://github.com/" + worker.repository + "/issues/" + number,
+        url: "https://github.com/" + worker.repository + "/" + (worker.work_kind === "pr_repair" ? "pull" : "issues") + "/" + number,
         label: "Open #" + number
       }))
     : [];

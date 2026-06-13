@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { createHmac, generateKeyPairSync } from "node:crypto";
 import test from "node:test";
 
-import worker from "../dashboard/worker.ts";
+import worker, { workerWorkKind } from "../dashboard/worker.ts";
 
 class MemoryKv {
   private values = new Map<string, string>();
@@ -32,8 +32,28 @@ function isoAgo(ms: number) {
   return new Date(Date.now() - ms).toISOString();
 }
 
+test("dashboard classifies issue conversion and PR repair workers", () => {
+  assert.equal(
+    workerWorkKind(
+      { title: "repair cluster jobs/openclaw/inbox/issue-openclaw-openclaw-123.md" },
+      "Execute and apply cluster actions",
+    ),
+    "issue_to_pr",
+  );
+  assert.equal(
+    workerWorkKind({ title: "automerge repair jobs/openclaw/inbox/automerge-456.md" }, ""),
+    "pr_repair",
+  );
+  assert.equal(
+    workerWorkKind({ title: "repair cluster jobs/openclaw/inbox/cluster-1.md" }, ""),
+    "repair_cluster",
+  );
+});
+
 test("dashboard HTML preserves UTF-8 emoji labels", async () => {
-  const response = await worker.fetch(new Request("https://clawsweeper.openclaw.ai/"));
+  const response = await worker.fetch(new Request("https://clawsweeper.openclaw.ai/"), {
+    CLAWSWEEPER_CRABFLEET_URL: "https://fleet.example.test/terminal?view=live&mode=all",
+  });
   assert.equal(response.headers.get("content-type"), "text/html; charset=utf-8");
   const html = await response.text();
   assert.match(html, /<title>🦞 ClawSweeper Live<\/title>/);
@@ -43,6 +63,8 @@ test("dashboard HTML preserves UTF-8 emoji labels", async () => {
   assert.match(html, /💥 Recent Snags/);
   assert.match(html, /⚡ Merge Speed/);
   assert.match(html, /🎯 Capacity/);
+  assert.match(html, /Live terminals/);
+  assert.match(html, /href="https:\/\/fleet\.example\.test\/terminal\?view=live&amp;mode=all"/);
   assert.match(html, /🌊 Loading pipeline state/);
   assert.match(html, /System Overview/);
   assert.match(html, /Active Workers/);
@@ -740,7 +762,7 @@ test("dashboard counts active runs that are older than the latest unfiltered pag
     assert.equal(status.fleet.queued_workflow_runs, 1);
     assert.equal(status.fleet.support_workflow_runs, 3);
     assert.equal(status.fleet.support_queued_workflow_runs, 1);
-    assert.equal(status.fleet.worker_budget, 32);
+    assert.equal(status.fleet.worker_budget, 64);
     assert.deepEqual(
       status.pipeline.map((row: { id: number }) => row.id),
       [2, 4, 3],

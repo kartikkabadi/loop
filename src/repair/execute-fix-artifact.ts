@@ -28,7 +28,7 @@ import {
   isRetryableCodexTransportError,
   isTerminalCodexErrorMessage,
 } from "../codex-transient.js";
-import { runCodexProcess } from "../codex-process.js";
+import { codexAppServerProcessOptionsFromEnv, runCodexProcess } from "../codex-process.js";
 import {
   branchHasBaseDiff,
   completeRebaseIfResolved,
@@ -325,6 +325,7 @@ function spawnCodexSyncWithHeartbeat(
     if (typeof options.cwd !== "string" || typeof options.input !== "string") {
       throw new Error(`${label} requires string cwd and input.`);
     }
+    const appServer = codexAppServerProcessOptionsFromEnv(label);
     return runCodexProcess({
       args,
       cwd: options.cwd,
@@ -333,6 +334,7 @@ function spawnCodexSyncWithHeartbeat(
       timeoutMs: options.timeout ?? currentCodexTimeoutMs(),
       ...(options.stdoutPath ? { stdoutPath: options.stdoutPath } : {}),
       ...(options.stderrPath ? { stderrPath: options.stderrPath } : {}),
+      ...(appServer ? { appServer } : {}),
     });
   } finally {
     stopCodexHeartbeat(heartbeat);
@@ -1525,6 +1527,7 @@ function executeReplacementBranch({
   }
 
   pushRecoverableBranch({ targetDir, branch });
+  assertIssueImplementationNotPaused();
   const bodyPath = path.join(workRoot, "replacement-pr-body.md");
   fs.writeFileSync(bodyPath, body);
   const prUrl =
@@ -3220,6 +3223,7 @@ function commitCheckpointIfNeeded({ targetDir, message, trailers = [] }: LooseRe
 }
 
 function pushRecoverableBranch({ targetDir, branch }: LooseRecord) {
+  assertIssueImplementationNotPaused();
   const remoteSha = remoteBranchSha({ targetDir, branch });
   const targetRef = `refs/heads/${branch}`;
   const args = remoteSha
@@ -3228,6 +3232,32 @@ function pushRecoverableBranch({ targetDir, branch }: LooseRecord) {
   runGitNetwork(args, targetDir);
   if (fetchRemoteRecoverableBranch({ targetDir, branch, required: false })) return;
   throw new Error(`git push reported success, but refs/heads/${branch} was not visible on origin`);
+}
+
+function assertIssueImplementationNotPaused() {
+  if (job.frontmatter.source !== "issue_implementation") return;
+  const repo = String(job.frontmatter.source_issue_repo ?? job.frontmatter.repo ?? "").trim();
+  const number = Number(job.frontmatter.source_issue_number);
+  if (!repo || !Number.isInteger(number) || number <= 0) {
+    throw new Error("issue implementation job is missing a valid source issue");
+  }
+  const response = run(
+    "gh",
+    ["api", `repos/${repo}/issues/${number}`, "--jq", "{state, labels: [.labels[].name]}"],
+    { cwd: targetDir, env: ghEnv(), timeoutMs: currentNetworkCommandTimeoutMs() },
+  );
+  const issue = JSON.parse(response);
+  if (issue.state !== "open") {
+    throw new Error(
+      `source issue ${repo}#${number} is ${issue.state || "not open"}; refusing to push`,
+    );
+  }
+  const pauseLabel = repairPauseLabel(issue.labels);
+  if (pauseLabel) {
+    throw new Error(
+      `source issue ${repo}#${number} is paused by ${pauseLabel}; refusing to push or open a PR`,
+    );
+  }
 }
 
 function fetchRemoteRecoverableBranch({ targetDir, branch, required = true }: LooseRecord) {

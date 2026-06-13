@@ -10,13 +10,14 @@ const REPAIR_STRATEGIES = new Set([
   "new_fix_pr",
 ]);
 export const HUMAN_REVIEW_LABEL = "clawsweeper:human-review";
+export const MANUAL_ONLY_LABEL = "clawsweeper:manual-only";
 
 export function repairPauseLabel(labels: Iterable<JsonValue> | null | undefined): string | null {
   for (const label of labels ?? []) {
     const name = String(label?.name ?? label ?? "")
       .trim()
       .toLowerCase();
-    if (name === HUMAN_REVIEW_LABEL) return HUMAN_REVIEW_LABEL;
+    if (name === HUMAN_REVIEW_LABEL || name === MANUAL_ONLY_LABEL) return name;
   }
   return null;
 }

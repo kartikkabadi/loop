@@ -74,7 +74,7 @@ on:
       shard_count:
         description: "Parallel shards (capped by config/automation-limits.json)"
         required: false
-        default: "22"
+        default: "44"
       item_number:
         description: "Optional single issue/PR number to review"
         required: false
@@ -405,7 +405,7 @@ jobs:
         run: pnpm run repair:publish-event-result
 
       - name: Dispatch viable issue implementation
-        if: ${{ success() && steps.target-write-token.outputs.token != '' && steps.target.outputs.target_repo != 'openclaw/openclaw' && steps.target.outputs.target_repo != 'openclaw/clawhub' }}
+        if: ${{ success() && vars.CLAWSWEEPER_AUTO_IMPLEMENT_ISSUES == '1' && steps.target-write-token.outputs.token != '' && steps.target.outputs.target_repo != 'openclaw/openclaw' && steps.target.outputs.target_repo != 'openclaw/clawhub' }}
         env:
           GH_TOKEN: ${{ github.token }}
           TARGET_REPO: ${{ steps.target.outputs.target_repo }}
@@ -1331,7 +1331,7 @@ jobs:
             --rebase-strategy theirs
 
       - name: Dispatch reproducible bug implementation candidates
-        if: ${{ success() && needs.plan.outputs.target_repo == 'openclaw/openclaw' && vars.CLAWSWEEPER_AUTO_IMPLEMENT_REPRO_BUGS == '1' }}
+        if: ${{ success() && vars.CLAWSWEEPER_AUTO_IMPLEMENT_ISSUES == '1' && needs.plan.outputs.target_repo == 'openclaw/openclaw' && vars.CLAWSWEEPER_AUTO_IMPLEMENT_REPRO_BUGS == '1' }}
         env:
           GH_TOKEN: ${{ github.token }}
           TARGET_REPO: ${{ needs.plan.outputs.target_repo }}
@@ -1385,7 +1385,7 @@ jobs:
           done < /tmp/issue-implementation-candidates.tsv
 
       - name: Dispatch vision-fit implementation candidates
-        if: ${{ success() && needs.plan.outputs.target_repo == 'openclaw/openclaw' && vars.CLAWSWEEPER_AUTO_IMPLEMENT_VISION_FIT == '1' }}
+        if: ${{ success() && vars.CLAWSWEEPER_AUTO_IMPLEMENT_ISSUES == '1' && needs.plan.outputs.target_repo == 'openclaw/openclaw' && vars.CLAWSWEEPER_AUTO_IMPLEMENT_VISION_FIT == '1' }}
         env:
           GH_TOKEN: ${{ github.token }}
           TARGET_REPO: ${{ needs.plan.outputs.target_repo }}
@@ -1439,7 +1439,7 @@ jobs:
           done < /tmp/vision-fit-implementation-candidates.tsv
 
       - name: Dispatch viable issue implementation candidates
-        if: ${{ success() && steps.target-write-token.outputs.token != '' && needs.plan.outputs.target_repo != 'openclaw/openclaw' && needs.plan.outputs.target_repo != 'openclaw/clawhub' }}
+        if: ${{ success() && vars.CLAWSWEEPER_AUTO_IMPLEMENT_ISSUES == '1' && steps.target-write-token.outputs.token != '' && needs.plan.outputs.target_repo != 'openclaw/openclaw' && needs.plan.outputs.target_repo != 'openclaw/clawhub' }}
         env:
           GH_TOKEN: ${{ github.token }}
           TARGET_REPO: ${{ needs.plan.outputs.target_repo }}
