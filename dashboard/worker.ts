@@ -12,6 +12,11 @@ type WorkflowRunSummary = {
   id: number | string;
   name?: string;
   display_title?: string;
+  status?: string;
+  conclusion?: string | null;
+  html_url?: string;
+  created_at?: string;
+  updated_at?: string;
 };
 
 declare global {
@@ -60,7 +65,11 @@ const STALE_CACHE_TTL_SECONDS = 900;
 const CI_STATUS_TTL_SECONDS = 7200;
 const WORKER_JOB_CACHE_TTL_SECONDS = 60;
 const WORKER_JOB_IDLE_CACHE_TTL_SECONDS = 10;
+const WORKER_JOB_PAGE_LIMIT = 3;
 const DEFAULT_WORKER_JOB_FETCH_CONCURRENCY = 12;
+const RECENT_WORKER_HEALTH_RUN_LIMIT = 20;
+const WORKER_HEALTH_CACHE_TTL_SECONDS = 120;
+const DEFAULT_WORKER_HEALTH_FETCH_CONCURRENCY = 10;
 const WORKER_TARGET_CACHE_TTL_SECONDS = 900;
 const WORKER_TARGET_BATCH_SIZE = 50;
 const AUTOMERGE_CACHE_TTL_SECONDS = 300;
@@ -1040,64 +1049,86 @@ async function statusSnapshot(env) {
     .split(",")
     .map((value) => value.trim())
     .filter(Boolean);
-  const budget = numberFrom(env.WORKER_BUDGET, 64);
-  const [runs, filteredActiveRuns] = await Promise.all([
+  const budget = numberFrom(env.WORKER_BUDGET, 128);
+  const [runs, completedRuns, filteredActiveRuns] = await Promise.all([
     githubJson(env, `/repos/${repo}/actions/runs?per_page=100`).catch((error) => {
       errors.push(`workflow runs: ${error.message}`);
+      return null;
+    }),
+    githubJson(env, `/repos/${repo}/actions/runs?status=completed&per_page=100`).catch((error) => {
+      errors.push(`workflow runs completed: ${error.message}`);
       return null;
     }),
     activeWorkflowRuns(env, repo, errors),
   ]);
   const workflowRuns = Array.isArray(runs?.workflow_runs) ? runs.workflow_runs : [];
+  const completedWorkflowRuns = uniqueWorkflowRuns([
+    ...(Array.isArray(completedRuns?.workflow_runs) ? completedRuns.workflow_runs : []),
+    ...workflowRuns.filter((run) => run.status === "completed"),
+  ]).sort(newestWorkflowRunFirst);
   const activeRuns = uniqueWorkflowRuns([
     ...filteredActiveRuns,
     ...workflowRuns.filter((run) => isActiveWorkflowRun(run)),
   ]).sort(newestWorkflowRunFirst);
   const workerRuns = activeRuns.filter((run) => !isSupportWorkflowRun(run));
   const supportRuns = activeRuns.filter((run) => isSupportWorkflowRun(run));
-  const failedRuns = workflowRuns.filter(
-    (run) => run.status === "completed" && TERMINAL_BAD_CONCLUSIONS.has(String(run.conclusion)),
+  const failedRuns = completedWorkflowRuns.filter(
+    (run) =>
+      run.status === "completed" &&
+      !isSupportWorkflowRun(run) &&
+      codexJobName(`${run.name || ""} ${run.display_title || ""}`) &&
+      TERMINAL_BAD_CONCLUSIONS.has(String(run.conclusion)),
   );
   const activeJobs = await activeWorkerSnapshot(env, repo, workerRuns);
-  const [pipeline, clusterRepair, automerge, closed, storedEvents] = await Promise.all([
-    withTimeout(
-      pipelineItems(env, workerRuns.slice(0, 30)),
-      OPTIONAL_SECTION_TIMEOUT_MS,
-      "pipeline",
-    ).catch((error) => {
-      errors.push(error.message);
-      return workerRuns.slice(0, 30).map((run) => classifyRun(run));
-    }),
-    withTimeout(
-      clusterRepairStatus(env, repo, targetRepos, activeRuns),
-      OPTIONAL_SECTION_TIMEOUT_MS,
-      "cluster repair intake",
-    ).catch((error) => {
-      errors.push(error.message);
-      return emptyClusterRepairStatus(targetRepos);
-    }),
-    withTimeout(
-      recentAutomerge(env, targetRepos[0] || "openclaw/openclaw"),
-      OPTIONAL_SECTION_TIMEOUT_MS,
-      "automerge timing",
-    ).catch((error) => {
-      errors.push(error.message);
-      return { average_ms: null, samples: 0, items: [] };
-    }),
-    withTimeout(
-      recentClawsweeperClosed(env, targetRepos),
-      OPTIONAL_SECTION_TIMEOUT_MS,
-      "recent closed",
-    ).catch((error) => {
-      errors.push(error.message);
-      return { items: [], stats: emptyClosedStats(generatedAt) };
-    }),
-    readEvents(env).catch((error) => {
-      errors.push(`events: ${error.message}`);
-      return [];
-    }),
-  ]);
+  const [workerHealth, pipeline, clusterRepair, automerge, closed, storedEvents] =
+    await Promise.all([
+      withTimeout(
+        recentWorkerHealth(env, repo, completedWorkflowRuns),
+        OPTIONAL_SECTION_TIMEOUT_MS * 2,
+        "worker health",
+      ).catch((error) => {
+        errors.push(error.message);
+        return emptyWorkerHealth(generatedAt);
+      }),
+      withTimeout(
+        pipelineItems(env, workerRuns.slice(0, 30)),
+        OPTIONAL_SECTION_TIMEOUT_MS,
+        "pipeline",
+      ).catch((error) => {
+        errors.push(error.message);
+        return workerRuns.slice(0, 30).map((run) => classifyRun(run));
+      }),
+      withTimeout(
+        clusterRepairStatus(env, repo, targetRepos, activeRuns),
+        OPTIONAL_SECTION_TIMEOUT_MS,
+        "cluster repair intake",
+      ).catch((error) => {
+        errors.push(error.message);
+        return emptyClusterRepairStatus(targetRepos);
+      }),
+      withTimeout(
+        recentAutomerge(env, targetRepos[0] || "openclaw/openclaw"),
+        OPTIONAL_SECTION_TIMEOUT_MS,
+        "automerge timing",
+      ).catch((error) => {
+        errors.push(error.message);
+        return { average_ms: null, samples: 0, items: [] };
+      }),
+      withTimeout(
+        recentClawsweeperClosed(env, targetRepos),
+        OPTIONAL_SECTION_TIMEOUT_MS,
+        "recent closed",
+      ).catch((error) => {
+        errors.push(error.message);
+        return { items: [], stats: emptyClosedStats(generatedAt) };
+      }),
+      readEvents(env).catch((error) => {
+        errors.push(`events: ${error.message}`);
+        return [];
+      }),
+    ]);
   errors.push(...activeJobs.errors);
+  errors.push(...workerHealth.errors);
 
   const snapshot = {
     schema_version: 1,
@@ -1119,6 +1150,7 @@ async function statusSnapshot(env) {
       worker_detail_runs: activeJobs.detailRuns,
       worker_detail_fallbacks: activeJobs.fallbacks,
     },
+    health: workerHealth,
     averages: {
       automerge_command_to_merge_ms: automerge.average_ms,
       automerge_samples: automerge.samples,
@@ -2069,6 +2101,154 @@ async function activeWorkerSnapshot(env, repo, runs) {
   };
 }
 
+async function recentWorkerHealth(env, repo, runs: WorkflowRunSummary[]) {
+  const cacheKey = `worker-health:v1:${String(repo || "").toLowerCase()}`;
+  const cached = await readStoredJson(env, cacheKey);
+  if (cached) return cached;
+
+  const completedRuns = runs
+    .filter(
+      (run) =>
+        run.status === "completed" &&
+        !isSupportWorkflowRun(run) &&
+        codexJobName(`${run.name || ""} ${run.display_title || ""}`),
+    )
+    .sort(newestWorkflowRunFirst)
+    .slice(0, RECENT_WORKER_HEALTH_RUN_LIMIT);
+  const fetchConcurrency = Math.max(
+    1,
+    Math.floor(
+      numberFrom(env.WORKER_HEALTH_FETCH_CONCURRENCY, DEFAULT_WORKER_HEALTH_FETCH_CONCURRENCY),
+    ),
+  );
+  const results = await mapWithConcurrency(completedRuns, fetchConcurrency, async (run) => {
+    try {
+      return {
+        attempts: (await workflowJobsForRun(env, repo, run.id))
+          .filter((job) => isCodexWorkerJob(job))
+          .map((job) => workerHealthAttempt(run, job))
+          .filter(Boolean),
+        error: null,
+      };
+    } catch (error) {
+      return {
+        attempts: [],
+        error: `worker health run ${run.id}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      };
+    }
+  });
+  const attempts = results.flatMap((result) => result.attempts);
+  const successfulByKey = new Map();
+  for (const attempt of attempts) {
+    if (attempt.outcome !== "success") continue;
+    const timestamp = Date.parse(attempt.started_at || "");
+    const previous = successfulByKey.get(attempt.key) || 0;
+    if (Number.isFinite(timestamp) && timestamp > previous) {
+      successfulByKey.set(attempt.key, timestamp);
+    }
+  }
+  const failures = attempts
+    .filter((attempt) => attempt.outcome === "failure")
+    .map((attempt) => {
+      const successAt = successfulByKey.get(attempt.key) || 0;
+      const failedAt = Date.parse(attempt.started_at || "");
+      return {
+        ...attempt,
+        recovered: Number.isFinite(failedAt) && successAt > failedAt,
+      };
+    })
+    .sort((left, right) => Date.parse(right.started_at || "") - Date.parse(left.started_at || ""));
+  const successfulAttempts = attempts.filter((attempt) => attempt.outcome === "success").length;
+  const cancelledAttempts = attempts.filter((attempt) => attempt.outcome === "cancelled").length;
+  const measuredAttempts = successfulAttempts + failures.length;
+  const recoveredFailures = failures.filter((failure) => failure.recovered).length;
+  const health = {
+    sampled_runs: completedRuns.length,
+    attempts: measuredAttempts,
+    successful_attempts: successfulAttempts,
+    failed_attempts: failures.length,
+    cancelled_attempts: cancelledAttempts,
+    recovered_failures: recoveredFailures,
+    unresolved_failures: failures.length - recoveredFailures,
+    error_rate_percent: ratePercent(failures.length, measuredAttempts),
+    recovery_rate_percent: failures.length ? ratePercent(recoveredFailures, failures.length) : null,
+    failures: failures.slice(0, 10),
+    errors: results.flatMap((result) => (result.error ? [result.error] : [])).slice(0, 10),
+    updated_at: new Date().toISOString(),
+  };
+  await writeStoredJson(
+    env,
+    cacheKey,
+    health,
+    numberFrom(env.WORKER_HEALTH_CACHE_TTL_SECONDS, WORKER_HEALTH_CACHE_TTL_SECONDS),
+  );
+  return health;
+}
+
+function emptyWorkerHealth(updatedAt) {
+  return {
+    sampled_runs: 0,
+    attempts: 0,
+    successful_attempts: 0,
+    failed_attempts: 0,
+    cancelled_attempts: 0,
+    recovered_failures: 0,
+    unresolved_failures: 0,
+    error_rate_percent: 0,
+    recovery_rate_percent: null,
+    failures: [],
+    errors: [],
+    updated_at: updatedAt,
+  };
+}
+
+function workerHealthAttempt(run, job) {
+  if (String(job?.status || "") !== "completed") return null;
+  const runItem = classifyRun(run);
+  const target = workerTargetFromJob(runItem, job?.name);
+  const steps = Array.isArray(job?.steps) ? job.steps : [];
+  const failedStep = steps.find((step) =>
+    TERMINAL_BAD_CONCLUSIONS.has(String(step?.conclusion || "")),
+  );
+  const conclusion = String(failedStep?.conclusion || job?.conclusion || "");
+  const outcome =
+    conclusion === "cancelled"
+      ? "cancelled"
+      : failedStep || TERMINAL_BAD_CONCLUSIONS.has(conclusion)
+        ? "failure"
+        : conclusion === "success" || conclusion === "neutral"
+          ? "success"
+          : null;
+  if (!outcome) return null;
+  const itemNumbers = [...target.itemNumbers].sort((left, right) => left - right);
+  const targetKey =
+    target.repository && itemNumbers.length
+      ? `${String(target.repository).toLowerCase()}#${itemNumbers.join(",")}`
+      : `${String(run.name || "").toLowerCase()}|${String(run.display_title || job?.name || "")
+          .toLowerCase()
+          .replace(/\[clawsweeper-recovery-attempt=\d+\]/g, "")
+          .replace(/\s+/g, " ")
+          .trim()}`;
+  return {
+    key: targetKey,
+    outcome,
+    workflow_title: runItem.title,
+    job_name: String(job?.name || runItem.title || "Codex worker"),
+    repository: target.repository,
+    item_numbers: itemNumbers,
+    conclusion: conclusion || null,
+    failed_step: failedStep ? String(failedStep.name || "Unknown step") : null,
+    url: job?.html_url || run.html_url,
+    started_at: job?.started_at || run.created_at || null,
+  };
+}
+
+function ratePercent(numerator, denominator) {
+  return denominator > 0 ? Math.round((numerator / denominator) * 1000) / 10 : 0;
+}
+
 async function attachWorkerTargets(env, workers, errors) {
   const references = new Map();
   for (const worker of workers) {
@@ -2215,11 +2395,22 @@ async function workflowJobsForRun(env, repo, runId) {
   const key = `workflow-jobs:${repo}:${runId}`;
   const cached = await readStoredJson(env, key);
   if (Array.isArray(cached)) return cached;
-  const payload = await githubJson(
-    env,
-    `/repos/${repo}/actions/runs/${runId}/jobs?filter=latest&per_page=100`,
-  );
-  const jobs = Array.isArray(payload?.jobs) ? payload.jobs : [];
+  const jobs = [];
+  for (let page = 1; page <= WORKER_JOB_PAGE_LIMIT; page += 1) {
+    const payload = await githubJson(
+      env,
+      `/repos/${repo}/actions/runs/${runId}/jobs?filter=latest&per_page=100&page=${page}`,
+    );
+    const pageJobs = Array.isArray(payload?.jobs) ? payload.jobs : [];
+    jobs.push(...pageJobs);
+    const totalCount = Number(payload?.total_count);
+    if (
+      pageJobs.length < 100 ||
+      (Number.isFinite(totalCount) && totalCount >= 0 && jobs.length >= totalCount)
+    ) {
+      break;
+    }
+  }
   const hasActiveWorker = jobs.some((job) => isActiveWorkflowJob(job) && isCodexWorkerJob(job));
   await writeStoredJson(
     env,
@@ -4981,6 +5172,8 @@ a:hover { color: #89c8ff; text-decoration: underline; }
       <h2>✅ Closed by ClawSweeper</h2>
       <div id="closed-stats"></div>
       <div id="closed"></div>
+      <h2>🩺 Worker Health</h2>
+      <div id="worker-health"></div>
       <h2>🧭 Operations</h2>
       <div id="operations"></div>
       <h2>📡 Recent Activity</h2>
@@ -5246,8 +5439,8 @@ function renderDashboard(data, note) {
     metric("🦾 Claw Workers", fmt.format(fleet.active_codex_jobs), "budget " + fleet.worker_budget, fleet.budget_used_percent, "var(--green)"),
     metric("🌊 Active Sweeps", fmt.format(fleet.active_workflow_runs), "support " + fmt.format(fleet.support_workflow_runs || 0), Math.min(100, fleet.active_workflow_runs * 3), "var(--blue)"),
     metric("⏳ Queue Depth", fmt.format(fleet.queued_workflow_runs), "support queue " + fmt.format(fleet.support_queued_workflow_runs || 0), Math.min(100, fleet.queued_workflow_runs * 10), "var(--amber)"),
-    metric("💥 Recent Snags", fmt.format(fleet.failed_recent_runs), "last page", Math.min(100, fleet.failed_recent_runs * 15), fleet.failed_recent_runs ? "var(--red)" : "var(--green)"),
-    metric("⚡ Merge Speed", data.averages.automerge_command_to_merge_ms ? elapsed(data.averages.automerge_command_to_merge_ms) : "n/a", data.averages.automerge_samples + " samples", 60, "var(--violet)"),
+    metric("💥 Error Rate", (data.health?.error_rate_percent || 0) + "%", fmt.format(data.health?.failed_attempts || 0) + " failed / " + fmt.format(data.health?.attempts || 0) + " attempts", Math.min(100, data.health?.error_rate_percent || 0), data.health?.failed_attempts ? "var(--red)" : "var(--green)"),
+    metric("🛟 Recovery Rate", data.health?.recovery_rate_percent == null ? "n/a" : data.health.recovery_rate_percent + "%", fmt.format(data.health?.unresolved_failures || 0) + " unresolved", data.health?.recovery_rate_percent == null ? 100 : data.health.recovery_rate_percent, data.health?.unresolved_failures ? "var(--amber)" : "var(--green)"),
     metric("🎯 Capacity", fleet.budget_used_percent + "%", "fleet utilization", fleet.budget_used_percent, "var(--green)")
   ].join("");
   renderSystemMap(data);
@@ -5258,6 +5451,7 @@ function renderDashboard(data, note) {
   renderAutomerge(data.recent.automerge || []);
   renderClosedStats(data.recent.closed_stats);
   renderClosedItems(data.recent.closed_items || []);
+  renderWorkerHealth(data.health);
   renderOperations(data.recent.operation_counts);
   renderEvents(data.recent.events || []);
 }
@@ -5310,6 +5504,12 @@ function renderClosedItems(rows) {
 function renderClosedStats(stats) {
   const safe = stats || { total: 0, issues: 0, prs: 0, window_hours: 24 };
   document.getElementById("closed-stats").innerHTML = '<div class="closed-stats"><div class="closed-stat"><span>' + esc((safe.window_hours || 24) + "h total") + '</span><strong>' + fmt.format(safe.total || 0) + '</strong></div><div class="closed-stat"><span>Issues</span><strong>' + fmt.format(safe.issues || 0) + '</strong></div><div class="closed-stat"><span>PRs</span><strong>' + fmt.format(safe.prs || 0) + '</strong></div></div>';
+}
+function renderWorkerHealth(health) {
+  const safe = health || { attempts: 0, failed_attempts: 0, recovered_failures: 0, unresolved_failures: 0, failures: [] };
+  const stats = '<div class="closed-stats"><div class="closed-stat"><span>Attempts sampled</span><strong>' + fmt.format(safe.attempts || 0) + '</strong></div><div class="closed-stat"><span>Failed attempts</span><strong>' + fmt.format(safe.failed_attempts || 0) + '</strong></div><div class="closed-stat"><span>Recovered</span><strong>' + fmt.format(safe.recovered_failures || 0) + '</strong></div></div>';
+  const rows = (safe.failures || []).map(failure => '<article class="side-row"><div class="side-main">' + linkClass(failure.url, compactText(failure.workflow_title || failure.job_name), "item-link") + '<div class="muted side-title">' + esc(failure.failed_step || failure.conclusion || "worker failure") + '</div></div><div class="side-meta"><span class="pill ' + (failure.recovered ? "" : "red") + '">' + (failure.recovered ? "recovered" : "unresolved") + '</span><span>' + esc(failure.started_at ? since(failure.started_at) : "") + '</span></div></article>').join("");
+  document.getElementById("worker-health").innerHTML = stats + (rows ? '<div class="side-list">' + rows + '</div>' : '<div class="empty">No worker failures in the recent sample.</div>');
 }
 function renderOperations(counts) {
   const safe = counts || {};

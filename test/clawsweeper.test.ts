@@ -17933,6 +17933,7 @@ test("review capacity probes use REST actions run listing", () => {
   for (const block of [sweepBlock, commitBlock]) {
     assert.match(block, /active_runs_json\(\)/);
     assert.match(block, /actions\/runs\?per_page=100/);
+    assert.match(block, /--paginate/);
     assert.match(block, /status=\$\{run_status\}/);
     assert.match(block, /workflowName:\.name/);
     assert.match(block, /displayTitle:\.display_title/);
@@ -18461,8 +18462,8 @@ test("sweep failed-review retry lane defaults to dry-run exact-item dispatch", (
     workflow.indexOf("\n    runs-on:", workflow.indexOf("\n  plan:")),
   );
 
-  assert.match(workflow, /cron: "13 8,20 \* \* \*"/);
-  assert.match(planHeader, /github\.event\.schedule == '13 8,20 \* \* \*'/);
+  assert.match(workflow, /cron: "13 \* \* \* \*"/);
+  assert.match(planHeader, /github\.event\.schedule == '13 \* \* \* \*'/);
   assert.match(retryBlock, /pnpm run retry-failed-reviews --/);
   assert.match(
     retryBlock,

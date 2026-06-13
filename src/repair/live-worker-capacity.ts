@@ -15,6 +15,8 @@ const DEFAULT_STALE_QUEUED_WORKFLOW_MS = 6 * 60 * 60 * 1000;
 const ACTIVE_WORKFLOW_STATUSES = ["queued", "in_progress", "waiting", "requested", "pending"];
 const ACTIVE_WORKFLOW_STATUS_SET = new Set(ACTIVE_WORKFLOW_STATUSES);
 const QUEUED_WORKFLOW_STATUS_SET = new Set(["queued", "waiting", "requested", "pending"]);
+const WORKFLOW_RUN_PAGE_SIZE = 100;
+const ACTIVE_WORKFLOW_RUN_PAGE_LIMIT = Math.ceil(MAX_LIVE_WORKERS / WORKFLOW_RUN_PAGE_SIZE) + 1;
 
 export function readMaxLiveWorkers(args: LooseRecord = {}) {
   return readMaxLiveWorkerLimit(
@@ -138,20 +140,27 @@ export function listActiveWorkflowRuns({
     );
 }
 
-function fetchRecentWorkflowRuns({ repo, workflow, env }: LooseRecord) {
+export function fetchRecentWorkflowRuns({ repo, workflow, env, fetchPage = ghJson }: LooseRecord) {
+  const fetchRunsPage = typeof fetchPage === "function" ? fetchPage : ghJson;
   return ACTIVE_WORKFLOW_STATUSES.flatMap((status) => {
-    const runs = ghJson(
-      [
-        "api",
-        "--method",
-        "GET",
-        `repos/${repo}/actions/workflows/${encodeURIComponent(workflow)}/runs?per_page=100&status=${encodeURIComponent(status)}`,
-        "--jq",
-        ".workflow_runs",
-      ],
-      env ? { env } : {},
-    );
-    return Array.isArray(runs) ? runs : [];
+    const statusRuns = [];
+    for (let page = 1; page <= ACTIVE_WORKFLOW_RUN_PAGE_LIMIT; page += 1) {
+      const runs = fetchRunsPage(
+        [
+          "api",
+          "--method",
+          "GET",
+          `repos/${repo}/actions/workflows/${encodeURIComponent(workflow)}/runs?per_page=${WORKFLOW_RUN_PAGE_SIZE}&status=${encodeURIComponent(status)}&page=${page}`,
+          "--jq",
+          ".workflow_runs",
+        ],
+        env ? { env } : {},
+      );
+      if (!Array.isArray(runs)) break;
+      statusRuns.push(...runs);
+      if (runs.length < WORKFLOW_RUN_PAGE_SIZE) break;
+    }
+    return statusRuns;
   });
 }
 

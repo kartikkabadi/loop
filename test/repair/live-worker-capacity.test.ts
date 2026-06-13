@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   MAX_LIVE_WORKERS,
   activeRepairWorkflowRunForJobAfterDispatchRecheck,
+  fetchRecentWorkflowRuns,
   listActiveWorkflowRuns,
   normalizeWorkflowRun,
   readMaxLiveWorkers,
@@ -12,13 +13,13 @@ import {
 } from "../../dist/repair/live-worker-capacity.js";
 
 test("live worker capacity refuses limits above the global Codex cap", () => {
-  assert.equal(MAX_LIVE_WORKERS, 64);
-  assert.equal(readMaxLiveWorkers(), 25);
+  assert.equal(MAX_LIVE_WORKERS, 128);
+  assert.equal(readMaxLiveWorkers(), 51);
   assert.equal(readMaxLiveWorkers({ "max-live-workers": "1" }), 1);
-  assert.equal(readMaxLiveWorkers({ "max-live-workers": "25" }), 25);
+  assert.equal(readMaxLiveWorkers({ "max-live-workers": "51" }), 51);
   assert.throws(
-    () => readMaxLiveWorkers({ "max-live-workers": "65" }),
-    /max-live-workers must be <= 64/,
+    () => readMaxLiveWorkers({ "max-live-workers": "129" }),
+    /max-live-workers must be <= 128/,
   );
 });
 
@@ -65,6 +66,48 @@ test("workflow run normalization prefers the human Actions URL", () => {
   );
   assert.equal(run.url, "https://github.com/openclaw/clawsweeper/actions/runs/123");
   assert.equal(run.updatedAt, null);
+});
+
+test("active workflow run fetch paginates beyond the first 100 runs", () => {
+  const calls = [];
+  const runs = fetchRecentWorkflowRuns({
+    repo: "openclaw/clawsweeper",
+    workflow: "repair-cluster.yml",
+    fetchPage: (args) => {
+      const path = args[3];
+      const query = new URL(`https://github.test/${path}`).searchParams;
+      const status = query.get("status");
+      const page = Number(query.get("page"));
+      calls.push({ status, page });
+      if (status !== "in_progress") return [];
+      if (page === 1) {
+        return Array.from({ length: 100 }, (_, index) => ({
+          id: index + 1,
+          status,
+        }));
+      }
+      if (page === 2) {
+        return Array.from({ length: 40 }, (_, index) => ({
+          id: index + 101,
+          status,
+        }));
+      }
+      return [];
+    },
+  });
+
+  assert.equal(runs.length, 140);
+  assert.deepEqual(
+    calls.filter((call) => call.status === "in_progress"),
+    [
+      { status: "in_progress", page: 1 },
+      { status: "in_progress", page: 2 },
+    ],
+  );
+  assert.equal(
+    calls.filter((call) => call.status !== "in_progress").every((call) => call.page === 1),
+    true,
+  );
 });
 
 test("active workflow runs are filtered from one recent-runs fetch", () => {

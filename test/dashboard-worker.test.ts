@@ -32,6 +32,19 @@ function isoAgo(ms: number) {
   return new Date(Date.now() - ms).toISOString();
 }
 
+function completedReviewRun(id: number, itemNumber: number, conclusion: string, ageMs: number) {
+  return {
+    id,
+    name: "Review ClawSweeper items",
+    display_title: `Review event item openclaw/openclaw#${itemNumber}`,
+    status: "completed",
+    conclusion,
+    html_url: `https://github.com/openclaw/clawsweeper/actions/runs/${id}`,
+    created_at: isoAgo(ageMs),
+    updated_at: isoAgo(Math.max(0, ageMs - 10_000)),
+  };
+}
+
 test("dashboard classifies issue conversion and PR repair workers", () => {
   assert.equal(
     workerWorkKind(
@@ -60,8 +73,8 @@ test("dashboard HTML preserves UTF-8 emoji labels", async () => {
   assert.match(html, /🦾 Claw Workers/);
   assert.match(html, /🌊 Active Sweeps/);
   assert.match(html, /⏳ Queue Depth/);
-  assert.match(html, /💥 Recent Snags/);
-  assert.match(html, /⚡ Merge Speed/);
+  assert.match(html, /💥 Error Rate/);
+  assert.match(html, /🛟 Recovery Rate/);
   assert.match(html, /🎯 Capacity/);
   assert.match(html, /Live terminals/);
   assert.match(html, /href="https:\/\/fleet\.example\.test\/terminal\?view=live&amp;mode=all"/);
@@ -75,6 +88,7 @@ test("dashboard HTML preserves UTF-8 emoji labels", async () => {
   assert.match(html, /🔎 Cluster Intake/);
   assert.match(html, /🌀 Active Pipeline/);
   assert.match(html, /✅ Closed by ClawSweeper/);
+  assert.match(html, /🩺 Worker Health/);
   assert.match(html, /📡 Recent Activity/);
   assert.doesNotMatch(html, /ðŸ|â|âš|âœ/);
 });
@@ -374,6 +388,206 @@ test("dashboard bounds worker job detail request concurrency", async () => {
     assert.equal(maxActiveJobRequests, 3);
     assert.equal(pipelineRequestsWhileJobsActive, 0);
     assert.deepEqual(status.diagnostics.errors, []);
+  } finally {
+    globalThis.fetch = originalFetch;
+    Object.defineProperty(globalThis, "caches", { configurable: true, value: originalCaches });
+  }
+});
+
+test("dashboard paginates worker jobs beyond GitHub's first page", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalCaches = globalThis.caches;
+  Object.defineProperty(globalThis, "caches", {
+    configurable: true,
+    value: {
+      default: new MemoryCache(),
+    },
+  });
+  const run = {
+    id: 500,
+    name: "Review ClawSweeper items",
+    display_title: "Review event item openclaw/openclaw#500",
+    status: "in_progress",
+    conclusion: null,
+    html_url: "https://github.com/openclaw/clawsweeper/actions/runs/500",
+    created_at: isoAgo(60_000),
+    updated_at: isoAgo(5_000),
+  };
+  const requestedPages = [];
+  globalThis.fetch = async (input) => {
+    const url = new URL(String(input));
+    if (url.pathname === "/repos/openclaw/clawsweeper/actions/runs") {
+      const status = url.searchParams.get("status");
+      return jsonResponse({
+        workflow_runs: !status || status === "in_progress" ? [run] : [],
+      });
+    }
+    if (url.pathname === "/repos/openclaw/clawsweeper/actions/runs/500/jobs") {
+      const page = Number(url.searchParams.get("page") || "1");
+      requestedPages.push(page);
+      const count = page === 1 ? 100 : 28;
+      const offset = page === 1 ? 0 : 100;
+      return jsonResponse({
+        total_count: 128,
+        jobs: Array.from({ length: count }, (_, index) => ({
+          id: 500_000 + offset + index,
+          name: `Review shard ${offset + index}`,
+          status: "in_progress",
+          conclusion: null,
+          html_url: `https://github.com/openclaw/clawsweeper/actions/runs/500/job/${
+            500_000 + offset + index
+          }`,
+          started_at: isoAgo(30_000),
+          steps: [
+            {
+              number: 1,
+              name: "Run ./clawsweeper/.github/actions/setup-codex",
+              status: "completed",
+              conclusion: "success",
+            },
+            {
+              number: 2,
+              name: "Review shard",
+              status: "in_progress",
+              conclusion: null,
+            },
+          ],
+        })),
+      });
+    }
+    if (
+      url.pathname ===
+      "/repos/openclaw/clawsweeper/actions/workflows/repair-cluster-intake.yml/runs"
+    ) {
+      return jsonResponse({ workflow_runs: [] });
+    }
+    if (url.pathname === "/search/issues") return jsonResponse({ items: [] });
+    if (url.pathname === "/repos/openclaw/openclaw/issues") return jsonResponse([]);
+    throw new Error(`unexpected fetch ${url}`);
+  };
+
+  try {
+    const response = await worker.fetch(
+      new Request("https://clawsweeper.openclaw.ai/api/status"),
+      {
+        CLAWSWEEPER_REPO: "openclaw/clawsweeper",
+        TARGET_REPOS: "openclaw/openclaw",
+        CACHE_TTL_SECONDS: "0",
+      },
+      { waitUntil: () => undefined },
+    );
+    const status = await response.json();
+    assert.equal(status.fleet.active_codex_jobs, 128);
+    assert.equal(status.workers.length, 128);
+    assert.deepEqual(requestedPages, [1, 2]);
+  } finally {
+    globalThis.fetch = originalFetch;
+    Object.defineProperty(globalThis, "caches", { configurable: true, value: originalCaches });
+  }
+});
+
+test("dashboard reports worker error and recovery rates from completed job steps", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalCaches = globalThis.caches;
+  Object.defineProperty(globalThis, "caches", {
+    configurable: true,
+    value: {
+      default: new MemoryCache(),
+    },
+  });
+  const runs = [
+    completedReviewRun(4, 300, "success", 60_000),
+    completedReviewRun(3, 200, "success", 120_000),
+    completedReviewRun(2, 100, "success", 180_000),
+    completedReviewRun(1, 100, "success", 240_000),
+  ];
+  let jobRequests = 0;
+  globalThis.fetch = async (input) => {
+    const url = new URL(String(input));
+    if (url.pathname === "/repos/openclaw/clawsweeper/actions/runs") {
+      return jsonResponse({
+        workflow_runs:
+          url.searchParams.get("status") === "completed"
+            ? runs
+            : url.searchParams.has("status")
+              ? []
+              : runs,
+      });
+    }
+    const jobMatch = url.pathname.match(
+      /^\/repos\/openclaw\/clawsweeper\/actions\/runs\/(\d+)\/jobs$/,
+    );
+    if (jobMatch) {
+      jobRequests += 1;
+      const runId = Number(jobMatch[1]);
+      const itemNumber = runId === 1 || runId === 2 ? 100 : runId === 3 ? 200 : 300;
+      const failed = runId === 1 || runId === 3;
+      return jsonResponse({
+        jobs: [
+          {
+            id: runId * 10,
+            name: `Review shard 0 · openclaw/openclaw#${itemNumber}`,
+            status: "completed",
+            conclusion: "success",
+            html_url: `https://github.com/openclaw/clawsweeper/actions/runs/${runId}/job/${
+              runId * 10
+            }`,
+            started_at: runs.find((run) => run.id === runId)?.created_at,
+            steps: [
+              {
+                number: 1,
+                name: "Run ./clawsweeper/.github/actions/setup-codex",
+                status: "completed",
+                conclusion: "success",
+              },
+              {
+                number: 2,
+                name: "Review shard",
+                status: "completed",
+                conclusion: failed ? "failure" : "success",
+              },
+            ],
+          },
+        ],
+      });
+    }
+    if (
+      url.pathname ===
+      "/repos/openclaw/clawsweeper/actions/workflows/repair-cluster-intake.yml/runs"
+    ) {
+      return jsonResponse({ workflow_runs: [] });
+    }
+    if (url.pathname === "/search/issues") return jsonResponse({ items: [] });
+    if (url.pathname === "/repos/openclaw/openclaw/issues") return jsonResponse([]);
+    throw new Error(`unexpected fetch ${url}`);
+  };
+
+  try {
+    const env = {
+      CLAWSWEEPER_REPO: "openclaw/clawsweeper",
+      TARGET_REPOS: "openclaw/openclaw",
+      CACHE_TTL_SECONDS: "0",
+      STATUS_STORE: new MemoryKv(),
+    };
+    const response = await worker.fetch(
+      new Request("https://clawsweeper.openclaw.ai/api/status"),
+      env,
+      { waitUntil: () => undefined },
+    );
+    const status = await response.json();
+    assert.equal(status.health.attempts, 4);
+    assert.equal(status.health.successful_attempts, 2);
+    assert.equal(status.health.failed_attempts, 2);
+    assert.equal(status.health.recovered_failures, 1);
+    assert.equal(status.health.unresolved_failures, 1);
+    assert.equal(status.health.error_rate_percent, 50);
+    assert.equal(status.health.recovery_rate_percent, 50);
+    assert.equal(status.health.failures[0].item_numbers[0], 200);
+    assert.equal(status.health.failures[0].recovered, false);
+    assert.equal(status.health.failures[0].failed_step, "Review shard");
+    assert.equal(status.health.failures[1].item_numbers[0], 100);
+    assert.equal(status.health.failures[1].recovered, true);
+    assert.equal(jobRequests, 4);
   } finally {
     globalThis.fetch = originalFetch;
     Object.defineProperty(globalThis, "caches", { configurable: true, value: originalCaches });
@@ -1132,7 +1346,7 @@ test("dashboard counts active runs that are older than the latest unfiltered pag
     assert.equal(status.fleet.queued_workflow_runs, 1);
     assert.equal(status.fleet.support_workflow_runs, 3);
     assert.equal(status.fleet.support_queued_workflow_runs, 1);
-    assert.equal(status.fleet.worker_budget, 64);
+    assert.equal(status.fleet.worker_budget, 128);
     assert.deepEqual(
       status.pipeline.map((row: { id: number }) => row.id),
       [2, 4, 3],
