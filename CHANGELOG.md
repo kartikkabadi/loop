@@ -70,7 +70,7 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
-- Served stale dashboard status immediately while coalescing a background refresh, and cached and parallelized historical GitHub lookups to reduce cold-load latency and API usage.
+- Served stale dashboard status immediately while coalescing a background refresh, bounded job-detail fanout, and cached and parallelized historical GitHub lookups to reduce cold-load latency, diagnostic timeouts, and API usage.
 - Preserved records written by concurrent workers during generated-state publish races while retaining deliberate item-to-closed moves and plan cleanup.
 - Raised and unified Codex review timeouts at 20 minutes, including exact event reviews, so high-context reviews do not fall back at the previous 10-minute ceiling.
 - Deferred workflow utility CLI execution until module initialization completes, preventing apply preselection from crashing on close-action constants.

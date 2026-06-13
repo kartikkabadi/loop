@@ -270,6 +270,105 @@ test("dashboard exposes active worker jobs and their current steps", async () =>
   }
 });
 
+test("dashboard bounds worker job detail request concurrency", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalCaches = globalThis.caches;
+  Object.defineProperty(globalThis, "caches", {
+    configurable: true,
+    value: {
+      default: new MemoryCache(),
+    },
+  });
+  const runs = Array.from({ length: 12 }, (_, index) => ({
+    id: 1000 + index,
+    name: "Review ClawSweeper items",
+    display_title: `Review shard batch ${index}`,
+    status: "in_progress",
+    conclusion: null,
+    html_url: `https://github.com/openclaw/clawsweeper/actions/runs/${1000 + index}`,
+    created_at: isoAgo((index + 1) * 1000),
+    updated_at: isoAgo(1000),
+  }));
+  let activeJobRequests = 0;
+  let maxActiveJobRequests = 0;
+  globalThis.fetch = async (input) => {
+    const url = new URL(String(input));
+    if (url.pathname === "/repos/openclaw/clawsweeper/actions/runs") {
+      const status = url.searchParams.get("status");
+      return jsonResponse({ workflow_runs: !status || status === "in_progress" ? runs : [] });
+    }
+    if (/^\/repos\/openclaw\/clawsweeper\/actions\/runs\/\d+\/jobs$/.test(url.pathname)) {
+      const runId = Number(url.pathname.split("/").at(-2));
+      activeJobRequests += 1;
+      maxActiveJobRequests = Math.max(maxActiveJobRequests, activeJobRequests);
+      await new Promise((resolve) => setTimeout(resolve, 5));
+      activeJobRequests -= 1;
+      return jsonResponse({
+        jobs: [
+          {
+            id: runId * 10,
+            name: `Review shard ${runId}`,
+            status: "in_progress",
+            conclusion: null,
+            html_url: `https://github.com/openclaw/clawsweeper/actions/runs/${runId}/job/${
+              runId * 10
+            }`,
+            started_at: isoAgo(1000),
+            steps: [
+              {
+                number: 1,
+                name: "Run ./clawsweeper/.github/actions/setup-codex",
+                status: "completed",
+                conclusion: "success",
+              },
+              {
+                number: 2,
+                name: "Review shard",
+                status: "in_progress",
+                conclusion: null,
+              },
+            ],
+          },
+        ],
+      });
+    }
+    if (
+      url.pathname ===
+      "/repos/openclaw/clawsweeper/actions/workflows/repair-cluster-intake.yml/runs"
+    ) {
+      return jsonResponse({ workflow_runs: [] });
+    }
+    if (url.pathname === "/search/issues") return jsonResponse({ items: [] });
+    if (url.pathname === "/repos/openclaw/openclaw/issues") return jsonResponse([]);
+    throw new Error(`unexpected fetch ${url}`);
+  };
+
+  try {
+    const response = await worker.fetch(
+      new Request("https://clawsweeper.openclaw.ai/api/status"),
+      {
+        CLAWSWEEPER_REPO: "openclaw/clawsweeper",
+        TARGET_REPOS: "openclaw/openclaw",
+        WORKER_DETAIL_RUN_LIMIT: "12",
+        WORKER_JOB_FETCH_CONCURRENCY: "3",
+        CACHE_TTL_SECONDS: "0",
+      },
+      {
+        waitUntil: () => undefined,
+      },
+    );
+    const status = await response.json();
+    assert.equal(response.status, 200);
+    assert.equal(status.workers.length, 12);
+    assert.equal(status.fleet.active_codex_jobs, 12);
+    assert.equal(maxActiveJobRequests, 3);
+    assert.deepEqual(status.diagnostics.errors, []);
+  } finally {
+    globalThis.fetch = originalFetch;
+    Object.defineProperty(globalThis, "caches", { configurable: true, value: originalCaches });
+  }
+});
+
 test("dashboard exposes scheduled cluster intake markers and runs", async () => {
   const originalFetch = globalThis.fetch;
   const originalCaches = globalThis.caches;

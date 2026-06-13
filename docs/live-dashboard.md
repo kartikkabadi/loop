@@ -109,15 +109,17 @@ is absent or a cache event lands in another Cloudflare colo.
 - explicit workflow status events posted to the ingest API when KV ingest is
   enabled
 
-The Worker fetches job details only for the bounded active-run set and caches
-each run's jobs for 60 seconds. If GitHub job telemetry is unavailable, the API
-and UI retain the workflow-level fallback rather than hiding active work.
+The Worker fetches job details only for the bounded active-run set, limits that
+GitHub fanout to 12 concurrent requests, and caches each run's jobs for 60
+seconds. This bounds telemetry pressure without reducing the 64-worker fleet
+budget. If GitHub job telemetry is unavailable, the API and UI retain the
+workflow-level fallback rather than hiding active work.
 
 Status responses use stale-while-revalidate delivery. After the 20-second fresh
 window expires, the Worker immediately returns the last good snapshot, marks it
 with `X-ClawSweeper-Cache: stale`, and coalesces one background refresh per
 isolate. Recent automerge timing is cached for five minutes and recent
-ClawSweeper-owned closes for one minute because those historical sections do
+ClawSweeper-owned closes for five minutes because those historical sections do
 not need worker-step freshness. The deployment smoke output includes cache
 state, fetch time, and current diagnostics.
 

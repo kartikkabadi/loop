@@ -8,6 +8,11 @@ const QUEUED_RUN_STATUSES = new Set(["queued", "waiting", "requested", "pending"
 type DashboardEnv = Record<string, unknown>;
 type DashboardContext = { waitUntil?: (promise: Promise<unknown>) => void };
 type GithubAppJsonOptions = { method?: string; body?: BodyInit; errorLabel?: string };
+type WorkflowRunSummary = {
+  id: number | string;
+  name?: string;
+  display_title?: string;
+};
 
 declare global {
   interface CacheStorage {
@@ -55,10 +60,11 @@ const STALE_CACHE_TTL_SECONDS = 900;
 const CI_STATUS_TTL_SECONDS = 7200;
 const WORKER_JOB_CACHE_TTL_SECONDS = 60;
 const WORKER_JOB_IDLE_CACHE_TTL_SECONDS = 10;
+const DEFAULT_WORKER_JOB_FETCH_CONCURRENCY = 12;
 const WORKER_TARGET_CACHE_TTL_SECONDS = 900;
 const WORKER_TARGET_BATCH_SIZE = 50;
 const AUTOMERGE_CACHE_TTL_SECONDS = 300;
-const RECENT_CLOSED_CACHE_TTL_SECONDS = 60;
+const RECENT_CLOSED_CACHE_TTL_SECONDS = 300;
 const DEFAULT_WORKER_DETAIL_RUN_LIMIT = 32;
 const SUPPORT_WORKFLOW_NAMES = new Set([
   "CI",
@@ -1986,29 +1992,31 @@ async function activeWorkerSnapshot(env, repo, runs) {
     1,
     numberFrom(env.WORKER_DETAIL_RUN_LIMIT, DEFAULT_WORKER_DETAIL_RUN_LIMIT),
   );
-  const detailRuns = runs.slice(0, detailRunLimit);
-  const results = await Promise.all(
-    detailRuns.map(async (run) => {
-      try {
-        const jobs = await workflowJobsForRun(env, repo, run.id);
-        return {
-          run,
-          workers: jobs
-            .filter((job) => isActiveWorkflowJob(job) && isCodexWorkerJob(job))
-            .map((job) => normalizeWorkerJob(run, job)),
-          hasWorkerJobs: jobs.some((job) => isCodexWorkerJob(job)),
-          error: null,
-        };
-      } catch (error) {
-        return {
-          run,
-          workers: [],
-          hasWorkerJobs: false,
-          error: error instanceof Error ? error.message : String(error),
-        };
-      }
-    }),
+  const fetchConcurrency = Math.max(
+    1,
+    Math.floor(numberFrom(env.WORKER_JOB_FETCH_CONCURRENCY, DEFAULT_WORKER_JOB_FETCH_CONCURRENCY)),
   );
+  const detailRuns: WorkflowRunSummary[] = runs.slice(0, detailRunLimit);
+  const results = await mapWithConcurrency(detailRuns, fetchConcurrency, async (run) => {
+    try {
+      const jobs = await workflowJobsForRun(env, repo, run.id);
+      return {
+        run,
+        workers: jobs
+          .filter((job) => isActiveWorkflowJob(job) && isCodexWorkerJob(job))
+          .map((job) => normalizeWorkerJob(run, job)),
+        hasWorkerJobs: jobs.some((job) => isCodexWorkerJob(job)),
+        error: null,
+      };
+    } catch (error) {
+      return {
+        run,
+        workers: [],
+        hasWorkerJobs: false,
+        error: error instanceof Error ? error.message : String(error),
+      };
+    }
+  });
   const workers = [];
   const errors = [];
   let fallbacks = 0;
@@ -2180,6 +2188,27 @@ function chunk(items, size) {
     chunks.push(items.slice(index, index + size));
   }
   return chunks;
+}
+
+async function mapWithConcurrency<Item, Result>(
+  items: Item[],
+  concurrency: number,
+  mapper: (item: Item, index: number) => Promise<Result>,
+): Promise<Result[]> {
+  if (!items.length) return [];
+  const results = Array.from({ length: items.length }) as Result[];
+  let nextIndex = 0;
+  const workerCount = Math.min(items.length, concurrency);
+  await Promise.all(
+    Array.from({ length: workerCount }, async () => {
+      while (nextIndex < items.length) {
+        const index = nextIndex;
+        nextIndex += 1;
+        results[index] = await mapper(items[index], index);
+      }
+    }),
+  );
+  return results;
 }
 
 async function workflowJobsForRun(env, repo, runId) {
