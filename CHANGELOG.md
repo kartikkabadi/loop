@@ -74,7 +74,7 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
-- Correlated active issue-build workers by workflow run when GitHub job titles omit the target, preserved generated PR links on blocked lifecycle cards and issue progress comments, and stopped generic repository repairs from requiring a nonexistent `pnpm check:changed` script.
+- Correlated active issue-build workers by workflow run when GitHub job titles omit the target, preserved source issue titles and generated PR links across repair lifecycle events, and stopped generic repository repairs from requiring a nonexistent `pnpm check:changed` script.
 - Persisted dashboard lifecycle events in a globally consistent Cloudflare Durable Object so automatic issue-build cards remain visible across edge locations, and accepted Ansible plus repository-local shell-script validation commands without permitting inline shell execution.
 - Prevented ClawSweeper-owned advisory labels from invalidating queued issue implementation source revisions, and accepted quoted arguments plus common validation toolchains while blocking shell/eval runners and removing GitHub write credentials from target validation.
 - Skip optional ClawSweeper label additions when an issue or pull request already has GitHub's 100-label maximum, so one saturated item cannot abort a comment-sync batch.

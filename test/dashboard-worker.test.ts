@@ -320,6 +320,40 @@ test("dashboard correlates issue implementation workers by run URL", () => {
   assert.equal(workers[0].target_items[0].title, "Install sudo when missing");
 });
 
+test("dashboard preserves issue titles across generated PR repair events", () => {
+  const rows = automaticIssueWork(
+    [
+      {
+        event_type: "clawsweeper.issue_build_started",
+        repository: "openclaw/openclaw-ansible",
+        source_item_number: 20,
+        source_item_url: "https://github.com/openclaw/openclaw-ansible/issues/20",
+        title: "installation fails due to not sudo installed",
+        stage: "building",
+        status: "running",
+        automatic: true,
+        received_at: "2026-06-14T10:00:00Z",
+      },
+      {
+        event_type: "clawsweeper.contributor_branch_repaired",
+        repository: "openclaw/openclaw-ansible",
+        source_item_number: 20,
+        source_item_url: "https://github.com/openclaw/openclaw-ansible/issues/20",
+        item_url: "https://github.com/openclaw/openclaw-ansible/pull/49",
+        pr_url: "https://github.com/openclaw/openclaw-ansible/pull/49",
+        title: "openclaw/openclaw-ansible#49",
+        stage: "repair_contributor_branch",
+        status: "pushed",
+        received_at: "2026-06-14T10:10:00Z",
+      },
+    ],
+    [],
+  );
+
+  assert.equal(rows[0].title, "installation fails due to not sudo installed");
+  assert.equal(rows[0].pr_url, "https://github.com/openclaw/openclaw-ansible/pull/49");
+});
+
 test("dashboard exposes active worker jobs and their current steps", async () => {
   const originalFetch = globalThis.fetch;
   const originalCaches = globalThis.caches;

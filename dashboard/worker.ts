@@ -3123,7 +3123,14 @@ export function automaticIssueWork(storedEvents, workers) {
       worker_id: null,
       timeline: [],
     };
-    row.title = nullableString(event.title) || row.title;
+    const eventTitle = nullableString(event.title);
+    if (
+      eventTitle &&
+      isAutomaticWorkPlaceholderTitle(row.title, repository, issueNumber) &&
+      !isAutomaticWorkPlaceholderTitle(eventTitle, repository, issueNumber)
+    ) {
+      row.title = eventTitle;
+    }
     row.phase = nullableString(event.stage) || row.phase;
     row.status = nullableString(event.status) || row.status;
     row.run_url = nullableString(event.run_url) || row.run_url;
@@ -3195,7 +3202,13 @@ export function automaticIssueWork(storedEvents, workers) {
     row.status = worker.status || row.status;
     row.run_url = worker.run_url || row.run_url;
     row.updated_at = worker.updated_at || worker.started_at || row.updated_at;
-    row.title = target?.title || row.title;
+    if (
+      target?.title &&
+      isAutomaticWorkPlaceholderTitle(row.title, row.repository, row.issue_number) &&
+      !isAutomaticWorkPlaceholderTitle(target.title, row.repository, row.issue_number)
+    ) {
+      row.title = target.title;
+    }
     row.timeline.push({
       event_type: "clawsweeper.worker_active",
       phase: worker.current_step || worker.stage || "worker",
@@ -3225,6 +3238,17 @@ export function automaticIssueWork(storedEvents, workers) {
 function issueNumberFromUrl(value) {
   const match = String(value || "").match(/\/issues\/(\d+)(?:\/|$)/);
   return match ? Number(match[1]) : null;
+}
+
+function isAutomaticWorkPlaceholderTitle(value, repository, issueNumber) {
+  const title = String(value || "").trim();
+  if (!title) return true;
+  const escapedRepository = String(repository || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return (
+    new RegExp(`^Issue #${issueNumber}$`, "i").test(title) ||
+    /^PR #\d+$/i.test(title) ||
+    new RegExp(`^${escapedRepository}#\\d+$`, "i").test(title)
+  );
 }
 
 function operationEventCounts(storedEvents) {
