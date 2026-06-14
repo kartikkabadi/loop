@@ -17564,6 +17564,11 @@ test("review workflow gives Codex a read-only inspection token", () => {
 test("dashboard syncs Worker secrets without rewriting KV-backed settings", () => {
   const workflow = readFileSync(".github/workflows/dashboard.yml", "utf8");
 
+  assert.match(workflow, /name: Ensure durable dashboard status store/);
+  assert.match(workflow, /storage\/kv\/namespaces/);
+  assert.match(workflow, /binding = "STATUS_STORE"/);
+  assert.match(workflow, /clawsweeper-status-store/);
+  assert.match(workflow, /result_info\.total_pages/);
   assert.match(workflow, /workers\/scripts\/\$CLOUDFLARE_WORKER_NAME\/secrets-bulk/);
   assert.match(workflow, /Content-Type: application\/merge-patch\+json/);
   assert.match(workflow, /jq -e '\.success == true'/);

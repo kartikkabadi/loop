@@ -131,7 +131,7 @@ export function parseAllowedValidationCommand(command: unknown): string[] {
   if (!text) throw new Error("empty validation command");
   const parts = normalizeEnvInvocation(splitValidationCommand(text));
   const executable = validationExecutable(parts);
-  if (!executable || !isAllowedValidationExecutable(executable)) {
+  if (!executable || !isAllowedValidationExecutable(executable, parts)) {
     throw new Error(`unsupported validation command: ${text}`);
   }
   if (hasUnsafePackageRunner(parts) || hasInlineInterpreterCode(parts)) {
@@ -153,7 +153,7 @@ function validationExecutable(parts: readonly string[]) {
   return commandParts[0] ?? "";
 }
 
-function isAllowedValidationExecutable(executable: string) {
+function isAllowedValidationExecutable(executable: string, parts: readonly string[]) {
   return (
     [
       "pnpm",
@@ -174,6 +174,8 @@ function isAllowedValidationExecutable(executable: string) {
       "uv",
       "ruff",
       "mypy",
+      "ansible-playbook",
+      "ansible-lint",
       "dotnet",
       "gradle",
       "./gradlew",
@@ -184,6 +186,7 @@ function isAllowedValidationExecutable(executable: string) {
       "ruby",
       "bundle",
     ].includes(executable) ||
+    isSafeLocalShellScriptInvocation(stripEnvPrefix(parts)) ||
     executable === "scripts/run-opengrep.sh" ||
     executable === "./scripts/run-opengrep.sh"
   );
@@ -215,7 +218,12 @@ function hasInlineInterpreterCode(parts: readonly string[]) {
     swift: ["-e"],
   };
   const commandParts = stripEnvPrefix(parts);
-  if (commandParts.some((part) => shellExecutables.has(part.toLowerCase()))) return true;
+  if (
+    commandParts.some((part) => shellExecutables.has(part.toLowerCase())) &&
+    !isSafeLocalShellScriptInvocation(commandParts)
+  ) {
+    return true;
+  }
   for (const [index, executable] of commandParts.entries()) {
     const denied = deniedByExecutable[executable];
     if (!denied) continue;
@@ -234,6 +242,22 @@ function hasInlineInterpreterCode(parts: readonly string[]) {
     }
   }
   return false;
+}
+
+function isSafeLocalShellScriptInvocation(commandParts: readonly string[]) {
+  const executable = String(commandParts[0] ?? "").toLowerCase();
+  if (!["sh", "bash"].includes(executable)) return false;
+  const script = String(commandParts[1] ?? "");
+  if (
+    !script ||
+    script.startsWith("-") ||
+    script.startsWith("/") ||
+    script.includes("\\") ||
+    script.split("/").includes("..")
+  ) {
+    return false;
+  }
+  return /(?:^|\/)[A-Za-z0-9_.-]+\.sh$/.test(script);
 }
 
 function hasUnsafePackageRunner(parts: readonly string[]) {

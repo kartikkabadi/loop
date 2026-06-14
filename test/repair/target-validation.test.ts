@@ -406,6 +406,16 @@ test("validation parser requires env assignments before env command", () => {
 
 test("validation parser accepts common non-Node project commands", () => {
   assert.deepEqual(parseAllowedValidationCommand("make fmt"), ["make", "fmt"]);
+  assert.deepEqual(parseAllowedValidationCommand("ansible-playbook playbook.yml --syntax-check"), [
+    "ansible-playbook",
+    "playbook.yml",
+    "--syntax-check",
+  ]);
+  assert.deepEqual(parseAllowedValidationCommand("bash tests/run-tests.sh ubuntu2404"), [
+    "bash",
+    "tests/run-tests.sh",
+    "ubuntu2404",
+  ]);
   assert.deepEqual(parseAllowedValidationCommand("pnpm exec vitest run tests/browser"), [
     "pnpm",
     "exec",
@@ -436,6 +446,14 @@ test("validation parser still rejects executable shell syntax", () => {
     /unsafe|unsupported/,
   );
   assert.throws(() => parseAllowedValidationCommand("make $(printf fmt)"), /unsafe|unsupported/);
+  for (const command of [
+    `bash -c 'make test'`,
+    "bash /tmp/run-tests.sh",
+    "bash ../run-tests.sh",
+    "bash tests/../run-tests.sh",
+  ]) {
+    assert.throws(() => parseAllowedValidationCommand(command), /unsafe|unsupported/);
+  }
 });
 
 test("validation parser rejects direct interpreter eval commands", () => {
