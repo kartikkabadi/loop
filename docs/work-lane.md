@@ -81,17 +81,29 @@ them from the source report instead of editing them by hand.
 ## Automatic Issue Implementation
 
 The automatic issue implementation lane is disabled for `openclaw/openclaw`
-and `openclaw/clawhub`. In other configured projects, it can create a PR only
-for reviewed issues that are:
+and `openclaw/clawhub`. In other eligible public `openclaw/*` and `steipete/*`
+projects, newly opened or reopened issues can enter the lane after a complete
+current review when `CLAWSWEEPER_AUTO_IMPLEMENT_ISSUES=1`.
 
 - open with a complete current report
 - kept open with no close reason
-- `work_candidate: queue_fix_pr`
-- `work_confidence: high`
 - free of protected or security signals
-- free of product-decision blockers
-- backed by a repair prompt and validation commands
 - not already covered by an open PR or ClawSweeper implementation branch
+
+The viable lane intentionally does not require the review to preselect files,
+validation commands, implementation shape, confidence, or a repair prompt.
+Codex receives the source issue and review context, inspects the repository,
+chooses a narrow implementation strategy, discovers the repository's own
+validation, and stops without opening a PR when the request is already fixed,
+no longer useful, security-sensitive, or needs a maintainer product decision.
+Deterministic code still owns repository exclusions, issue identity and state,
+security/protected labels, opt-out labels, PR and cluster deduplication, branch
+pushes, validation, PR creation, review, and merge gates.
+
+Scheduled pickup of older reviewed issues is independently gated by
+`CLAWSWEEPER_AUTO_IMPLEMENT_BACKFILL=1`. This keeps the normal default focused
+on new issue events while allowing controlled backfill or explicit workflow
+trials.
 
 The older strict bug lane remains available and can create a PR only for
 reviewed issues that are exactly:
@@ -131,9 +143,10 @@ still stops before broad product or architecture work. Medium-or-larger aligned
 items remain manual work-lane candidates.
 
 After review publish, `sweep.yml` scans the just-produced artifacts and
-dispatches `repair-issue-implementation-intake.yml` for eligible reports. The
-intake workflow re-fetches the live issue, rejects protected/security/locked
-items, skips issues that already have an open PR reference or existing
+dispatches `repair-issue-implementation-intake.yml` for eligible new-issue
+reports. Broad scheduled scans do this only when the backfill gate is enabled.
+The intake workflow re-fetches the live issue, rejects protected, security, or
+locked items, skips issues that already have an open PR reference or existing
 ClawSweeper implementation PR, writes the normal
 `source: issue_implementation` job, commits the ledger, then dispatches
 `repair-cluster-worker.yml` in autonomous mode. Jobs use
@@ -153,6 +166,13 @@ issue only through its normal closing reference after merge. When a worker
 opens the PR from a maintainer command, it edits the existing ClawSweeper
 command status comment with the generated PR link so the same comment moves
 from queued to opened.
+
+Automatic work also maintains one marker-backed status comment on the source
+issue. It announces that ClawSweeper is building, updates through queued,
+planning, building, complete, or blocked states, links the Actions run, and
+lists the opt-out labels. The live dashboard groups those lifecycle events by
+source issue and shows the issue title, current phase, active worker, run, and
+generated PR.
 
 Promote a candidate from this checkout:
 

@@ -200,9 +200,13 @@ open or update one narrow implementation PR. This lane never merges or closes
 the issue; broad, underspecified, security-sensitive, or already-fixed issues
 become a blocked repair result instead of a public PR.
 Outside `openclaw/openclaw` and `openclaw/clawhub`, the normal review publisher
-also dispatches this same worker automatically when a complete current review
-marks an issue as a high-confidence `queue_fix_pr` candidate. Generated PRs
-receive the existing automerge label and continue through the normal exact-head
+also dispatches this same worker for newly opened or reopened issues when
+automatic issue implementation is enabled and the complete current review
+keeps the issue open. Codex discovers the implementation and validation from
+the repository; deterministic intake still blocks protected/security signals,
+opt-outs, stale issue state, and duplicate or linked PRs. Scheduled pickup of
+older reports requires the separate backfill gate. Generated PRs receive the
+existing automerge label and continue through the normal exact-head
 review/fix/merge loop.
 Freeform maintainer mentions such as `@clawsweeper why did automerge stop here?`
 dispatch a read-only assist review. The answer lands in the next ClawSweeper

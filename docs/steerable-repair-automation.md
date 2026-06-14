@@ -139,8 +139,23 @@ Additional candidate gates select the permitted automatic lane:
 - Eligible configured repositories outside the stricter core profiles may use
   the reviewed `viable` candidate path.
 
-With these variables absent or disabled, reviewed issues are not automatically
-converted. A member must explicitly ask ClawSweeper to implement the issue.
+The viable path applies to newly opened or reopened issues in eligible public
+`openclaw/*` and `steipete/*` repositories, excluding `openclaw/openclaw` and
+`openclaw/clawhub`. It requires a complete current kept-open review, but does
+not require that review to prescribe likely files, validation commands, a
+repair prompt, or high-confidence implementation metadata. Codex inspects the
+repository and owns that discovery. Deterministic intake still enforces live
+issue state, protected/security labels, opt-out labels, source identity, and
+deduplication.
+
+Older reviewed issue pickup is a separate operator decision:
+
+```text
+CLAWSWEEPER_AUTO_IMPLEMENT_BACKFILL=1
+```
+
+With the master gate absent or disabled, reviewed issues are not automatically
+converted. A member may still explicitly ask ClawSweeper to implement an issue.
 
 Automatic intake remains PR-only. It does not close the source issue and does
 not merge the generated PR as part of issue implementation.

@@ -9,6 +9,7 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Added
 
+- Added automatic issue-build lifecycle comments and dashboard cards with issue titles, queued/planning/building/completed/blocked history, live worker links, Actions runs, and generated PR drill-down.
 - Show issue and pull request titles alongside target numbers on active dashboard worker cards and worker detail links.
 - Added comprehensive documentation for steerable repair automation, covering issue-to-PR and PR-repair intake, GitCrawl Actions consumption, deduplication, opt-out labels, GitHub App token boundaries, durable Codex thread resumption, CrabFleet steering, worker budgets, completion gates, dashboards, and failure recovery.
 - Added steerable, resumable Codex app-server sessions for repair GitHub Actions, with CrabFleet terminal attach, durable thread restoration across planning/execution runners, work-state heartbeats, and deterministic completion reporting.
@@ -63,6 +64,7 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Changed
 
+- Enabled new-issue automatic implementation for eligible public `openclaw/*` and `steipete/*` sibling repositories while excluding `openclaw/openclaw` and `openclaw/clawhub`; Codex now discovers viable implementation and validation strategy, while deterministic security, opt-out, source-state, quota, and PR/cluster deduplication gates remain.
 - Increased quiet scheduled review capacity from 48 to 64 workers, switched scheduled backfill to three-item shards to reduce setup and tail-idle overhead, and made seven-day review freshness an explicit scheduler priority.
 - Doubled the global Codex worker budget to 128 with proportional reserves, added job-level dashboard error and recovery rates, and moved the bounded failed-review retry backstop to hourly.
 - Raised the shared Codex worker budget from 24 to 32, tripling quiet scheduled normal-review capacity from 4 to 12 shards while preserving interactive and matrix-expansion reserves, and synchronized live-dashboard budget reporting.
@@ -72,6 +74,7 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Prevented ClawSweeper-owned advisory labels from invalidating queued issue implementation source revisions, and accepted quoted arguments plus common validation toolchains while blocking shell/eval runners and removing GitHub write credentials from target validation.
 - Skip optional ClawSweeper label additions when an issue or pull request already has GitHub's 100-label maximum, so one saturated item cannot abort a comment-sync batch.
 - Served stale dashboard status immediately while coalescing a background refresh, bounded job-detail fanout, and cached and parallelized historical GitHub lookups to reduce cold-load latency, diagnostic timeouts, and API usage.
 - Preserved records written by concurrent workers during generated-state publish races while retaining deliberate item-to-closed moves and plan cleanup.

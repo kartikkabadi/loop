@@ -98,6 +98,9 @@ is absent or a cache event lands in another Cloudflare colo.
 - a Live terminals link to CrabFleet, where registered `github_actions`
   sessions expose the current Codex thread for browser steering
 - a five-stage system overview from intake through results
+- an Automatic Builds overview grouped by source issue, showing the issue
+  title, queued/planning/building/completed/blocked phase, linked Actions run,
+  active worker, generated PR, and a chronological lifecycle drawer
 - a budget-sized capacity rail plus lane filters for issue-to-PR, PR repair,
   review, repair, commit, assist, and other workers
 - queued/waiting run count
@@ -120,6 +123,10 @@ then finish before optional pipeline CI and historical
 enrichment begin, so those secondary lookups do not compete with active worker
 telemetry. If GitHub job telemetry is unavailable, the API and UI retain the
 workflow-level fallback rather than hiding active work.
+
+Automatic issue-build lifecycle events are retained for seven days so completed
+and blocked work remains visible after the worker leaves the active Actions
+set. Other recent activity remains bounded independently.
 
 Status responses use stale-while-revalidate delivery. After the 20-second fresh
 window expires, the Worker immediately returns the last good snapshot, marks it
