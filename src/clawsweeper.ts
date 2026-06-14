@@ -4997,6 +4997,14 @@ function compareBackfillCandidates(left: DueCandidate, right: DueCandidate): num
   );
 }
 
+function weeklyReviewDeadlineMs(candidate: DueCandidate): number {
+  if (candidate.reviewedAt > 0) {
+    return candidate.reviewedAt + WEEKLY_REVIEW_DAYS * DAY_MS;
+  }
+  const createdAt = Date.parse(candidate.item.createdAt);
+  return Number.isFinite(createdAt) ? createdAt + WEEKLY_REVIEW_DAYS * DAY_MS : 0;
+}
+
 const SCHEDULER_BUCKET_WEIGHTS: ReadonlyArray<readonly [SchedulerBucket, number]> = [
   ["hot_issue", 4],
   ["hot_pull_request", 2],
@@ -5010,6 +5018,7 @@ function selectDueCandidates(
   due: DueCandidate[],
   limit: number,
   compare: (left: DueCandidate, right: DueCandidate) => number = compareDueCandidates,
+  now = Date.now(),
 ): DueCandidate[] {
   const capacity = Math.max(0, limit);
   if (capacity === 0) return [];
@@ -5027,6 +5036,25 @@ function selectDueCandidates(
     selectedKeys.add(key);
     selected.push(candidate);
   };
+
+  // Weekly freshness is the outer SLO. Catch up breached items before applying
+  // the normal weighted mix for hourly and daily work.
+  const weeklyOverdue = due
+    .filter((candidate) => weeklyReviewDeadlineMs(candidate) <= now)
+    .sort(
+      (left, right) =>
+        weeklyReviewDeadlineMs(left) - weeklyReviewDeadlineMs(right) || compare(left, right),
+    );
+  for (const candidate of weeklyOverdue) take(candidate);
+  for (const [bucket, candidates] of buckets) {
+    buckets.set(
+      bucket,
+      candidates.filter(
+        (candidate) =>
+          !selectedKeys.has(existingReviewKey(candidate.item.repo, candidate.item.number)),
+      ),
+    );
+  }
 
   while (selected.length < capacity) {
     const before = selected.length;
@@ -5075,6 +5103,7 @@ export function selectDueCandidateNumbersForTest(
     nextDueAt?: number;
   }>,
   limit: number,
+  now = Date.now(),
 ): number[] {
   return selectDueCandidates(
     due.map((candidate) => ({
@@ -5086,6 +5115,8 @@ export function selectDueCandidateNumbersForTest(
       bucket: candidate.bucket,
     })),
     limit,
+    compareDueCandidates,
+    now,
   ).map((candidate) => candidate.item.number);
 }
 
@@ -5716,7 +5747,7 @@ function planCandidates(options: {
       );
       if (candidate) due.push(candidate);
     }
-    const candidates = selectDueCandidates(due, capacity, compareHotIntakeDueCandidates).map(
+    const candidates = selectDueCandidates(due, capacity, compareHotIntakeDueCandidates, now).map(
       ({ item }) => item,
     );
     const shards = Array.from(
@@ -5774,10 +5805,14 @@ function planCandidates(options: {
     }
     if (shouldStopSaturatedPlanScan({ dueCount: due.length, capacity })) break;
   }
-  const selected = appendFloorBackfillCandidates(selectDueCandidates(due, capacity), backfill, {
-    activeFloor,
-    capacity,
-  });
+  const selected = appendFloorBackfillCandidates(
+    selectDueCandidates(due, capacity, compareDueCandidates, now),
+    backfill,
+    {
+      activeFloor,
+      capacity,
+    },
+  );
   const floorBackfill = selected.filter((candidate) => !due.includes(candidate)).length;
   const candidates = selected.map(({ item }) => item);
   const shards = shardItemNumbers(

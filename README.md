@@ -566,7 +566,7 @@ default, subject to the selected repository profile; pass `target_repo`,
 `apply_kind=issue`, or `apply_kind=pull_request` to narrow a manual run.
 
 Scheduled runs cover the configured product profiles. `openclaw/openclaw` runs
-normal backfill every 5 minutes with up to 48 review shards when the system is
+normal backfill every 5 minutes with up to 64 review shards when the system is
 quiet; `openclaw/clawhub` runs on offset review/apply/audit crons so its reports
 live under `records/openclaw-clawhub/` without colliding with default repo
 records. `openclaw/clawsweeper` has a scheduled read-only audit row and is
@@ -582,7 +582,7 @@ is active. Throughput defaults live in
 ClawSweeper has one main capacity knob:
 `config/automation-limits.json` -> `workers.max`. The current value is `128`.
 Lane limits are derived from that number: normal review defaults to 89 shards
-for manual/backstop runs, scheduled normal review gets up to 48 after reserves,
+for manual/backstop runs, scheduled normal review gets up to 64 after reserves,
 hot intake up to 44 shards, commit review 6 commits per page, and existing
 repair/issue implementation lanes use 40% of `workers.max`, currently 51 live
 workers. Imported gitcrawl cluster repair allows 2 live workers by default.

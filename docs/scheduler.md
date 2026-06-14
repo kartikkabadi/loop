@@ -221,7 +221,7 @@ Current defaults:
 - exact manual hot intake: 1 shard, 1 item
 - broad hot intake: up to 44 shards when quiet, batch size 1, scans up to 10
   GitHub pages
-- scheduled normal backfill: up to 48 shards when quiet, batch size 1, scans up
+- scheduled normal backfill: up to 64 shards when quiet, batch size 3, scans up
   to 250 GitHub pages after reserving interactive and expansion capacity
 - normal active floor: 38 shards for `openclaw/openclaw` scheduled runs and
   workflow-dispatch continuations; stale current-review backfill is eligible
@@ -261,7 +261,7 @@ because they may rebase and push generated records.
 Normal backfill now runs every 5 minutes for `openclaw/openclaw`. Because its
 concurrency group allows only one running normal backfill per target repo, the
 effect is a continuous drain loop: when due backlog exists, the active run can
-hold up to 48 Codex review shards with one item per shard, and the next
+hold up to 64 Codex review shards with up to three items per shard, and the next
 scheduled tick is available as the backstop or pending continuation. Manual
 normal reviews keep the larger default batch size for targeted catch-up runs.
 
@@ -273,7 +273,7 @@ allowance. Planning, publish, queued, and not-yet-expanded background runs
 reserve one worker slot instead of a whole quiet-system lane. If
 repair/automerge is busy, background sweep dispatches fewer shards and leaves
 capacity for the specific work that is closest to a merge or maintainer request.
-Background lanes also subtract a 48-worker expansion reserve so independently
+Background lanes also subtract a 32-worker expansion reserve so independently
 planned exact-item and commit-review runs have room to start without pushing the
 live Codex count past the global budget.
 
@@ -335,6 +335,10 @@ older issue backlog forever. The normal scheduler cycles through:
 - weekly older issues
 
 Within each bucket, earlier due times and older reviews win before item number.
+Items whose latest complete review, or creation time when never reviewed, is
+already more than seven days old are selected first across all buckets. The
+weighted mix applies to the remaining capacity, making weekly freshness an
+enforced outer SLO instead of only a cadence hint.
 
 ## Planning
 

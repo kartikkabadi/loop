@@ -35,7 +35,7 @@ The mental model:
 | --- | ---: | --- |
 | `workers.max` | 128 | Maximum global Codex worker budget used to derive lane limits. |
 | `workers.reserve_for_interactive` | 32 | Worker slots background lanes leave open for exact/manual/urgent work. |
-| `workers.expansion_reserve` | 48 | Extra slots background lanes leave open for independently planned matrix expansion. |
+| `workers.expansion_reserve` | 32 | Extra slots background lanes leave open for independently planned matrix expansion. |
 | `workers.minimum_background` | 16 | Target floor for background progress when enough global capacity is available. |
 | `lanes.assist.max` | 10 | Maximum concurrent lightweight assist jobs. |
 | `lanes.repair.cluster_max_live_runs` | 2 | Default live repair workflow cap for imported gitcrawl cluster dispatches. |
@@ -110,11 +110,11 @@ priority work.
 Examples with the current config:
 
 - Quiet system: manual normal review can request 89 shards; scheduled normal
-  review gets 48 after reserving 32 slots for exact/manual/urgent work and 48
+  review gets 64 after reserving 32 slots for exact/manual/urgent work and 32
   slots for in-flight matrix expansion.
-- 4 active repair workers and 52 active background workers: normal review gets
-  1 because `128 - 32 interactive reserve - 48 expansion reserve - 4 priority
-  - 52 background = -8`, and enabled background lanes keep one slow-progress worker.
+- 4 active repair workers and 68 active background workers: normal review gets
+  1 because `128 - 32 interactive reserve - 32 expansion reserve - 4 priority
+  - 68 background = -8`, and enabled background lanes keep one slow-progress worker.
 - 88 active priority workers: commit review gets 1, so commit review yields but
   does not fully stall.
 

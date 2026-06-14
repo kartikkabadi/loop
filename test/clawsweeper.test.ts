@@ -1828,6 +1828,7 @@ test("hot issue priority is protected from policy mismatch backlog", () => {
 });
 
 test("normal scheduler reserves throughput for PR and older buckets", () => {
+  const now = Date.parse("2026-04-30T12:00:00Z");
   const due = [];
   for (let number = 1; number <= 12; number += 1) {
     due.push({
@@ -1852,21 +1853,97 @@ test("normal scheduler reserves throughput for PR and older buckets", () => {
       item: item({
         number: 201,
         kind: "pull_request",
-        createdAt: "2026-03-01T00:00:00Z",
+        createdAt: "2026-04-25T00:00:00Z",
       }),
       bucket: "daily_pull_request",
       priority: 3,
       nextDueAt: 1,
     },
     {
-      item: item({ number: 301, kind: "issue", createdAt: "2026-03-01T00:00:00Z" }),
+      item: item({ number: 301, kind: "issue", createdAt: "2026-04-25T00:00:00Z" }),
       bucket: "weekly_issue",
       priority: 6,
       nextDueAt: 1,
     },
   );
 
-  assert.deepEqual(selectDueCandidateNumbersForTest(due, 8), [1, 2, 3, 4, 101, 201, 301, 5]);
+  assert.deepEqual(selectDueCandidateNumbersForTest(due, 8, now), [1, 2, 3, 4, 101, 201, 301, 5]);
+});
+
+test("normal scheduler prioritizes items already breaching weekly freshness", () => {
+  const now = Date.parse("2026-06-14T12:00:00Z");
+  const due = [
+    {
+      item: item({
+        number: 1,
+        kind: "issue",
+        createdAt: "2026-06-13T00:00:00Z",
+      }),
+      bucket: "hot_issue",
+      priority: 0,
+      nextDueAt: 0,
+    },
+    {
+      item: item({
+        number: 2,
+        kind: "pull_request",
+        createdAt: "2026-06-01T00:00:00Z",
+      }),
+      bucket: "daily_pull_request",
+      priority: 3,
+      nextDueAt: 0,
+    },
+    {
+      item: item({
+        number: 3,
+        kind: "issue",
+        createdAt: "2026-05-01T00:00:00Z",
+      }),
+      bucket: "weekly_issue",
+      priority: 6,
+      nextDueAt: 0,
+    },
+  ];
+
+  assert.deepEqual(selectDueCandidateNumbersForTest(due, 3, now), [3, 2, 1]);
+});
+
+test("weekly freshness preselection still fills remaining scheduler capacity", () => {
+  const now = Date.parse("2026-06-14T12:00:00Z");
+  const due = Array.from({ length: 5 }, (_, index) => ({
+    item: item({
+      number: index + 1,
+      kind: "issue",
+      createdAt: "2026-05-01T00:00:00Z",
+    }),
+    bucket: "hot_issue",
+    priority: 0,
+    nextDueAt: 0,
+  }));
+  due.push(
+    {
+      item: item({
+        number: 6,
+        kind: "pull_request",
+        createdAt: "2026-06-13T00:00:00Z",
+      }),
+      bucket: "hot_pull_request",
+      priority: 1,
+      nextDueAt: 0,
+    },
+    {
+      item: item({
+        number: 7,
+        kind: "issue",
+        createdAt: "2026-06-13T00:00:00Z",
+      }),
+      bucket: "hot_issue",
+      priority: 0,
+      nextDueAt: 0,
+    },
+  );
+
+  assert.deepEqual(selectDueCandidateNumbersForTest(due, 7, now), [1, 2, 3, 4, 5, 7, 6]);
 });
 
 test("normal scheduler can fill active floor from stale current reviews", () => {
@@ -17967,6 +18044,19 @@ test("background review capacity reserves expanding matrices and caps broad manu
   assert.match(commitBlock, /limit review_shards\.normal_default/);
   assert.match(commitBlock, /STALE_QUEUED_CUTOFF/);
   assert.match(commitBlock, /updatedAt:\.updated_at/);
+});
+
+test("scheduled normal review keeps workers warm with multi-item shards", () => {
+  const workflow = readFileSync(".github/workflows/sweep.yml", "utf8");
+  const modeBlock = workflow.slice(
+    workflow.indexOf("- id: mode"),
+    workflow.indexOf("- id: select"),
+  );
+
+  assert.match(
+    modeBlock,
+    /if \[ "\$\{\{ github\.event_name \}\}" = "schedule" \]; then\s+batch_size="3"/,
+  );
 });
 
 test("sweep event reviews and target fanout avoid storm amplification", () => {

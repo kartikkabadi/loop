@@ -891,7 +891,7 @@ jobs:
             min_backfill_review_age_minutes="360"
           else
             if [ "${{ github.event_name }}" = "schedule" ]; then
-              batch_size="1"
+              batch_size="3"
             else
               batch_size="${{ github.event.client_payload.batch_size || github.event.inputs.batch_size || '3' }}"
             fi
