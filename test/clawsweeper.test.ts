@@ -51,6 +51,7 @@ import {
   hotIntakeRecencyMs,
   isCodexReviewCommentBody,
   isInfrastructureFailedReviewForTest,
+  isGitHubLabelCapacityErrorForTest,
   isGitHubNotFoundError,
   isGitHubRequiresAuthenticationError,
   isLockedConversationCommentError,
@@ -15980,6 +15981,19 @@ test("ClawSweeper proof label sync recognizes missing optional labels", () => {
       "failed to update https://github.com/openclaw/fs-safe/pull/18: 'other label' not found",
       "proof: sufficient",
     ),
+    false,
+  );
+});
+
+test("ClawSweeper optional label sync recognizes GitHub label capacity errors", () => {
+  assert.equal(
+    isGitHubLabelCapacityErrorForTest(
+      "GraphQL: Validation failed: Labels can have a maximum of 100 labels (addLabelsToLabelable)",
+    ),
+    true,
+  );
+  assert.equal(
+    isGitHubLabelCapacityErrorForTest("GraphQL: Resource not accessible by integration"),
     false,
   );
 });

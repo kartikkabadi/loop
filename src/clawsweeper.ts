@@ -10351,10 +10351,16 @@ function syncPriorityLabel(options: {
   for (const label of labelsToRemove) {
     ghWithRetry(["issue", "edit", String(options.number), "--remove-label", label]);
   }
-  if (labelToAdd) {
-    ghWithRetry(["issue", "edit", String(options.number), "--add-label", labelToAdd]);
-  }
-  return { labels: nextLabels, changed };
+  const syncedLabels = options.labels.filter((label) => !labelsToRemove.includes(label));
+  const added =
+    labelToAdd !== undefined &&
+    tryAddOptionalLabel({
+      number: options.number,
+      label: labelToAdd,
+      currentLabels: syncedLabels,
+    });
+  if (added) syncedLabels.push(labelToAdd);
+  return { labels: syncedLabels, changed: labelsToRemove.length > 0 || added };
 }
 
 function syncImpactLabels(options: {
@@ -10376,14 +10382,19 @@ function syncImpactLabels(options: {
   const changed = labelsToAdd.length > 0 || labelsToRemove.length > 0;
   if (!changed) return { labels: nextLabels, changed };
   if (options.dryRun) return { labels: nextLabels, changed };
-  for (const label of labelsToAdd) {
-    ensureImpactLabel(label);
-    ghWithRetry(["issue", "edit", String(options.number), "--add-label", label]);
-  }
   for (const label of labelsToRemove) {
     ghWithRetry(["issue", "edit", String(options.number), "--remove-label", label]);
   }
-  return { labels: nextLabels, changed };
+  const syncedLabels = options.labels.filter((label) => !labelsToRemove.includes(label));
+  let added = false;
+  for (const label of labelsToAdd) {
+    ensureImpactLabel(label);
+    if (tryAddOptionalLabel({ number: options.number, label, currentLabels: syncedLabels })) {
+      syncedLabels.push(label);
+      added = true;
+    }
+  }
+  return { labels: syncedLabels, changed: labelsToRemove.length > 0 || added };
 }
 
 function syncMergeRiskLabels(options: {
@@ -10405,14 +10416,19 @@ function syncMergeRiskLabels(options: {
   const changed = labelsToAdd.length > 0 || labelsToRemove.length > 0;
   if (!changed) return { labels: nextLabels, changed };
   if (options.dryRun) return { labels: nextLabels, changed };
-  for (const label of labelsToAdd) {
-    ensureMergeRiskLabel(label);
-    ghWithRetry(["issue", "edit", String(options.number), "--add-label", label]);
-  }
   for (const label of labelsToRemove) {
     ghWithRetry(["issue", "edit", String(options.number), "--remove-label", label]);
   }
-  return { labels: nextLabels, changed };
+  const syncedLabels = options.labels.filter((label) => !labelsToRemove.includes(label));
+  let added = false;
+  for (const label of labelsToAdd) {
+    ensureMergeRiskLabel(label);
+    if (tryAddOptionalLabel({ number: options.number, label, currentLabels: syncedLabels })) {
+      syncedLabels.push(label);
+      added = true;
+    }
+  }
+  return { labels: syncedLabels, changed: labelsToRemove.length > 0 || added };
 }
 
 function syncIssueAdvisoryLabels(options: {
@@ -10439,14 +10455,19 @@ function syncIssueAdvisoryLabels(options: {
   const changed = labelsToAdd.length > 0 || labelsToRemove.length > 0;
   if (!changed) return { labels: nextLabels, changed };
   if (options.dryRun) return { labels: nextLabels, changed };
-  for (const label of labelsToAdd) {
-    ensureIssueAdvisorySyncLabel(label);
-    ghWithRetry(["issue", "edit", String(options.number), "--add-label", label]);
-  }
   for (const label of labelsToRemove) {
     ghWithRetry(["issue", "edit", String(options.number), "--remove-label", label]);
   }
-  return { labels: nextLabels, changed };
+  const syncedLabels = options.labels.filter((label) => !labelsToRemove.includes(label));
+  let added = false;
+  for (const label of labelsToAdd) {
+    ensureIssueAdvisorySyncLabel(label);
+    if (tryAddOptionalLabel({ number: options.number, label, currentLabels: syncedLabels })) {
+      syncedLabels.push(label);
+      added = true;
+    }
+  }
+  return { labels: syncedLabels, changed: labelsToRemove.length > 0 || added };
 }
 
 function syncTelegramVisibleProofLabel(options: {
@@ -10462,13 +10483,25 @@ function syncTelegramVisibleProofLabel(options: {
   if (!changed) return { labels: nextLabels, changed };
   if (options.dryRun) return { labels: nextLabels, changed };
   if (wantsLabel) ensureTelegramVisibleProofLabel();
-  ghWithRetry([
-    "issue",
-    "edit",
-    String(options.number),
-    wantsLabel ? "--add-label" : "--remove-label",
-    TELEGRAM_VISIBLE_PROOF_LABEL,
-  ]);
+  if (wantsLabel) {
+    if (
+      !tryAddOptionalLabel({
+        number: options.number,
+        label: TELEGRAM_VISIBLE_PROOF_LABEL,
+        currentLabels: options.labels,
+      })
+    ) {
+      return { labels: [...options.labels], changed: false };
+    }
+  } else {
+    ghWithRetry([
+      "issue",
+      "edit",
+      String(options.number),
+      "--remove-label",
+      TELEGRAM_VISIBLE_PROOF_LABEL,
+    ]);
+  }
   return { labels: nextLabels, changed };
 }
 
@@ -10551,7 +10584,15 @@ function syncFeatureShowcaseLabel(options: {
   if (!changed) return { labels: nextLabels, changed };
   if (options.dryRun) return { labels: nextLabels, changed };
   ensureFeatureShowcaseLabel();
-  ghWithRetry(["issue", "edit", String(options.number), "--add-label", FEATURE_SHOWCASE_LABEL]);
+  if (
+    !tryAddOptionalLabel({
+      number: options.number,
+      label: FEATURE_SHOWCASE_LABEL,
+      currentLabels: options.labels,
+    })
+  ) {
+    return { labels: [...options.labels], changed: false };
+  }
   return { labels: nextLabels, changed };
 }
 
@@ -10577,10 +10618,16 @@ function syncPrRatingLabel(options: {
   for (const label of labelsToRemove) {
     ghWithRetry(["issue", "edit", String(options.number), "--remove-label", label]);
   }
-  if (labelToAdd) {
-    ghWithRetry(["issue", "edit", String(options.number), "--add-label", labelToAdd]);
-  }
-  return { labels: nextLabels, changed };
+  const syncedLabels = options.labels.filter((label) => !labelsToRemove.includes(label));
+  const added =
+    labelToAdd !== undefined &&
+    tryAddOptionalLabel({
+      number: options.number,
+      label: labelToAdd,
+      currentLabels: syncedLabels,
+    });
+  if (added) syncedLabels.push(labelToAdd);
+  return { labels: syncedLabels, changed: labelsToRemove.length > 0 || added };
 }
 
 function syncPrStatusLabel(options: {
@@ -10605,10 +10652,16 @@ function syncPrStatusLabel(options: {
   for (const label of labelsToRemove) {
     ghWithRetry(["issue", "edit", String(options.number), "--remove-label", label]);
   }
-  if (labelToAdd) {
-    ghWithRetry(["issue", "edit", String(options.number), "--add-label", labelToAdd]);
-  }
-  return { labels: nextLabels, changed };
+  const syncedLabels = options.labels.filter((label) => !labelsToRemove.includes(label));
+  const added =
+    labelToAdd !== undefined &&
+    tryAddOptionalLabel({
+      number: options.number,
+      label: labelToAdd,
+      currentLabels: syncedLabels,
+    });
+  if (added) syncedLabels.push(labelToAdd);
+  return { labels: syncedLabels, changed: labelsToRemove.length > 0 || added };
 }
 
 function ensureTelegramVisibleProofLabel(): void {
@@ -10636,8 +10689,42 @@ function missingLabelError(error: unknown, label: string): boolean {
   return message.includes(`'${label}' not found`) || message.includes(`"${label}" not found`);
 }
 
+function labelCapacityError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  return /labels can have a maximum of 100 labels/i.test(message);
+}
+
+function tryAddOptionalLabel(options: {
+  number: number;
+  label: string;
+  currentLabels: readonly string[];
+}): boolean {
+  if (options.currentLabels.length >= 100) {
+    console.warn(
+      `Skipping optional label sync for ${options.label}: item ${options.number} already has 100 labels`,
+    );
+    return false;
+  }
+  try {
+    ghWithRetry(["issue", "edit", String(options.number), "--add-label", options.label]);
+    return true;
+  } catch (error) {
+    if (!missingLabelError(error, options.label) && !labelCapacityError(error)) throw error;
+    console.warn(
+      `Skipping optional label sync for ${options.label}: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
+    return false;
+  }
+}
+
 export function isMissingGitHubLabelErrorForTest(message: string, label: string): boolean {
   return missingLabelError(new Error(message), label);
+}
+
+export function isGitHubLabelCapacityErrorForTest(message: string): boolean {
+  return labelCapacityError(new Error(message));
 }
 
 function ensureRealBehaviorProofSufficientLabel(): boolean {
@@ -10703,24 +10790,33 @@ function syncRealBehaviorProofSufficientLabel(options: {
   if (wantsLabel && !ensureRealBehaviorProofSufficientLabel()) {
     return { labels: [...options.labels], changed: false };
   }
-  try {
-    ghWithRetry([
-      "issue",
-      "edit",
-      String(options.number),
-      wantsLabel ? "--add-label" : "--remove-label",
-      PROOF_SUFFICIENT_LABEL,
-    ]);
-  } catch (error) {
-    if (!missingLabelError(error, PROOF_SUFFICIENT_LABEL)) throw error;
-    console.warn(
-      `Skipping optional label sync for ${PROOF_SUFFICIENT_LABEL}: ${
-        error instanceof Error ? error.message : String(error)
-      }`,
-    );
-    return wantsLabel
-      ? { labels: [...options.labels], changed: false }
-      : { labels: nextLabels, changed };
+  if (wantsLabel) {
+    if (
+      !tryAddOptionalLabel({
+        number: options.number,
+        label: PROOF_SUFFICIENT_LABEL,
+        currentLabels: options.labels,
+      })
+    ) {
+      return { labels: [...options.labels], changed: false };
+    }
+  } else {
+    try {
+      ghWithRetry([
+        "issue",
+        "edit",
+        String(options.number),
+        "--remove-label",
+        PROOF_SUFFICIENT_LABEL,
+      ]);
+    } catch (error) {
+      if (!missingLabelError(error, PROOF_SUFFICIENT_LABEL)) throw error;
+      console.warn(
+        `Skipping optional label sync for ${PROOF_SUFFICIENT_LABEL}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+    }
   }
   return { labels: nextLabels, changed };
 }
@@ -10743,14 +10839,12 @@ function syncRealBehaviorProofMediaLabels(options: {
   const changed = labelsToAdd.length > 0 || labelsToRemove.length > 0;
   if (!changed) return { labels: nextLabels, changed };
   if (options.dryRun) return { labels: nextLabels, changed };
-  for (const label of labelsToAdd) {
-    if (!ensureRealBehaviorProofMediaLabel(label))
-      return { labels: [...options.labels], changed: false };
-    ghWithRetry(["issue", "edit", String(options.number), "--add-label", label]);
-  }
+  const syncedLabels = [...options.labels];
   for (const label of labelsToRemove) {
     try {
       ghWithRetry(["issue", "edit", String(options.number), "--remove-label", label]);
+      const index = syncedLabels.indexOf(label);
+      if (index >= 0) syncedLabels.splice(index, 1);
     } catch (error) {
       if (!missingLabelError(error, label)) throw error;
       console.warn(
@@ -10760,7 +10854,18 @@ function syncRealBehaviorProofMediaLabels(options: {
       );
     }
   }
-  return { labels: nextLabels, changed };
+  for (const label of labelsToAdd) {
+    if (!ensureRealBehaviorProofMediaLabel(label)) continue;
+    if (tryAddOptionalLabel({ number: options.number, label, currentLabels: syncedLabels })) {
+      syncedLabels.push(label);
+    }
+  }
+  return {
+    labels: syncedLabels,
+    changed:
+      syncedLabels.length !== options.labels.length ||
+      syncedLabels.some((label, index) => label !== options.labels[index]),
+  };
 }
 
 function isAutomationReportAuthor(author: string | undefined): boolean {
