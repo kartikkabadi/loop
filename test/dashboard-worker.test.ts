@@ -278,6 +278,48 @@ test("dashboard groups automatic issue lifecycle events with active workers", ()
   assert.equal(rows[0].timeline.length, 3);
 });
 
+test("dashboard correlates issue implementation workers by run URL", () => {
+  const workers = [
+    {
+      id: 7002,
+      repository: null,
+      item_number: null,
+      item_numbers: [],
+      work_kind: "issue_to_pr",
+      name: "Execute and apply cluster actions",
+      status: "in_progress",
+      current_step: "Execute credited fix artifact",
+      run_url: "https://github.com/openclaw/clawsweeper/actions/runs/101",
+      updated_at: "2026-06-14T10:05:00Z",
+      target_items: [],
+    },
+  ];
+  const rows = automaticIssueWork(
+    [
+      {
+        event_type: "clawsweeper.issue_build_started",
+        repository: "openclaw/openclaw-ansible",
+        source_item_number: 20,
+        source_item_url: "https://github.com/openclaw/openclaw-ansible/issues/20",
+        title: "Install sudo when missing",
+        stage: "building",
+        status: "running",
+        run_url: "https://github.com/openclaw/clawsweeper/actions/runs/101",
+        work_kind: "issue_to_pr",
+        automatic: true,
+        received_at: "2026-06-14T10:04:00Z",
+      },
+    ],
+    workers,
+  );
+
+  assert.equal(rows[0].active, true);
+  assert.equal(rows[0].worker_id, "7002");
+  assert.equal(workers[0].repository, "openclaw/openclaw-ansible");
+  assert.equal(workers[0].item_number, 20);
+  assert.equal(workers[0].target_items[0].title, "Install sudo when missing");
+});
+
 test("dashboard exposes active worker jobs and their current steps", async () => {
   const originalFetch = globalThis.fetch;
   const originalCaches = globalThis.caches;

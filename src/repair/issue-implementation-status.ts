@@ -19,6 +19,7 @@ type StatusOptions = {
   state: string;
   detail: string;
   runUrl: string;
+  prUrl: string;
   title: string;
 };
 
@@ -47,7 +48,9 @@ async function main() {
   const state = stringArg(args.state) || "Queued";
   const detail = stringArg(args.detail) || "ClawSweeper is preparing the implementation worker.";
   const runUrl = stringArg(args["run-url"]) || currentActionsRunUrl();
+  const prUrl = stringArg(args["pr-url"]);
   validateRepo(repo);
+  validatePrUrl(prUrl, repo);
 
   const issue = ghJsonWithRetry<LooseRecord>(["api", `repos/${repo}/issues/${itemNumber}`]);
   const options: StatusOptions = {
@@ -56,6 +59,7 @@ async function main() {
     state,
     detail,
     runUrl,
+    prUrl,
     title: stringArg(args.title) || String(issue.title ?? `Issue #${itemNumber}`),
   };
   const comments = ghPagedWithRetry<LooseRecord>(
@@ -136,6 +140,7 @@ export function renderIssueImplementationStatusComment(
     `- State: ${options.state}`,
     `- Detail: ${options.detail}`,
     options.runUrl ? `- Run: ${options.runUrl}` : null,
+    options.prUrl ? `- PR: ${options.prUrl}` : null,
     `- Updated: ${new Date().toISOString()}`,
     "- Opt out: add `clawsweeper:manual-only` or `clawsweeper:human-review`.",
     PROGRESS_END,
@@ -188,6 +193,7 @@ async function postDashboardStatus(options: StatusOptions) {
       item_url: `https://github.com/${options.repo}/issues/${options.itemNumber}`,
       source_item_url: `https://github.com/${options.repo}/issues/${options.itemNumber}`,
       run_url: options.runUrl || null,
+      pr_url: options.prUrl || null,
       title: options.title,
       note: options.detail,
       work_kind: "issue_to_pr",
@@ -238,6 +244,17 @@ function validateRepo(repo: string) {
   if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repo)) {
     throw new Error(`invalid repo: ${repo}`);
   }
+}
+
+function validatePrUrl(prUrl: string, repo: string) {
+  if (!prUrl) return;
+  if (!new RegExp(`^https://github\\.com/${escapeRegex(repo)}/pull/[1-9][0-9]*$`).test(prUrl)) {
+    throw new Error(`invalid pull request URL: ${prUrl}`);
+  }
+}
+
+function escapeRegex(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function currentActionsRunUrl() {

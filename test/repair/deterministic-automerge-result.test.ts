@@ -192,3 +192,18 @@ test("deterministic automerge result emits bun run check for openclaw/clawhub", 
   assert.equal(result?.repo, "openclaw/clawhub");
   assert.deepEqual(result?.fix_artifact.validation_commands, ["bun run check"]);
 });
+
+test("deterministic automerge result uses git validation for generic repositories", () => {
+  const genericJob = job();
+  genericJob.frontmatter.repo = "openclaw/openclaw-ansible";
+  const genericPlan = clusterPlan();
+  genericPlan.repo = "openclaw/openclaw-ansible";
+
+  const result = deterministicAutomergeResult({
+    job: genericJob,
+    mode: "autonomous",
+    clusterPlan: genericPlan,
+  });
+
+  assert.deepEqual(result?.fix_artifact.validation_commands, ["git diff --check"]);
+});

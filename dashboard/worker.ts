@@ -3143,18 +3143,43 @@ export function automaticIssueWork(storedEvents, workers) {
   }
 
   for (const worker of Array.isArray(workers) ? workers : []) {
-    if (worker?.work_kind !== "issue_to_pr" || !worker.repository) continue;
+    if (worker?.work_kind !== "issue_to_pr") continue;
     const issueNumber = numberOrNull(worker.item_number) ?? numberOrNull(worker.item_numbers?.[0]);
-    if (!issueNumber) continue;
-    const key = `${worker.repository}#${issueNumber}`;
+    let key = worker.repository && issueNumber ? `${worker.repository}#${issueNumber}` : null;
+    if (!key && worker.run_url) {
+      const matches = [...grouped.values()].filter((row) => row.run_url === worker.run_url);
+      if (matches.length === 1) key = matches[0].id;
+    }
+    if (!key) continue;
     if (!grouped.has(key)) continue;
-    const target = (worker.target_items || []).find((item) => Number(item.number) === issueNumber);
+    const matchedRow = grouped.get(key);
+    const resolvedIssueNumber = issueNumber || matchedRow.issue_number;
+    worker.repository ||= matchedRow.repository;
+    worker.item_number ||= resolvedIssueNumber;
+    if (!Array.isArray(worker.item_numbers) || !worker.item_numbers.length) {
+      worker.item_numbers = [resolvedIssueNumber];
+    }
+    if (!Array.isArray(worker.target_items) || !worker.target_items.length) {
+      worker.target_items = [
+        {
+          repository: matchedRow.repository,
+          number: resolvedIssueNumber,
+          title: matchedRow.title,
+          url: matchedRow.issue_url,
+          type: "issue",
+        },
+      ];
+    }
+    const target = (worker.target_items || []).find(
+      (item) => Number(item.number) === resolvedIssueNumber,
+    );
     const row = grouped.get(key) ?? {
       id: key,
       repository: worker.repository,
-      issue_number: issueNumber,
-      issue_url: target?.url || `https://github.com/${worker.repository}/issues/${issueNumber}`,
-      title: target?.title || `Issue #${issueNumber}`,
+      issue_number: worker.item_number,
+      issue_url:
+        target?.url || `https://github.com/${worker.repository}/issues/${worker.item_number}`,
+      title: target?.title || `Issue #${worker.item_number}`,
       phase: "worker",
       status: worker.status || "running",
       run_url: worker.run_url || null,

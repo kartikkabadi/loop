@@ -12,6 +12,7 @@ const options = {
   state: "Planning",
   detail: "Codex is inspecting the issue and repository.",
   runUrl: "https://github.com/openclaw/clawsweeper/actions/runs/100",
+  prUrl: "",
   title: "Add compact export mode",
 };
 
@@ -23,6 +24,16 @@ test("issue implementation status creates a stable public progress comment", () 
   assert.match(body, /State: Planning/);
   assert.match(body, /clawsweeper:manual-only/);
   assert.match(body, /clawsweeper:human-review/);
+});
+
+test("issue implementation status includes a generated pull request", () => {
+  const body = renderIssueImplementationStatusComment("", {
+    ...options,
+    state: "Blocked",
+    prUrl: "https://github.com/steipete/example/pull/51",
+  });
+
+  assert.match(body, /PR: https:\/\/github\.com\/steipete\/example\/pull\/51/);
 });
 
 test("issue implementation status updates progress without replacing worker results", () => {

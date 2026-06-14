@@ -646,11 +646,7 @@ test("bun-based target repos drop stale pnpm check:changed and pass on their rea
   assert.deepEqual(result.available_scripts, ["check"]);
 });
 
-test("non-gated target repos preserve fallback validation when no replacement exists", () => {
-  // A deterministic fallback `pnpm check:changed` is stale only when the active
-  // toolchain has a replacement command. For generic pnpm/no-base toolchains,
-  // preserving it makes preflight block on a missing script instead of silently
-  // passing with zero validation commands.
+test("non-gated target repos replace stale changed gates with git validation", () => {
   const cwd = packageFixture({ test: "node test.js" });
 
   const result = preflightTargetValidationPlan(
@@ -664,10 +660,9 @@ test("non-gated target repos preserve fallback validation when no replacement ex
     }),
   );
 
-  assert.equal(result.status, "blocked");
-  assert.equal(result.code, "validation_script_missing");
-  assert.equal(result.missing_script, "check:changed");
-  assert.deepEqual(result.resolved_commands, ["pnpm check:changed"]);
+  assert.equal(result.status, "passed");
+  assert.deepEqual(result.resolved_commands, ["git diff --check"]);
+  assert.deepEqual(result.available_scripts, ["test"]);
 });
 
 test("repair execution provisions pinned Bun before target validation can invoke it", () => {

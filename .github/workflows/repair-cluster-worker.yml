@@ -563,15 +563,14 @@ jobs:
           set -euo pipefail
           state="Blocked"
           detail="The automatic implementation worker stopped before all deterministic gates completed. Open the workflow run for the exact blocker."
-          if [ "$EXECUTE_OUTCOME" = "success" ] && [ "$POST_FLIGHT_OUTCOME" = "success" ]; then
+          pr_url=""
+          report=""
+          post_flight_report=""
+          if [ "$EXECUTE_OUTCOME" = "success" ]; then
             report="$(
               find .clawsweeper-repair/runs -name fix-execution-report.json -type f -print -quit
             )"
             if [ -n "$report" ]; then
-              post_flight_report="${report%/*}/post-flight-report.json"
-              if [ ! -f "$post_flight_report" ]; then
-                post_flight_report=""
-              fi
               pr_url="$(
                 jq -r '
                   [
@@ -585,8 +584,16 @@ jobs:
                   ][-1] // empty
                 ' "$report"
               )"
+            fi
+          fi
+          if [ "$EXECUTE_OUTCOME" = "success" ] && [ "$POST_FLIGHT_OUTCOME" = "success" ] && [ -n "$report" ]; then
+            post_flight_report="${report%/*}/post-flight-report.json"
+            if [ ! -f "$post_flight_report" ]; then
+              post_flight_report=""
+            fi
+            if [ -n "$pr_url" ]; then
               post_flight_ready="false"
-              if [ -n "$pr_url" ] && [ -n "$post_flight_report" ]; then
+              if [ -n "$post_flight_report" ]; then
                 post_flight_ready="$(
                   jq -r --arg pr_url "$pr_url" '
                     any(
@@ -635,7 +642,8 @@ jobs:
             --job "${{ inputs.job }}" \
             --state "$state" \
             --detail "$detail" \
-            --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --pr-url "$pr_url"
 
       - name: Detect repair requeue requests
         id: repair_requeue

@@ -395,9 +395,9 @@ export function requiredValidationCommands(
  *
  * We are deliberately conservative: we only drop commands that match the
  * fingerprint of a known changed-gate command and only when the active
- * toolchain has no gate of its own. Other unrelated commands are passed
- * through untouched so `validation_script_missing` still fires for genuinely
- * missing scripts (e.g. a typo'd `pnpm test:repair-typo`).
+ * toolchain has no gate of its own. If no repository-specific replacement
+ * exists, fall back to `git diff --check`; unrelated commands still pass
+ * through so genuinely missing scripts remain visible.
  */
 function sanitizeStaleChangedGateCommands(
   commands: readonly LooseRecord[],
@@ -405,8 +405,15 @@ function sanitizeStaleChangedGateCommands(
   replacementCommands: readonly string[],
 ): LooseRecord[] {
   if (toolchain.changedGate) return [...commands];
-  if (replacementCommands.length === 0) return [...commands];
-  return commands.filter((command) => !looksLikeStaleChangedGateCommand(command));
+  const filtered = commands.filter((command) => !looksLikeStaleChangedGateCommand(command));
+  if (
+    filtered.length === 0 &&
+    commands.some((command) => looksLikeStaleChangedGateCommand(command)) &&
+    replacementCommands.length === 0
+  ) {
+    return ["git diff --check"];
+  }
+  return filtered;
 }
 
 function looksLikeStaleChangedGateCommand(command: LooseRecord): boolean {
