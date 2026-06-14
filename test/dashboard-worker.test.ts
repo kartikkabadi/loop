@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { createHmac, generateKeyPairSync } from "node:crypto";
 import test from "node:test";
 
-import worker, { automaticIssueWork, workerWorkKind } from "../dashboard/worker.ts";
+import worker, { automaticIssueWork, StatusStore, workerWorkKind } from "../dashboard/worker.ts";
 
 class MemoryKv {
   private values = new Map<string, string>();
@@ -13,6 +13,43 @@ class MemoryKv {
 
   async put(key: string, value: string) {
     this.values.set(key, value);
+  }
+}
+
+class MemoryDurableStorage {
+  private values = new Map<string, unknown>();
+  private alarmAt: number | null = null;
+
+  async get(key: string) {
+    return this.values.get(key);
+  }
+
+  async put(key: string, value: unknown) {
+    this.values.set(key, value);
+  }
+
+  async delete(key: string) {
+    this.values.delete(key);
+  }
+
+  async list() {
+    return new Map(this.values);
+  }
+
+  async getAlarm() {
+    return this.alarmAt;
+  }
+
+  async setAlarm(at: number) {
+    this.alarmAt = at;
+  }
+
+  async deleteAlarm() {
+    this.alarmAt = null;
+  }
+
+  has(key: string) {
+    return this.values.has(key);
   }
 }
 
@@ -27,6 +64,89 @@ class MemoryCache {
     this.values.set(request.url, response.clone());
   }
 }
+
+test("dashboard durable status store persists, expires, and prepends events", async () => {
+  const storage = new MemoryDurableStorage();
+  const store = new StatusStore({ storage });
+  const key = "https://clawsweeper-status-store/snapshot";
+
+  assert.equal((await store.fetch(new Request(key))).status, 404);
+  assert.equal(
+    (
+      await store.fetch(
+        new Request(key, {
+          method: "PUT",
+          body: JSON.stringify({ value: "ready" }),
+        }),
+      )
+    ).status,
+    204,
+  );
+  assert.equal(await (await store.fetch(new Request(key))).text(), "ready");
+
+  await store.fetch(
+    new Request("https://clawsweeper-status-store/expired", {
+      method: "PUT",
+      body: JSON.stringify({ value: "old", expires_at: Date.now() - 1 }),
+    }),
+  );
+  assert.equal(
+    (await store.fetch(new Request("https://clawsweeper-status-store/expired"))).status,
+    404,
+  );
+
+  for (const id of ["first", "second"]) {
+    assert.equal(
+      (
+        await store.fetch(
+          new Request("https://clawsweeper-status-store/events", {
+            method: "POST",
+            body: JSON.stringify({ event: { id }, limit: 2, ttl_seconds: 60 }),
+          }),
+        )
+      ).status,
+      200,
+    );
+  }
+  assert.deepEqual(
+    JSON.parse(
+      await (await store.fetch(new Request("https://clawsweeper-status-store/events"))).text(),
+    ),
+    [{ id: "second" }, { id: "first" }],
+  );
+
+  await store.fetch(
+    new Request("https://clawsweeper-status-store/events", {
+      method: "PUT",
+      body: JSON.stringify({
+        value: JSON.stringify([{ id: "expired" }]),
+        expires_at: Date.now() - 1,
+      }),
+    }),
+  );
+  await store.fetch(
+    new Request("https://clawsweeper-status-store/events", {
+      method: "POST",
+      body: JSON.stringify({ event: { id: "fresh" }, limit: 2, ttl_seconds: 60 }),
+    }),
+  );
+  assert.deepEqual(
+    JSON.parse(
+      await (await store.fetch(new Request("https://clawsweeper-status-store/events"))).text(),
+    ),
+    [{ id: "fresh" }],
+  );
+
+  await store.fetch(
+    new Request("https://clawsweeper-status-store/cold-expired", {
+      method: "PUT",
+      body: JSON.stringify({ value: "old", expires_at: Date.now() - 1 }),
+    }),
+  );
+  assert.equal(storage.has("cold-expired"), true);
+  await store.alarm();
+  assert.equal(storage.has("cold-expired"), false);
+});
 
 function isoAgo(ms: number) {
   return new Date(Date.now() - ms).toISOString();

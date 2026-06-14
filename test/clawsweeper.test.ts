@@ -17561,14 +17561,15 @@ test("review workflow gives Codex a read-only inspection token", () => {
   assert.doesNotMatch(reviewJob, /uses: \.\/\.github\/actions\/setup-codex/);
 });
 
-test("dashboard syncs Worker secrets without rewriting KV-backed settings", () => {
+test("dashboard syncs Worker secrets with durable lifecycle storage", () => {
   const workflow = readFileSync(".github/workflows/dashboard.yml", "utf8");
+  const config = readFileSync("dashboard/wrangler.toml", "utf8");
 
-  assert.match(workflow, /name: Ensure durable dashboard status store/);
-  assert.match(workflow, /storage\/kv\/namespaces/);
-  assert.match(workflow, /binding = "STATUS_STORE"/);
-  assert.match(workflow, /clawsweeper-status-store/);
-  assert.match(workflow, /result_info\.total_pages/);
+  assert.doesNotMatch(workflow, /storage\/kv\/namespaces/);
+  assert.match(config, /\[\[durable_objects\.bindings\]\]/);
+  assert.match(config, /name = "STATUS_STORE"/);
+  assert.match(config, /class_name = "StatusStore"/);
+  assert.match(config, /new_sqlite_classes = \["StatusStore"\]/);
   assert.match(workflow, /workers\/scripts\/\$CLOUDFLARE_WORKER_NAME\/secrets-bulk/);
   assert.match(workflow, /Content-Type: application\/merge-patch\+json/);
   assert.match(workflow, /jq -e '\.success == true'/);

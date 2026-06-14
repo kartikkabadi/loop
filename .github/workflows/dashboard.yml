@@ -49,50 +49,6 @@ jobs:
           printf 'INGEST_TOKEN = "%s"\n' "$CLAWSWEEPER_STATUS_INGEST_TOKEN" >> dashboard/wrangler.deploy.toml
           echo "config=dashboard/wrangler.deploy.toml" >> "$GITHUB_OUTPUT"
 
-      - name: Ensure durable dashboard status store
-        env:
-          STATUS_NAMESPACE_TITLE: clawsweeper-status-store
-        run: |
-          set -euo pipefail
-          namespaces_file="$RUNNER_TEMP/clawsweeper-kv-namespaces.json"
-          create_file="$RUNNER_TEMP/clawsweeper-kv-create.json"
-          trap 'rm -f "$namespaces_file" "$create_file"' EXIT
-          api="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/storage/kv/namespaces"
-          namespace_id=""
-          page=1
-          while [ -z "$namespace_id" ]; do
-            curl --fail-with-body --silent --show-error \
-              --header "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-              "$api?per_page=100&page=$page" > "$namespaces_file"
-            namespace_id="$(
-              jq -r --arg title "$STATUS_NAMESPACE_TITLE" \
-                '.result[] | select(.title == $title) | .id' \
-                "$namespaces_file" |
-                head -n 1
-            )"
-            total_pages="$(jq -r '.result_info.total_pages // 1' "$namespaces_file")"
-            if [ "$page" -ge "$total_pages" ]; then
-              break
-            fi
-            page=$((page + 1))
-          done
-          if [ -z "$namespace_id" ]; then
-            jq -n --arg title "$STATUS_NAMESPACE_TITLE" '{title: $title}' > "$create_file"
-            curl --fail-with-body --silent --show-error \
-              --request POST \
-              --header "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-              --header "Content-Type: application/json" \
-              --data-binary @"$create_file" \
-              "$api" > "$namespaces_file"
-            namespace_id="$(jq -r '.result.id // empty' "$namespaces_file")"
-          fi
-          test -n "$namespace_id"
-          {
-            printf '\n[[kv_namespaces]]\n'
-            printf 'binding = "STATUS_STORE"\n'
-            printf 'id = "%s"\n' "$namespace_id"
-          } >> "${{ steps.dashboard-config.outputs.config }}"
-
       - name: Sync Worker secrets
         run: |
           set -euo pipefail

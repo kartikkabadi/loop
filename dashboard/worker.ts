@@ -8,6 +8,7 @@ const QUEUED_RUN_STATUSES = new Set(["queued", "waiting", "requested", "pending"
 type DashboardEnv = Record<string, unknown>;
 type DashboardContext = { waitUntil?: (promise: Promise<unknown>) => void };
 type GithubAppJsonOptions = { method?: string; body?: BodyInit; errorLabel?: string };
+type StoredValue = { value: string; expires_at?: number };
 type WorkflowRunSummary = {
   id: number | string;
   name?: string;
@@ -218,6 +219,81 @@ const PR_PROOF_VIEWS = [
 let githubAppTokenCache = null;
 let statusRefresh = null;
 
+export class StatusStore {
+  private storage;
+
+  constructor(state) {
+    this.storage = state.storage;
+  }
+
+  async fetch(request: Request) {
+    const url = new URL(request.url);
+    const key = decodeURIComponent(url.pathname.slice(1));
+    if (!key) return new Response("missing key", { status: 400 });
+
+    if (request.method === "GET") {
+      const stored = (await this.storage.get(key)) as StoredValue | undefined;
+      if (!stored) return new Response(null, { status: 404 });
+      if (stored.expires_at && stored.expires_at <= Date.now()) {
+        await this.storage.delete(key);
+        return new Response(null, { status: 404 });
+      }
+      return new Response(stored.value);
+    }
+
+    if (request.method === "PUT") {
+      const stored = (await request.json()) as StoredValue;
+      if (typeof stored?.value !== "string") return new Response("invalid value", { status: 400 });
+      await this.storage.put(key, stored);
+      if (stored.expires_at) await this.scheduleCleanup(stored.expires_at);
+      return new Response(null, { status: 204 });
+    }
+
+    if (request.method === "POST" && key === "events") {
+      const body = await request.json();
+      const current = (await this.storage.get("events")) as StoredValue | undefined;
+      const currentValue =
+        current?.value && (!current.expires_at || current.expires_at > Date.now())
+          ? current.value
+          : null;
+      const parsed = currentValue ? JSON.parse(currentValue) : [];
+      const events = [body.event, ...(Array.isArray(parsed) ? parsed : [])].slice(
+        0,
+        numberFrom(body.limit, EVENT_LIMIT),
+      );
+      const expiresAt = Date.now() + numberFrom(body.ttl_seconds, EVENT_STORE_TTL_SECONDS) * 1000;
+      await this.storage.put("events", {
+        value: JSON.stringify(events),
+        expires_at: expiresAt,
+      });
+      await this.scheduleCleanup(expiresAt);
+      return json({ ok: true });
+    }
+
+    return new Response("method not allowed", { status: 405 });
+  }
+
+  async alarm() {
+    const now = Date.now();
+    const entries = (await this.storage.list()) as Map<string, StoredValue>;
+    const expired = [];
+    let nextExpiration = Number.POSITIVE_INFINITY;
+    for (const [key, stored] of entries) {
+      if (!stored?.expires_at) continue;
+      if (stored.expires_at <= now) expired.push(key);
+      else nextExpiration = Math.min(nextExpiration, stored.expires_at);
+    }
+    await Promise.all(expired.map((key) => this.storage.delete(key)));
+    await this.storage.deleteAlarm();
+    if (Number.isFinite(nextExpiration)) await this.storage.setAlarm(nextExpiration);
+  }
+
+  private async scheduleCleanup(expiresAt: number) {
+    const scheduled = await this.storage.getAlarm();
+    if (scheduled === null || expiresAt < scheduled) await this.storage.setAlarm(expiresAt);
+  }
+}
+
 export default {
   async fetch(request: Request, env: DashboardEnv = {}, ctx?: DashboardContext) {
     const url = new URL(request.url);
@@ -332,7 +408,7 @@ async function refreshStatusCaches(request, env) {
         }),
       ),
     ];
-    if (env.STATUS_STORE) writes.push(env.STATUS_STORE.put("snapshot", body));
+    if (env.STATUS_STORE) writes.push(writeStatusStoreText(env.STATUS_STORE, "snapshot", body));
     await Promise.allSettled(writes);
   }
   return { snapshot, body, looksEmpty };
@@ -463,10 +539,8 @@ async function ingestEvent(request, env) {
   const body = await request.json().catch(() => null);
   if (!body || typeof body !== "object") return json({ error: "invalid_json" }, 400);
   const event = normalizeEvent(body);
-  const current = await readEvents(env);
-  const events = [event, ...current].slice(0, EVENT_LIMIT);
   const writes = [
-    writeStoredJson(env, "events", events, EVENT_STORE_TTL_SECONDS),
+    prependStoredEvent(env, event),
     writeStoredJson(env, "latest-event", event, EVENT_STORE_TTL_SECONDS),
   ];
   const ci = normalizeCiStatus(body);
@@ -3290,7 +3364,7 @@ function firstAutomergeCommandAt(comments) {
 
 async function readCachedSnapshot(env, ttlSeconds) {
   if (!env.STATUS_STORE) return null;
-  const text = await env.STATUS_STORE.get("snapshot");
+  const text = await readStatusStoreText(env.STATUS_STORE, "snapshot");
   if (!text) return null;
   const snapshot = JSON.parse(text);
   if (Date.now() - Date.parse(snapshot.generated_at || "") > ttlSeconds * 1000) return null;
@@ -3330,7 +3404,7 @@ function ciStatusKey(repository, itemNumber) {
 
 async function readStoredJson(env, key) {
   if (env.STATUS_STORE) {
-    const text = await env.STATUS_STORE.get(key);
+    const text = await readStatusStoreText(env.STATUS_STORE, key);
     return text ? JSON.parse(text) : null;
   }
   const cached = await caches.default.match(storeCacheRequest(key));
@@ -3345,7 +3419,7 @@ async function writeStoredJson(
 ) {
   const body = JSON.stringify(value);
   if (env.STATUS_STORE) {
-    await env.STATUS_STORE.put(key, body, { expirationTtl: ttlSeconds });
+    await writeStatusStoreText(env.STATUS_STORE, key, body, ttlSeconds);
     return;
   }
   await caches.default.put(
@@ -3357,6 +3431,68 @@ async function writeStoredJson(
       },
     }),
   );
+}
+
+async function prependStoredEvent(env, event) {
+  const store = env.STATUS_STORE;
+  if (isDurableStatusStore(store)) {
+    const response = await durableStatusStoreStub(store).fetch(
+      statusStoreRequest("events", "POST"),
+      {
+        method: "POST",
+        body: JSON.stringify({
+          event,
+          limit: EVENT_LIMIT,
+          ttl_seconds: EVENT_STORE_TTL_SECONDS,
+        }),
+      },
+    );
+    if (!response.ok) throw new Error(`status store event write failed: ${response.status}`);
+    return;
+  }
+  const current = await readEvents(env);
+  await writeStoredJson(
+    env,
+    "events",
+    [event, ...current].slice(0, EVENT_LIMIT),
+    EVENT_STORE_TTL_SECONDS,
+  );
+}
+
+async function readStatusStoreText(store, key) {
+  if (!isDurableStatusStore(store)) return store.get(key);
+  const response = await durableStatusStoreStub(store).fetch(statusStoreRequest(key));
+  if (response.status === 404) return null;
+  if (!response.ok) throw new Error(`status store read failed: ${response.status}`);
+  return response.text();
+}
+
+async function writeStatusStoreText(store, key, value, ttlSeconds?) {
+  if (!isDurableStatusStore(store)) {
+    return store.put(key, value, ttlSeconds ? { expirationTtl: ttlSeconds } : undefined);
+  }
+  const response = await durableStatusStoreStub(store).fetch(statusStoreRequest(key, "PUT"), {
+    method: "PUT",
+    body: JSON.stringify({
+      value,
+      ...(ttlSeconds ? { expires_at: Date.now() + ttlSeconds * 1000 } : {}),
+    }),
+  });
+  if (!response.ok) throw new Error(`status store write failed: ${response.status}`);
+}
+
+function isDurableStatusStore(store) {
+  return Boolean(
+    store && typeof store.idFromName === "function" && typeof store.get === "function",
+  );
+}
+
+function durableStatusStoreStub(store) {
+  return store.get(store.idFromName("global"));
+}
+
+function statusStoreRequest(key, method = "GET") {
+  return new Request(`https://clawsweeper-status-store/${encodeURIComponent(key)}`, { method });
 }
 
 function storeCacheRequest(key) {

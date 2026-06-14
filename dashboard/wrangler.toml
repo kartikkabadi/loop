@@ -4,6 +4,14 @@ account_id = "<cloudflare-account-id>"
 compatibility_date = "2026-05-11"
 workers_dev = true
 
+[[durable_objects.bindings]]
+name = "STATUS_STORE"
+class_name = "StatusStore"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["StatusStore"]
+
 [[routes]]
 pattern = "clawsweeper.openclaw.ai"
 custom_domain = true
