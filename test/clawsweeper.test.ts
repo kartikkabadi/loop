@@ -18219,6 +18219,9 @@ test("repair workers hydrate only durable jobs from generated state", () => {
   assert.match(workflow, /actions\/cache\/save@v5/);
   assert.match(workflow, /repair:action-session -- register/);
   assert.match(workflow, /completion-reason gates_passed/);
+  assert.match(workflow, /post_flight_report=.*post-flight-report\.json/);
+  assert.match(workflow, /\.action == "finalize_fix_pr"/);
+  assert.match(workflow, /\.status == "ready"/);
   assert.equal(workflow.match(/id: crabfleet_session/g)?.length, 2);
   assert.equal(workflow.match(/steps\.crabfleet_session\.outcome == 'success'/g)?.length, 6);
   assert.doesNotMatch(workflow, /if: \$\{\{[^\n]*env\.CLAWSWEEPER_CRABFLEET_AGENT_TOKEN/);
@@ -18226,14 +18229,21 @@ test("repair workers hydrate only durable jobs from generated state", () => {
 
 test("reviewed viable issues dispatch the existing implementation and automerge lanes", () => {
   const workflow = readFileSync(".github/workflows/sweep.yml", "utf8");
+  const eventDispatchStart = workflow.indexOf("- name: Dispatch viable issue implementation");
+  const eventDispatch = workflow.slice(
+    eventDispatchStart,
+    workflow.indexOf("\n  plan:", eventDispatchStart),
+  );
 
-  assert.match(workflow, /name: Dispatch viable issue implementation/);
-  assert.match(workflow, /--candidate-kind viable/);
-  assert.match(workflow, /repair-issue-implementation-intake\.yml/);
-  assert.match(workflow, /-f candidate_kind=viable/);
-  assert.match(workflow, /-f report_repo=openclaw\/clawsweeper-state/);
-  assert.match(workflow, /steps\.target\.outputs\.target_repo != 'openclaw\/openclaw'/);
-  assert.match(workflow, /steps\.target\.outputs\.target_repo != 'openclaw\/clawhub'/);
+  assert.ok(eventDispatchStart >= 0);
+  assert.match(eventDispatch, /--candidate-kind viable/);
+  assert.match(eventDispatch, /\/tmp\/viable-event-candidate\.tsv/);
+  assert.match(eventDispatch, /repair-issue-implementation-intake\.yml/);
+  assert.match(eventDispatch, /-f candidate_kind=viable/);
+  assert.match(eventDispatch, /-f report_repo=openclaw\/clawsweeper-state/);
+  assert.match(eventDispatch, /steps\.target\.outputs\.target_repo != 'openclaw\/openclaw'/);
+  assert.match(eventDispatch, /steps\.target\.outputs\.target_repo != 'openclaw\/clawhub'/);
+  assert.doesNotMatch(eventDispatch, /vision-fit-implementation-candidates/);
   assert.equal(workflow.match(/vars\.CLAWSWEEPER_AUTO_IMPLEMENT_ISSUES == '1'/g)?.length, 4);
 });
 

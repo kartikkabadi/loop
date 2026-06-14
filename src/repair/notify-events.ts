@@ -467,6 +467,10 @@ async function postStatusDashboardEvent({
 }
 
 function statusDashboardPayload(event: ClawSweeperEvent): JsonObject {
+  const issueImplementation = String(event.clusterId ?? "").startsWith("issue-");
+  const sourceIssueNumber = issueImplementation
+    ? Number(String(event.clusterId).match(/-(\d+)$/)?.[1] ?? 0)
+    : 0;
   return {
     event_type: event.type,
     mode: event.type.replace(/^clawsweeper\./, ""),
@@ -477,6 +481,17 @@ function statusDashboardPayload(event: ClawSweeperEvent): JsonObject {
     run_url: event.runUrl,
     title: event.title ?? `${event.repo}${event.target ?? ""}`,
     note: event.reason,
+    ...(issueImplementation
+      ? {
+          cluster_id: event.clusterId,
+          work_kind: "issue_to_pr",
+          source_item_number: sourceIssueNumber || null,
+          source_item_url: sourceIssueNumber
+            ? `https://github.com/${event.repo}/issues/${sourceIssueNumber}`
+            : null,
+          pr_url: event.type === "clawsweeper.fix_pr_opened" ? event.url : null,
+        }
+      : {}),
   };
 }
 

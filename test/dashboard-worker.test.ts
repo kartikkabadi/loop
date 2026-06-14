@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { createHmac, generateKeyPairSync } from "node:crypto";
 import test from "node:test";
 
-import worker, { workerWorkKind } from "../dashboard/worker.ts";
+import worker, { automaticIssueWork, workerWorkKind } from "../dashboard/worker.ts";
 
 class MemoryKv {
   private values = new Map<string, string>();
@@ -80,6 +80,9 @@ test("dashboard HTML preserves UTF-8 emoji labels", async () => {
   assert.match(html, /href="https:\/\/fleet\.example\.test\/terminal\?view=live&amp;mode=all"/);
   assert.match(html, /🌊 Loading pipeline state/);
   assert.match(html, /System Overview/);
+  assert.match(html, /Automatic Builds/);
+  assert.match(html, /id="automatic-work"/);
+  assert.match(html, /Lifecycle Timeline/);
   assert.match(html, /Active Workers/);
   assert.match(html, /id="worker-dialog"/);
   assert.match(html, /Step Timeline/);
@@ -91,6 +94,68 @@ test("dashboard HTML preserves UTF-8 emoji labels", async () => {
   assert.match(html, /🩺 Worker Health/);
   assert.match(html, /📡 Recent Activity/);
   assert.doesNotMatch(html, /ðŸ|â|âš|âœ/);
+});
+
+test("dashboard groups automatic issue lifecycle events with active workers", () => {
+  const rows = automaticIssueWork(
+    [
+      {
+        event_type: "clawsweeper.issue_build_queued",
+        repository: "steipete/example",
+        source_item_number: 42,
+        source_item_url: "https://github.com/steipete/example/issues/42",
+        title: "Add compact export mode",
+        stage: "queued",
+        status: "queued",
+        run_url: "https://github.com/openclaw/clawsweeper/actions/runs/100",
+        work_kind: "issue_to_pr",
+        automatic: true,
+        received_at: "2026-06-14T10:00:00Z",
+      },
+      {
+        event_type: "clawsweeper.generated_pr_opened",
+        repository: "steipete/example",
+        source_item_number: 42,
+        source_item_url: "https://github.com/steipete/example/issues/42",
+        item_url: "https://github.com/steipete/example/pull/51",
+        pr_url: "https://github.com/steipete/example/pull/51",
+        title: "Add compact export mode",
+        stage: "pr_opened",
+        status: "completed",
+        work_kind: "issue_to_pr",
+        automatic: null,
+        received_at: "2026-06-14T10:10:00Z",
+      },
+    ],
+    [
+      {
+        id: 7001,
+        repository: "steipete/example",
+        item_number: 42,
+        work_kind: "issue_to_pr",
+        name: "Implement issue",
+        status: "in_progress",
+        current_step: "Run Codex",
+        run_url: "https://github.com/openclaw/clawsweeper/actions/runs/100",
+        updated_at: "2026-06-14T10:05:00Z",
+        target_items: [
+          {
+            number: 42,
+            title: "Add compact export mode",
+            url: "https://github.com/steipete/example/issues/42",
+          },
+        ],
+      },
+    ],
+  );
+
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].id, "steipete/example#42");
+  assert.equal(rows[0].title, "Add compact export mode");
+  assert.equal(rows[0].active, true);
+  assert.equal(rows[0].worker_id, "7001");
+  assert.equal(rows[0].pr_url, "https://github.com/steipete/example/pull/51");
+  assert.equal(rows[0].timeline.length, 3);
 });
 
 test("dashboard exposes active worker jobs and their current steps", async () => {

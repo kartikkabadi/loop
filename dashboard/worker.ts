@@ -27,6 +27,7 @@ declare global {
 const ACTIVE_RUN_STATUS_FILTERS = ["in_progress", "queued", "waiting", "requested", "pending"];
 const TERMINAL_BAD_CONCLUSIONS = new Set(["failure", "timed_out", "action_required"]);
 const EVENT_LIMIT = 200;
+const EVENT_STORE_TTL_SECONDS = 7 * 24 * 60 * 60;
 const AVERAGE_LIMIT = 4;
 const RECENT_CLOSED_LIMIT = 8;
 const CLOSED_STATS_HOURS = 24;
@@ -465,8 +466,8 @@ async function ingestEvent(request, env) {
   const current = await readEvents(env);
   const events = [event, ...current].slice(0, EVENT_LIMIT);
   const writes = [
-    writeStoredJson(env, "events", events),
-    writeStoredJson(env, "latest-event", event),
+    writeStoredJson(env, "events", events, EVENT_STORE_TTL_SECONDS),
+    writeStoredJson(env, "latest-event", event, EVENT_STORE_TTL_SECONDS),
   ];
   const ci = normalizeCiStatus(body);
   if (ci) writes.push(writeCiStatus(env, ci));
@@ -1156,6 +1157,7 @@ async function statusSnapshot(env) {
       automerge_samples: automerge.samples,
     },
     workers: activeJobs.workers,
+    automatic_work: automaticIssueWork(storedEvents, activeJobs.workers),
     pipeline,
     recent: {
       cluster_repair: clusterRepair,
@@ -3003,6 +3005,129 @@ function recentActivityEvents(storedEvents, closedItems) {
     .slice(0, 25);
 }
 
+export function automaticIssueWork(storedEvents, workers) {
+  const grouped = new Map();
+  const allEvents = Array.isArray(storedEvents) ? storedEvents : [];
+  const automaticKeys = new Set();
+  for (const event of allEvents) {
+    if (
+      event?.automatic !== true &&
+      !String(event?.event_type || "").startsWith("clawsweeper.issue_build_")
+    ) {
+      continue;
+    }
+    const repository = nullableString(event.repository);
+    const issueNumber =
+      numberOrNull(event.source_item_number) ??
+      issueNumberFromUrl(event.source_item_url) ??
+      issueNumberFromUrl(event.item_url);
+    if (repository && issueNumber) automaticKeys.add(`${repository}#${issueNumber}`);
+  }
+  for (const event of [...allEvents].reverse()) {
+    const repository = nullableString(event.repository);
+    const issueNumber =
+      numberOrNull(event.source_item_number) ??
+      issueNumberFromUrl(event.source_item_url) ??
+      issueNumberFromUrl(event.item_url);
+    if (!repository || !issueNumber) continue;
+    const key = `${repository}#${issueNumber}`;
+    if (!automaticKeys.has(key)) continue;
+    const row = grouped.get(key) ?? {
+      id: key,
+      repository,
+      issue_number: issueNumber,
+      issue_url:
+        nullableString(event.source_item_url) ||
+        `https://github.com/${repository}/issues/${issueNumber}`,
+      title: nullableString(event.title) || `Issue #${issueNumber}`,
+      phase: "queued",
+      status: "queued",
+      run_url: null,
+      pr_url: null,
+      updated_at: null,
+      active: false,
+      worker_id: null,
+      timeline: [],
+    };
+    row.title = nullableString(event.title) || row.title;
+    row.phase = nullableString(event.stage) || row.phase;
+    row.status = nullableString(event.status) || row.status;
+    row.run_url = nullableString(event.run_url) || row.run_url;
+    row.pr_url =
+      nullableString(event.pr_url) ||
+      (String(event.item_url || "").includes("/pull/") ? event.item_url : row.pr_url);
+    row.updated_at = nullableString(event.received_at) || row.updated_at;
+    row.timeline.push({
+      event_type: nullableString(event.event_type),
+      phase: nullableString(event.stage) || "update",
+      status: nullableString(event.status) || "unknown",
+      note: nullableString(event.note),
+      run_url: nullableString(event.run_url),
+      received_at: nullableString(event.received_at),
+    });
+    grouped.set(key, row);
+  }
+
+  for (const worker of Array.isArray(workers) ? workers : []) {
+    if (worker?.work_kind !== "issue_to_pr" || !worker.repository) continue;
+    const issueNumber = numberOrNull(worker.item_number) ?? numberOrNull(worker.item_numbers?.[0]);
+    if (!issueNumber) continue;
+    const key = `${worker.repository}#${issueNumber}`;
+    if (!grouped.has(key)) continue;
+    const target = (worker.target_items || []).find((item) => Number(item.number) === issueNumber);
+    const row = grouped.get(key) ?? {
+      id: key,
+      repository: worker.repository,
+      issue_number: issueNumber,
+      issue_url: target?.url || `https://github.com/${worker.repository}/issues/${issueNumber}`,
+      title: target?.title || `Issue #${issueNumber}`,
+      phase: "worker",
+      status: worker.status || "running",
+      run_url: worker.run_url || null,
+      pr_url: null,
+      updated_at: worker.updated_at || worker.started_at || null,
+      active: true,
+      worker_id: String(worker.id),
+      timeline: [],
+    };
+    row.active = true;
+    row.worker_id = String(worker.id);
+    row.phase = worker.current_step || worker.stage || row.phase;
+    row.status = worker.status || row.status;
+    row.run_url = worker.run_url || row.run_url;
+    row.updated_at = worker.updated_at || worker.started_at || row.updated_at;
+    row.title = target?.title || row.title;
+    row.timeline.push({
+      event_type: "clawsweeper.worker_active",
+      phase: worker.current_step || worker.stage || "worker",
+      status: worker.status || "running",
+      note: worker.name || null,
+      run_url: worker.run_url || null,
+      received_at: worker.updated_at || worker.started_at || null,
+    });
+    grouped.set(key, row);
+  }
+
+  return [...grouped.values()]
+    .map((row) => ({
+      ...row,
+      timeline: row.timeline.sort(
+        (left, right) => Date.parse(left.received_at || "") - Date.parse(right.received_at || ""),
+      ),
+    }))
+    .sort(
+      (left, right) =>
+        Number(right.active) - Number(left.active) ||
+        Date.parse(right.updated_at || "") - Date.parse(left.updated_at || ""),
+    )
+    .slice(0, 20);
+}
+
+function issueNumberFromUrl(value) {
+  const match = String(value || "").match(/\/issues\/(\d+)(?:\/|$)/);
+  return match ? Number(match[1]) : null;
+}
+
 function operationEventCounts(storedEvents) {
   const counts = {
     inherited_label_cleanups: 0,
@@ -3504,6 +3629,8 @@ async function withTimeout(promise, timeoutMs, label) {
 }
 
 function normalizeEvent(body) {
+  const itemNumber = numberOrNull(body.item_number);
+  const sourceItemNumber = numberOrNull(body.source_item_number);
   return {
     id: crypto.randomUUID(),
     received_at: new Date().toISOString(),
@@ -3515,6 +3642,13 @@ function normalizeEvent(body) {
     item_url: nullableString(body.item_url),
     run_url: nullableString(body.run_url),
     title: nullableString(body.title),
+    ...(itemNumber === null ? {} : { item_number: itemNumber }),
+    ...(sourceItemNumber === null ? {} : { source_item_number: sourceItemNumber }),
+    source_item_url: nullableString(body.source_item_url),
+    pr_url: nullableString(body.pr_url),
+    work_kind: nullableString(body.work_kind),
+    automatic: body.automatic === true || body.automatic === "true",
+    cluster_id: nullableString(body.cluster_id),
     duration_ms: numberOrNull(body.duration_ms),
     note: nullableString(body.note),
   };
@@ -4593,6 +4727,7 @@ h2 {
   box-shadow: inset 0 1px rgba(255,255,255,0.025);
 }
 .overview-head,
+.automatic-head,
 .workers-head,
 .worker-toolbar {
   display: flex;
@@ -4601,6 +4736,7 @@ h2 {
   gap: 12px;
 }
 .overview-head h2,
+.automatic-head h2,
 .workers-head h2 { margin: 0; }
 .flow-map {
   display: grid;
@@ -4691,6 +4827,61 @@ h2 {
 .status-dot.active { background: var(--green); }
 .capacity-legend .waiting,
 .status-dot.waiting { background: var(--amber); }
+.status-dot.done { background: var(--green); }
+.status-dot.failed { background: var(--red); }
+.automatic-head { margin-top: 24px; }
+.automatic-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+  margin-top: 12px;
+}
+.automatic-card {
+  appearance: none;
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+  padding: 13px;
+  text-align: left;
+  color: var(--text);
+  background:
+    linear-gradient(135deg, rgba(185,156,255,0.08), transparent 55%),
+    #0d141d;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  cursor: pointer;
+  font: inherit;
+  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+.automatic-card:hover,
+.automatic-card:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(185,156,255,0.65);
+  background: #111b27;
+  outline: none;
+}
+.automatic-card-top,
+.automatic-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+.automatic-title {
+  display: -webkit-box;
+  overflow: hidden;
+  color: #f0eaff;
+  font-weight: 650;
+  line-height: 1.35;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.automatic-card-meta {
+  color: var(--muted);
+  font-size: 12px;
+}
 .workers-head { margin-top: 24px; }
 .worker-toolbar { margin-top: 10px; align-items: flex-start; }
 .worker-filters { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -5112,9 +5303,9 @@ a:hover { color: #89c8ff; text-decoration: underline; }
   font-style: italic;
 }
 .empty::before { content: "🦀 "; opacity: 0.3; }
-@media (max-width: 1280px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .split { grid-template-columns: 1fr; } .left-col { order: 1; } .side-col { order: 2; } .cluster-col-desktop { display: none; } .cluster-col-mobile { display: block; order: 3; } header { align-items: start; flex-direction: column; } .top-links { justify-content: flex-start; } .worker-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 1280px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .split { grid-template-columns: 1fr; } .left-col { order: 1; } .side-col { order: 2; } .cluster-col-desktop { display: none; } .cluster-col-mobile { display: block; order: 3; } header { align-items: start; flex-direction: column; } .top-links { justify-content: flex-start; } .worker-grid, .automatic-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 900px) { .flow-map { grid-template-columns: 1fr; } .flow-node { min-height: 0; } .flow-node:not(:last-child)::after { content: "⌄"; right: 18px; top: auto; bottom: -16px; } }
-@media (max-width: 760px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .work-row { grid-template-columns: 1fr; align-items: start; } .work-state, .stage-block, .timebox { justify-content: start; justify-items: start; } .worker-grid { grid-template-columns: 1fr; } .worker-toolbar { align-items: stretch; flex-direction: column; } }
+@media (max-width: 760px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .work-row { grid-template-columns: 1fr; align-items: start; } .work-state, .stage-block, .timebox { justify-content: start; justify-items: start; } .worker-grid, .automatic-grid { grid-template-columns: 1fr; } .worker-toolbar { align-items: stretch; flex-direction: column; } }
 @media (max-width: 560px) { main { width: min(100vw - 20px, 1440px); padding-top: 16px; } .grid, .closed-stats, .drawer-grid { grid-template-columns: 1fr; } .side-row { grid-template-columns: 1fr; } .side-meta { justify-content: flex-start; } .overview-shell { padding: 13px; } .capacity-rail { grid-template-columns: repeat(8, minmax(0, 1fr)); } dialog { margin: 7px; max-height: calc(100vh - 14px); } }
 </style>
 </head>
@@ -5145,6 +5336,11 @@ a:hover { color: #89c8ff; text-decoration: underline; }
       <span><i class="waiting"></i>waiting</span>
       <span><i></i>available</span>
     </div>
+    <div class="automatic-head">
+      <h2>Automatic Builds</h2>
+      <span class="muted" id="automatic-summary"></span>
+    </div>
+    <div id="automatic-work"></div>
     <div class="workers-head">
       <h2>Active Workers</h2>
       <span class="muted" id="worker-summary"></span>
@@ -5260,6 +5456,7 @@ let lastData = null;
 let loading = false;
 let activeWorkerFilter = "all";
 let workerIndex = new Map();
+let automaticIndex = new Map();
 
 function workerGroup(worker) {
   const text = (worker.mode + " " + worker.name + " " + worker.workflow_title).toLowerCase();
@@ -5278,7 +5475,11 @@ function workerKindLabel(kind) {
   return "";
 }
 function workerStatusClass(status) {
-  return status === "in_progress" ? "active" : ["queued", "waiting", "requested", "pending"].includes(status) ? "waiting" : "";
+  if (["in_progress", "running"].includes(status)) return "active";
+  if (["queued", "waiting", "requested", "pending"].includes(status)) return "waiting";
+  if (["completed", "success"].includes(status)) return "done";
+  if (["blocked", "failed", "failure", "cancelled"].includes(status)) return "failed";
+  return "";
 }
 function workerTarget(worker) {
   if (worker.repository && worker.item_numbers?.length) {
@@ -5346,6 +5547,32 @@ function renderWorkers(rows) {
     return '<button type="button" class="worker-card" data-worker-id="' + esc(worker.id) + '" aria-label="Open details for ' + esc(targetTitle || worker.name) + '"><div class="worker-card-top"><span><span class="pill"><i class="status-dot ' + workerStatusClass(worker.status) + '"></i>' + esc(modeLabel(worker.mode)) + '</span>' + (kind ? ' <span class="pill">' + esc(kind) + '</span>' : '') + '</span><span class="muted mono">' + elapsed(worker.elapsed_ms) + '</span></div><div class="worker-name">' + esc(worker.name) + '</div><div class="worker-card-meta"><span class="worker-target-ref">' + esc(workerTarget(worker)) + '</span></div>' + (targetTitle ? '<div class="worker-target-title" title="' + esc(targetTitle) + '">' + esc(targetTitle) + '</div>' : '') + '<div class="worker-card-step"><span>↳ ' + esc(worker.current_step || worker.stage) + '</span></div><div class="worker-progress"><i style="width:' + progress + '%"></i></div></button>';
   }).join("") + '</div>';
 }
+function renderAutomaticWork(rows) {
+  automaticIndex = new Map(rows.map(row => [String(row.id), row]));
+  const active = rows.filter(row => row.active || ["queued", "running", "in_progress"].includes(row.status)).length;
+  document.getElementById("automatic-summary").textContent =
+    fmt.format(rows.length) + " recent · " + fmt.format(active) + " active";
+  if (!rows.length) {
+    document.getElementById("automatic-work").innerHTML =
+      '<div class="empty">No automatic issue builds have started yet.</div>';
+    return;
+  }
+  document.getElementById("automatic-work").innerHTML =
+    '<div class="automatic-grid">' +
+    rows.map(row => {
+      const phase = compactText(row.phase || row.status || "queued").replaceAll("_", " ");
+      return '<button type="button" class="automatic-card" data-automatic-id="' + esc(row.id) +
+        '" aria-label="Open automatic build details for ' + esc(row.title) + '">' +
+        '<div class="automatic-card-top"><span class="pill"><i class="status-dot ' +
+        workerStatusClass(row.status) + '"></i>' + esc(phase) + '</span><span class="muted">' +
+        esc(row.updated_at ? since(row.updated_at) : "") + '</span></div>' +
+        '<div class="automatic-title">' + esc(row.title || "Issue #" + row.issue_number) + '</div>' +
+        '<div class="automatic-card-meta"><span>' + esc(row.repository + "#" + row.issue_number) +
+        '</span><span>' + esc(row.pr_url ? "PR opened" : row.active ? "worker active" : row.status) +
+        '</span></div></button>';
+    }).join("") +
+    '</div>';
+}
 function renderWorkerDialog(worker) {
   const dialog = document.getElementById("worker-dialog");
   const statusClass = workerStatusClass(worker.status);
@@ -5375,18 +5602,55 @@ function renderWorkerDialog(worker) {
   if (!dialog.open) dialog.showModal();
   history.replaceState(null, "", "#worker-" + encodeURIComponent(worker.id));
 }
+function renderAutomaticDialog(row) {
+  const dialog = document.getElementById("worker-dialog");
+  const phase = compactText(row.phase || row.status || "queued").replaceAll("_", " ");
+  document.getElementById("worker-dialog-heading").innerHTML =
+    '<div><span class="pill"><i class="status-dot ' + workerStatusClass(row.status) + '"></i>' +
+    esc(row.status) + '</span> <span class="pill">Automatic issue build</span></div>' +
+    '<h3 id="worker-dialog-title">' + esc(row.title) + '</h3>' +
+    '<div class="muted">' + esc(row.repository + "#" + row.issue_number) + '</div>';
+  const timeline = (row.timeline || []).map(entry =>
+    '<li class="step-row ' + esc(entry.status) + '"><i class="step-mark"></i><strong>' +
+    esc(compactText(entry.phase).replaceAll("_", " ")) + '</strong><span>' +
+    esc(entry.received_at ? since(entry.received_at) : entry.status) + '</span>' +
+    (entry.note ? '<div class="muted" style="grid-column:2 / -1">' + esc(entry.note) + '</div>' : '') +
+    '</li>'
+  ).join("");
+  document.getElementById("worker-dialog-body").innerHTML =
+    '<div class="drawer-grid">' +
+      '<div class="drawer-stat"><span>Current phase</span><strong>' + esc(phase) + '</strong></div>' +
+      '<div class="drawer-stat"><span>Status</span><strong>' + esc(row.status) + '</strong></div>' +
+      '<div class="drawer-stat"><span>Source</span><strong>' + esc(row.repository + "#" + row.issue_number) + '</strong></div>' +
+      '<div class="drawer-stat"><span>Updated</span><strong>' + esc(row.updated_at ? since(row.updated_at) : "unknown") + '</strong></div>' +
+    '</div>' +
+    '<div class="drawer-links">' +
+      linkClass(row.issue_url, "Open issue", "pill run-link") +
+      linkClass(row.run_url, "Open workflow run", "pill run-link") +
+      linkClass(row.pr_url, "Open generated PR", "pill run-link") +
+      (row.worker_id ? '<button type="button" class="filter-button" data-linked-worker-id="' + esc(row.worker_id) + '">Open live worker</button>' : '') +
+    '</div>' +
+    '<h2>Lifecycle Timeline</h2>' +
+    (timeline ? '<ol class="step-list">' + timeline + '</ol>' : '<div class="empty">No lifecycle events recorded yet.</div>');
+  if (!dialog.open) dialog.showModal();
+  history.replaceState(null, "", "#automatic-" + encodeURIComponent(row.id));
+}
 function closeWorkerDialog() {
   const dialog = document.getElementById("worker-dialog");
   if (dialog.open) dialog.close();
-  if (location.hash.startsWith("#worker-")) history.replaceState(null, "", location.pathname + location.search);
+  if (location.hash.startsWith("#worker-") || location.hash.startsWith("#automatic-")) {
+    history.replaceState(null, "", location.pathname + location.search);
+  }
 }
 function openWorkerFromHash() {
-  if (!location.hash.startsWith("#worker-")) return;
-  const worker = workerIndex.get(decodeURIComponent(location.hash.slice(8)));
-  if (worker) {
-    renderWorkerDialog(worker);
-  } else if (document.getElementById("worker-dialog").open) {
-    closeWorkerDialog();
+  if (location.hash.startsWith("#worker-")) {
+    const worker = workerIndex.get(decodeURIComponent(location.hash.slice(8)));
+    if (worker) renderWorkerDialog(worker);
+    else if (document.getElementById("worker-dialog").open) closeWorkerDialog();
+  } else if (location.hash.startsWith("#automatic-")) {
+    const row = automaticIndex.get(decodeURIComponent(location.hash.slice(11)));
+    if (row) renderAutomaticDialog(row);
+    else if (document.getElementById("worker-dialog").open) closeWorkerDialog();
   }
 }
 
@@ -5444,6 +5708,7 @@ function renderDashboard(data, note) {
     metric("🎯 Capacity", fleet.budget_used_percent + "%", "fleet utilization", fleet.budget_used_percent, "var(--green)")
   ].join("");
   renderSystemMap(data);
+  renderAutomaticWork(data.automatic_work || []);
   renderWorkers(data.workers || []);
   openWorkerFromHash();
   renderClusterRepair(data.recent?.cluster_repair);
@@ -5542,13 +5807,28 @@ document.getElementById("workers").addEventListener("click", event => {
   const worker = workerIndex.get(String(button.dataset.workerId));
   if (worker) renderWorkerDialog(worker);
 });
+document.getElementById("automatic-work").addEventListener("click", event => {
+  const button = event.target.closest("button[data-automatic-id]");
+  if (!button) return;
+  const row = automaticIndex.get(String(button.dataset.automaticId));
+  if (row) renderAutomaticDialog(row);
+});
 document.getElementById("worker-dialog-close").addEventListener("click", closeWorkerDialog);
 document.getElementById("worker-dialog").addEventListener("click", event => {
+  const linkedWorker = event.target.closest("button[data-linked-worker-id]");
+  if (linkedWorker) {
+    const worker = workerIndex.get(String(linkedWorker.dataset.linkedWorkerId));
+    if (worker) renderWorkerDialog(worker);
+    return;
+  }
   if (event.target === event.currentTarget) closeWorkerDialog();
 });
 document.getElementById("worker-dialog").addEventListener("close", () => {
-  if (location.hash.startsWith("#worker-")) history.replaceState(null, "", location.pathname + location.search);
+  if (location.hash.startsWith("#worker-") || location.hash.startsWith("#automatic-")) {
+    history.replaceState(null, "", location.pathname + location.search);
+  }
 });
+window.addEventListener("hashchange", openWorkerFromHash);
 load();
 setInterval(load, 15000);
 </script>

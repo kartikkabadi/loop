@@ -404,6 +404,65 @@ test("validation parser requires env assignments before env command", () => {
   );
 });
 
+test("validation parser accepts common non-Node project commands", () => {
+  assert.deepEqual(parseAllowedValidationCommand("make fmt"), ["make", "fmt"]);
+  assert.deepEqual(parseAllowedValidationCommand("pnpm exec vitest run tests/browser"), [
+    "pnpm",
+    "exec",
+    "vitest",
+    "run",
+    "tests/browser",
+  ]);
+  assert.deepEqual(parseAllowedValidationCommand("pnpm exec node --test test/example.test.ts"), [
+    "pnpm",
+    "exec",
+    "node",
+    "--test",
+    "test/example.test.ts",
+  ]);
+  assert.deepEqual(parseAllowedValidationCommand('go test ./internal/cmd -run "TestA|TestB"'), [
+    "go",
+    "test",
+    "./internal/cmd",
+    "-run",
+    "TestA|TestB",
+  ]);
+});
+
+test("validation parser still rejects executable shell syntax", () => {
+  assert.throws(() => parseAllowedValidationCommand("make fmt; make test"), /unsafe|unsupported/);
+  assert.throws(
+    () => parseAllowedValidationCommand("go test ./... | tee output"),
+    /unsafe|unsupported/,
+  );
+  assert.throws(() => parseAllowedValidationCommand("make $(printf fmt)"), /unsafe|unsupported/);
+});
+
+test("validation parser rejects direct interpreter eval commands", () => {
+  for (const command of [
+    `node -e 'require("child_process").execFileSync("gh",["issue","edit","1"])'`,
+    `bun --eval='Bun.spawnSync(["gh","issue","edit","1"])'`,
+    `python3 -c 'import subprocess; subprocess.run(["gh", "issue", "edit", "1"])'`,
+    `ruby -e 'system("gh", "issue", "edit", "1")'`,
+    `php -r 'system("gh issue edit 1");'`,
+    `swift -e 'print("inline")'`,
+    `uv run python -c 'import subprocess; subprocess.run(["gh", "issue", "edit", "1"])'`,
+    `npm exec -- node -e 'require("child_process").execFileSync("gh",["issue","edit","1"])'`,
+    `pnpm exec node --eval='require("child_process").execFileSync("gh",["issue","edit","1"])'`,
+    `bundle exec ruby -e 'system("gh", "issue", "edit", "1")'`,
+    `pnpm exec sh -c 'gh issue edit 1 --add-label security'`,
+    `uv run bash -c 'gh issue edit 1 --add-label security'`,
+    `pnpm exec tsx -e 'console.log("inline")'`,
+    `pnpm exec ts-node --eval='console.log("inline")'`,
+    `pnpm dlx tsx --eval='console.log("inline")'`,
+    `npm exec tsx -e 'console.log("inline")'`,
+    `bun x tsx -e 'console.log("inline")'`,
+    `pnpm exec gh issue edit 1 --add-label security`,
+  ]) {
+    assert.throws(() => parseAllowedValidationCommand(command), /unsafe validation command/);
+  }
+});
+
 test("validation preflight accepts scoped OpenGrep commands", () => {
   const cwd = packageFixture({ "check:changed": "node check.js" });
   const command =
@@ -897,25 +956,25 @@ test("changed validation retries one transient check:changed failure", () => {
   }
 });
 
-test("target validation strips Codex and model secrets", () => {
+test("target validation strips Codex, model, and GitHub write credentials", () => {
+  const secretNames = [
+    "OPENAI_API_KEY",
+    "CODEX_API_KEY",
+    "CLAWSWEEPER_INTERNAL_MODEL",
+    "CODEX_HOME",
+    "GH_TOKEN",
+    "GITHUB_TOKEN",
+  ];
+  const secretNameArray = `[${secretNames.map((name) => `'${name}'`).join(",")}]`;
   const cwd = gitPackageFixture({
-    "check:env":
-      "node -e \"for (const key of ['OPENAI_API_KEY','CODEX_API_KEY','CLAWSWEEPER_INTERNAL_MODEL','CODEX_HOME']) if (process.env[key]) process.exit(9)\"",
+    "check:env": `node -e "for (const key of ${secretNameArray}) if (process.env[key]) process.exit(9)"`,
   });
   git(cwd, "add", ".");
   git(cwd, "commit", "-m", "initial");
   attachOrigin(cwd);
 
-  const previous = Object.fromEntries(
-    ["OPENAI_API_KEY", "CODEX_API_KEY", "CLAWSWEEPER_INTERNAL_MODEL", "CODEX_HOME"].map((key) => [
-      key,
-      process.env[key],
-    ]),
-  );
-  process.env.OPENAI_API_KEY = "secret";
-  process.env.CODEX_API_KEY = "secret";
-  process.env.CLAWSWEEPER_INTERNAL_MODEL = "secret-model";
-  process.env.CODEX_HOME = "/tmp/secret-codex-home";
+  const previous = Object.fromEntries(secretNames.map((key) => [key, process.env[key]]));
+  for (const key of secretNames) process.env[key] = `secret-${key.toLowerCase()}`;
   try {
     assert.deepEqual(
       runAllowedValidationCommands(

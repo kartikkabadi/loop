@@ -305,11 +305,14 @@ function eligibilityDecision({
     blockers.push(`review status is ${fm.review_status || "unknown"}`);
   if (fm.decision !== "keep_open") blockers.push(`decision is ${fm.decision || "unknown"}`);
   if (fm.close_reason !== "none") blockers.push(`close reason is ${fm.close_reason || "unknown"}`);
-  if (fm.confidence !== "high") blockers.push(`review confidence is ${fm.confidence || "unknown"}`);
-  if (fm.work_candidate !== "queue_fix_pr")
-    blockers.push(`work candidate is ${fm.work_candidate || "unknown"}`);
-  if (fm.work_confidence !== "high")
-    blockers.push(`work confidence is ${fm.work_confidence || "unknown"}`);
+  if (candidateKind !== "viable") {
+    if (fm.confidence !== "high")
+      blockers.push(`review confidence is ${fm.confidence || "unknown"}`);
+    if (fm.work_candidate !== "queue_fix_pr")
+      blockers.push(`work candidate is ${fm.work_candidate || "unknown"}`);
+    if (fm.work_confidence !== "high")
+      blockers.push(`work confidence is ${fm.work_confidence || "unknown"}`);
+  }
   if (
     candidateKind !== "viable" &&
     frontMatterStringArray(fm.work_cluster_refs).some((reference) =>
@@ -343,17 +346,17 @@ function eligibilityDecision({
     if (fm.requires_product_decision === "true") blockers.push("requires a product decision");
     if (frontMatterStringArray(fm.vision_fit_evidence).length === 0)
       blockers.push("missing vision-fit evidence");
-  } else {
-    if (fm.requires_product_decision === "true") blockers.push("requires a product decision");
   }
   if (frontMatterStringArray(fm.labels).some(isProtectedLabel))
     blockers.push("protected label present");
   if (reportSecurityNeedsAttention(reportMarkdown))
     blockers.push("security-sensitive signal present");
-  if (!section(report.body, "Repair Work Prompt").trim())
-    blockers.push("missing repair work prompt");
-  if (frontMatterStringArray(fm.work_validation).length === 0)
-    blockers.push("missing validation commands");
+  if (candidateKind !== "viable") {
+    if (!section(report.body, "Repair Work Prompt").trim())
+      blockers.push("missing repair work prompt");
+    if (frontMatterStringArray(fm.work_validation).length === 0)
+      blockers.push("missing validation commands");
+  }
   if (live) {
     const issue = asRecord(live.issue);
     const labels = (issue.labels ?? []).map((label: JsonValue) => String(label?.name ?? label));
@@ -467,13 +470,14 @@ function writeJob(context: LooseRecord) {
 function viableImplementationPrompt(context: LooseRecord) {
   const workPrompt = section(context.report.body, "Repair Work Prompt");
   return [
-    "ClawSweeper review approved this issue for autonomous implementation.",
+    "ClawSweeper finished reviewing this open issue and found no active implementation PR.",
     "",
     `Review report: ${context.reportUrl}`,
     "",
-    workPrompt.trim() || "Implement the issue as one focused pull request.",
+    workPrompt.trim() ||
+      "Read the source issue and implement it as one focused pull request on latest main.",
     "",
-    "Inspect the repository and choose the appropriate implementation and validation.",
+    "Own the implementation strategy: inspect the repository, understand the existing design, choose the appropriate implementation, and discover the relevant validation.",
     "Stop without a PR if the request is no longer viable, already fixed, security-sensitive, or needs a product decision.",
     "Use a closing reference for the source issue in the PR body.",
   ].join("\n");

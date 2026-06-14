@@ -129,17 +129,13 @@ export function uniqueStrings(values: Iterable<unknown>): string[] {
 export function parseAllowedValidationCommand(command: unknown): string[] {
   const text = String(command ?? "").trim();
   if (!text) throw new Error("empty validation command");
-  const safetyText = text.replace(
-    /\$\{[A-Z_][A-Z0-9_]*(?::-[A-Za-z0-9_./:-]+)?\}/g,
-    "SHELL_DEFAULT",
-  );
-  if (/[`$;&|<>()[\]{}*?~]/.test(safetyText)) {
-    throw new Error(`unsafe validation command: ${text}`);
-  }
-  const parts = normalizeEnvInvocation(text.split(/\s+/));
+  const parts = normalizeEnvInvocation(splitValidationCommand(text));
   const executable = validationExecutable(parts);
   if (!executable || !isAllowedValidationExecutable(executable)) {
     throw new Error(`unsupported validation command: ${text}`);
+  }
+  if (hasUnsafePackageRunner(parts) || hasInlineInterpreterCode(parts)) {
+    throw new Error(`unsafe validation command: ${text}`);
   }
   return parts;
 }
@@ -159,10 +155,212 @@ function validationExecutable(parts: readonly string[]) {
 
 function isAllowedValidationExecutable(executable: string) {
   return (
-    ["pnpm", "npm", "bun", "node", "git"].includes(executable) ||
+    [
+      "pnpm",
+      "npm",
+      "bun",
+      "node",
+      "git",
+      "make",
+      "go",
+      "cargo",
+      "rustc",
+      "swift",
+      "swiftc",
+      "xcodebuild",
+      "python",
+      "python3",
+      "pytest",
+      "uv",
+      "ruff",
+      "mypy",
+      "dotnet",
+      "gradle",
+      "./gradlew",
+      "mvn",
+      "./mvnw",
+      "php",
+      "composer",
+      "ruby",
+      "bundle",
+    ].includes(executable) ||
     executable === "scripts/run-opengrep.sh" ||
     executable === "./scripts/run-opengrep.sh"
   );
+}
+
+function hasInlineInterpreterCode(parts: readonly string[]) {
+  const shellExecutables = new Set([
+    "sh",
+    "bash",
+    "zsh",
+    "dash",
+    "fish",
+    "ksh",
+    "pwsh",
+    "powershell",
+    "cmd",
+    "cmd.exe",
+  ]);
+  const deniedByExecutable: Record<string, readonly string[]> = {
+    node: ["-e", "--eval", "-p", "--print"],
+    bun: ["-e", "--eval", "-p", "--print"],
+    deno: ["eval"],
+    tsx: ["-e", "--eval", "-p", "--print"],
+    "ts-node": ["-e", "--eval", "-p", "--print"],
+    python: ["-c"],
+    python3: ["-c"],
+    ruby: ["-e"],
+    php: ["-r"],
+    swift: ["-e"],
+  };
+  const commandParts = stripEnvPrefix(parts);
+  if (commandParts.some((part) => shellExecutables.has(part.toLowerCase()))) return true;
+  for (const [index, executable] of commandParts.entries()) {
+    const denied = deniedByExecutable[executable];
+    if (!denied) continue;
+    if (
+      commandParts
+        .slice(index + 1)
+        .some((arg) =>
+          denied.some(
+            (flag) =>
+              arg === flag ||
+              (flag.startsWith("--") ? arg.startsWith(`${flag}=`) : arg.startsWith(flag)),
+          ),
+        )
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function hasUnsafePackageRunner(parts: readonly string[]) {
+  const commandParts = stripEnvPrefix(parts);
+  const executable = commandParts[0];
+  if (!executable) return false;
+
+  if (executable === "npm" && commandParts[1] === "exec") return true;
+  if (executable === "bunx" || (executable === "bun" && commandParts[1] === "x")) return true;
+
+  let runnerIndex = 1;
+  if (executable === "pnpm" && ["-s", "--silent"].includes(commandParts[runnerIndex] ?? "")) {
+    runnerIndex += 1;
+  }
+  if (executable === "pnpm" && commandParts[runnerIndex] === "dlx") return true;
+
+  const wrapper =
+    executable === "pnpm" && commandParts[runnerIndex] === "exec"
+      ? commandParts[runnerIndex + 1]
+      : executable === "uv" && commandParts[1] === "run"
+        ? commandParts[2]
+        : executable === "bundle" && commandParts[1] === "exec"
+          ? commandParts[2]
+          : executable === "composer" && commandParts[1] === "exec"
+            ? commandParts[2]
+            : "";
+  if (!wrapper) return false;
+  return !SAFE_WRAPPED_VALIDATION_EXECUTABLES.has(wrapper);
+}
+
+const SAFE_WRAPPED_VALIDATION_EXECUTABLES = new Set([
+  "ava",
+  "cargo",
+  "c8",
+  "eslint",
+  "go",
+  "jest",
+  "mocha",
+  "mypy",
+  "node",
+  "nyc",
+  "php",
+  "phpstan",
+  "phpunit",
+  "playwright",
+  "prettier",
+  "psalm",
+  "python",
+  "python3",
+  "pytest",
+  "rake",
+  "rspec",
+  "rubocop",
+  "ruff",
+  "ruby",
+  "ts-node",
+  "tsc",
+  "tsx",
+  "vitest",
+]);
+
+function splitValidationCommand(text: string): string[] {
+  const parts: string[] = [];
+  let current = "";
+  let quote: "'" | '"' | null = null;
+  let escaping = false;
+  for (let index = 0; index < text.length; index += 1) {
+    const character = text[index]!;
+    if (escaping) {
+      current += character;
+      escaping = false;
+      continue;
+    }
+    if (character === "\\") {
+      escaping = true;
+      continue;
+    }
+    if (quote) {
+      if (character === quote) {
+        quote = null;
+      } else {
+        if (quote === '"' && character === "$") {
+          const expansion = safeVariableExpansion(text.slice(index));
+          if (expansion) {
+            current += expansion;
+            index += expansion.length - 1;
+            continue;
+          }
+        }
+        if (quote === '"' && (character === "`" || character === "$")) {
+          throw new Error(`unsafe validation command: ${text}`);
+        }
+        current += character;
+      }
+      continue;
+    }
+    if (character === "'" || character === '"') {
+      quote = character;
+      continue;
+    }
+    if (/\s/.test(character)) {
+      if (current) {
+        parts.push(current);
+        current = "";
+      }
+      continue;
+    }
+    if (character === "$") {
+      const expansion = safeVariableExpansion(text.slice(index));
+      if (expansion) {
+        current += expansion;
+        index += expansion.length - 1;
+        continue;
+      }
+    }
+    if (/[`$;&|<>()[\]{}*?~]/.test(character)) {
+      throw new Error(`unsafe validation command: ${text}`);
+    }
+    current += character;
+  }
+  if (escaping || quote) throw new Error(`unsafe validation command: ${text}`);
+  if (current) parts.push(current);
+  return parts;
+}
+
+function safeVariableExpansion(value: string) {
+  return value.match(/^\$\{[A-Z_][A-Z0-9_]*(?::-[A-Za-z0-9_./:-]+)?\}/)?.[0] ?? "";
 }
 
 function isEnvAssignment(value: unknown) {

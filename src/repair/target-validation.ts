@@ -507,6 +507,8 @@ function targetValidationEnv() {
   delete env.CODEX_API_KEY;
   delete env.CLAWSWEEPER_INTERNAL_MODEL;
   delete env.CODEX_HOME;
+  delete env.GH_TOKEN;
+  delete env.GITHUB_TOKEN;
   return env;
 }
 

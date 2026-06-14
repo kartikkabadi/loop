@@ -189,6 +189,28 @@ test("viable reviews queue autonomous implementation outside protected repositor
   assert.equal(decision.status, "queued_for_repair");
 });
 
+test("viable reviews let Codex discover the implementation and validation strategy", () => {
+  const markdown = report({
+    number: "244",
+    repository: "steipete/summarize",
+    confidence: "low",
+    work_candidate: "none",
+    work_confidence: "low",
+    work_validation: JSON.stringify([]),
+    requires_product_decision: "true",
+  }).replace(/## Repair Work Prompt[\s\S]*$/, "");
+  const decision = reportOnlyDecision({
+    targetRepo: "steipete/summarize",
+    itemNumber: 244,
+    report: parseReviewReport(markdown),
+    reportMarkdown: markdown,
+    candidateKind: "viable",
+  });
+
+  assert.equal(decision.shouldRepair, true);
+  assert.equal(decision.status, "queued_for_repair");
+});
+
 test("viable review routing resolves pull request context during live intake", () => {
   const markdown = report({
     number: "244",
@@ -367,7 +389,7 @@ test("viable live intake allows auth-provider prose but blocks explicit security
   assert.match(credentialExposure.reason, /security-sensitive signal/);
 });
 
-test("viable review routing excludes protected repositories and weak verdicts", () => {
+test("viable review routing excludes protected repositories and invalid review identity", () => {
   const base = {
     number: "244",
     repository: "steipete/summarize",
@@ -378,8 +400,8 @@ test("viable review routing excludes protected repositories and weak verdicts", 
   const cases = [
     { targetRepo: "openclaw/openclaw", overrides: { repository: "openclaw/openclaw" } },
     { targetRepo: "openclaw/clawhub", overrides: { repository: "openclaw/clawhub" } },
-    { targetRepo: "steipete/summarize", overrides: { work_candidate: "none" } },
-    { targetRepo: "steipete/summarize", overrides: { requires_product_decision: "true" } },
+    { targetRepo: "steipete/summarize", overrides: { review_status: "incomplete" } },
+    { targetRepo: "steipete/summarize", overrides: { decision: "close" } },
     { targetRepo: "steipete/summarize", overrides: { number: "245" } },
   ];
 

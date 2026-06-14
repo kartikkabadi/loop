@@ -131,6 +131,16 @@ jobs:
           permission-issues: read
           permission-pull-requests: read
 
+      - name: Create target status token
+        id: target-status-token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: ${{ steps.target.outputs.target_owner }}
+          repositories: ${{ steps.target.outputs.target_name }}
+          permission-issues: write
+
       - name: Create central dispatch token
         id: dispatch-token
         uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
@@ -200,6 +210,20 @@ jobs:
             --path results \
             --max-attempts 12 \
             --push-attempts 4
+
+      - name: Publish automatic implementation queue status
+        if: ${{ steps.prepare.outputs.should_repair == 'true' }}
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ steps.target-status-token.outputs.token }}
+          CLAWSWEEPER_STATUS_INGEST_TOKEN: ${{ secrets.CLAWSWEEPER_STATUS_INGEST_TOKEN }}
+        run: |
+          pnpm run repair:issue-implementation-status -- \
+            --repo "${{ steps.prepare.outputs.target_repo }}" \
+            --item-number "${{ steps.prepare.outputs.item_number }}" \
+            --state "Queued" \
+            --detail "Review complete; no active implementation PR was found. The Codex implementation worker is queued." \
+            --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
       - name: Dispatch repair worker
         if: ${{ steps.prepare.outputs.should_repair == 'true' }}

@@ -2,7 +2,14 @@ import crypto from "node:crypto";
 
 import type { JsonValue, LooseRecord } from "./json-types.js";
 
-const PROTECTED_LABELS = new Set(["security", "beta-blocker", "release-blocker", "maintainer"]);
+const PROTECTED_LABELS = new Set([
+  "security",
+  "beta-blocker",
+  "release-blocker",
+  "maintainer",
+  "clawsweeper:human-review",
+  "clawsweeper:manual-only",
+]);
 const CLAWSWEEPER_BOTS = new Set([
   "clawsweeper",
   "clawsweeper[bot]",
@@ -14,7 +21,7 @@ export function issueSourceRevisionSha256(issue: LooseRecord, comments: JsonValu
   const snapshot = {
     title: String(issue.title ?? ""),
     body: String(issue.body ?? ""),
-    labels: normalizedLabels(issue.labels ?? []),
+    labels: revisionLabels(issue.labels ?? []),
     comments: comments
       .map(asRecord)
       .filter((comment) => !isClawSweeperComment(comment))
@@ -73,6 +80,18 @@ function normalizedLabels(labels: JsonValue[]): string[] {
     )
     .filter(Boolean)
     .sort();
+}
+
+function revisionLabels(labels: JsonValue[]): string[] {
+  return normalizedLabels(labels).filter((label) => !isIgnorableAutomationLabel(label));
+}
+
+function isIgnorableAutomationLabel(label: string) {
+  return (
+    (label.startsWith("clawsweeper:") && !PROTECTED_LABELS.has(label)) ||
+    label === "no-stale" ||
+    label === "stale"
+  );
 }
 
 function isClawSweeperComment(comment: LooseRecord): boolean {
