@@ -202,7 +202,6 @@ test("viable reviews let Codex discover the implementation and validation strate
     work_candidate: "none",
     work_confidence: "low",
     work_validation: JSON.stringify([]),
-    requires_product_decision: "true",
   }).replace(/## Repair Work Prompt[\s\S]*$/, "");
   const decision = reportOnlyDecision({
     targetRepo: "steipete/summarize",
@@ -214,6 +213,45 @@ test("viable reviews let Codex discover the implementation and validation strate
 
   assert.equal(decision.shouldRepair, true);
   assert.equal(decision.status, "queued_for_repair");
+});
+
+test("viable reviews reject product-decision and automatic PR pause signals", () => {
+  for (const overrides of [
+    { requires_product_decision: "true" },
+    { labels: JSON.stringify(["clawsweeper:no-new-fix-pr"]) },
+    { labels: JSON.stringify(["clawsweeper:needs-maintainer-review"]) },
+    { labels: JSON.stringify(["clawsweeper:needs-product-decision"]) },
+  ]) {
+    const markdown = report({
+      number: "244",
+      repository: "steipete/summarize",
+      item_category: "feature",
+      reproduction_status: "not_applicable",
+      reproduction_confidence: "low",
+      ...overrides,
+    });
+    const decision = reportOnlyDecision({
+      targetRepo: "steipete/summarize",
+      itemNumber: 244,
+      report: parseReviewReport(markdown),
+      reportMarkdown: markdown,
+      candidateKind: "viable",
+    });
+
+    assert.equal(decision.shouldRepair, false);
+
+    const overrideDecision = reportOnlyDecision({
+      targetRepo: "steipete/summarize",
+      itemNumber: 244,
+      report: parseReviewReport(markdown),
+      reportMarkdown: markdown,
+      candidateKind: "viable",
+      operatorOverride: true,
+    });
+    assert.equal(overrideDecision.shouldRepair, true);
+    assert.equal(overrideDecision.status, "override_queued_for_repair");
+    assert.equal(overrideDecision.blockerClass, "soft");
+  }
 });
 
 test("viable review routing resolves pull request context during live intake", () => {

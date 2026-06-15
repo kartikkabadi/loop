@@ -362,6 +362,7 @@ function eligibilityDecision({
     blockers.push(`review status is ${fm.review_status || "unknown"}`);
   if (fm.decision !== "keep_open") blockers.push(`decision is ${fm.decision || "unknown"}`);
   if (fm.close_reason !== "none") blockers.push(`close reason is ${fm.close_reason || "unknown"}`);
+  if (fm.requires_product_decision === "true") blockers.push("requires a product decision");
   if (candidateKind !== "viable") {
     if (fm.confidence !== "high")
       blockers.push(`review confidence is ${fm.confidence || "unknown"}`);
@@ -389,7 +390,6 @@ function eligibilityDecision({
       blockers.push(`reproduction confidence is ${fm.reproduction_confidence || "unknown"}`);
     if (fm.requires_new_feature === "true") blockers.push("requires a new feature");
     if (fm.requires_new_config_option === "true") blockers.push("requires a new config option");
-    if (fm.requires_product_decision === "true") blockers.push("requires a product decision");
   } else if (candidateKind === "vision_fit") {
     if (fm.auto_implementation_candidate !== "vision_fit")
       blockers.push(
@@ -400,12 +400,14 @@ function eligibilityDecision({
       blockers.push(`implementation complexity is ${fm.implementation_complexity || "unknown"}`);
     if (!visionFitItemCategoryAllowed(fm.item_category))
       blockers.push(`item category is ${fm.item_category || "unknown"}`);
-    if (fm.requires_product_decision === "true") blockers.push("requires a product decision");
     if (frontMatterStringArray(fm.vision_fit_evidence).length === 0)
       blockers.push("missing vision-fit evidence");
   }
-  if (frontMatterStringArray(fm.labels).some(isProtectedLabel))
-    blockers.push("protected label present");
+  const reportLabels = frontMatterStringArray(fm.labels);
+  if (reportLabels.some(isProtectedLabel)) blockers.push("protected label present");
+  const reportPauseLabels = reportLabels.filter(isAutomaticImplementationPauseLabel);
+  if (reportPauseLabels.length > 0)
+    blockers.push(`automatic issue implementation is paused by ${reportPauseLabels.join(", ")}`);
   if (reportSecurityNeedsAttention(reportMarkdown))
     blockers.push("security-sensitive signal present");
   if (candidateKind !== "viable") {
@@ -420,6 +422,9 @@ function eligibilityDecision({
     if (issue.state !== "open") blockers.push(`live issue state is ${issue.state || "unknown"}`);
     if (issue.locked === true) blockers.push("live issue is locked");
     if (labels.some(isProtectedLabel)) blockers.push("live issue has protected label");
+    const livePauseLabels = labels.filter(isAutomaticImplementationPauseLabel);
+    if (livePauseLabels.length > 0)
+      blockers.push(`live issue implementation is paused by ${livePauseLabels.join(", ")}`);
     if (
       hasSecuritySignal({
         labels: Array.isArray(issue.labels) ? issue.labels : [],
@@ -958,6 +963,14 @@ function isProtectedLabel(label: string): boolean {
     "maintainer",
     "clawsweeper:human-review",
     "clawsweeper:manual-only",
+  ].includes(label.trim().toLowerCase());
+}
+
+function isAutomaticImplementationPauseLabel(label: string): boolean {
+  return [
+    "clawsweeper:no-new-fix-pr",
+    "clawsweeper:needs-maintainer-review",
+    "clawsweeper:needs-product-decision",
   ].includes(label.trim().toLowerCase());
 }
 
