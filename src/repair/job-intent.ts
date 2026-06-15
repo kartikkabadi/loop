@@ -4,6 +4,7 @@ import type { JsonValue, LooseRecord } from "./json-types.js";
 export const REPAIR_JOB_INTENTS = [
   "repair_cluster",
   "automerge_pr",
+  "pr_repair",
   "clawsweeper_self_rebase",
   "implement_issue",
   "commit_finding",
@@ -48,6 +49,7 @@ export function repairJobIntentForFrontmatter(frontmatter: LooseRecord): RepairJ
 
 export function workerLaneForRepairJobIntent(intent: RepairJobIntent): WorkerLane {
   if (intent === "automerge_pr") return "automerge_repair";
+  if (intent === "pr_repair") return "automerge_repair";
   if (intent === "clawsweeper_self_rebase") return "automerge_repair";
   if (intent === "implement_issue") return "issue_implementation";
   return "repair";

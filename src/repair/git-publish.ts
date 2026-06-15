@@ -259,7 +259,8 @@ function shouldPreserveStateOnlyFile(
   rel: string,
   sourceHasPath: (path: string) => boolean,
 ): boolean {
-  if (path === "jobs") return /^[^/]+\/inbox\/(?:automerge|issue|self-heal)-.+\.md$/.test(rel);
+  if (path === "jobs")
+    return /^[^/]+\/inbox\/(?:automerge|issue|self-heal|repair-pr)-.+\.md$/.test(rel);
   const publishedPath = joinedPublishPath(path, rel);
   if (!publishedPath.startsWith("records/")) return false;
   const counterpart = recordCounterpartPath(publishedPath);

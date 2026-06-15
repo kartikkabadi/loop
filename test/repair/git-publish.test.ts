@@ -338,6 +338,10 @@ test("publishMainCommit preserves state-only queued jobs on broad jobs publishes
     "state self-heal job\n",
   );
   write(path.join(state, "jobs/steipete/inbox/issue-steipete-oracle-241.md"), "state issue job\n");
+  write(
+    path.join(state, "jobs/openclaw/inbox/repair-pr-openclaw-clawsweeper-290.md"),
+    "state repair-pr job\n",
+  );
   write(path.join(state, "jobs/openclaw/inbox/ordinary.md"), "state ordinary job\n");
   run("git", ["add", "."], state);
   run("git", ["commit", "-m", "initial state"], state);
@@ -393,6 +397,19 @@ test("publishMainCommit preserves state-only queued jobs on broad jobs publishes
       root,
     ),
     "state issue job\n",
+  );
+  assert.equal(
+    run(
+      "git",
+      [
+        "--git-dir",
+        origin,
+        "show",
+        "state:jobs/openclaw/inbox/repair-pr-openclaw-clawsweeper-290.md",
+      ],
+      root,
+    ),
+    "state repair-pr job\n",
   );
   assert.equal(
     run("git", ["--git-dir", origin, "show", "state:jobs/openclaw/inbox/new.md"], root),

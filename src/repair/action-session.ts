@@ -16,8 +16,10 @@ export function actionWorkKind(frontmatter: LooseRecord): ActionWorkKind {
   }
   if (
     frontmatter.job_intent === "automerge_pr" ||
+    frontmatter.job_intent === "pr_repair" ||
     frontmatter.source === "pr_automerge" ||
-    String(frontmatter.cluster_id ?? "").startsWith("automerge-")
+    String(frontmatter.cluster_id ?? "").startsWith("automerge-") ||
+    String(frontmatter.cluster_id ?? "").startsWith("repair-pr-")
   ) {
     return "pr_repair";
   }

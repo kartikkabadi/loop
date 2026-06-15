@@ -9,6 +9,7 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Added
 
+- Added repair-only PR intake that scans an author's open pull requests for actionable failures and creates durable PR-repair jobs. Thanks @Jhacarreiro.
 - Added automatic issue-build lifecycle comments and dashboard cards with issue titles, queued/planning/building/completed/blocked history, live worker links, Actions runs, and generated PR drill-down.
 - Show issue and pull request titles alongside target numbers on active dashboard worker cards and worker detail links.
 - Added comprehensive documentation for steerable repair automation, covering issue-to-PR and PR-repair intake, GitCrawl Actions consumption, deduplication, opt-out labels, GitHub App token boundaries, durable Codex thread resumption, CrabFleet steering, worker budgets, completion gates, dashboards, and failure recovery.
@@ -64,6 +65,7 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Changed
 
+- Removed the unsupported ephemeral-session flag from repair Codex subprocess invocations. Thanks @Jhacarreiro.
 - Enabled automatic implementation plus bounded durable-report backfill for eligible open issues; general viable implementation remains limited to public sibling repositories, while separately gated strict-bug and vision-fit lanes can backfill `openclaw/openclaw`. Codex discovers viable implementation and validation strategy, while deterministic security, opt-out, source-state, quota, report-revision receipt, queued-job, and PR/cluster deduplication gates remain.
 - Increased quiet scheduled review capacity from 48 to 64 workers, switched scheduled backfill to three-item shards to reduce setup and tail-idle overhead, and made seven-day review freshness an explicit scheduler priority.
 - Doubled the global Codex worker budget to 128 with proportional reserves, added job-level dashboard error and recovery rates, and moved the bounded failed-review retry backstop to hourly.

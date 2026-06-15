@@ -3,6 +3,7 @@ import path from "node:path";
 
 import type { JsonValue, LooseRecord } from "./json-types.js";
 import { GITHUB_PR_TITLE_MAX_LENGTH } from "./pr-title.js";
+import { slug } from "./text-utils.js";
 
 const REPAIR_STRATEGIES = new Set([
   "repair_contributor_branch",
@@ -187,7 +188,11 @@ function isTrustedIssueImplementation({ job, fixArtifact }: LooseRecord): boolea
 function isTrustedAdoptedBranchRepair({ job, fixArtifact }: LooseRecord): boolean {
   const frontmatter = job.frontmatter ?? {};
   if (fixArtifact.repair_strategy !== "repair_contributor_branch") return false;
-  if (frontmatter.source !== "pr_autofix" && frontmatter.source !== "pr_automerge") return false;
+  const trustedSource =
+    frontmatter.source === "pr_autofix" ||
+    frontmatter.source === "pr_automerge" ||
+    isTrustedPrRepairIntake(frontmatter, fixArtifact);
+  if (!trustedSource) return false;
   if (frontmatter.allow_fix_pr !== true) return false;
   if (!Array.isArray(frontmatter.allowed_actions) || !frontmatter.allowed_actions.includes("fix")) {
     return false;
@@ -202,6 +207,34 @@ function isTrustedAdoptedBranchRepair({ job, fixArtifact }: LooseRecord): boolea
       /^https:\/\/github\.com\/[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+\/pull\/\d+$/i.test(text)
     );
   });
+}
+
+function isTrustedPrRepairIntake(frontmatter: LooseRecord, fixArtifact: LooseRecord): boolean {
+  if (frontmatter.source !== "pr-repair-intake" || frontmatter.job_intent !== "pr_repair") {
+    return false;
+  }
+  const repo = String(frontmatter.repo ?? "")
+    .trim()
+    .toLowerCase();
+  if (!/^[a-z0-9_.-]+\/[a-z0-9_.-]+$/.test(repo)) return false;
+  if (!Array.isArray(fixArtifact.source_prs) || fixArtifact.source_prs.length !== 1) return false;
+  const sourcePr = String(fixArtifact.source_prs[0] ?? "").toLowerCase();
+  const sourceMatch = sourcePr.match(
+    new RegExp(
+      `^https://github\\.com/${repo.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}/pull/([1-9]\\d*)$`,
+    ),
+  );
+  if (!sourceMatch) return false;
+  const sourceRef = `#${sourceMatch[1]}`;
+  for (const key of ["canonical", "candidates", "cluster_refs"]) {
+    const refs = frontmatter[key];
+    if (!Array.isArray(refs) || refs.length !== 1 || refs[0] !== sourceRef) return false;
+  }
+  const expectedClusterId = slug(`repair-pr-${repo.replace("/", "-")}-${sourceMatch[1]}`);
+  return (
+    frontmatter.cluster_id === expectedClusterId &&
+    frontmatter.target_branch === `clawsweeper/${expectedClusterId}`
+  );
 }
 
 function readSiblingJson(resultPath: string, name: string): LooseRecord | null {

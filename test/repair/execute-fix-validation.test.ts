@@ -75,6 +75,88 @@ test("autonomous scope validation allows trusted adopted PR branch refreshes", (
   assert.equal(block, null);
 });
 
+test("autonomous scope validation allows repair-intake adopted branch refreshes", () => {
+  const block = validate(
+    {
+      frontmatter: {
+        repo: "openclaw/openclaw",
+        cluster_id: "repair-pr-openclaw-openclaw-74742",
+        canonical: ["#74742"],
+        candidates: ["#74742"],
+        cluster_refs: ["#74742"],
+        source: "pr-repair-intake",
+        job_intent: "pr_repair",
+        allow_fix_pr: true,
+        allowed_actions: ["fix", "raise_pr"],
+        target_branch: "clawsweeper/repair-pr-openclaw-openclaw-74742",
+      },
+    },
+    {
+      ...broadBranchRepairArtifact(),
+      source_prs: ["https://github.com/openclaw/openclaw/pull/74742"],
+    },
+  );
+
+  assert.equal(block, null);
+});
+
+test("autonomous scope validation blocks repair-intake branch/source mismatches", () => {
+  const block = validate(
+    {
+      frontmatter: {
+        repo: "openclaw/openclaw",
+        cluster_id: "repair-pr-openclaw-openclaw-74742",
+        canonical: ["#74742"],
+        candidates: ["#74742"],
+        cluster_refs: ["#74742"],
+        source: "pr-repair-intake",
+        job_intent: "pr_repair",
+        allow_fix_pr: true,
+        allowed_actions: ["fix", "raise_pr"],
+        target_branch: "clawsweeper/repair-pr-openclaw-openclaw-74742",
+      },
+    },
+    {
+      ...broadBranchRepairArtifact(),
+      source_prs: ["https://github.com/openclaw/openclaw/pull/74743"],
+    },
+  );
+
+  assert.match(block.reason, /too broad for autonomous execution/);
+});
+
+test("autonomous scope validation accepts generated truncated repair-intake clusters", () => {
+  const repo = `${"a".repeat(39)}/${"b".repeat(90)}`;
+  const sourcePr = `https://github.com/${repo}/pull/74742`;
+  const clusterId = `repair-pr-${repo.replace("/", "-")}-74742`
+    .toLowerCase()
+    .replace(/[^a-z0-9_.-]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 120);
+  const block = validate(
+    {
+      frontmatter: {
+        repo,
+        cluster_id: clusterId,
+        canonical: ["#74742"],
+        candidates: ["#74742"],
+        cluster_refs: ["#74742"],
+        source: "pr-repair-intake",
+        job_intent: "pr_repair",
+        allow_fix_pr: true,
+        allowed_actions: ["fix", "raise_pr"],
+        target_branch: `clawsweeper/${clusterId}`,
+      },
+    },
+    {
+      ...broadBranchRepairArtifact(),
+      source_prs: [sourcePr],
+    },
+  );
+
+  assert.equal(block, null);
+});
+
 test("autonomous scope validation allows reviewed issue implementations", () => {
   const block = validate(
     {

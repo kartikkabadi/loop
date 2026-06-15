@@ -14,7 +14,9 @@ test("action session classifies issue implementation and PR repair work", () => 
     "issue_to_pr",
   );
   assert.equal(actionWorkKind({ job_intent: "automerge_pr" }), "pr_repair");
+  assert.equal(actionWorkKind({ job_intent: "pr_repair" }), "pr_repair");
   assert.equal(actionWorkKind({ cluster_id: "automerge-openclaw-openclaw-123" }), "pr_repair");
+  assert.equal(actionWorkKind({ cluster_id: "repair-pr-openclaw-clawsweeper-290" }), "pr_repair");
   assert.equal(actionWorkKind({ job_intent: "repair_cluster" }), "repair_cluster");
 });
 
