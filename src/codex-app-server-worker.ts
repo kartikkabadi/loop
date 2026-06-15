@@ -1,4 +1,3 @@
-import { spawn } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { createInterface } from "node:readline";
@@ -8,6 +7,7 @@ import {
   codexOutputTail,
   openCodexOutputCapture,
 } from "./codex-output-capture.js";
+import { spawnCodex, terminateCodexProcessTree, waitForCodexProcessExit } from "./codex-spawn.js";
 
 interface AppServerOptions {
   statePath: string;
@@ -19,6 +19,8 @@ interface AppServerOptions {
 
 interface WorkerOptions {
   args: string[];
+  command: string;
+  timeoutMs: number;
   resultPath: string;
   stdoutPath: string;
   stderrPath: string;
@@ -67,10 +69,10 @@ const stderr = openCodexOutputCapture(options.stderrPath, {
   maxFileBytes: options.maxOutputFileBytes,
   tailBytes: options.tailBytes,
 });
-const child = spawn("codex", ["app-server", "--listen", "stdio://"], {
+process.env.CODEX_BIN = options.command;
+const child = spawnCodex(["app-server", "--listen", "stdio://"], {
   cwd: execOptions.cwd,
   env: process.env,
-  stdio: ["pipe", "pipe", "pipe"],
 });
 const pending = new Map<
   number,
@@ -81,6 +83,7 @@ const pending = new Map<
 >();
 let requestId = 0;
 let spawnError: Error | undefined;
+let timeoutError: Error | undefined;
 let threadId = "";
 let sessionId = "";
 let turnId = "";
@@ -91,6 +94,11 @@ let forceKillTimer: NodeJS.Timeout | undefined;
 let terminal: WebSocket | null = null;
 let terminalInput = "";
 let heartbeat: NodeJS.Timeout | undefined;
+const timeout = setTimeout(() => {
+  timeoutError = new Error(`Codex app-server timed out after ${options.timeoutMs}ms`);
+  (timeoutError as NodeJS.ErrnoException).code = "ETIMEDOUT";
+  forceKillTimer = terminateCodexProcessTree(child);
+}, options.timeoutMs);
 
 child.stderr.on("data", (chunk: Buffer) => appendCodexOutputCapture(stderr, chunk));
 child.once("error", (error) => {
@@ -99,7 +107,11 @@ child.once("error", (error) => {
 });
 child.once("close", (status, signal) => {
   if (!settled) {
-    void finish(status ?? 1, signal, spawnError ?? new Error("Codex app-server exited early."));
+    void finish(
+      status ?? 1,
+      signal,
+      timeoutError ?? spawnError ?? new Error("Codex app-server exited early."),
+    );
   }
 });
 
@@ -113,8 +125,7 @@ lines.on("line", (line) => {
 for (const signal of ["SIGINT", "SIGTERM", "SIGHUP"] as const) {
   process.once(signal, () => {
     if (settled) return;
-    child.kill(signal);
-    forceKillTimer = setTimeout(() => child.kill("SIGKILL"), 1_000);
+    forceKillTimer = terminateCodexProcessTree(child, signal);
   });
 }
 
@@ -235,6 +246,7 @@ async function handleRpcMessage(message: RpcMessage): Promise<void> {
   terminalWrite(
     `\r\n\r\n[ClawSweeper] Codex turn ${turnStatus || "finished"}. Deterministic repair gates continue in GitHub Actions.\r\n`,
   );
+  clearTimeout(timeout);
   await updateWorkState(
     failed ? "blocked" : "running",
     failed ? "codex_failed" : "validating",
@@ -361,6 +373,7 @@ function terminalWrite(value: string): void {
 async function finish(status: number, signal: NodeJS.Signals | null, error?: Error): Promise<void> {
   if (settled) return;
   settled = true;
+  clearTimeout(timeout);
   if (heartbeat) clearInterval(heartbeat);
   if (forceKillTimer) clearTimeout(forceKillTimer);
   for (const waiter of pending.values())
@@ -368,7 +381,8 @@ async function finish(status: number, signal: NodeJS.Signals | null, error?: Err
   pending.clear();
   if (child.exitCode === null && child.signalCode === null) {
     child.stdin.end();
-    child.kill("SIGTERM");
+    forceKillTimer = terminateCodexProcessTree(child);
+    await waitForCodexProcessExit(child);
   }
   terminal?.close(1000, "turn complete");
   closeCodexOutputCapture(stdout);

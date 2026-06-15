@@ -3,7 +3,7 @@ import type { JsonValue, LooseRecord } from "./json-types.js";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { spawn, spawnSync } from "node:child_process";
+import { spawnSync } from "node:child_process";
 import {
   appendCodexOutputCapture,
   closeCodexOutputCapture,
@@ -11,6 +11,7 @@ import {
   openCodexOutputCapture,
 } from "../codex-output-capture.js";
 import { codexAppServerProcessOptionsFromEnv, runCodexProcess } from "../codex-process.js";
+import { spawnCodex, terminateCodexProcessTree } from "../codex-spawn.js";
 import { deterministicAutomergeResult } from "./deterministic-automerge-result.js";
 import {
   assertAllowedOwner,
@@ -271,11 +272,8 @@ function spawnCodexWithHeartbeat({
     const stdout = openCodexOutputCapture(codexTranscriptPath);
     const stderr = openCodexOutputCapture(stderrPath);
 
-    const child = spawn("codex", commandArgs, {
-      cwd,
-      env: codexEnv(),
-      stdio: ["pipe", "pipe", "pipe"],
-    });
+    const childEnv = codexEnv();
+    const child = spawnCodex(commandArgs, { cwd, env: childEnv });
 
     const heartbeat = setInterval(() => {
       const elapsedSeconds = Math.round((Date.now() - startedAt) / 1000);
@@ -286,10 +284,7 @@ function spawnCodexWithHeartbeat({
     const timeout = setTimeout(() => {
       timeoutError = new Error(`Codex worker timed out after ${timeoutMs}ms`);
       (timeoutError as LooseRecord).code = "ETIMEDOUT";
-      child.kill("SIGTERM");
-      setTimeout(() => {
-        if (!settled) child.kill("SIGKILL");
-      }, 5_000).unref();
+      terminateCodexProcessTree(child, "SIGTERM", 5_000);
     }, timeoutMs);
 
     const finish = (result: LooseRecord) => {

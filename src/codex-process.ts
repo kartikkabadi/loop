@@ -7,6 +7,9 @@ import {
   DEFAULT_CODEX_OUTPUT_FILE_BYTES,
   DEFAULT_CODEX_OUTPUT_TAIL_BYTES,
 } from "./codex-output-capture.js";
+import { codexProcessCommand } from "./codex-spawn.js";
+
+export { codexProcessCommand, codexSpawnInvocation } from "./codex-spawn.js";
 
 export interface CodexProcessResult {
   status: number | null;
@@ -87,6 +90,8 @@ export function runCodexProcess(options: {
       optionsPath,
       JSON.stringify({
         args: [...options.args],
+        command: codexProcessCommand(options.env),
+        timeoutMs: options.timeoutMs,
         resultPath,
         stdoutPath,
         stderrPath,
@@ -102,7 +107,7 @@ export function runCodexProcess(options: {
       env: options.env,
       input: options.input,
       stdio: ["pipe", "ignore", "ignore"],
-      timeout: options.timeoutMs,
+      timeout: options.timeoutMs + 10_000,
     });
     if (existsSync(resultPath)) {
       const result = deserializeProcessResult(JSON.parse(readFileSync(resultPath, "utf8")));
