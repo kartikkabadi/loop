@@ -5882,6 +5882,7 @@ function stripProofAndRatingFrontMatter(report: string): string {
 function promotionGhMock(options: {
   number: number;
   title?: string;
+  labels?: string[];
   itemCreatedAt?: string;
   itemUpdatedAt?: string;
   itemUpdatedAtAfterLabelSync?: string;
@@ -5934,6 +5935,7 @@ function promotionGhMock(options: {
 	const closeAppliedBodyLogPath = ${JSON.stringify(options.closeAppliedBodyLogPath ?? "")};
 	const number = ${options.number};
 		const title = ${JSON.stringify(title)};
+		const labels = ${JSON.stringify(options.labels ?? ["status: 📣 needs proof"])};
 		const itemCreatedAt = ${JSON.stringify(itemCreatedAt)};
 		const itemUpdatedAt = ${JSON.stringify(itemUpdatedAt)};
 		const itemUpdatedAtAfterLabelSync = ${JSON.stringify(
@@ -5993,7 +5995,7 @@ function promotionGhMock(options: {
     active_lock_reason: null,
     author_association: "CONTRIBUTOR",
     user: { login: "reporter" },
-    labels: ["status: 📣 needs proof"],
+    labels,
     comments: issueCommentCount,
     pull_request: { url: "https://api.github.com/repos/openclaw/openclaw/pulls/" + number }
   }));
@@ -6654,6 +6656,108 @@ if (args[0] === "api" && /\\/issues\\/74478$/.test(path)) {
           args.includes("feature: ✨ showcase"),
       ),
     );
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("apply-decisions routes parsed security owner acceptance to maintainer review", () => {
+  const root = mkdtempSync(tmpPrefix);
+  try {
+    const itemsDir = join(root, "items");
+    const closedDir = join(root, "closed");
+    const plansDir = join(root, "plans");
+    const reportPath = join(root, "apply-report.json");
+    const labelLogPath = join(root, "label-sync.log");
+    const itemPath = join(itemsDir, "74480.md");
+    mkdirSync(itemsDir, { recursive: true });
+    mkdirSync(plansDir, { recursive: true });
+
+    const sourceReport = `${reportFrontMatter({
+      repository: "openclaw/openclaw",
+      type: "pull_request",
+      number: "74480",
+      title: "Route owner security acceptance",
+      url: "https://github.com/openclaw/openclaw/pull/74480",
+      decision: "keep_open",
+      close_reason: "none",
+      confidence: "high",
+      action_taken: "kept_open",
+      review_status: "complete",
+      local_checkout_access: "verified",
+      author: "contributor",
+      author_association: "CONTRIBUTOR",
+      labels: JSON.stringify(["status: ⏳ waiting on author"]),
+      item_snapshot_hash: "reviewed-snapshot",
+      item_created_at: "2026-02-01T00:00:00Z",
+      item_updated_at: "2026-05-01T00:00:00Z",
+      pull_head_sha: "head-sha",
+      merge_risk_options: JSON.stringify([
+        {
+          title: "Accept the reviewed security tradeoff",
+          body: "A maintainer may accept this bounded security tradeoff before merge.",
+          category: "accept_risk",
+          recommended: true,
+          automergeInstruction: "",
+        },
+      ]),
+    })}
+
+## Summary
+
+The patch is correct and the remaining security decision belongs to a maintainer.
+
+${realBehaviorProofReportSection()}
+
+${prRatingReportSection()}
+
+## Security Review
+
+Status: needs_attention
+
+Summary: A maintainer must explicitly accept the bounded security tradeoff.
+
+## Review Findings
+
+Overall correctness: patch is correct
+
+Overall confidence: 0.95
+
+Full review comments:
+
+- none
+`;
+    const synced = reportWithSyncedReviewComment(sourceReport, 74480);
+    writeFileSync(itemPath, synced.report, "utf8");
+
+    withMockGh(
+      root,
+      promotionGhMock({
+        number: 74480,
+        title: "Route owner security acceptance",
+        labels: ["status: ⏳ waiting on author"],
+        comment: synced.comment,
+        itemUpdatedAtAfterLabelSync: "2026-05-01T00:01:00Z",
+        itemUpdatedAtAfterLabelSyncLogPath: labelLogPath,
+      }),
+      () => {
+        runApplyDecisionsForTest({
+          targetRepo: "openclaw/openclaw",
+          itemsDir,
+          closedDir,
+          plansDir,
+          reportPath,
+          extraArgs: ["--sync-comments-only", "--item-numbers", "74480"],
+        });
+      },
+    );
+
+    const updatedReport = readFileSync(itemPath, "utf8");
+    assert.match(updatedReport, /status: 👀 ready for maintainer look/);
+    assert.doesNotMatch(updatedReport, /status: ⏳ waiting on author/);
+    const labelCalls = readFileSync(labelLogPath, "utf8");
+    assert.match(labelCalls, /--remove-label status: ⏳ waiting on author/);
+    assert.match(labelCalls, /--add-label status: 👀 ready for maintainer look/);
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
@@ -16960,6 +17064,47 @@ test("ClawSweeper PR status labels use one current workflow status", () => {
       overallCorrectness: "patch is correct",
     }),
     ["bug", "status: 👀 ready for maintainer look"],
+  );
+});
+
+test("ClawSweeper PR status routes security owner acceptance to maintainer look", () => {
+  const ownerAcceptanceLabels = prStatusLabelsForTest([], {
+    proofStatus: "sufficient",
+    securityStatus: "needs_attention",
+    mergeRiskOptions: [{ category: "accept_risk", recommended: true }],
+    overallCorrectness: "patch is correct",
+  });
+
+  assert.equal(
+    ownerAcceptanceLabels.some((label) => label.endsWith("ready for maintainer look")),
+    true,
+  );
+  assert.equal(
+    ownerAcceptanceLabels.some((label) => label.endsWith("waiting on author")),
+    false,
+  );
+
+  const authorFixLabels = prStatusLabelsForTest([], {
+    proofStatus: "sufficient",
+    securityStatus: "needs_attention",
+    mergeRiskOptions: [{ category: "fix_before_merge", recommended: true }],
+    overallCorrectness: "patch is correct",
+  });
+
+  assert.equal(
+    authorFixLabels.some((label) => label.endsWith("waiting on author")),
+    true,
+  );
+
+  const ambiguousSecurityLabels = prStatusLabelsForTest([], {
+    proofStatus: "sufficient",
+    securityStatus: "needs_attention",
+    overallCorrectness: "patch is correct",
+  });
+
+  assert.equal(
+    ambiguousSecurityLabels.some((label) => label.endsWith("waiting on author")),
+    true,
   );
 });
 

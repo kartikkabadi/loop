@@ -9162,16 +9162,31 @@ function hasBlockingReviewFindings(findings: readonly Pick<ReviewFinding, "prior
   return findings.some((finding) => finding.priority <= 2);
 }
 
+function recommendedMergeRiskOptionCategory(
+  options: readonly Pick<MergeRiskOption, "category" | "recommended">[],
+): MergeRiskOptionCategory | null {
+  return options.find((option) => option.recommended)?.category ?? null;
+}
+
+function securityReviewNeedsContributorWork(options: {
+  securityReview: Pick<SecurityReview, "status">;
+  mergeRiskOptions: readonly Pick<MergeRiskOption, "category" | "recommended">[];
+}): boolean {
+  if (options.securityReview.status !== "needs_attention") return false;
+  return recommendedMergeRiskOptionCategory(options.mergeRiskOptions) !== "accept_risk";
+}
+
 function hasUnresolvedContributorWork(options: {
   realBehaviorProof: Pick<RealBehaviorProof, "status">;
   reviewFindings: readonly Pick<ReviewFinding, "priority">[];
   securityReview: Pick<SecurityReview, "status">;
+  mergeRiskOptions: readonly Pick<MergeRiskOption, "category" | "recommended">[];
   overallCorrectness: OverallCorrectness;
 }): boolean {
   return (
     proofNeedsContributorAction(options.realBehaviorProof) ||
     hasBlockingReviewFindings(options.reviewFindings) ||
-    options.securityReview.status === "needs_attention" ||
+    securityReviewNeedsContributorWork(options) ||
     options.overallCorrectness === "patch is incorrect"
   );
 }
@@ -9180,11 +9195,12 @@ function isReadyForMaintainerLook(options: {
   realBehaviorProof: Pick<RealBehaviorProof, "status">;
   reviewFindings: readonly Pick<ReviewFinding, "priority">[];
   securityReview: Pick<SecurityReview, "status">;
+  mergeRiskOptions: readonly Pick<MergeRiskOption, "category" | "recommended">[];
   overallCorrectness: OverallCorrectness;
 }): boolean {
   return (
     !hasBlockingReviewFindings(options.reviewFindings) &&
-    options.securityReview.status !== "needs_attention" &&
+    !securityReviewNeedsContributorWork(options) &&
     (options.realBehaviorProof.status === "sufficient" ||
       options.realBehaviorProof.status === "override" ||
       options.realBehaviorProof.status === "not_applicable") &&
@@ -9196,6 +9212,7 @@ function prStatusLabelKind(options: {
   realBehaviorProof: Pick<RealBehaviorProof, "status">;
   reviewFindings: readonly Pick<ReviewFinding, "priority">[];
   securityReview: Pick<SecurityReview, "status">;
+  mergeRiskOptions: readonly Pick<MergeRiskOption, "category" | "recommended">[];
   overallCorrectness: OverallCorrectness;
   hasAutomergeLabel: boolean;
   hasRecentReReviewRequest: boolean;
@@ -9300,6 +9317,7 @@ function prStatusLabelKindFromReport(
     realBehaviorProof: reportRealBehaviorProof(markdown),
     reviewFindings: reportReviewFindings(markdown),
     securityReview: reportSecurityReview(markdown),
+    mergeRiskOptions: mergeRiskOptionsFromReport(markdown),
     overallCorrectness: reportOverallCorrectness(markdown),
     hasAutomergeLabel: currentLabels.includes(AUTOMERGE_LABEL),
     hasRecentReReviewRequest: hasRecentReReviewRequest(
@@ -9321,6 +9339,7 @@ export function prStatusLabelsForTest(
     proofStatus?: string;
     findingPriorities?: readonly number[];
     securityStatus?: string;
+    mergeRiskOptions?: readonly Pick<MergeRiskOption, "category" | "recommended">[];
     overallCorrectness?: string;
     hasAutomergeLabel?: boolean;
     hasRecentReReviewRequest?: boolean;
@@ -9355,6 +9374,7 @@ export function prStatusLabelsForTest(
         ? (options.securityStatus as SecurityReviewStatus)
         : "cleared",
     },
+    mergeRiskOptions: options.mergeRiskOptions ?? [],
     overallCorrectness: OVERALL_CORRECTNESS_VALUES.has(
       options.overallCorrectness as OverallCorrectness,
     )
