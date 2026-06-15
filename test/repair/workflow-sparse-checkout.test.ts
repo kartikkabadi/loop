@@ -41,6 +41,39 @@ test("repair build emits the bounded Codex process worker", () => {
   assert.ok(config.include?.includes("src/codex-process-worker.ts"));
 });
 
+test("repair comment router workflow preserves repository dispatch target branch", () => {
+  const workflow = fs.readFileSync(
+    path.join(process.cwd(), ".github/workflows/repair-comment-router.yml"),
+    "utf8",
+  );
+
+  assert.match(workflow, /target_branch:\n\s+description:/);
+  assert.match(
+    workflow,
+    /target_branch="\$\{\{ github\.event\.client_payload\.target_branch \|\| '' \}\}"/,
+  );
+  assert.equal(
+    [
+      ...workflow.matchAll(
+        /if \[ -n "\$target_branch" \]; then\n\s+args\+=\(--target-branch "\$target_branch"\)\n\s+fi/g,
+      ),
+    ].length,
+    2,
+  );
+});
+
+test("sweep workflow preserves workflow dispatch target branch", () => {
+  const workflow = fs.readFileSync(path.join(process.cwd(), ".github/workflows/sweep.yml"), "utf8");
+  const dispatchTargetBranchResolver =
+    /target_branch="\$\{\{ github\.event_name == 'workflow_dispatch' && github\.event\.inputs\.target_branch \|\| github\.event\.client_payload\.target_branch \|\| 'main' \}\}"/g;
+  const continuationTargetBranch =
+    /-f target_branch="\$\{\{ needs\.plan\.outputs\.target_branch \}\}"/g;
+
+  assert.match(workflow, /target_branch:\n\s+description: "Target repository branch to review"/);
+  assert.equal([...workflow.matchAll(dispatchTargetBranchResolver)].length, 2);
+  assert.equal([...workflow.matchAll(continuationTargetBranch)].length, 2);
+});
+
 function sparseCheckoutEntries(workflow: string): Set<string> {
   const entries = new Set<string>();
   const lines = workflow.split(/\r?\n/);

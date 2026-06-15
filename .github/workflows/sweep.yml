@@ -11,6 +11,10 @@ on:
         description: "Repository to sweep"
         required: false
         default: "openclaw/openclaw"
+      target_branch:
+        description: "Target repository branch to review"
+        required: false
+        default: ""
       apply_existing:
         description: "Apply existing proposed close decisions without rerunning Codex; skips items changed since review"
         required: false
@@ -55,10 +59,6 @@ on:
         description: "Delay after each close/comment pair to avoid GitHub secondary write throttling"
         required: false
         default: "2000"
-      apply_progress_every:
-        description: "Log apply progress every N processed records, plus every close"
-        required: false
-        default: "10"
       apply_checkpoint_size:
         description: "Fresh closes per checkpoint commit in apply-existing mode"
         required: false
@@ -178,7 +178,7 @@ jobs:
         run: |
           set -euo pipefail
           target_repo="${{ github.event.client_payload.target_repo || 'openclaw/openclaw' }}"
-          target_branch="${{ github.event.client_payload.target_branch || 'main' }}"
+          target_branch="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.target_branch || github.event.client_payload.target_branch || 'main' }}"
           item_number="${{ github.event.client_payload.item_number || '' }}"
           item_kind="${{ github.event.client_payload.item_kind || '' }}"
           if ! printf '%s' "$target_repo" | grep -Eq '^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$'; then
@@ -717,7 +717,7 @@ jobs:
         id: target
         run: |
           target_repo="${{ github.event.inputs.target_repo || github.event.client_payload.target_repo || '' }}"
-          target_branch="${{ github.event.client_payload.target_branch || 'main' }}"
+          target_branch="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.target_branch || github.event.client_payload.target_branch || 'main' }}"
           if [ -z "$target_repo" ]; then
             case "${{ github.event.schedule || '' }}" in
               "2/5 * * * *"|"22 * * * *"|"8,23,38,53 * * * *"|"12 */6 * * *")
@@ -1508,8 +1508,7 @@ jobs:
               -f apply_sync_comments_only=true \
               -f apply_item_numbers="$item_numbers" \
               -f apply_limit=0 \
-              -f apply_comment_sync_min_age_days=7 \
-              -f apply_progress_every=25; then
+              -f apply_comment_sync_min_age_days=7; then
               echo "Dispatched background comment sync for item numbers: $item_numbers"
               exit 0
             fi
@@ -1635,6 +1634,7 @@ jobs:
               -f apply_existing=false \
               -f hot_intake="${{ needs.plan.outputs.hot_intake }}" \
               -f target_repo="${{ needs.plan.outputs.target_repo }}" \
+              -f target_branch="${{ needs.plan.outputs.target_branch }}" \
               -f batch_size="${{ needs.plan.outputs.batch_size }}" \
               -f shard_count="${{ needs.plan.outputs.shard_count }}" \
               -f codex_timeout_ms="${{ needs.plan.outputs.codex_timeout_ms }}"; then
@@ -1729,6 +1729,7 @@ jobs:
             -f apply_existing=false
             -f hot_intake=false
             -f target_repo="${{ needs.plan.outputs.target_repo }}"
+            -f target_branch="${{ needs.plan.outputs.target_branch }}"
             -f batch_size="${{ needs.plan.outputs.batch_size }}"
             -f shard_count="$recovery_shard_count"
             -f codex_timeout_ms="${{ needs.plan.outputs.codex_timeout_ms }}"
@@ -2092,7 +2093,7 @@ jobs:
           apply_close_reasons="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_close_reasons || 'all' }}"
           stale_min_age_days="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_stale_min_age_days || '60' }}"
           close_delay_ms="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_close_delay_ms || '2000' }}"
-          progress_every="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_progress_every || '10' }}"
+          progress_every="10"
           checkpoint_size="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_checkpoint_size || '50' }}"
           sync_batch_size="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_limit || '25' }}"
           item_numbers="${{ github.event_name == 'repository_dispatch' && github.event.client_payload.item_number || github.event.inputs.apply_item_numbers || '' }}"
@@ -2411,7 +2412,6 @@ jobs:
             -f apply_sync_comments_only="$APPLY_SYNC_COMMENTS_ONLY" \
             -f apply_comment_sync_min_age_days="$APPLY_COMMENT_SYNC_MIN_AGE_DAYS" \
             -f apply_close_delay_ms="$APPLY_CLOSE_DELAY_MS" \
-            -f apply_progress_every="$APPLY_PROGRESS_EVERY" \
             -f apply_checkpoint_size="$APPLY_CHECKPOINT_SIZE"
 
       - name: Queue review backstops

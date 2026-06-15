@@ -111,6 +111,7 @@ const args = parseArgs(process.argv.slice(2));
 const config = readCommentRouterConfig(args);
 const {
   targetRepo,
+  targetBranch,
   repairRepo,
   workflow,
   reviewRepo,
@@ -196,6 +197,7 @@ for (const comment of comments) {
     }),
     comment_url: comment.html_url,
     repo: targetRepo,
+    target_branch: targetBranch || null,
     issue_number: issueNumber,
     author: comment.user?.login ?? null,
     author_id: comment.user?.id ?? null,
@@ -2045,6 +2047,7 @@ function dispatchClawSweeperReview(command: LooseRecord) {
     event_type: "clawsweeper_item",
     client_payload: {
       target_repo: command.repo,
+      ...(command.target_branch ? { target_branch: String(command.target_branch) } : {}),
       item_number: String(command.issue_number),
       item_kind: command.target?.kind ?? "",
       additional_prompt: freeformReviewPrompt(command),
@@ -2069,6 +2072,7 @@ function dispatchClawSweeperReview(command: LooseRecord) {
         "-f",
         `target_repo=${command.repo}`,
         "-f",
+        ...(command.target_branch ? [`target_branch=${String(command.target_branch)}`, "-f"] : []),
         `item_number=${command.issue_number}`,
         "-f",
         `item_numbers=${command.issue_number}`,
