@@ -168,6 +168,7 @@ const collaboratorPermissionCache = new Map();
 const activeRepairRunsByPrefix = new Map<string, LooseRecord[]>();
 const liveTargetCache = new Map<number, LooseRecord>();
 const issueCommentsCache = new Map<number, JsonValue[]>();
+const MAX_MEDIA_PREPROCESSING_TIMEOUT_MS = 480_000;
 const PROOF_OVERRIDE_DESCRIPTION_MARKER = "<!-- clawsweeper-proof-override-note -->";
 const cachedIssueComments = createCachedIssueCommentsLookup(
   (number) => ghPaged<JsonValue>(`repos/${targetRepo}/issues/${number}/comments?per_page=100`),
@@ -2040,9 +2041,10 @@ function dispatchClawSweeperReview(command: LooseRecord) {
     command.target?.kind === "pull_request"
       ? adaptiveReviewBudgetForPullRequest(command.target)
       : null;
-  // workflow_dispatch is at GitHub's input limit, so its one timeout carries both budgets.
+  // Comment-only media is hydrated after dispatch, so fallback must reserve the full bounded
+  // preprocessing budget even when the initial PR title/body did not expose media.
   const fallbackCodexTimeoutMs = reviewBudget
-    ? reviewBudget.codexTimeoutMs + reviewBudget.mediaProofTimeoutMs
+    ? reviewBudget.codexTimeoutMs + MAX_MEDIA_PREPROCESSING_TIMEOUT_MS
     : null;
   const commandStatus = ["re_review", "autofix", "automerge"].includes(String(command.intent ?? ""))
     ? {

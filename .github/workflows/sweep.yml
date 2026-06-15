@@ -405,8 +405,9 @@ jobs:
           codex_timeout_seconds=$(((codex_timeout_ms + 999) / 1000))
           media_proof_timeout_ms="${{ steps.target.outputs.media_proof_timeout_ms }}"
           media_proof_timeout_seconds=$(((media_proof_timeout_ms + 999) / 1000))
-          review_timeout_seconds=$((codex_timeout_seconds + media_proof_timeout_seconds + 180))
-          echo "::notice::Exact event review timeout is ${review_timeout_seconds}s for per-item Codex timeout ${codex_timeout_seconds}s and media proof allowance ${media_proof_timeout_seconds}s."
+          media_preprocessing_reserve_seconds=480
+          review_timeout_seconds=$((codex_timeout_seconds + media_preprocessing_reserve_seconds + 180))
+          echo "::notice::Exact event review timeout is ${review_timeout_seconds}s for per-item Codex timeout ${codex_timeout_seconds}s, reserved media preprocessing ${media_preprocessing_reserve_seconds}s, and detected media allowance ${media_proof_timeout_seconds}s."
           timeout --kill-after=30s "${review_timeout_seconds}s" pnpm run review -- \
             --target-repo "${{ steps.target.outputs.target_repo }}" \
             --target-dir "${{ steps.target.outputs.target_checkout_dir }}" \

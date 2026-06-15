@@ -18301,8 +18301,13 @@ test("comment commands keep the router-to-sweep dispatch contract", () => {
   assert.match(routerWorkflow, /--status-comment-id "\$status_comment_id"/);
   assert.match(routerSource, /event_type:\s*"clawsweeper_item"/);
   assert.match(routerSource, /adaptiveReviewBudgetForPullRequest\(command\.target\)/);
+  assert.match(routerSource, /const MAX_MEDIA_PREPROCESSING_TIMEOUT_MS = 480_000/);
   assert.match(routerSource, /media_proof_timeout_ms: reviewBudget\.mediaProofTimeoutMs/);
-  assert.match(routerSource, /reviewBudget\.codexTimeoutMs \+ reviewBudget\.mediaProofTimeoutMs/);
+  assert.match(routerSource, /reviewBudget\.codexTimeoutMs \+ MAX_MEDIA_PREPROCESSING_TIMEOUT_MS/);
+  assert.doesNotMatch(
+    routerSource,
+    /reviewBudget\.codexTimeoutMs \+ reviewBudget\.mediaProofTimeoutMs/,
+  );
   assert.match(routerSource, /`codex_timeout_ms=\$\{fallbackCodexTimeoutMs\}`/);
   assert.match(sweepWorkflow, /types:\s*\[clawsweeper_item,\s*clawsweeper_target_sweep\]/);
   assert.doesNotMatch(sweepWorkflow, /types:\s*\[[^\]]*clawsweeper_comment/);
@@ -18612,6 +18617,7 @@ test("sweep exact event reviews consume adaptive Codex timeout payload", () => {
     /adaptive_codex_timeout_ms="\$\(\(10#\$adaptive_codex_timeout_ms\)\)"/,
   );
   assert.match(resolveBlock, /media_proof_timeout_ms="\$\(\(10#\$media_proof_timeout_ms\)\)"/);
+  assert.match(resolveBlock, /\[ "\$media_proof_timeout_ms" -gt 480000 \]/);
   assert.match(resolveBlock, /\[ "\$adaptive_codex_timeout_ms" -lt 600000 \]/);
   assert.match(resolveBlock, /\[ "\$adaptive_codex_timeout_ms" -gt 1800000 \]/);
   assert.match(resolveBlock, /\[ "\$adaptive_codex_timeout_ms" -gt "\$codex_timeout_ms" \]/);
@@ -18621,10 +18627,13 @@ test("sweep exact event reviews consume adaptive Codex timeout payload", () => {
     reviewBlock,
     /codex_timeout_ms="\$\{\{ steps\.target\.outputs\.codex_timeout_ms \}\}"/,
   );
+  assert.match(reviewBlock, /media_preprocessing_reserve_seconds=480/);
   assert.match(
     reviewBlock,
-    /review_timeout_seconds=\$\(\(codex_timeout_seconds \+ media_proof_timeout_seconds \+ 180\)\)/,
+    /review_timeout_seconds=\$\(\(codex_timeout_seconds \+ media_preprocessing_reserve_seconds \+ 180\)\)/,
   );
+  assert.match(reviewBlock, /detected media allowance \$\{media_proof_timeout_seconds\}s/);
+  assert.doesNotMatch(reviewBlock, /review_timeout_seconds=.*media_proof_timeout_seconds/);
   assert.match(reviewBlock, /timeout --kill-after=30s "\$\{review_timeout_seconds\}s"/);
   assert.match(reviewBlock, /--codex-timeout-ms "\$codex_timeout_ms"/);
   assert.doesNotMatch(reviewBlock, /timeout --kill-after=30s 12m/);
@@ -18817,10 +18826,12 @@ test("sweep workflow runs exact event reviews without a global worker gate", () 
   assert.ok(exactReviewIndex > setupCodexIndex);
   assert.match(exactReviewStep, /--batch-size 1/);
   assert.match(exactReviewStep, /--shard-count 1/);
+  assert.match(exactReviewStep, /media_preprocessing_reserve_seconds=480/);
   assert.match(
     exactReviewStep,
-    /review_timeout_seconds=\$\(\(codex_timeout_seconds \+ media_proof_timeout_seconds \+ 180\)\)/,
+    /review_timeout_seconds=\$\(\(codex_timeout_seconds \+ media_preprocessing_reserve_seconds \+ 180\)\)/,
   );
+  assert.match(exactReviewStep, /detected media allowance \$\{media_proof_timeout_seconds\}s/);
   assert.match(exactReviewStep, /--codex-timeout-ms "\$codex_timeout_ms"/);
   assert.doesNotMatch(exactReviewStep, /--codex-timeout-ms 600000/);
   assert.doesNotMatch(eventReviewBlock, /Wait for exact event review capacity/);
