@@ -5,7 +5,7 @@ All notable ClawSweeper changes are tracked here.
 This file was reconstructed from first-parent git history. Generated dashboard,
 checkpoint, and status-only commits are intentionally omitted.
 
-## 0.2.1 - Unreleased
+## 0.3.0 - 2026-06-15
 
 ### Added
 
@@ -78,6 +78,8 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Included the shared Codex spawn helper in repair comment-router sparse checkouts, restoring repair builds in that workflow. Thanks @849261680.
+- Rendered Mantis proof suggestions as complete copyable PR comments inside fenced text blocks without triggering the suggested command. Thanks @hxy91819.
 - Added a cancellation-safe four-slot exact-review semaphore, replacing the proposed state-repository lease with deterministic live Actions ranking. Thanks @hxy91819.
 - Made every Codex subprocess honor `CODEX_BIN`, safely launch npm-installed `codex.cmd` wrappers on native Windows, and terminate their process trees on timeout. Thanks @anagnorisis2peripeteia.
 - Reserved the full bounded media preprocessing allowance for exact-event review deadlines and command-dispatch fallbacks, including media discovered only after comment hydration.

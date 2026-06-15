@@ -29,7 +29,7 @@ test("automergeRepairOutcomeComment explains no-op repair runs", () => {
         },
       ],
     },
-    provenance: { model: "gpt-test", reasoning: "medium", reviewedSha: "0123456789abcdef" },
+    provenance: { model: "model-test", reasoning: "medium", reviewedSha: "0123456789abcdef" },
   });
 
   assert.match(body, /^<!-- marker -->/);
@@ -44,14 +44,14 @@ test("automergeRepairOutcomeComment explains no-op repair runs", () => {
     /(No branch push|No push|left the PR as-is|Nothing moved downstream|observational only)/i,
   );
   assert.match(body, /reasoning medium; reviewed against 0123456789ab/);
-  assert.doesNotMatch(body, /model gpt-test/);
+  assert.doesNotMatch(body, /model model-test/);
 });
 
 test("repairContributorBranchComment avoids self PR references", () => {
   const body = repairContributorBranchComment({
     sourcePrUrl: "https://github.com/openclaw/openclaw/pull/75183",
     validationCommands: ["pnpm check:changed"],
-    provenance: { model: "gpt-test", reasoning: "medium", reviewedSha: "abcdef1234567890" },
+    provenance: { model: "model-test", reasoning: "medium", reviewedSha: "abcdef1234567890" },
   });
 
   assert.match(body, /reef update/);
@@ -67,7 +67,7 @@ test("replacement comments explain no push rights and keep co-author credit visi
       co_authored_by: "Co-authored-by: Mona Octocat <1+octocat@users.noreply.github.com>",
     },
   ];
-  const provenance = { model: "gpt-test", reasoning: "medium", reviewedSha: "abcdef1234567890" };
+  const provenance = { model: "model-test", reasoning: "medium", reviewedSha: "abcdef1234567890" };
 
   const linkBody = replacementSourceLinkComment({
     replacementPrUrl: "https://github.com/openclaw/openclaw/pull/67890",
@@ -115,7 +115,7 @@ test("replacement PR body keeps public context without internal worker notes", (
       author_id: 123456,
     },
     sourceClosingReferences: ["Closes #74124", "closes #74124", "Fixes openclaw/openclaw#81234"],
-    provenance: { model: "gpt-test", reasoning: "medium", reviewedSha: "abcdef1234567890" },
+    provenance: { model: "model-test", reasoning: "medium", reviewedSha: "abcdef1234567890" },
   });
 
   assert.match(
@@ -218,7 +218,7 @@ test("issueImplementationResultStatusComment reports blocked terminal outcomes",
 });
 
 test("external message provenance normalizes accidental xhigh reasoning", () => {
-  const provenance = externalMessageProvenance({ model: "gpt-test", reasoning: "xhigh" });
+  const provenance = externalMessageProvenance({ model: "model-test", reasoning: "xhigh" });
   const body = automergeRepairOutcomeComment({
     marker: "<!-- marker -->",
     target: 74156,
@@ -229,6 +229,6 @@ test("external message provenance normalizes accidental xhigh reasoning", () => 
 
   assert.equal(provenance.reasoning, "high");
   assert.match(body, /reasoning high/);
-  assert.doesNotMatch(body, /model gpt-test/);
+  assert.doesNotMatch(body, /model model-test/);
   assert.doesNotMatch(body, /reasoning xhigh/);
 });

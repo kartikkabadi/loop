@@ -1235,7 +1235,7 @@ function runApplyResult(
       ...process.env,
       CLAWSWEEPER_ALLOW_EXECUTE: "1",
       CLAWSWEEPER_ALLOWED_OWNER: "openclaw",
-      CLAWSWEEPER_MODEL: "gpt-test",
+      CLAWSWEEPER_MODEL: "model-test",
       CLAWSWEEPER_PR_CLOSE_COVERAGE_PROOF_TIMEOUT_MS: "10000",
       GH_TOKEN: "write-token",
       PATH: `${paths.binDir}${path.delimiter}${process.env.PATH ?? ""}`,

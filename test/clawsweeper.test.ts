@@ -15625,7 +15625,7 @@ process.exit(1);
       item: item({ number: 83393 }),
       context: { issue: {}, comments: [], timeline: [] },
       git: { mainSha: "abc123", latestRelease: null },
-      model: "gpt-test",
+      model: "model-test",
       openclawDir,
       reasoningEffort: "high",
       sandboxMode: "read-only",
@@ -15659,7 +15659,7 @@ test("runCodex preserves redacted process output when Codex exits without a deci
     codexPath,
     `#!/usr/bin/env node
 process.stdout.write("startup banner GH_TOKEN=ghp_abcdefghijklmnopqrstuvwxyz123456\\n");
-process.stderr.write("Rate limit reached for gpt-test on tokens per min (TPM); OPENAI_API_KEY=sk-proj-abcdefghijklmnopqrstuvwxyz123456\\n");
+process.stderr.write("Rate limit reached for model-test on tokens per min (TPM); OPENAI_API_KEY=sk-proj-abcdefghijklmnopqrstuvwxyz123456\\n");
 process.exit(1);
 `,
   );
@@ -15675,7 +15675,7 @@ process.exit(1);
           item: item({ number: 83394 }),
           context: { issue: {}, comments: [], timeline: [] },
           git: { mainSha: "abc123", latestRelease: null },
-          model: "gpt-test",
+          model: "model-test",
           openclawDir,
           reasoningEffort: "high",
           sandboxMode: "read-only",
@@ -15748,7 +15748,7 @@ fs.writeFileSync(process.argv[outputIndex + 1], process.env.CODEX_DECISION_JSON)
       item: item({ number: 83395 }),
       context: { issue: {}, comments: [], timeline: [] },
       git: { mainSha: "abc123", latestRelease: null },
-      model: "gpt-test",
+      model: "model-test",
       openclawDir,
       reasoningEffort: "high",
       sandboxMode: "read-only",
@@ -15771,7 +15771,7 @@ fs.writeFileSync(process.argv[outputIndex + 1], process.env.CODEX_DECISION_JSON)
 
 test("codex failure decisions expose stderr and stdout separately", () => {
   const errorMessage =
-    "Rate limit reached for gpt-test on tokens per min (TPM). Please try again in 1ms.";
+    "Rate limit reached for model-test on tokens per min (TPM). Please try again in 1ms.";
   const decision = codexFailureDecisionForTest(
     1,
     "Codex review failed for #278 with exit 1.",
