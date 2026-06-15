@@ -18462,7 +18462,7 @@ test("repair workers hydrate only durable jobs from generated state", () => {
   assert.doesNotMatch(workflow, /if: \$\{\{[^\n]*env\.CLAWSWEEPER_CRABFLEET_AGENT_TOKEN/);
 });
 
-test("reviewed viable issues dispatch the existing implementation and automerge lanes", () => {
+test("reviewed viable issues dispatch generated PRs and backfill durable open reports", () => {
   const workflow = readFileSync(".github/workflows/sweep.yml", "utf8");
   const eventDispatchStart = workflow.indexOf("- name: Dispatch viable issue implementation");
   const eventDispatch = workflow.slice(
@@ -18479,6 +18479,10 @@ test("reviewed viable issues dispatch the existing implementation and automerge 
   assert.match(eventDispatch, /steps\.target\.outputs\.target_repo != 'openclaw\/openclaw'/);
   assert.match(eventDispatch, /steps\.target\.outputs\.target_repo != 'openclaw\/clawhub'/);
   assert.doesNotMatch(eventDispatch, /vision-fit-implementation-candidates/);
+  assert.match(workflow, /- name: Backfill viable open issue implementation candidates/);
+  assert.match(workflow, /--report-dir "records\/\$target_slug\/items"/);
+  assert.equal(workflow.match(/--report-dir "records\/\$target_slug\/items"/g)?.length, 3);
+  assert.doesNotMatch(workflow, /CLAWSWEEPER_AUTO_IMPLEMENT_BACKFILL/);
   assert.equal(workflow.match(/vars\.CLAWSWEEPER_AUTO_IMPLEMENT_ISSUES == '1'/g)?.length, 4);
 });
 
