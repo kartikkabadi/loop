@@ -2,6 +2,7 @@
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
+import { homedir } from "node:os";
 import { fileURLToPath } from "node:url";
 import {
   changedFilesForCommit,
@@ -15,7 +16,11 @@ import { codexEnv, codexLoginConfig, codexModelArgs, PUBLIC_CODEX_MODEL } from "
 import { codexProcessErrorCode, runCodexProcess } from "./codex-process.js";
 import { runText } from "./command.js";
 import { ghRetryKind, ghRetryWaitMs } from "./github-retry.js";
-import { DEFAULT_TARGET_REPO, repositoryProfileFor } from "./repository-profiles.js";
+import {
+  configuredRepositoryProfileFor,
+  DEFAULT_TARGET_REPO,
+  repositoryProfileFor,
+} from "./repository-profiles.js";
 
 export { isReviewableCommitPath } from "./commit-classifier.js";
 
@@ -99,7 +104,12 @@ function optionalGhJson(path: string, jq: string): string {
   }
 }
 
-function commitMetadata(targetDir: string, targetRepo: string, sha: string): CommitMetadata {
+export function commitMetadata(
+  targetDir: string,
+  targetRepo: string,
+  sha: string,
+  offline = false,
+): CommitMetadata {
   const separator = "\x1f";
   const raw = run(
     "git",
@@ -113,14 +123,16 @@ function commitMetadata(targetDir: string, targetRepo: string, sha: string): Com
   );
   const parts = raw.split(separator);
   const body = parts.slice(9).join(separator);
-  const githubAuthor = optionalGhJson(
-    `repos/${targetRepo}/commits/${sha}`,
-    ".author.login // empty",
-  );
-  const githubCommitter = optionalGhJson(
-    `repos/${targetRepo}/commits/${sha}`,
-    ".committer.login // empty",
-  );
+  // Offline mode (e.g. local-review) must not contact GitHub: skip the gh-api
+  // author/committer hydration. `gh` uses its own configured auth, so removing
+  // token env vars is not enough — the only way to honor the "no GitHub access"
+  // contract is to not run `gh` at all.
+  const githubAuthor = offline
+    ? ""
+    : optionalGhJson(`repos/${targetRepo}/commits/${sha}`, ".author.login // empty");
+  const githubCommitter = offline
+    ? ""
+    : optionalGhJson(`repos/${targetRepo}/commits/${sha}`, ".committer.login // empty");
   return {
     sha: assertSha(parts[0] ?? sha),
     parents: (parts[1] ?? "")
@@ -279,6 +291,7 @@ function runCodex(options: {
   timeoutMs: number;
   workDir: string;
   additionalPrompt: string;
+  extraCodexConfig?: readonly string[];
 }): string {
   ensureDir(options.workDir);
   const promptPath = join(options.workDir, `${options.sha}.prompt.md`);
@@ -299,6 +312,7 @@ function runCodex(options: {
     `model_reasoning_effort="${options.reasoningEffort}"`,
     codexLoginConfig(),
     'approval_policy="never"',
+    ...(options.extraCodexConfig ?? []),
   ];
   if (options.serviceTier) codexConfig.splice(1, 0, `service_tier="${options.serviceTier}"`);
   const result = runCodexProcess({
@@ -376,6 +390,121 @@ function reviewCommand(args: Args): void {
   );
   ensureDir(dirname(outputPath));
   writeFileSync(outputPath, markdown.endsWith("\n") ? markdown : `${markdown}\n`, "utf8");
+  console.log(outputPath);
+}
+
+// GitHub credential env vars scrubbed before the offline local-review engine runs.
+// Covers both gh enterprise aliases (GH_ENTERPRISE_TOKEN and GITHUB_ENTERPRISE_TOKEN),
+// since gh honors either; this is belt-and-suspenders with the empty GH_CONFIG_DIR set
+// per run.
+export const LOCAL_REVIEW_SCRUBBED_TOKEN_ENV: readonly string[] = [
+  "GH_TOKEN",
+  "GITHUB_TOKEN",
+  "GH_ENTERPRISE_TOKEN",
+  "GITHUB_ENTERPRISE_TOKEN",
+  "COMMIT_SWEEPER_TARGET_GH_TOKEN",
+  "CLAWSWEEPER_PROOF_INSPECTION_TOKEN",
+];
+export const LOCAL_REVIEW_WEB_SEARCH_CONFIG = 'web_search="disabled"';
+
+export function localReviewAdditionalPrompt(
+  baseSha: string,
+  headSha: string,
+  baseBranch: string,
+): string {
+  return `This is a LOCAL pre-PR review of the COMMITTED range ${baseSha.slice(0, 8)}..${headSha.slice(0, 8)} (your branch vs ${baseBranch}) on a clean checkout — no staged or untracked changes. Review code correctness, bugs, and security; ignore PR metadata. This review is offline: do not run gh, use web search, access URLs, or make any network request. Use only the local checkout and git history.`;
+}
+
+// Local, offline pre-PR review of a whole branch: reviews the committed range
+// merge-base(base, HEAD)..HEAD as a single unit, reusing the Commit Sweeper engine.
+// Conforms to the #253 replacement spec: clean checkout, unique run dir, no GitHub
+// token, and reject unsupported repos (never fall back to a foreign profile).
+function localReviewCommand(args: Args): void {
+  const targetDir = resolve(argString(args, "target_dir", "."));
+  const baseBranch = argString(args, "base", "main");
+  const reportDir = resolve(
+    argString(args, "report_dir", join(homedir(), ".clawsweeper-local-reviews")),
+  );
+
+  // Spec: genuinely offline — withhold every GitHub credential from the review engine.
+  for (const tokenVar of LOCAL_REVIEW_SCRUBBED_TOKEN_ENV) {
+    delete process.env[tokenVar];
+  }
+
+  // Spec: committed-range review requires a clean checkout (no hidden staged/untracked work).
+  const dirtyTree = run("git", ["status", "--porcelain"], { cwd: targetDir }).trim();
+  if (dirtyTree) {
+    console.error(`[local-review] working tree not clean — commit or stash first:\n${dirtyTree}`);
+    process.exit(1);
+  }
+
+  const targetRepo =
+    argString(args, "target_repo", "") ||
+    run("git", ["remote", "get-url", "origin"], { cwd: targetDir })
+      .replace(/.*github\.com[:/]/, "")
+      .replace(/\.git\s*$/, "")
+      .trim();
+
+  // Spec: reject unsupported repos — never silently fall back to a foreign profile.
+  const profile = configuredRepositoryProfileFor(targetRepo);
+  if (!profile) {
+    console.error(
+      `[local-review] no review profile for '${targetRepo}'. Add a repository profile, or pass --target-repo <known-repo>.`,
+    );
+    process.exit(1);
+  }
+  const profileSlug = profile.slug;
+
+  // Range = merge-base(base, HEAD)..HEAD — the whole branch, reviewed as one unit.
+  const headSha = run("git", ["rev-parse", "HEAD"], { cwd: targetDir }).trim();
+  const baseSha = run("git", ["merge-base", baseBranch, "HEAD"], { cwd: targetDir }).trim();
+  if (!baseSha || baseSha === headSha) {
+    console.error(`[local-review] no commits on HEAD beyond ${baseBranch} — nothing to review.`);
+    process.exit(1);
+  }
+
+  const metadata = commitMetadata(targetDir, targetRepo, headSha, true);
+
+  // Spec: unique per-run dir so concurrent runs never collide on result paths.
+  const runDir = join(reportDir, `run-${headSha.slice(0, 8)}-${Date.now()}-${process.pid}`);
+  ensureDir(runDir);
+
+  // Spec: hard-enforce no GitHub access. The review prompt suggests `gh` for issue
+  // refs, and `gh` uses its own configured auth (token-env deletion can't stop it),
+  // so point it at an empty config dir — any `gh` the spawned reviewer runs finds
+  // no cached credentials. Belt-and-suspenders with Codex's read-only sandbox.
+  const ghEmptyConfig = join(runDir, ".gh-empty");
+  ensureDir(ghEmptyConfig);
+  process.env.GH_CONFIG_DIR = ghEmptyConfig;
+
+  const additionalPrompt = localReviewAdditionalPrompt(baseSha, headSha, baseBranch);
+
+  console.error(
+    `[local-review] repo=${targetRepo} profile=${profileSlug} base=${baseBranch} range=${baseSha.slice(0, 8)}..${headSha.slice(0, 8)}`,
+  );
+
+  const markdown = ensureCommitReportTimestamps(
+    runCodex({
+      targetDir,
+      targetRepo,
+      sha: headSha,
+      baseSha,
+      metadata,
+      model: argString(args, "codex_model", DEFAULT_CODEX_MODEL),
+      reasoningEffort: argString(args, "codex_reasoning_effort", DEFAULT_REASONING_EFFORT),
+      sandboxMode: argString(args, "codex_sandbox", "read-only"),
+      serviceTier: argString(args, "codex_service_tier", DEFAULT_SERVICE_TIER),
+      timeoutMs: argNumber(args, "codex_timeout_ms", 1_800_000),
+      workDir: runDir,
+      additionalPrompt,
+      extraCodexConfig: [LOCAL_REVIEW_WEB_SEARCH_CONFIG],
+    }),
+    metadata,
+  );
+
+  const outputPath = join(runDir, "local-review.md");
+  writeFileSync(outputPath, markdown.endsWith("\n") ? markdown : `${markdown}\n`, "utf8");
+  console.error(`[local-review] report written to ${outputPath}`);
   console.log(outputPath);
 }
 
@@ -794,6 +923,7 @@ export function main(argv = process.argv.slice(2)): void {
   else if (command === "reports") reportsCommand(args);
   else if (command === "copy-artifacts") copyArtifactsCommand(args);
   else if (command === "dispatch-findings") dispatchFindingsCommand(args);
+  else if (command === "local-review") localReviewCommand(args);
   else {
     console.error(`Unknown command: ${command}`);
     process.exit(1);
