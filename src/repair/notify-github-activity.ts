@@ -2,6 +2,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import { DEFAULT_TRUSTED_BOTS } from "./config.js";
 import type { JsonObject, JsonValue } from "./json-types.js";
 import { asJsonObject } from "./json-types.js";
 import { parseArgs, repoRoot } from "./lib.js";
@@ -50,6 +51,7 @@ export type GithubActivityNotifierRuntime = {
 
 const DEFAULT_REPORT_PATH = "notifications/github-activity-report.json";
 const BODY_EXCERPT_LIMIT = 1200;
+const TRUSTED_CLAWSWEEPER_BOTS = new Set(DEFAULT_TRUSTED_BOTS.map((login) => login.toLowerCase()));
 const CLAWSWEEPER_COMMAND_RE =
   /(^|\s)(@(clawsweeper|openclaw-clawsweeper)(\[bot\])?\b|\/(clawsweeper|review|re-review|re-run|rerun|automerge|autoclose)\b)/i;
 
@@ -378,6 +380,13 @@ export async function runGithubActivityNotifier(
 
 export function routineGithubActivityReason(activity: GithubActivity): string | null {
   const typeAction = `${activity.type}.${activity.action ?? "none"}`;
+  if (
+    activity.type === "issue_comment" &&
+    isTrustedClawSweeperComment(activity) &&
+    hasCommandStatusMarker(asJsonObject(activity.payload.comment).body_excerpt)
+  ) {
+    return "routine GitHub activity filtered: ClawSweeper command status comment";
+  }
   const commandLike = activityContainsClawSweeperCommand(activity);
   if (typeAction === "issue_comment.edited" && !commandLike) {
     return "routine GitHub activity filtered: issue comment edit";
@@ -429,7 +438,30 @@ function successfulState(state: string | null): boolean {
 }
 
 function activityContainsClawSweeperCommand(activity: GithubActivity): boolean {
-  const text = [
+  return CLAWSWEEPER_COMMAND_RE.test(activityText(activity));
+}
+
+function isTrustedClawSweeperComment(activity: GithubActivity): boolean {
+  const commentAuthor = stringOrNull(asJsonObject(activity.payload.comment).author);
+  return isTrustedClawSweeperBot(activity.actor) && isTrustedClawSweeperBot(commentAuthor);
+}
+
+function isTrustedClawSweeperBot(login: string | null): boolean {
+  return typeof login === "string" && TRUSTED_CLAWSWEEPER_BOTS.has(login.toLowerCase());
+}
+
+function hasCommandStatusMarker(value: unknown): boolean {
+  const text = stringOrNull(value);
+  return (
+    typeof text === "string" &&
+    /<!--\s*clawsweeper-command(?:(?:-status|-ack):[^>]+|-progress:(?:start|end)|:[^>]+)\s*-->/i.test(
+      text,
+    )
+  );
+}
+
+function activityText(activity: GithubActivity): string {
+  return [
     activity.subject.title,
     stringOrNull(activity.payload.body_excerpt),
     stringOrNull(asJsonObject(activity.payload.comment).body_excerpt),
@@ -437,7 +469,6 @@ function activityContainsClawSweeperCommand(activity: GithubActivity): boolean {
   ]
     .filter((value): value is string => Boolean(value))
     .join("\n");
-  return CLAWSWEEPER_COMMAND_RE.test(text);
 }
 
 function normalizeRepositoryDispatch(
