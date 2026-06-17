@@ -6,7 +6,10 @@ import { AUTOMATION_LIMITS } from "./limits.js";
 import { parseArgs } from "./lib.js";
 import { sleepMs } from "./timing.js";
 
-const ACTIVE_STATUSES = ["in_progress", "pending", "queued", "waiting", "requested"];
+// Only running workflow jobs can enter the Codex gate. Queued/pending Actions
+// runs do not consume Codex capacity yet, and polling every active status from
+// every waiter can exhaust the GitHub App installation rate limit during bursts.
+const RUNNING_STATUSES = ["in_progress"];
 const EXACT_REVIEW_TITLE_PREFIX = "Review event item ";
 const DEFAULT_POLL_MS = 15_000;
 const DEFAULT_TIMEOUT_MS = 20 * 60 * 1000;
@@ -111,7 +114,7 @@ export function fetchActiveExactReviewRuns(
   fetchPage: (args: string[]) => JsonValue[] = (args) =>
     ghJsonWithRetry<JsonValue[]>(args, { attempts: 3 }),
 ): CapacityRun[] {
-  const runs = ACTIVE_STATUSES.flatMap((status) => {
+  const runs = RUNNING_STATUSES.flatMap((status) => {
     const statusRuns: JsonValue[] = [];
     for (let page = 1; ; page += 1) {
       const pageRuns = fetchPage([

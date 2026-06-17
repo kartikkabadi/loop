@@ -69,8 +69,10 @@ test("cancelled or completed exact runs disappear without lease recovery", () =>
 });
 
 test("workflow-scoped fetch accepts dynamic Actions run names", () => {
+  const statuses = new Set<string>();
   const runs = fetchActiveExactReviewRuns("openclaw/clawsweeper", (args) => {
     const query = new URL(`https://github.test/${args[3]}`).searchParams;
+    statuses.add(query.get("status") ?? "");
     if (query.get("status") !== "in_progress") return [];
     return [
       exactApiRun(500, "2026-06-15T12:00:00Z"),
@@ -88,6 +90,7 @@ test("workflow-scoped fetch accepts dynamic Actions run names", () => {
     runs.map((run) => run.databaseId),
     [500],
   );
+  assert.deepEqual([...statuses], ["in_progress"]);
 });
 
 test("exact review run fetch paginates until the oldest active page", () => {

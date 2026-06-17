@@ -285,6 +285,17 @@ jobs:
           permission-issues: write
           permission-pull-requests: write
 
+      - name: Create ClawSweeper dispatch token
+        id: clawsweeper-dispatch-token
+        continue-on-error: true
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
+          permission-contents: write
+
       - name: React to target item review start
         continue-on-error: true
         env:
@@ -383,8 +394,95 @@ jobs:
           pnpm run repair:codex-capacity -- \
             --repo "${{ github.repository }}" \
             --run-id "${{ github.run_id }}" \
-            --poll-ms 30000 \
+            --poll-ms 120000 \
             --timeout-ms 1200000
+
+      - name: Requeue capacity-blocked exact review
+        id: capacity-requeue
+        if: ${{ failure() && steps.codex-capacity.outcome == 'failure' }}
+        env:
+          DISPATCH_TOKEN: ${{ steps.clawsweeper-dispatch-token.outputs.token || github.token }}
+          STATUS_GH_TOKEN: ${{ steps.target-write-token.outputs.token }}
+          CLIENT_PAYLOAD: ${{ toJson(github.event.client_payload) }}
+          TARGET_REPO: ${{ steps.target.outputs.target_repo }}
+          ITEM_NUMBER: ${{ steps.target.outputs.item_number }}
+          COMMAND_STATUS_MARKER: ${{ github.event.client_payload.command_status_marker || '' }}
+          STATUS_COMMENT_ID: ${{ github.event.client_payload.status_comment_id || '' }}
+          MAX_CAPACITY_RETRIES: ${{ vars.CLAWSWEEPER_EXACT_REVIEW_CAPACITY_RETRIES || '1' }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          mkdir -p .artifacts
+          result_file=".artifacts/capacity-requeue.json"
+          dispatch_file=".artifacts/capacity-requeue-dispatch.json"
+          node <<'NODE' > "$result_file"
+          const payload = JSON.parse(process.env.CLIENT_PAYLOAD || "{}");
+          const existingRetry =
+            payload.capacity_retry && typeof payload.capacity_retry === "object"
+              ? payload.capacity_retry
+              : {};
+          const parsedMax = Number.parseInt(process.env.MAX_CAPACITY_RETRIES || "1", 10);
+          const max = Number.isFinite(parsedMax) && parsedMax >= 0 ? parsedMax : 1;
+          const parsedPrevious = Number.parseInt(
+            String(existingRetry.count ?? payload.capacity_retry_count ?? "0"),
+            10,
+          );
+          const previous = Number.isFinite(parsedPrevious) && parsedPrevious > 0 ? parsedPrevious : 0;
+          if (previous >= max) {
+            console.log(JSON.stringify({ status: "exhausted", attempt: previous, max }));
+          } else {
+            const attempt = previous + 1;
+            delete payload.capacity_retry_count;
+            delete payload.capacity_retry_source_run;
+            delete payload.capacity_retry_source_url;
+            delete payload.capacity_retry_reason;
+            payload.capacity_retry = {
+              ...existingRetry,
+              count: attempt,
+              source_run: process.env.GITHUB_RUN_ID,
+              source_url: process.env.RUN_URL,
+              reason: "exact-review-capacity-timeout",
+            };
+            console.log(
+              JSON.stringify({
+                status: "scheduled",
+                attempt,
+                max,
+                dispatch: { event_type: "clawsweeper_item", client_payload: payload },
+              }),
+            );
+          }
+          NODE
+          status="$(node -e 'const fs=require("fs"); const result=JSON.parse(fs.readFileSync(process.argv[1],"utf8")); console.log(result.status);' "$result_file")"
+          attempt="$(node -e 'const fs=require("fs"); const result=JSON.parse(fs.readFileSync(process.argv[1],"utf8")); console.log(result.attempt ?? 0);' "$result_file")"
+          max="$(node -e 'const fs=require("fs"); const result=JSON.parse(fs.readFileSync(process.argv[1],"utf8")); console.log(result.max ?? 0);' "$result_file")"
+          if [ "$status" = "scheduled" ]; then
+            if [ -n "$STATUS_GH_TOKEN" ]; then
+              GH_TOKEN="$STATUS_GH_TOKEN" pnpm run repair:update-command-status -- \
+                --repo "$TARGET_REPO" \
+                --item-number "$ITEM_NUMBER" \
+                --marker "$COMMAND_STATUS_MARKER" \
+                --status-comment-id "$STATUS_COMMENT_ID" \
+                --state "Retry scheduled" \
+                --detail "The targeted re-review timed out or was rate-limited while waiting for exact-review Codex capacity. ClawSweeper scheduled bounded retry ${attempt}/${max}." \
+                --run-url "$RUN_URL" \
+                --wait-ms 120000 || true
+            fi
+            node -e 'const fs=require("fs"); const result=JSON.parse(fs.readFileSync(process.argv[1],"utf8")); fs.writeFileSync(process.argv[2], JSON.stringify(result.dispatch));' "$result_file" "$dispatch_file"
+            if GH_TOKEN="$DISPATCH_TOKEN" gh api --method POST "repos/${GITHUB_REPOSITORY}/dispatches" --input "$dispatch_file"; then
+              echo "::notice::Scheduled exact-review capacity retry ${attempt}/${max}."
+            else
+              echo "::warning::Unable to schedule exact-review capacity retry ${attempt}/${max}."
+              status="dispatch_failed"
+            fi
+          else
+            echo "::warning::Exact-review capacity retry limit already exhausted (${attempt}/${max})."
+          fi
+          {
+            echo "status=$status"
+            echo "attempt=$attempt"
+            echo "max=$max"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Mark re-review command in progress
         continue-on-error: true
@@ -551,11 +649,22 @@ jobs:
           PUBLISH_OUTCOME: ${{ steps.publish-event-result.outcome }}
           ROUTE_OUTCOME: ${{ steps.route-synced-verdict.outcome }}
           CAPACITY_OUTCOME: ${{ steps.codex-capacity.outcome }}
+          CAPACITY_REQUEUE_STATUS: ${{ steps.capacity-requeue.outputs.status }}
+          CAPACITY_REQUEUE_ATTEMPT: ${{ steps.capacity-requeue.outputs.attempt }}
+          CAPACITY_REQUEUE_MAX: ${{ steps.capacity-requeue.outputs.max }}
         run: |
           state="Failed"
           detail="The targeted re-review did not finish cleanly. Check the workflow run for details."
           if [ "$CAPACITY_OUTCOME" = "failure" ]; then
             detail="The targeted re-review timed out or failed while waiting for exact-review Codex capacity. Retry after capacity recovers."
+            if [ "$CAPACITY_REQUEUE_STATUS" = "scheduled" ]; then
+              state="Retry scheduled"
+              detail="The targeted re-review timed out or was rate-limited while waiting for exact-review Codex capacity. ClawSweeper scheduled bounded retry ${CAPACITY_REQUEUE_ATTEMPT}/${CAPACITY_REQUEUE_MAX}."
+            elif [ "$CAPACITY_REQUEUE_STATUS" = "exhausted" ]; then
+              detail="The targeted re-review timed out or was rate-limited while waiting for exact-review Codex capacity, and the bounded capacity retry limit is exhausted."
+            elif [ "$CAPACITY_REQUEUE_STATUS" = "dispatch_failed" ]; then
+              detail="The targeted re-review timed out or was rate-limited while waiting for exact-review Codex capacity, and ClawSweeper could not schedule the bounded retry."
+            fi
           fi
           if [ "$REVIEW_OUTCOME" = "cancelled" ]; then
             state="Superseded"

@@ -19736,6 +19736,7 @@ test("sweep workflow admits exact event reviews through an exact-review semaphor
   const setupPnpmIndex = eventReviewBlock.indexOf("- uses: ./.github/actions/setup-pnpm");
   const readTokenIndex = eventReviewBlock.indexOf("- name: Create target read token");
   const writeTokenIndex = eventReviewBlock.indexOf("- name: Create target write token");
+  const dispatchTokenIndex = eventReviewBlock.indexOf("- name: Create ClawSweeper dispatch token");
   const waitingStatusIndex = eventReviewBlock.indexOf(
     "- name: Mark re-review waiting for capacity",
   );
@@ -19745,6 +19746,9 @@ test("sweep workflow admits exact event reviews through an exact-review semaphor
   const setupCodexIndex = eventReviewBlock.indexOf("- uses: ./.github/actions/setup-codex");
   const checkoutIndex = eventReviewBlock.indexOf("- name: Check out target repository");
   const capacityIndex = eventReviewBlock.indexOf("- name: Wait for exact-review Codex capacity");
+  const capacityRequeueIndex = eventReviewBlock.indexOf(
+    "- name: Requeue capacity-blocked exact review",
+  );
   const exactReviewIndex = eventReviewBlock.indexOf("- name: Review exact event item");
   const exactReviewStep = eventReviewBlock.slice(
     exactReviewIndex,
@@ -19759,17 +19763,34 @@ test("sweep workflow admits exact event reviews through an exact-review semaphor
   assert.ok(setupPnpmIndex >= 0);
   assert.ok(readTokenIndex > setupPnpmIndex);
   assert.ok(writeTokenIndex > readTokenIndex);
-  assert.ok(checkoutIndex > writeTokenIndex);
+  assert.ok(dispatchTokenIndex > writeTokenIndex);
+  assert.ok(checkoutIndex > dispatchTokenIndex);
   assert.ok(waitingStatusIndex > checkoutIndex);
   assert.ok(capacityIndex > waitingStatusIndex);
-  assert.ok(inProgressStatusIndex > capacityIndex);
+  assert.ok(capacityRequeueIndex > capacityIndex);
+  assert.ok(inProgressStatusIndex > capacityRequeueIndex);
   assert.ok(setupCodexIndex > inProgressStatusIndex);
   assert.ok(exactReviewIndex > setupCodexIndex);
   assert.match(eventReviewBlock, /pnpm run repair:codex-capacity/);
   assert.match(eventReviewBlock, /--run-id "\$\{\{ github\.run_id \}\}"/);
+  assert.match(eventReviewBlock, /--poll-ms 120000/);
   assert.match(eventReviewBlock, /--state "Waiting for Codex capacity"/);
   assert.match(eventReviewBlock, /exact-review semaphore admitted this run/);
   assert.match(eventReviewBlock, /CAPACITY_OUTCOME: \$\{\{ steps\.codex-capacity\.outcome \}\}/);
+  assert.match(
+    eventReviewBlock,
+    /CAPACITY_REQUEUE_STATUS: \$\{\{ steps\.capacity-requeue\.outputs\.status \}\}/,
+  );
+  assert.match(eventReviewBlock, /CLAWSWEEPER_EXACT_REVIEW_CAPACITY_RETRIES/);
+  assert.match(eventReviewBlock, /permission-contents: write/);
+  assert.match(
+    eventReviewBlock,
+    /DISPATCH_TOKEN: \$\{\{ steps\.clawsweeper-dispatch-token\.outputs\.token \|\| github\.token \}\}/,
+  );
+  assert.match(eventReviewBlock, /payload\.capacity_retry = \{/);
+  assert.match(eventReviewBlock, /delete payload\.capacity_retry_count/);
+  assert.match(eventReviewBlock, /repos\/\$\{GITHUB_REPOSITORY\}\/dispatches/);
+  assert.match(eventReviewBlock, /state="Retry scheduled"/);
   assert.match(
     eventReviewBlock,
     /timed out or failed while waiting for exact-review Codex capacity/,

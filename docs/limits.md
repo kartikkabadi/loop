@@ -110,11 +110,18 @@ their derived lane ceiling and at the remaining global budget after other active
 priority work.
 
 Exact-item review runs use a deterministic live Actions semaphore before Codex
-starts. Active exact runs are ordered by creation time and run ID; only the
-oldest `lanes.exact_review.max_concurrent` runs proceed. Cancelled and completed
-runs disappear from the next poll, so no lease or TTL recovery is required.
-This is an exact-review burst limit, not a hard distributed provider semaphore
-across every Codex workflow.
+starts. Running exact jobs are ordered by creation time and run ID; only the
+oldest `lanes.exact_review.max_concurrent` jobs proceed. Queued or pending
+Actions runs are not counted until their job starts, because they are not yet
+competing for Codex slots. Cancelled and completed runs disappear from the next
+poll.
+
+Capacity waiters poll the Actions API at a low cadence. If a waiter times out
+or cannot verify capacity before Codex starts, the event workflow records a
+retry-scheduled status and re-dispatches the exact item with bounded retry
+metadata through a separate ClawSweeper App dispatch token instead of treating
+the overflow as a permanent review failure. This is an exact-review burst limit,
+not a hard distributed provider semaphore across every Codex workflow.
 
 Examples with the current config:
 
