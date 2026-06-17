@@ -19589,7 +19589,7 @@ test("sweep exact event reviews preserve the configured fallback without an adap
   assert.match(resolveBlock, /\[ "\$adaptive_codex_timeout_ms" -gt "\$codex_timeout_ms" \]/);
 });
 
-test("github activity workflow coalesces noisy observer runs", () => {
+test("github activity workflow scopes cancellation to matching item activity", () => {
   const workflow = readFileSync(".github/workflows/github-activity.yml", "utf8");
   const concurrencyBlock = workflow.slice(
     workflow.indexOf("concurrency:"),
@@ -19601,8 +19601,28 @@ test("github activity workflow coalesces noisy observer runs", () => {
     concurrencyBlock,
     /github-activity-\$\{\{ github\.event\.client_payload\.activity\.repo/,
   );
+  assert.match(concurrencyBlock, /github\.event\.client_payload\.target_repo/);
   assert.match(concurrencyBlock, /github\.event\.repository\.full_name/);
   assert.match(concurrencyBlock, /github\.event_name == 'workflow_run'/);
+  assert.match(concurrencyBlock, /github\.event\.client_payload\.event_name/);
+  assert.match(concurrencyBlock, /github\.event\.client_payload\.activity\.type/);
+  assert.match(concurrencyBlock, /github\.event\.client_payload\.activity\.action/);
+  assert.match(concurrencyBlock, /github\.event\.action/);
+  assert.match(concurrencyBlock, /github\.event\.client_payload\.comment_id/);
+  assert.match(concurrencyBlock, /github\.event\.comment\.id/);
+  assert.match(concurrencyBlock, /github\.event\.client_payload\.activity\.review\.id/);
+  assert.match(concurrencyBlock, /github\.event\.review\.id/);
+  assert.match(concurrencyBlock, /github\.event\.client_payload\.activity\.pull_request\.number/);
+  assert.match(concurrencyBlock, /github\.event\.pull_request\.number/);
+  assert.match(concurrencyBlock, /github\.event\.client_payload\.activity\.issue\.number/);
+  assert.match(concurrencyBlock, /github\.event\.issue\.number/);
+  assert.match(concurrencyBlock, /github\.event\.client_payload\.activity\.subject\.number/);
+  assert.match(concurrencyBlock, /github\.event\.client_payload\.activity\.label\.name/);
+  assert.match(concurrencyBlock, /github\.event\.label\.name/);
+  assert.match(concurrencyBlock, /github\.event\.client_payload\.activity\.assignee\.login/);
+  assert.match(concurrencyBlock, /github\.event\.assignee\.login/);
+  assert.match(concurrencyBlock, /github\.event\.client_payload\.activity\.delivery_id/);
+  assert.match(concurrencyBlock, /github\.event\.client_payload\.activity\.idempotency_key/);
   assert.match(workflow, /Check core API budget/);
   assert.match(workflow, /CLAWSWEEPER_MIN_CORE_REMAINING/);
   assert.match(workflow, /contents: write/);
@@ -19625,11 +19645,7 @@ test("github activity workflow coalesces noisy observer runs", () => {
     concurrencyBlock,
     /group: github-activity-\$\{\{ github\.event_name \}\}-\$\{\{ github\.run_id \}\}/,
   );
-  assert.doesNotMatch(concurrencyBlock, /github\.event\.action/);
-  assert.doesNotMatch(concurrencyBlock, /github\.event\.client_payload\.activity\.action/);
-  assert.doesNotMatch(concurrencyBlock, /github\.event\.issue\.number/);
-  assert.doesNotMatch(concurrencyBlock, /github\.event\.pull_request\.number/);
-  assert.doesNotMatch(concurrencyBlock, /github\.event\.client_payload\.activity\.subject\.number/);
+  assert.doesNotMatch(concurrencyBlock, /workflow-run' \|\| 'activity'/);
 });
 
 test("spam comment intake coalesces duplicate comment deliveries", () => {
