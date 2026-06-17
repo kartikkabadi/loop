@@ -2751,19 +2751,26 @@ function parseRootCauseCluster(
   ) {
     throw new Error(`${path}.currentItemRelationship cannot claim a canonical ref`);
   }
-  for (const member of members) {
+  for (const { member, parsed } of parsedMembers) {
     if (requiresCanonical.has(member.relationship) && !canonicalRef) {
       throw new Error(`${path} relationship ${member.relationship} requires a canonical ref`);
     }
-    if (member.relationship === "fixed_by_candidate" && parsedCanonical?.kind !== "pull_request") {
-      throw new Error(`${path} fixed_by_candidate requires a canonical pull request`);
+    if (
+      member.relationship === "fixed_by_candidate" &&
+      parsed.kind !== "pull_request" &&
+      parsedCanonical?.kind !== "pull_request"
+    ) {
+      throw new Error(`${path} fixed_by_candidate requires the member or canonical ref to be a PR`);
     }
   }
   if (
     currentItemRelationship === "fixed_by_candidate" &&
+    item?.kind !== "pull_request" &&
     parsedCanonical?.kind !== "pull_request"
   ) {
-    throw new Error(`${path}.currentItemRelationship fixed_by_candidate requires a canonical PR`);
+    throw new Error(
+      `${path}.currentItemRelationship fixed_by_candidate requires the current item or canonical ref to be a PR`,
+    );
   }
 
   return {
@@ -2773,6 +2780,18 @@ function parseRootCauseCluster(
     summary,
     members,
   };
+}
+
+function parseRootCauseClusterOrDefault(
+  value: unknown,
+  path: string,
+  item?: RootCauseNormalizationItem,
+): RootCauseClusterAssessment {
+  try {
+    return parseRootCauseCluster(value, path, item);
+  } catch {
+    return defaultRootCauseCluster();
+  }
 }
 
 function parseAgentsPolicyStatus(value: unknown, path: string): AgentsPolicyStatus {
@@ -2875,7 +2894,7 @@ export function parseDecision(value: unknown, item?: DecisionNormalizationItem):
       AUTO_IMPLEMENTATION_CANDIDATES,
       "decision.autoImplementationCandidate",
     ),
-    rootCauseCluster: parseRootCauseCluster(
+    rootCauseCluster: parseRootCauseClusterOrDefault(
       record.rootCauseCluster,
       "decision.rootCauseCluster",
       item,

@@ -377,7 +377,7 @@
     "rootCauseCluster": {
       "type": "object",
       "additionalProperties": false,
-      "description": "Read-only root-cause relationship assessment. This does not dispatch repair, suppress jobs, mutate sibling items, close, or merge anything.",
+      "description": "Read-only root-cause relationship assessment. This does not dispatch repair, suppress jobs, mutate sibling items, close, or merge anything. Use fixed_by_candidate only when one side of that relationship is a pull request: an issue may be fixed by a canonical PR, or a PR may be the candidate fix for a canonical issue.",
       "required": ["confidence", "canonicalRef", "currentItemRelationship", "summary", "members"],
       "properties": {
         "confidence": {
