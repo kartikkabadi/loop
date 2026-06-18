@@ -19958,6 +19958,8 @@ test("failed Codex workers use bounded automatic retry paths", () => {
   assert.match(outputCapture, /Codex output truncated; final tail follows/);
   assert.doesNotMatch(worker, /Codex output exceeded|CLAWSWEEPER_CODEX_STDIO_MAX_BUFFER_MB/);
   assert.match(worker, /Codex worker timed out[\s\S]*process\.exit\(1\)/);
+  assert.match(worker, /CLAWSWEEPER_CODEX_PLANNER_SANDBOX/);
+  assert.match(worker, /\? "danger-full-access"\s*:\s*"read-only"/);
   assert.match(
     worker,
     /Codex worker completed without a structured result\.json artifact[\s\S]*process\.exit\(1\)/,
@@ -19966,6 +19968,15 @@ test("failed Codex workers use bounded automatic retry paths", () => {
   assert.match(executor, /if \(outcome\.requeue_required === true\) process\.exitCode = 1/);
   assert.match(selfHeal, /CLAWSWEEPER_SELF_HEAL_MAX_ATTEMPTS_PER_JOB \?\? 3/);
   assert.match(selfHeal, /reason: "retry_limit_reached"/);
+});
+
+test("repair workers expose an explicit sandbox fallback for trusted ephemeral runners", () => {
+  const workflow = readFileSync(".github/workflows/repair-cluster-worker.yml", "utf8");
+
+  assert.match(workflow, /planner_sandbox:/);
+  assert.match(workflow, /default: read-only/);
+  assert.match(workflow, /- danger-full-access/);
+  assert.match(workflow, /CLAWSWEEPER_CODEX_PLANNER_SANDBOX: \$\{\{ inputs\.planner_sandbox \}\}/);
 });
 
 test("repair workflows preserve existing dispatch while scheduled cluster intake stays gated", () => {

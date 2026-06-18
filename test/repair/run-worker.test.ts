@@ -98,6 +98,7 @@ test("run-worker starts Codex in the target checkout when one is available", () 
         FAKE_CODEX_ARGS_FILE: argsFile,
         CLAWSWEEPER_INTERNAL_MODEL: "secret-model-for-test",
         CLAWSWEEPER_CODEX_STDIO_MAX_BUFFER_MB: "1",
+        CLAWSWEEPER_CODEX_PLANNER_SANDBOX: "danger-full-access",
         CLAWSWEEPER_STEERABLE_CODEX: "0",
         PATH: `${fakeBin}${path.delimiter}${process.env.PATH ?? ""}`,
       },
@@ -107,6 +108,7 @@ test("run-worker starts Codex in the target checkout when one is available", () 
     assert.equal(fs.readFileSync(cwdFile, "utf8"), fs.realpathSync(targetCheckout));
     const args = JSON.parse(fs.readFileSync(argsFile, "utf8"));
     assert.equal(args[args.indexOf("--cd") + 1], targetCheckout);
+    assert.equal(args[args.indexOf("--sandbox") + 1], "danger-full-access");
     assert.equal(args.includes("--model"), false);
     assert.equal(args.includes("secret-model-for-test"), false);
     const runDirs = fs.globSync(path.join(repoRoot, `.clawsweeper-repair/runs/${jobName}-plan-*`));

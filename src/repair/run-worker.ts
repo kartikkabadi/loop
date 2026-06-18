@@ -46,6 +46,10 @@ const resultRepairTimeoutMs = Number(
 );
 const codexReasoningEffort = repairCodexReasoningEffort();
 const codexServiceTier = repairCodexServiceTier();
+const codexPlannerSandbox =
+  process.env.CLAWSWEEPER_CODEX_PLANNER_SANDBOX === "danger-full-access"
+    ? "danger-full-access"
+    : "read-only";
 const codexHeartbeatMs = Math.max(
   10_000,
   Number(process.env.CLAWSWEEPER_CODEX_HEARTBEAT_MS ?? 60_000),
@@ -223,7 +227,7 @@ function runCodex({
     codexWorkspaceRoot(),
     ...codexModelArgs(String(model)),
     "--sandbox",
-    "read-only",
+    codexPlannerSandbox,
     ...codexConfigArgs(),
     "--output-schema",
     path.join(repoRoot(), "schema", "repair", "codex-result.schema.json"),
