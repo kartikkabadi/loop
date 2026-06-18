@@ -54,7 +54,9 @@ test("fix prompt still asks Codex to preserve discovered release-note context", 
     likely_files: ["extensions/discord/src/message.ts"],
   });
 
+  assert.match(prompt, /changelog_required is false: do not edit CHANGELOG\.md/);
   assert.match(prompt, /if you discover the target repository requires release-note context/);
+  assert.match(prompt, /preserve contributor credit in the PR body or commit history/);
 });
 
 test("fix prompt makes Codex own the validation loop", () => {
