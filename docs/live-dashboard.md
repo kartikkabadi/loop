@@ -43,6 +43,19 @@ GitHub deploys use `.github/workflows/dashboard.yml`. Configure either
 Workers Scripts edit permission before enabling the workflow as the production
 deploy path. The deploy workflow injects the `CLAWSWEEPER_STATUS_INGEST_TOKEN`
 GitHub secret into a temporary Wrangler config as the Worker `INGEST_TOKEN`.
+Its smoke test also verifies the durable exact-review queue binding, not only
+the dashboard response.
+
+When a change updates both the Worker and a GitHub Actions workflow that calls
+a new Worker route, deploy the reviewed Worker branch first and wait for the
+dashboard workflow to pass. Then merge the workflow change. This avoids a
+window where Actions sends events to a route that production has not deployed:
+
+```bash
+gh workflow run dashboard.yml --repo openclaw/clawsweeper --ref <reviewed-branch>
+gh api "repos/openclaw/clawsweeper/actions/workflows/dashboard.yml/runs?per_page=1" \
+  --jq '.workflow_runs[0] | {id, status, conclusion, html_url}'
+```
 
 ## Access Model
 
@@ -143,9 +156,10 @@ Do not move these into the dashboard:
 - maintainer authorization
 - PR branch writes
 - labels/comments/closes/merges
-- worker budget enforcement
 - final merge safety gates
 
-Cloudflare can later become the queue/dedupe/dispatch control plane, but phase
-one must stay an observer so the existing GitHub Actions safety model remains
-unchanged.
+The dashboard Worker owns durable exact-review admission only: it deduplicates
+webhook deliveries, coalesces each repository/item pair, and leases at most
+four Actions executors. It does not decide review outcomes or perform target
+repository mutations. GitHub Actions remains the executor and the existing
+review/apply safety model remains unchanged.
