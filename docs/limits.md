@@ -120,8 +120,12 @@ Capacity waiters poll the Actions API at a low cadence. If a waiter times out
 or cannot verify capacity before Codex starts, the event workflow records a
 retry-scheduled status and re-dispatches the exact item with bounded retry
 metadata through a separate ClawSweeper App dispatch token instead of treating
-the overflow as a permanent review failure. This is an exact-review burst limit,
-not a hard distributed provider semaphore across every Codex workflow.
+the overflow as a permanent review failure. The default budget is 12 retries;
+`CLAWSWEEPER_EXACT_REVIEW_CAPACITY_RETRIES` can override it. Combined with the
+40-minute admission wait, the default preserves an item for up to eight hours
+during large event bursts without exceeding the four-session Codex cap. This is
+an exact-review burst limit, not a hard distributed provider semaphore across
+every Codex workflow.
 
 Examples with the current config:
 

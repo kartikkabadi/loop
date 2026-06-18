@@ -19841,6 +19841,15 @@ test("sweep workflow admits exact event reviews through an exact-review semaphor
     /CAPACITY_REQUEUE_STATUS: \$\{\{ steps\.capacity-requeue\.outputs\.status \}\}/,
   );
   assert.match(eventReviewBlock, /CLAWSWEEPER_EXACT_REVIEW_CAPACITY_RETRIES/);
+  assert.match(
+    eventReviewBlock,
+    /MAX_CAPACITY_RETRIES: \$\{\{ vars\.CLAWSWEEPER_EXACT_REVIEW_CAPACITY_RETRIES \|\| '12' \}\}/,
+  );
+  assert.match(
+    eventReviewBlock,
+    /Number\.parseInt\(process\.env\.MAX_CAPACITY_RETRIES \|\| "12", 10\)/,
+  );
+  assert.match(eventReviewBlock, /parsedMax >= 0 \? parsedMax : 12/);
   assert.match(eventReviewBlock, /permission-contents: write/);
   assert.match(
     eventReviewBlock,

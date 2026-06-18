@@ -13,6 +13,8 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Prevented large exact-review bursts from dropping issues before review by retaining capacity-blocked items for 12 bounded retries by default.
+
 ## 0.3.0 - 2026-06-15
 
 ### Added
