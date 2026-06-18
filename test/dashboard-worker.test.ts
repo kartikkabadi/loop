@@ -5,6 +5,7 @@ import test from "node:test";
 import worker, {
   automaticIssueWork,
   ExactReviewQueue,
+  exactReviewQueueCapacity,
   StatusStore,
   workerWorkKind,
 } from "../dashboard/worker.ts";
@@ -12,6 +13,12 @@ import {
   TRIAGE_ROUTING_GROUPS,
   triageRoutingGroupsForLabels,
 } from "../dashboard/triage-routing-groups.ts";
+
+test("exact-review queue defaults to 32 of the 128 global workers", () => {
+  assert.equal(exactReviewQueueCapacity({}), 32);
+  assert.equal(exactReviewQueueCapacity({ EXACT_REVIEW_QUEUE_MAX_CONCURRENT: "64" }), 64);
+  assert.equal(exactReviewQueueCapacity({ EXACT_REVIEW_QUEUE_MAX_CONCURRENT: "100" }), 64);
+});
 
 test("triage routing groups classify impact labels without forcing one primary group", () => {
   assert.deepEqual(
