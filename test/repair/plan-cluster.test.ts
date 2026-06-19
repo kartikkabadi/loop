@@ -97,6 +97,51 @@ test("plan-cluster hydrates the repository default branch instead of hard-coding
   });
 });
 
+test("plan-cluster offline mode does not pretend the default branch is main", () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-plan-offline-default-"));
+  const jobPath = path.join(tmp, "job.md");
+  const runDir = path.join(tmp, "run");
+
+  fs.writeFileSync(
+    jobPath,
+    [
+      "---",
+      "repo: openclaw/openclaw",
+      "cluster_id: issue-implementation-openclaw-openclaw-74134",
+      "mode: autonomous",
+      "allowed_actions:",
+      "  - comment",
+      "canonical:",
+      "  - #74134",
+      "candidates:",
+      "  - #74134",
+      "allow_fix_pr: false",
+      "security_policy: central_security_only",
+      "security_sensitive: false",
+      "---",
+      "Plan this item.",
+      "",
+    ].join("\n"),
+  );
+
+  execFileSync(
+    process.execPath,
+    ["dist/repair/plan-cluster.js", jobPath, "--run-dir", runDir, "--offline"],
+    {
+      cwd: process.cwd(),
+      stdio: "pipe",
+    },
+  );
+
+  const clusterPlan = JSON.parse(fs.readFileSync(path.join(runDir, "cluster-plan.json"), "utf8"));
+  assert.deepEqual(clusterPlan.main, {
+    name: "unknown",
+    sha: null,
+    url: "https://github.com/openclaw/openclaw",
+    note: "offline mode did not fetch current default branch",
+  });
+});
+
 test("plan-cluster allows security repair for adopted PR autofix jobs", () => {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-plan-security-autofix-"));
   const jobPath = path.join(tmp, "job.md");

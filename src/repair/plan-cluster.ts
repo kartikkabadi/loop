@@ -732,10 +732,10 @@ function fetchDefaultBranchName(repo: string) {
 
 function offlineMainBranch(repo: string) {
   return {
-    name: "main",
+    name: "unknown",
     sha: null,
-    url: `https://github.com/${repo}/tree/main`,
-    note: "offline mode did not fetch current main",
+    url: `https://github.com/${repo}`,
+    note: "offline mode did not fetch current default branch",
   };
 }
 
