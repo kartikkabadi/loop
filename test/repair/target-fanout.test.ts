@@ -167,6 +167,19 @@ process.exit(2);
   );
 });
 
+test("target fanout falls back to public inventory env outside Actions", () => {
+  const source = readFileSync("src/repair/target-fanout.ts", "utf8");
+  const helperStart = source.indexOf("function inventoryEnv(");
+  const helperEnd = source.indexOf("function publicInventoryEnv(", helperStart);
+
+  assert.notEqual(helperStart, -1);
+  assert.notEqual(helperEnd, -1);
+  const helper = source.slice(helperStart, helperEnd);
+  assert.match(helper, /if \(process\.env\.GITHUB_ACTIONS === "true"\) return null;/);
+  assert.match(helper, /return publicInventoryEnv\(\);/);
+  assert.doesNotMatch(helper, /GH_TOKEN: ""/);
+});
+
 test("target fanout selection advances cursor with wraparound", () => {
   const repositories = [
     { targetRepo: "openclaw/a", defaultBranch: "main", visibility: "PUBLIC" },

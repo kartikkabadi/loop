@@ -304,7 +304,7 @@ function inventoryEnv(owner: string): NodeJS.ProcessEnv | null {
   if (token === PUBLIC_INVENTORY_TOKEN) return publicInventoryEnv();
   if (token) return { GH_TOKEN: token, GITHUB_TOKEN: token };
   if (process.env.GITHUB_ACTIONS === "true") return null;
-  return { GH_TOKEN: "", GITHUB_TOKEN: "" };
+  return publicInventoryEnv();
 }
 
 function publicInventoryEnv(): NodeJS.ProcessEnv {
