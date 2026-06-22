@@ -2197,7 +2197,6 @@ function editValidatePrepareMerge({
 
   const completedRebase = completeRebaseIfResolved({ targetDir });
   if (completedRebase.status === "continued") {
-    producedChanges = true;
     logProgress("completed resolved rebase", {
       previous_head: completedRebase.previous_head,
       current_head: completedRebase.current_head,

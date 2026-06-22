@@ -16378,9 +16378,6 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
     ) {
       continue;
     }
-    if (!storedHash && !shouldProbeClosedState) {
-      continue;
-    }
     let isCloseProposal = isApplyCloseCandidateReport(markdown);
     if (decision === "close" && !isCloseProposal && !shouldProbeClosedState) {
       continue;
@@ -16813,23 +16810,19 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       const authorAssociation = isMaintainerAuthorAssociation(currentAuthorAssociation)
         ? currentAuthorAssociation
         : reviewedAuthorAssociation;
-      if (isCloseProposal) {
-        markdown = replaceFrontMatterValue(markdown, "author_association", authorAssociation);
-        markdown = replaceFrontMatterValue(markdown, "action_taken", "skipped_maintainer_authored");
-        markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
-        if (!dryRun) writeFileSync(path, markdown, "utf8");
-      }
-      if (isCloseProposal) {
-        results.push({
-          number,
-          action: "skipped_maintainer_authored",
-          reason: `author association is ${authorAssociation}`,
-        });
-        processedCount += 1;
-        maybeLogProgress(`skipped #${number}: maintainer authored`);
-        if (processedCount >= processedLimit) break;
-        continue;
-      }
+      markdown = replaceFrontMatterValue(markdown, "author_association", authorAssociation);
+      markdown = replaceFrontMatterValue(markdown, "action_taken", "skipped_maintainer_authored");
+      markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
+      if (!dryRun) writeFileSync(path, markdown, "utf8");
+      results.push({
+        number,
+        action: "skipped_maintainer_authored",
+        reason: `author association is ${authorAssociation}`,
+      });
+      processedCount += 1;
+      maybeLogProgress(`skipped #${number}: maintainer authored`);
+      if (processedCount >= processedLimit) break;
+      continue;
     }
     const updatedSinceReview = Boolean(storedUpdatedAt && item.updatedAt !== storedUpdatedAt);
     const reviewCommentOnlyUpdate = item.updatedAt === commentUpdatedAt(existingReviewComment);
@@ -17296,12 +17289,10 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
             continue;
           }
         }
-      } else if (needsReviewCommentSync) {
+      } else {
         syncReasons.push("recorded existing durable comment metadata");
       }
-      if (needsReviewCommentSync) {
-        markdown = updateReviewCommentMetadata(markdown, syncedComment, markedReviewComment);
-      }
+      markdown = updateReviewCommentMetadata(markdown, syncedComment, markedReviewComment);
       if (!dryRun) writeFileSync(path, markdown, "utf8");
       results.push({
         number,
