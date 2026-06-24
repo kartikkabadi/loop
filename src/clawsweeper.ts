@@ -50,7 +50,7 @@ import {
 } from "./github-retry.js";
 import { parseGhJson, parseGhJsonLines } from "./github-json.js";
 import { stableJson } from "./stable-json.js";
-import { runText } from "./command.js";
+import { isUserFacingCommandError, runText, UserFacingCommandError } from "./command.js";
 import { AUTOMATION_LIMITS } from "./limits.js";
 import {
   buildOpenClawPrSurfaceStats,
@@ -5932,6 +5932,36 @@ function selectCandidates(options: {
   return { candidates, scannedPages };
 }
 
+function exactLocalReviewNoCandidateError(
+  itemNumber: number | undefined,
+  shardIndex: number,
+): UserFacingCommandError {
+  if (itemNumber === undefined) {
+    return new UserFacingCommandError("No review was run because no item number was provided.");
+  }
+  if (shardIndex !== 0) {
+    return new UserFacingCommandError(
+      `No review was run for ${targetRepo()}#${itemNumber} because exact item reviews only run on shard 0. Remove --shard-index for local reviews.`,
+    );
+  }
+  try {
+    const { item, state } = fetchItem(itemNumber);
+    if (state !== "open") {
+      return new UserFacingCommandError(
+        `No review was run for ${targetRepo()}#${itemNumber} because GitHub reports this ${item.kind === "pull_request" ? "PR" : "issue"} is ${state}. Local exact review only reviews open items.`,
+      );
+    }
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : String(error);
+    return new UserFacingCommandError(
+      `No review was run for ${targetRepo()}#${itemNumber} because the item could not be loaded from GitHub. If this is a different repository, pass --target-repo owner/name. ${reason}`,
+    );
+  }
+  return new UserFacingCommandError(
+    `No review was run for ${targetRepo()}#${itemNumber}. The item was not selected for review.`,
+  );
+}
+
 function openExplicitItems(itemNumbers: readonly number[]): Item[] {
   const seen = new Set<number>();
   const candidates: Item[] = [];
@@ -6369,8 +6399,13 @@ function collectItemContext(
   return context;
 }
 
-function gitInfo(openclawDir: string): GitInfo {
-  const targetBranch = reviewTargetBranch(openclawDir);
+type ReviewGitInfoOptions = {
+  targetBranch?: string;
+};
+
+function gitInfo(openclawDir: string, options: ReviewGitInfoOptions = {}): GitInfo {
+  const targetBranch = options.targetBranch ?? reviewTargetBranch(openclawDir);
+  requireSafeGitBranchName(targetBranch, "target branch");
   run(
     "git",
     ["fetch", "origin", `${targetBranch}:refs/remotes/origin/${targetBranch}`, "--depth=50"],
@@ -6409,8 +6444,215 @@ function gitInfo(openclawDir: string): GitInfo {
 
 function reviewTargetBranch(openclawDir: string): string {
   const branch = run("git", ["rev-parse", "--abbrev-ref", "HEAD"], { cwd: openclawDir });
-  if (/^[A-Za-z0-9_./-]+$/.test(branch) && branch !== "HEAD") return branch;
+  if (isSafeGitBranchName(branch) && branch !== "HEAD") return branch;
   return "main";
+}
+
+function isSafeGitBranchName(branch: string): boolean {
+  return /^[A-Za-z0-9_./-]+$/.test(branch) && !branch.startsWith("-");
+}
+
+function requireSafeGitBranchName(branch: string, label: string): string {
+  if (isSafeGitBranchName(branch) && branch !== "HEAD") return branch;
+  throw new UserFacingCommandError(`Invalid ${label}: ${branch}`);
+}
+
+type LocalPullMetadata = {
+  baseRef: string;
+};
+
+function localPullMetadata(itemNumber: number): LocalPullMetadata {
+  try {
+    const pull = asRecord(ghJson<unknown>(["api", `repos/${targetRepo()}/pulls/${itemNumber}`]));
+    const baseRef = stringOrUndefined(asRecord(pull.base).ref);
+    if (!baseRef) throw new Error("pull request base ref was missing");
+    return { baseRef: requireSafeGitBranchName(baseRef, "pull request base branch") };
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : String(error);
+    throw new UserFacingCommandError(
+      `Could not load pull request #${itemNumber} from ${targetRepo()} for managed local checkout. ` +
+        `Pass --target-dir to review an existing checkout. ${reason}`,
+    );
+  }
+}
+
+function tryLocalPullBaseBranch(itemNumber: number): string | undefined {
+  try {
+    return localPullMetadata(itemNumber).baseRef;
+  } catch {
+    return undefined;
+  }
+}
+
+type ReviewCheckout = {
+  mode: "managed" | "supplied" | "default";
+  openclawDir: string;
+  gitTargetBranch?: string;
+};
+
+function hasExplicitReviewTargetDir(args: Args): boolean {
+  return typeof args.target_dir === "string" || typeof args.openclaw_dir === "string";
+}
+
+function localExactReviewItem(
+  localOnly: boolean,
+  itemNumber: number | undefined,
+  itemNumbers: number[] | undefined,
+): itemNumber is number {
+  return localOnly && itemNumber !== undefined && itemNumbers === undefined;
+}
+
+function defaultReviewArtifactDir(
+  localOnly: boolean,
+  itemNumber: number | undefined,
+  itemNumbers: number[] | undefined,
+): string {
+  if (localExactReviewItem(localOnly, itemNumber, itemNumbers)) {
+    return `artifacts/local-review-${itemNumber}`;
+  }
+  return "artifacts/reviews";
+}
+
+function resolveReviewCheckout(options: {
+  args: Args;
+  artifactDir: string;
+  humanLocalReview?: boolean;
+  itemNumber: number | undefined;
+  itemNumbers: number[] | undefined;
+  localOnly: boolean;
+  profile: RepositoryProfile;
+  verbose?: boolean;
+}): ReviewCheckout {
+  const { args, artifactDir, humanLocalReview, itemNumber, itemNumbers, localOnly, profile } =
+    options;
+  const explicitTargetDir = hasExplicitReviewTargetDir(args);
+  if (localExactReviewItem(localOnly, itemNumber, itemNumbers) && !explicitTargetDir) {
+    const pull = localPullMetadata(itemNumber);
+    const openclawDir = join(artifactDir, "target");
+    if (humanLocalReview) {
+      console.error("  mode: managed PR checkout");
+      console.error(`  path: ${displayPath(openclawDir)}`);
+      console.error(`  base: ${pull.baseRef}`);
+    }
+    prepareManagedLocalReviewCheckout({
+      baseBranch: pull.baseRef,
+      itemNumber,
+      targetDir: openclawDir,
+      targetRepo: targetRepo(),
+      verbose: options.verbose,
+    });
+    return { mode: "managed", openclawDir, gitTargetBranch: pull.baseRef };
+  }
+
+  const openclawDir = resolve(
+    stringArg(args.target_dir, stringArg(args.openclaw_dir, `../${profile.checkoutDir}`)),
+  );
+  if (humanLocalReview) {
+    console.error(`  mode: ${explicitTargetDir ? "supplied checkout" : "default checkout"}`);
+    console.error(`  path: ${displayPath(openclawDir)}`);
+  }
+  if (localExactReviewItem(localOnly, itemNumber, itemNumbers)) {
+    const baseBranch = tryLocalPullBaseBranch(itemNumber);
+    if (baseBranch) {
+      if (humanLocalReview) console.error(`  base: ${baseBranch}`);
+      return {
+        mode: explicitTargetDir ? "supplied" : "default",
+        openclawDir,
+        gitTargetBranch: baseBranch,
+      };
+    }
+  }
+  return { mode: explicitTargetDir ? "supplied" : "default", openclawDir };
+}
+
+type ManagedLocalReviewCheckoutOptions = {
+  baseBranch: string;
+  cloneUrl?: string;
+  itemNumber: number;
+  targetDir: string;
+  targetRepo: string;
+  verbose?: boolean | undefined;
+};
+
+function prepareManagedLocalReviewCheckout(options: ManagedLocalReviewCheckoutOptions): void {
+  const { baseBranch, cloneUrl, itemNumber, targetDir, targetRepo, verbose } = options;
+  const remoteUrl = cloneUrl ?? githubCloneUrl(targetRepo);
+  ensureDir(dirname(targetDir));
+  const targetExists = existsSync(targetDir);
+  if (targetExists && !isGitWorkTree(targetDir)) {
+    const entries = readdirSync(targetDir);
+    if (entries.length > 0) {
+      throw new UserFacingCommandError(
+        `Managed local checkout target already exists and is not a git checkout: ${targetDir}. ` +
+          "Pass --target-dir to use an existing checkout or choose a different --artifact-dir.",
+      );
+    }
+  }
+  if (!targetExists || !isGitWorkTree(targetDir)) {
+    run("git", ["clone", "--filter=blob:none", "--no-checkout", remoteUrl, targetDir]);
+  } else {
+    ensureGitOriginRemote(targetDir, remoteUrl);
+  }
+
+  const branch = `clawsweeper/pr-${itemNumber}`;
+  if (verbose) {
+    console.error(
+      `[review] ${new Date().toISOString()} local-checkout=managed target=${targetDir} pr=#${itemNumber} base=${baseBranch}`,
+    );
+  }
+  run("git", ["fetch", "--force", "origin", `refs/pull/${itemNumber}/head`, "--depth=50"], {
+    cwd: targetDir,
+  });
+  run("git", ["checkout", "-f", "-B", branch, "FETCH_HEAD"], { cwd: targetDir });
+}
+
+function isGitWorkTree(dir: string): boolean {
+  try {
+    return run("git", ["rev-parse", "--is-inside-work-tree"], { cwd: dir }) === "true";
+  } catch {
+    return false;
+  }
+}
+
+function githubCloneUrl(targetRepo: string): string {
+  return `https://github.com/${targetRepo}.git`;
+}
+
+function ensureGitOriginRemote(dir: string, remoteUrl: string): void {
+  try {
+    run("git", ["remote", "set-url", "origin", remoteUrl], { cwd: dir });
+  } catch {
+    run("git", ["remote", "add", "origin", remoteUrl], { cwd: dir });
+  }
+}
+
+function displayPath(path: string): string {
+  const relativePath = relative(process.cwd(), path);
+  if (!relativePath) return ".";
+  return relativePath.startsWith("..") ? path : relativePath;
+}
+
+function displayDurationMs(ms: number): string {
+  const boundedMs = Math.max(0, Math.floor(ms));
+  const seconds = Math.floor(boundedMs / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  if (minutes > 0) return `${minutes}m ${remainingSeconds}s`;
+  return `${remainingSeconds}s`;
+}
+
+export function defaultReviewArtifactDirForTest(
+  localOnly: boolean,
+  itemNumber: number | undefined,
+  itemNumbers: number[] | undefined,
+): string {
+  return defaultReviewArtifactDir(localOnly, itemNumber, itemNumbers);
+}
+
+export function prepareManagedLocalReviewCheckoutForTest(
+  options: ManagedLocalReviewCheckoutOptions,
+): void {
+  prepareManagedLocalReviewCheckout(options);
 }
 
 export function reviewPromptTemplate(): string {
@@ -6978,11 +7220,11 @@ function redactedOutputTail(value: string | Buffer | null | undefined, maxLength
       .replace(/\bgithub_pat_[A-Za-z0-9_]{20,}\b/g, "[REDACTED_GITHUB_TOKEN]")
       .replace(/\bgh[pousr]_[A-Za-z0-9_]{20,}\b/g, "[REDACTED_GITHUB_TOKEN]")
       .replace(
-        /\b(OPENAI_API_KEY|CODEX_API_KEY|GH_TOKEN|GITHUB_TOKEN)=([^\s"']+)/g,
+        /\b(OPENAI_API_KEY|CODEX_API_KEY|CODEX_ACCESS_TOKEN|GH_TOKEN|GITHUB_TOKEN)=([^\s"']+)/g,
         "$1=[REDACTED]",
       )
       .replace(
-        /"((?:OPENAI_API_KEY|CODEX_API_KEY|GH_TOKEN|GITHUB_TOKEN))"\s*:\s*"[^"]*"/g,
+        /"((?:OPENAI_API_KEY|CODEX_API_KEY|CODEX_ACCESS_TOKEN|GH_TOKEN|GITHUB_TOKEN))"\s*:\s*"[^"]*"/g,
         '"$1":"[REDACTED]"',
       ),
   );
@@ -7068,6 +7310,14 @@ export function runCodexForTest(options: Parameters<typeof runCodex>[0]): Decisi
   return runCodex(options);
 }
 
+export function reviewCodexForcedLoginMethodForTest(args: Args): string {
+  return reviewCodexForcedLoginMethod(args);
+}
+
+function reviewCodexForcedLoginMethod(args: Args): string {
+  return stringArg(args.codex_forced_login_method, "");
+}
+
 function runCodex(options: {
   item: Item;
   context: ItemContext;
@@ -7077,11 +7327,15 @@ function runCodex(options: {
   reasoningEffort: string;
   sandboxMode: string;
   serviceTier: string;
+  forcedLoginMethod?: string;
+  preserveCodexAuth?: boolean;
+  preferWindowsAppBinary?: boolean;
   timeoutMs: number;
   workDir: string;
   additionalPrompt?: string;
   proofScratchDir?: string;
   prompt?: string;
+  quietLogs?: boolean;
 }): Decision {
   ensureDir(options.workDir);
   const proofScratchDir =
@@ -7115,11 +7369,12 @@ function runCodex(options: {
   );
   const startedAt = Date.now();
   const runReviewPass = (reasoningEffort: string, passAttempts: number): Decision => {
-    const codexConfig = [
-      `model_reasoning_effort="${reasoningEffort}"`,
-      codexLoginConfig(),
-      'approval_policy="never"',
-    ];
+    const codexConfig = [`model_reasoning_effort="${reasoningEffort}"`, 'approval_policy="never"'];
+    if (options.forcedLoginMethod) {
+      codexConfig.splice(1, 0, `forced_login_method="${options.forcedLoginMethod}"`);
+    } else if (!options.preserveCodexAuth) {
+      codexConfig.splice(1, 0, codexLoginConfig());
+    }
     if (options.serviceTier) codexConfig.splice(1, 0, `service_tier="${options.serviceTier}"`);
     for (let attempt = 1; attempt <= passAttempts; attempt += 1) {
       if (existsSync(outputPath)) unlinkSync(outputPath);
@@ -7151,8 +7406,12 @@ function runCodex(options: {
         ],
         cwd: options.openclawDir,
         env: {
-          ...codexEnv({ ghToken: process.env.CLAWSWEEPER_PROOF_INSPECTION_TOKEN }),
+          ...codexEnv({
+            ghToken: process.env.CLAWSWEEPER_PROOF_INSPECTION_TOKEN,
+            preserveCodexAuth: options.preserveCodexAuth,
+          }),
           CLAWSWEEPER_PROOF_SCRATCH_DIR: proofScratchDir,
+          ...(options.preferWindowsAppBinary ? { CLAWSWEEPER_PREFER_WINDOWS_CODEX_APP: "1" } : {}),
         },
         input: prompt,
         stderrPath: join(options.workDir, `${options.item.number}.${attempt}.codex.stderr.log`),
@@ -7180,11 +7439,13 @@ function runCodex(options: {
             options.item,
           );
           if (result.status !== 0) {
-            console.error(
-              `[review] ${new Date().toISOString()} codex-exit-nonzero-output-accepted #${
-                options.item.number
-              } status=${result.status ?? "unknown"} stderr=${JSON.stringify(stderr)}`,
-            );
+            if (!options.quietLogs) {
+              console.error(
+                `[review] ${new Date().toISOString()} codex-exit-nonzero-output-accepted #${
+                  options.item.number
+                } status=${result.status ?? "unknown"} stderr=${JSON.stringify(stderr)}`,
+              );
+            }
           }
           return decision;
         } catch (error) {
@@ -7215,11 +7476,13 @@ function runCodex(options: {
       if (retryable && attempt < passAttempts) {
         const delayMs = codexRetryDelayMs(processFailureDetail, attempt);
         if (Date.now() - startedAt + delayMs < options.timeoutMs) {
-          console.error(
-            `[review] ${new Date().toISOString()} codex-retry #${options.item.number} attempt=${
-              attempt + 1
-            }/${passAttempts} delay_ms=${delayMs} reason=transient_transport`,
-          );
+          if (!options.quietLogs) {
+            console.error(
+              `[review] ${new Date().toISOString()} codex-retry #${options.item.number} attempt=${
+                attempt + 1
+              }/${passAttempts} delay_ms=${delayMs} reason=transient_transport`,
+            );
+          }
           sleepMs(delayMs);
           continue;
         }
@@ -7248,9 +7511,11 @@ function runCodex(options: {
     const fallbackEffort = lowerCodexReasoningEffort(options.reasoningEffort);
     const remainingMs = options.timeoutMs - (Date.now() - startedAt);
     if (fallbackEffort === null || remainingMs < codexFallbackMinBudgetMs()) throw error;
-    console.error(
-      `[review] ${new Date().toISOString()} codex-fallback #${options.item.number} reason=transient_transport from_effort=${options.reasoningEffort} to_effort=${fallbackEffort} remaining_ms=${remainingMs}`,
-    );
+    if (!options.quietLogs) {
+      console.error(
+        `[review] ${new Date().toISOString()} codex-fallback #${options.item.number} reason=transient_transport from_effort=${options.reasoningEffort} to_effort=${fallbackEffort} remaining_ms=${remainingMs}`,
+      );
+    }
     try {
       const decision = runReviewPass(fallbackEffort, 1);
       return annotateDegradedReview(decision, {
@@ -15742,17 +16007,41 @@ function planCommand(args: Args): void {
 
 function reviewCommand(args: Args): void {
   const profile = repoFromArgs(args);
-  const openclawDir = resolve(
-    stringArg(args.target_dir, stringArg(args.openclaw_dir, `../${profile.checkoutDir}`)),
+  const localOnly = boolArg(args.local_only);
+  const verbose = boolArg(args.verbose);
+  const itemNumber = numberArg(args.item_number, 0) || undefined;
+  const hasItemNumbersInput = typeof args.item_numbers === "string" && args.item_numbers.trim();
+  const itemNumbers = hasItemNumbersInput
+    ? itemNumbersArg(args.item_numbers, undefined)
+    : undefined;
+  const localExactItem = localExactReviewItem(localOnly, itemNumber, itemNumbers);
+  const humanLocalReview = localExactItem && !verbose;
+  const artifactDir = resolve(
+    stringArg(args.artifact_dir, defaultReviewArtifactDir(localOnly, itemNumber, itemNumbers)),
   );
-  const artifactDir = resolve(stringArg(args.artifact_dir, "artifacts/reviews"));
+  if (humanLocalReview) {
+    console.error(`Local ClawSweeper review for ${targetRepo()}#${itemNumber}`);
+    console.error("");
+    console.error("Preparing target checkout");
+  }
+  const checkout = resolveReviewCheckout({
+    args,
+    artifactDir,
+    humanLocalReview,
+    itemNumber,
+    itemNumbers,
+    localOnly,
+    profile,
+    verbose,
+  });
+  const openclawDir = checkout.openclawDir;
   const itemsDir = resolve(stringArg(args.items_dir, defaultItemsDir()));
   const batchSize = numberArg(args.batch_size, DEFAULT_PLAN_BATCH_SIZE);
   const maxPages = numberArg(args.max_pages, 250);
   const model = stringArg(args.codex_model, DEFAULT_CODEX_MODEL);
   const reasoningEffort = stringArg(args.codex_reasoning_effort, DEFAULT_REASONING_EFFORT);
   const sandboxMode = stringArg(args.codex_sandbox, "read-only");
-  const serviceTier = stringArg(args.codex_service_tier, DEFAULT_SERVICE_TIER);
+  const serviceTier = stringArg(args.codex_service_tier, localOnly ? "fast" : DEFAULT_SERVICE_TIER);
   const timeoutMs = numberArg(args.codex_timeout_ms, DEFAULT_REVIEW_CODEX_TIMEOUT_MS);
   const additionalPrompt = stringArg(
     args.additional_prompt,
@@ -15760,15 +16049,14 @@ function reviewCommand(args: Args): void {
   );
   const shardIndex = numberArg(args.shard_index, 0);
   const shardCount = numberArg(args.shard_count, 1);
-  const itemNumber = numberArg(args.item_number, 0) || undefined;
   const hotIntake = boolArg(args.hot_intake);
-  const hasItemNumbersInput = typeof args.item_numbers === "string" && args.item_numbers.trim();
-  const itemNumbers = hasItemNumbersInput
-    ? itemNumbersArg(args.item_numbers, undefined)
-    : undefined;
   const readonlyOpenclaw = boolArg(args.readonly_openclaw);
+  const skipStartComment = boolArg(args.skip_start_comment) || localOnly;
+  const forcedLoginMethod = reviewCodexForcedLoginMethod(args);
   ensureDir(artifactDir);
-  const git = gitInfo(openclawDir);
+  const git = checkout.gitTargetBranch
+    ? gitInfo(openclawDir, { targetBranch: checkout.gitTargetBranch })
+    : gitInfo(openclawDir);
   const reviewPolicy = reviewPolicyHash({ model, reasoningEffort, sandboxMode, serviceTier });
   const readonlyModeSnapshots = readonlyOpenclaw ? makeTreeReadOnly(openclawDir) : [];
   try {
@@ -15783,20 +16071,38 @@ function reviewCommand(args: Args): void {
     if (itemNumber) selectionOptions.itemNumber = itemNumber;
     if (itemNumbers) selectionOptions.itemNumbers = itemNumbers;
     if (hotIntake) selectionOptions.hotIntake = true;
+    if (humanLocalReview) {
+      console.error("");
+      console.error("Loading review item");
+    }
     const { candidates, scannedPages } = selectCandidates(selectionOptions);
-    console.error(
-      `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} selected=${candidates.length} scanned_pages=${scannedPages}`,
-    );
+    if (humanLocalReview) {
+      if (candidates.length === 0) throw exactLocalReviewNoCandidateError(itemNumber, shardIndex);
+      const item = candidates[0]!;
+      console.error(`  item: ${item.kind === "pull_request" ? "PR" : "issue"} #${item.number}`);
+      console.error(`  title: ${item.title}`);
+      console.error("  state: open");
+    } else {
+      console.error(
+        `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} selected=${candidates.length} scanned_pages=${scannedPages}`,
+      );
+    }
     writeFileSync(
       join(artifactDir, "selection.json"),
       JSON.stringify({ shardIndex, shardCount, scannedPages, candidates, reviewPolicy }, null, 2),
     );
     let completed = 0;
     let codexFailures = 0;
+    const codexFailureReports: string[] = [];
     for (const item of candidates) {
-      console.error(
-        `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} start #${item.number} (${completed + 1}/${candidates.length})`,
-      );
+      if (humanLocalReview) {
+        console.error("");
+        console.error("Collecting GitHub context");
+      } else {
+        console.error(
+          `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} start #${item.number} (${completed + 1}/${candidates.length})`,
+        );
+      }
       const contextStartedAt = Date.now();
       const context = collectItemContext(item);
       const contextElapsedMs = Date.now() - contextStartedAt;
@@ -15811,28 +16117,48 @@ function reviewCommand(args: Args): void {
         mediaProofRuntimeHints(proofScratchDir, preparedMediaProof),
       );
       const snapshotHash = itemSnapshotHash(item, context);
-      try {
-        const startComment = postReviewStartStatusComment({
-          item,
-          position: completed + 1,
-          total: candidates.length,
-          shardIndex,
-          shardCount,
-        });
-        console.error(
-          `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} start-comment=${startComment} #${item.number}`,
-        );
-      } catch (error) {
-        console.error(
-          `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} start-comment=failed #${item.number}: ${
-            error instanceof Error ? error.message : String(error)
-          }`,
-        );
+      if (skipStartComment) {
+        if (!humanLocalReview) {
+          console.error(
+            `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} start-comment=skipped #${item.number}`,
+          );
+        }
+      } else {
+        try {
+          const startComment = postReviewStartStatusComment({
+            item,
+            position: completed + 1,
+            total: candidates.length,
+            shardIndex,
+            shardCount,
+          });
+          console.error(
+            `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} start-comment=${startComment} #${item.number}`,
+          );
+        } catch (error) {
+          console.error(
+            `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} start-comment=failed #${item.number}: ${
+              error instanceof Error ? error.message : String(error)
+            }`,
+          );
+        }
       }
       let decision: Decision;
       let codexElapsedMs = 0;
+      let codexFailed = false;
       const codexStartedAt = Date.now();
       try {
+        if (humanLocalReview) {
+          console.error("");
+          console.error("Running Codex review");
+          console.error(`  timeout: ${displayDurationMs(timeoutMs)}`);
+          console.error(
+            `  stdout: ${displayPath(join(codexWorkDir, `${item.number}.1.codex.stdout.log`))}`,
+          );
+          console.error(
+            `  stderr: ${displayPath(join(codexWorkDir, `${item.number}.1.codex.stderr.log`))}`,
+          );
+        }
         decision = runCodex({
           item,
           context,
@@ -15842,14 +16168,19 @@ function reviewCommand(args: Args): void {
           reasoningEffort,
           sandboxMode,
           serviceTier,
+          forcedLoginMethod,
+          preserveCodexAuth: localOnly,
+          preferWindowsAppBinary: localOnly,
           timeoutMs,
           workDir: codexWorkDir,
           additionalPrompt,
           proofScratchDir,
           prompt: prompt.text,
+          quietLogs: humanLocalReview,
         });
       } catch (error) {
         codexFailures += 1;
+        codexFailed = true;
         if (error instanceof CodexReviewError) {
           decision = codexFailureDecision(error.status, error.message, error.stdout, error.stderr, {
             errorCode: error.errorCode,
@@ -15876,8 +16207,9 @@ function reviewCommand(args: Args): void {
         codexElapsedMs,
       };
       const action = reviewActionForDecision({ item, decision, git, runtime });
+      const reportPath = join(artifactDir, reportFileName(item.repo, item.number));
       writeFileSync(
-        join(artifactDir, reportFileName(item.repo, item.number)),
+        reportPath,
         markdownFor({
           item,
           context,
@@ -15892,17 +16224,38 @@ function reviewCommand(args: Args): void {
         "utf8",
       );
       completed += 1;
+      if (codexFailed) codexFailureReports.push(reportPath);
+      if (humanLocalReview) {
+        console.error("");
+        console.error(codexFailed ? "Codex review failed" : "Review complete");
+        console.error(`  elapsed: ${displayDurationMs(codexElapsedMs)}`);
+        console.error(`  decision: ${decision.decision}`);
+        console.error(`  confidence: ${decision.confidence}`);
+        console.error(`  action: ${action.actionTaken}`);
+        console.error(`  report: ${displayPath(reportPath)}`);
+      } else {
+        console.error(
+          `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} done #${item.number} (${completed}/${candidates.length}) decision=${decision.decision} confidence=${decision.confidence} action=${action.actionTaken}`,
+        );
+      }
+    }
+    if (!humanLocalReview) {
       console.error(
-        `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} done #${item.number} (${completed}/${candidates.length}) decision=${decision.decision} confidence=${decision.confidence} action=${action.actionTaken}`,
+        `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} complete reviewed=${completed}`,
       );
     }
-    console.error(
-      `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} complete reviewed=${completed}`,
-    );
     if (codexFailures > 0) {
-      throw new Error(
-        `Codex failed for ${codexFailures} item${codexFailures === 1 ? "" : "s"}; review artifacts were written and the workflow recovery lane can requeue the planned set.`,
-      );
+      const message = `Codex failed for ${codexFailures} item${
+        codexFailures === 1 ? "" : "s"
+      }; review artifacts were written and the workflow recovery lane can requeue the planned set.${
+        codexFailureReports.length > 0
+          ? ` Report${codexFailureReports.length === 1 ? "" : "s"}: ${codexFailureReports
+              .map(displayPath)
+              .join(", ")}`
+          : ""
+      }`;
+      if (humanLocalReview) throw new UserFacingCommandError(message);
+      throw new Error(message);
     }
   } finally {
     restoreTreeModes(readonlyModeSnapshots);
@@ -19507,7 +19860,12 @@ export async function main(argv = process.argv.slice(2)): Promise<void> {
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   main().catch((error) => {
-    console.error(error instanceof Error ? error.stack || error.message : String(error));
+    console.error(formatFatalError(error));
     process.exit(1);
   });
+}
+
+function formatFatalError(error: unknown): string {
+  if (isUserFacingCommandError(error)) return `Error: ${error.message}`;
+  return error instanceof Error ? error.stack || error.message : String(error);
 }

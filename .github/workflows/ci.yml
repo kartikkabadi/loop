@@ -69,4 +69,7 @@ jobs:
           pnpm run build:repair
 
       - name: Verify native Windows launcher
-        run: node --test --test-name-pattern "escaped Windows launchers|CODEX_BIN and preserves argv|timeout errors|app-server mode" test/codex-process.test.ts
+        run: >
+          node --test --test-name-pattern
+          "escaped Windows launchers|extensionless Windows node shebang shims|CODEX_BIN and preserves argv|timeout errors|app-server mode"
+          test/codex-process.test.ts

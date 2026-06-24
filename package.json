@@ -11,6 +11,7 @@
     "build:all": "pnpm run build && pnpm run build:repair && pnpm run build:dashboard",
     "plan": "node dist/clawsweeper.js plan",
     "review": "node dist/clawsweeper.js review",
+    "codex:local:check": "node scripts/check-local-codex.mjs",
     "retry-failed-reviews": "node dist/clawsweeper.js retry-failed-reviews",
     "apply-artifacts": "node dist/clawsweeper.js apply-artifacts",
     "apply-decisions": "node dist/clawsweeper.js apply-decisions",
