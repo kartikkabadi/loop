@@ -521,6 +521,7 @@ interface ItemContext {
   issue: unknown;
   comments: unknown[];
   timeline: unknown[];
+  sourceRevision?: string;
   previousClawSweeperReview?: unknown;
   closingPullRequests?: unknown[];
   referencingMergedPullRequests?: unknown[];
@@ -2181,6 +2182,69 @@ function itemSnapshotHash(item: Item, context: ItemContext): string {
     labels: item.labels,
   };
   return sha256(stableJson({ item: snapshotItem, context }));
+}
+
+function itemSourceRevisionSha256(issue: unknown, comments: unknown[] = []): string {
+  const source = asRecord(issue);
+  const snapshot = {
+    title: sourceRevisionScalar(source.title),
+    body: sourceRevisionScalar(source.body),
+    labels: revisionLabels(source.labels),
+    comments: comments
+      .map(asRecord)
+      .filter((comment) => !isClawSweeperComment(comment))
+      .map((comment) => ({
+        id: sourceRevisionScalar(comment.id),
+        author: sourceRevisionScalar(login(comment.user) ?? comment.author),
+        body: sourceRevisionScalar(comment.body),
+        updated_at: sourceRevisionScalar(
+          comment.updated_at ?? comment.updatedAt ?? comment.created_at,
+        ),
+      }))
+      .sort((left, right) =>
+        `${left.id}:${left.updated_at}`.localeCompare(`${right.id}:${right.updated_at}`),
+      ),
+  };
+  return sha256(JSON.stringify(snapshot));
+}
+
+function sourceRevisionScalar(value: unknown): string {
+  if (value === null || value === undefined) return "";
+  if (typeof value === "string") return value;
+  if (typeof value === "number" || typeof value === "boolean") return String(value);
+  return JSON.stringify(value);
+}
+
+function revisionLabels(labels: unknown): string[] {
+  return (Array.isArray(labels) ? labels : [])
+    .map((label) => normalizeLabelName(String(asRecord(label).name ?? label)))
+    .filter(Boolean)
+    .filter((label) => !isIgnorableSourceRevisionLabel(label))
+    .sort();
+}
+
+function isIgnorableSourceRevisionLabel(label: string) {
+  return (
+    isClawSweeperAdvisorySourceRevisionLabel(label) ||
+    (label.startsWith("clawsweeper:") &&
+      !["clawsweeper:human-review", "clawsweeper:manual-only"].includes(label)) ||
+    label === "no-stale" ||
+    label === "stale"
+  );
+}
+
+function isClawSweeperAdvisorySourceRevisionLabel(label: string): boolean {
+  return (
+    /^(?:status|rating|proof|merge-risk|impact|issue-rating):/.test(label) ||
+    /^p[0-3]$/.test(label) ||
+    label === "feature: ✨ showcase" ||
+    label === "mantis: telegram-visible-proof" ||
+    label === "triage: needs-real-behavior-proof"
+  );
+}
+
+export function itemSourceRevisionSha256ForTest(issue: unknown, comments: unknown[] = []): string {
+  return itemSourceRevisionSha256(issue, comments);
 }
 
 function reviewPolicyHash(options: {
@@ -6262,6 +6326,9 @@ function collectItemContext(
     24,
   );
   const comments = commentsWindow.items;
+  const sourceRevisionComments = commentsWindow.truncated
+    ? ghPaged<unknown>(`repos/${targetRepo()}/issues/${item.number}/comments`)
+    : comments;
   const filteredComments = filterReviewContextComments(comments, item.number);
   const previousClawSweeperReview = extractLatestClawSweeperReview(comments, item.number);
   const timelineWindow = ghPagedLinkHeaderContextWindow<unknown>(
@@ -6271,6 +6338,7 @@ function collectItemContext(
   const timeline = timelineWindow.items;
   const context: ItemContext = {
     issue: compactIssue(issue),
+    sourceRevision: itemSourceRevisionSha256(issue, sourceRevisionComments),
     comments: compactMappedWindow(
       filteredComments.included,
       filteredComments.included.length,
@@ -12656,6 +12724,11 @@ function upgradePullRequestClosePromotionReport(
     "item_snapshot_hash",
     itemSnapshotHash(item, context),
   );
+  upgraded = replaceFrontMatterValue(
+    upgraded,
+    "item_source_revision",
+    context.sourceRevision ?? "unknown",
+  );
   upgraded = replaceSectionValue(upgraded, REVIEW_SECTIONS.bestSolution, promotion.bestSolution);
   upgraded = replaceSectionValue(upgraded, REVIEW_SECTIONS.evidence, promotion.evidence);
   upgraded = replaceSectionValue(upgraded, REVIEW_SECTIONS.closeComment, promotion.closeComment);
@@ -15060,10 +15133,16 @@ export function reviewAutomationMarkersFromReport(markdown: string): string {
   const decision = frontMatterValue(markdown, "decision");
   const confidence = frontMatterValue(markdown, "confidence") ?? "unknown";
   const headSha = pullHeadShaFromReport(markdown) ?? "unknown";
+  const itemUpdatedAt = frontMatterValue(markdown, "item_updated_at") ?? "unknown";
+  const reviewedAt = frontMatterValue(markdown, "reviewed_at") ?? "unknown";
+  const sourceRevision = frontMatterValue(markdown, "item_source_revision") ?? "unknown";
   const baseAttrs = [
     `item=${markerAttributeValue(number)}`,
     `sha=${markerAttributeValue(headSha)}`,
     `confidence=${markerAttributeValue(confidence)}`,
+    `updated_at=${markerAttributeValue(itemUpdatedAt)}`,
+    `reviewed_at=${markerAttributeValue(reviewedAt)}`,
+    `source_revision=${markerAttributeValue(sourceRevision)}`,
   ].join(" ");
   const securityNeedsAttention = reportSecurityReview(markdown).status === "needs_attention";
   const humanReviewMarkers = (): string => {
@@ -15122,7 +15201,13 @@ export function reviewAutomationMarkersFromReport(markdown: string): string {
     ].join("\n");
   }
   if (decision === "close") {
-    return `<!-- clawsweeper-verdict:needs-human ${baseAttrs} -->`;
+    const closeReason = frontMatterValue(markdown, "close_reason") ?? "unknown";
+    const actionTaken = frontMatterValue(markdown, "action_taken") ?? "unknown";
+    const closeAttrs = `${baseAttrs} action_taken=${markerAttributeValue(actionTaken)} reason=${markerAttributeValue(closeReason)}`;
+    return [
+      `<!-- clawsweeper-verdict:close ${closeAttrs} -->`,
+      `<!-- clawsweeper-action:close-required ${closeAttrs} -->`,
+    ].join("\n");
   }
   return `<!-- clawsweeper-verdict:needs-human ${baseAttrs} -->`;
 }
@@ -15271,8 +15356,56 @@ function commentBody(comment: Record<string, unknown> | undefined): string | und
   return typeof body === "string" ? body : undefined;
 }
 
-function commentBodyMatches(comment: Record<string, unknown> | undefined, body: string): boolean {
-  return commentBody(comment)?.trim() === body.trim();
+const APPLY_SYNC_EQUIVALENT_CLOSE_MARKER_ACTIONS = new Set([
+  "proposed_close",
+  "kept_open",
+  "skipped_pr_close_coverage_proof",
+  "retry_pr_close_coverage_proof",
+  ...RETRYABLE_CLOSE_SKIP_ACTIONS,
+  ...PAIR_BLOCKED_CLOSE_ACTIONS,
+]);
+
+function normalizeApplySyncCloseMarkerAction(body: string): string {
+  return body.replace(
+    /(<!-- clawsweeper-(?:verdict:close|action:close-required)\b[^>]*\s)action_taken=([^\s>]+)(?=\s|-->)/g,
+    (match, prefix: string, action: string) =>
+      APPLY_SYNC_EQUIVALENT_CLOSE_MARKER_ACTIONS.has(action)
+        ? `${prefix}action_taken=proposed_close`
+        : match,
+  );
+}
+
+function commentBodyMatches(
+  comment: Record<string, unknown> | undefined,
+  body: string,
+  options: { allowApplyCloseActionUpgrade?: boolean } = {},
+): boolean {
+  const actual = commentBody(comment)?.trim();
+  const expected = body.trim();
+  if (actual === expected) return true;
+  if (!actual || !options.allowApplyCloseActionUpgrade) return false;
+  return (
+    normalizeApplySyncCloseMarkerAction(actual) === normalizeApplySyncCloseMarkerAction(expected)
+  );
+}
+
+function reviewCommentHashMatches(
+  comment: Record<string, unknown> | undefined,
+  body: string,
+  storedHash: string | undefined,
+  expectedHash: string,
+  options: { allowApplyCloseActionUpgrade?: boolean } = {},
+): boolean {
+  if (storedHash === expectedHash) return true;
+  if (!storedHash || !options.allowApplyCloseActionUpgrade) return false;
+  const actual = commentBody(comment)?.trim();
+  if (!actual) return false;
+  if (
+    normalizeApplySyncCloseMarkerAction(actual) !== normalizeApplySyncCloseMarkerAction(body.trim())
+  ) {
+    return false;
+  }
+  return storedHash === sha256(actual);
 }
 
 const PATCHABLE_REVIEW_COMMENT_AUTHORS = new Set(
@@ -15876,6 +16009,7 @@ review_status: ${options.decision.summary.startsWith("Codex review failed") ? "f
 review_terminal_failure: ${options.decision.codexTerminalFailure === true}
 local_checkout_access: verified
 item_snapshot_hash: ${options.snapshotHash}
+item_source_revision: ${options.context.sourceRevision ?? "unknown"}
 close_comment_sha256: ${options.action.closeComment ? sha256(options.action.closeComment) : "none"}
 review_comment_sha256: none
 review_comment_id: unknown
@@ -17024,6 +17158,9 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
               counterpartNumber,
               counterpartReviewCommentBody,
             );
+            const counterpartAllowApplyCloseActionUpgrade =
+              isApplyCloseCandidateReport(counterpartMarkdown);
+            const counterpartMarkedReviewCommentHash = sha256(counterpartMarkedReviewComment);
             const counterpartNeedsReviewCommentSync = shouldSyncReviewComment({
               syncCommentsOnly: false,
               isCloseProposal: true,
@@ -17036,10 +17173,15 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
               needsReviewCommentBodySync: !commentBodyMatches(
                 counterpartReviewComment,
                 counterpartMarkedReviewComment,
+                { allowApplyCloseActionUpgrade: counterpartAllowApplyCloseActionUpgrade },
               ),
-              needsReviewCommentHashSync:
-                frontMatterValue(counterpartMarkdown, "review_comment_sha256") !==
-                sha256(counterpartMarkedReviewComment),
+              needsReviewCommentHashSync: !reviewCommentHashMatches(
+                counterpartReviewComment,
+                counterpartMarkedReviewComment,
+                frontMatterValue(counterpartMarkdown, "review_comment_sha256"),
+                counterpartMarkedReviewCommentHash,
+                { allowApplyCloseActionUpgrade: counterpartAllowApplyCloseActionUpgrade },
+              ),
               needsReviewCommentReferenceSync:
                 frontMatterValue(counterpartMarkdown, "review_comment_id") === "unknown" ||
                 frontMatterValue(counterpartMarkdown, "review_comment_url") === "unknown",
@@ -17628,13 +17770,20 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       }
     }
     let reviewCommentHash = sha256(markedReviewComment);
+    const allowApplyCloseActionUpgrade = isUpgradedCloseCandidate;
     let existingReviewCommentMatches = commentBodyMatches(
       existingReviewComment,
       markedReviewComment,
+      { allowApplyCloseActionUpgrade },
     );
     let needsReviewCommentBodySync = !existingReviewComment || !existingReviewCommentMatches;
-    let needsReviewCommentHashSync =
-      frontMatterValue(markdown, "review_comment_sha256") !== reviewCommentHash;
+    let needsReviewCommentHashSync = !reviewCommentHashMatches(
+      existingReviewComment,
+      markedReviewComment,
+      frontMatterValue(markdown, "review_comment_sha256"),
+      reviewCommentHash,
+      { allowApplyCloseActionUpgrade },
+    );
     let needsReviewCommentReferenceSync =
       frontMatterValue(markdown, "review_comment_id") === "unknown" ||
       frontMatterValue(markdown, "review_comment_url") === "unknown";

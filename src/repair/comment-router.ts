@@ -76,6 +76,7 @@ import {
   sharedAutomergeStatusMarkerPrefix,
   staleClosedItemCommandReason,
   shouldClearMaintainerCommandReaction,
+  trustedCloseBlockReason,
   usesSharedAutomergeStatus,
 } from "./comment-router-core.js";
 import { mergeAutomergeTimelineSection } from "./automerge-status-timeline.js";
@@ -233,6 +234,12 @@ for (const comment of comments) {
     freeform_prompt: parsed.freeform_prompt ?? null,
     visual_lens: parsed.visual_lens ?? null,
     expected_head_sha: parsed.expected_head_sha ?? null,
+    close_reason: parsed.close_reason ?? null,
+    close_confidence: parsed.close_confidence ?? null,
+    close_action_taken: parsed.close_action_taken ?? null,
+    reviewed_at: parsed.reviewed_at ?? null,
+    expected_item_updated_at: parsed.expected_item_updated_at ?? null,
+    expected_source_revision: parsed.expected_source_revision ?? null,
     finding_id: parsed.finding_id ?? null,
     status: "pending",
     actions: [],
@@ -846,6 +853,56 @@ function classifyAutoclose(command: LooseRecord, issue: LooseRecord, pull: Loose
       reason: "autoclose requires an open issue or PR",
       actions: [{ action: "comment", status: execute ? "pending" : "planned" }],
     };
+  }
+  if (command.trusted_bot && pull) {
+    const closeReason = String(command.close_reason ?? "");
+    const comments = cachedIssueComments(command.issue_number);
+    const needsCloseSignalContext =
+      closeReason === "unconfirmed_product_direction" ||
+      closeReason === "low_signal_unmergeable_pr";
+    const pullApi = needsCloseSignalContext ? fetchPullRequestApi(command.issue_number) : {};
+    const reviews = needsCloseSignalContext
+      ? ghPaged<JsonValue>(`repos/${targetRepo}/pulls/${command.issue_number}/reviews?per_page=100`)
+      : [];
+    const reviewComments =
+      closeReason === "unconfirmed_product_direction"
+        ? ghPaged<JsonValue>(
+            `repos/${targetRepo}/pulls/${command.issue_number}/comments?per_page=100`,
+          )
+        : [];
+    const trustedCloseBlock = trustedCloseBlockReason({
+      repo: command.repo,
+      kind: "pull_request",
+      labels: targetLabelsFromPull(pull),
+      closeReason: command.close_reason,
+      closeConfidence: command.close_confidence,
+      closeActionTaken: command.close_action_taken,
+      createdAt: issue.created_at,
+      expectedHeadSha: command.expected_head_sha,
+      currentHeadSha: pull.headRefOid,
+      expectedItemUpdatedAt: command.expected_item_updated_at,
+      currentItemUpdatedAt: issue.updated_at,
+      expectedSourceRevision: command.expected_source_revision,
+      currentSourceRevision: issueSourceRevisionSha256(issue, comments),
+      authorAssociation: issue.author_association,
+      reviewedAt: command.reviewed_at ?? command.expected_item_updated_at,
+      assignees: issue.assignees,
+      requestedReviewers: pullApi.requested_reviewers,
+      requestedTeams: pullApi.requested_teams,
+      comments,
+      reviews,
+      reviewComments,
+      sourceCommentId: command.comment_id,
+      trustedAuthors: trustedBots,
+    });
+    if (trustedCloseBlock) {
+      return {
+        ...command,
+        autoclose_reason: reason,
+        status: "skipped",
+        reason: trustedCloseBlock,
+      };
+    }
   }
   const targets = discoverAutocloseTargets({ command, issue, pull });
   if (targets.length === 0) {
@@ -2316,6 +2373,13 @@ function executeAutoclose(command: LooseRecord) {
         results.push({ ...liveTarget, status: "skipped", reason: "already closed" });
         continue;
       }
+      if (command.trusted_bot) {
+        const trustedCloseBlock = liveTrustedCloseBlockReason(command, liveTarget);
+        if (trustedCloseBlock) {
+          results.push({ ...liveTarget, status: "skipped", reason: trustedCloseBlock });
+          continue;
+        }
+      }
       if (Number(liveTarget.number) !== currentNumber) {
         postIssueComment(
           command.repo,
@@ -2360,6 +2424,72 @@ function discoverAutocloseTargets({ command, issue, pull }: LooseRecord): JsonVa
   return targets;
 }
 
+function liveTrustedCloseBlockReason(command: LooseRecord, liveTarget: LooseRecord): string | null {
+  if (liveTarget.kind === "pull_request") {
+    const issue = fetchIssue(liveTarget.number);
+    const pull = fetchPullRequestView(liveTarget.number);
+    const comments = cachedIssueComments(liveTarget.number);
+    const closeReason = String(command.close_reason ?? "");
+    const needsCloseSignalContext =
+      closeReason === "unconfirmed_product_direction" ||
+      closeReason === "low_signal_unmergeable_pr";
+    const pullApi = needsCloseSignalContext ? fetchPullRequestApi(liveTarget.number) : {};
+    const reviews = needsCloseSignalContext
+      ? ghPaged<JsonValue>(`repos/${targetRepo}/pulls/${liveTarget.number}/reviews?per_page=100`)
+      : [];
+    const reviewComments =
+      closeReason === "unconfirmed_product_direction"
+        ? ghPaged<JsonValue>(`repos/${targetRepo}/pulls/${liveTarget.number}/comments?per_page=100`)
+        : [];
+    return trustedCloseBlockReason({
+      repo: command.repo,
+      kind: "pull_request",
+      labels: targetLabelsFromPull(pull),
+      closeReason: command.close_reason,
+      closeConfidence: command.close_confidence,
+      closeActionTaken: command.close_action_taken,
+      createdAt: issue.created_at,
+      expectedHeadSha: command.expected_head_sha,
+      currentHeadSha: pull.headRefOid,
+      expectedItemUpdatedAt: command.expected_item_updated_at,
+      currentItemUpdatedAt: issue.updated_at,
+      expectedSourceRevision: command.expected_source_revision,
+      currentSourceRevision: issueSourceRevisionSha256(issue, comments),
+      authorAssociation: issue.author_association,
+      reviewedAt: command.reviewed_at ?? command.expected_item_updated_at,
+      assignees: issue.assignees,
+      requestedReviewers: pullApi.requested_reviewers,
+      requestedTeams: pullApi.requested_teams,
+      comments,
+      reviews,
+      reviewComments,
+      sourceCommentId: command.comment_id,
+      trustedAuthors: trustedBots,
+    });
+  }
+  const issue = fetchIssue(liveTarget.number);
+  const comments = cachedIssueComments(liveTarget.number);
+  return trustedCloseBlockReason({
+    repo: command.repo,
+    kind: "issue",
+    labels: issue.labels,
+    closeReason: command.close_reason,
+    closeConfidence: command.close_confidence,
+    closeActionTaken: command.close_action_taken,
+    expectedHeadSha: null,
+    currentHeadSha: null,
+    expectedItemUpdatedAt: command.expected_item_updated_at,
+    currentItemUpdatedAt: issue.updated_at,
+    expectedSourceRevision: command.expected_source_revision,
+    currentSourceRevision: issueSourceRevisionSha256(issue, comments),
+    authorAssociation: issue.author_association,
+    reviewedAt: command.reviewed_at ?? command.expected_item_updated_at,
+    comments,
+    sourceCommentId: command.comment_id,
+    trustedAuthors: trustedBots,
+  });
+}
+
 function collectAutocloseCandidateNumbers({ command }: LooseRecord): number[] {
   const numbers = new Set<number>();
   const add = (value: JsonValue) => {
@@ -2394,6 +2524,10 @@ function issueTargetFromIssue(issue: LooseRecord) {
       issue.html_url ??
       `https://github.com/${targetRepo}/${issue.pull_request ? "pull" : "issues"}/${number}`,
   };
+}
+
+function targetLabelsFromPull(pull: LooseRecord): JsonValue[] {
+  return (pull.labels ?? []).map((item: JsonValue) => item?.name ?? item);
 }
 
 function autocloseReason(command: LooseRecord) {
@@ -3070,6 +3204,18 @@ function fetchPullRequestView(number: JsonValue) {
         "title",
         "url",
       ].join(","),
+    ],
+    { attempts: TARGET_LOOKUP_RETRY_ATTEMPTS },
+  );
+}
+
+function fetchPullRequestApi(number: JsonValue) {
+  return ghJson(
+    [
+      "api",
+      `repos/${targetRepo}/pulls/${number}`,
+      "--jq",
+      "{requested_reviewers:[.requested_reviewers[]? | {login:.login}],requested_teams:[.requested_teams[]? | {slug:.slug}]}",
     ],
     { attempts: TARGET_LOOKUP_RETRY_ATTEMPTS },
   );

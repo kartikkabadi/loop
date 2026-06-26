@@ -88,9 +88,20 @@ function revisionLabels(labels: JsonValue[]): string[] {
 
 function isIgnorableAutomationLabel(label: string) {
   return (
+    isClawSweeperAdvisoryLabel(label) ||
     (label.startsWith("clawsweeper:") && !PROTECTED_LABELS.has(label)) ||
     label === "no-stale" ||
     label === "stale"
+  );
+}
+
+function isClawSweeperAdvisoryLabel(label: string): boolean {
+  return (
+    /^(?:status|rating|proof|merge-risk|impact|issue-rating):/.test(label) ||
+    /^p[0-3]$/.test(label) ||
+    label === "feature: ✨ showcase" ||
+    label === "mantis: telegram-visible-proof" ||
+    label === "triage: needs-real-behavior-proof"
   );
 }
 

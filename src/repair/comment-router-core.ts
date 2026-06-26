@@ -7,6 +7,12 @@ import {
 } from "./comment-command-text.js";
 import { renderJobIntentFrontmatter } from "./job-intent.js";
 import { compactText } from "./text-utils.js";
+import {
+  isAutoCloseAllowed,
+  repositoryProfileFor,
+  type RepositoryCloseReason,
+  type RepositoryItemKind,
+} from "../repository-profiles.js";
 export const REPAIR_INTENTS = new Set([
   "fix_ci",
   "address_review",
@@ -33,6 +39,22 @@ export const DEFAULT_ASSIST_MODEL = "internal";
 export const DEFAULT_ASSIST_REASONING_EFFORT = "low";
 export const DEFAULT_ASSIST_TIMEOUT_MS = "120000";
 const REPAIR_LOOP_PAUSE_LABELS = [HUMAN_REVIEW_LABEL, MANUAL_ONLY_LABEL, MERGE_READY_LABEL];
+const TRUSTED_CLOSE_PROTECTED_LABELS = new Set([
+  "security",
+  "beta-blocker",
+  "release-blocker",
+  "maintainer",
+]);
+const MAINTAINER_AUTHOR_ASSOCIATIONS = new Set(["OWNER", "MEMBER", "COLLABORATOR"]);
+const DAY_MS = 24 * 60 * 60 * 1000;
+const UNCONFIRMED_PRODUCT_DIRECTION_MIN_AGE_DAYS = 14;
+const UNCONFIRMED_PRODUCT_DIRECTION_MIN_INACTIVE_DAYS = 7;
+const UNCONFIRMED_PRODUCT_DIRECTION_EXEMPT_LABELS = new Set([
+  HUMAN_REVIEW_LABEL,
+  MANUAL_ONLY_LABEL,
+  AUTOMERGE_LABEL,
+  AUTOFIX_LABEL,
+]);
 const CLAWSWEEPER_REPLY_BADGES = {
   default: "🦞👀",
   repair: "🦞🔧",
@@ -1023,6 +1045,403 @@ export function reviewedHeadShaBlockReason({
   return null;
 }
 
+export function trustedCloseBlockReason({
+  repo,
+  kind,
+  labels,
+  closeReason,
+  closeConfidence,
+  closeActionTaken,
+  createdAt,
+  expectedHeadSha,
+  currentHeadSha,
+  expectedItemUpdatedAt,
+  currentItemUpdatedAt,
+  expectedSourceRevision,
+  currentSourceRevision,
+  authorAssociation,
+  reviewedAt,
+  assignees,
+  requestedReviewers,
+  requestedTeams,
+  comments,
+  reviews,
+  reviewComments,
+  sourceCommentId,
+  trustedAuthors = new Set(),
+  now,
+}: LooseRecord): string | null {
+  const headBlock = reviewedHeadShaBlockReason({
+    expectedHeadSha,
+    currentHeadSha,
+    markerName: "close",
+  });
+  if (headBlock) return headBlock;
+
+  const closeKind = normalizedCloseKind(kind);
+  if (!closeKind) return "trusted close marker requires an issue or pull request target";
+
+  const reason = String(closeReason ?? "").trim() as RepositoryCloseReason;
+  if (!reason || reason === "none")
+    return "trusted close marker must include an apply close reason";
+  const confidence = String(closeConfidence ?? "")
+    .trim()
+    .toLowerCase();
+  if (confidence !== "high") {
+    return `trusted close marker confidence must be high, got ${confidence || "unknown"}`;
+  }
+  const actionTaken = String(closeActionTaken ?? "").trim();
+  if (actionTaken !== "proposed_close") {
+    return `trusted close marker action_taken must be proposed_close, got ${actionTaken || "unknown"}`;
+  }
+
+  const profile = trustedCloseRepositoryProfile(repo);
+  if (typeof profile === "string") return profile;
+  if (!isAutoCloseAllowed(profile, closeKind, reason)) {
+    return `${reason} is not allowed for ${profile.targetRepo} ${closeKind} apply policy`;
+  }
+  if (
+    closeKind === "pull_request" &&
+    reason === "unconfirmed_product_direction" &&
+    !unconfirmedProductDirectionTrustedCloseEnabled()
+  ) {
+    return "unconfirmed product-direction apply policy is disabled";
+  }
+  const reasonSpecificBlock = trustedCloseReasonSpecificBlockReason({
+    reason,
+    closeKind,
+    createdAt,
+    expectedItemUpdatedAt,
+    reviewedAt,
+    labels,
+    assignees,
+    requestedReviewers,
+    requestedTeams,
+    comments,
+    reviews,
+    reviewComments,
+    now,
+  });
+  if (reasonSpecificBlock) {
+    return reasonSpecificBlock;
+  }
+
+  const protectedLabels = trustedCloseBlockingProtectedLabels(labels, reason);
+  if (protectedLabels.length > 0) return `protected label: ${protectedLabels.join(", ")}`;
+
+  const normalizedAuthorAssociation = normalizeAuthorAssociation(authorAssociation);
+  if (closeKind === "pull_request" && !isVerifiedFixedCloseReason(reason)) {
+    if (MAINTAINER_AUTHOR_ASSOCIATIONS.has(normalizedAuthorAssociation)) {
+      return `author association is ${normalizedAuthorAssociation}`;
+    }
+  }
+
+  const updatedAtBlock = trustedCloseUpdatedAtBlockReason({
+    expectedItemUpdatedAt,
+    currentItemUpdatedAt,
+    expectedSourceRevision,
+    currentSourceRevision,
+    comments,
+    sourceCommentId,
+    trustedAuthors,
+  });
+  if (updatedAtBlock) return updatedAtBlock;
+
+  const activityBlock = nonAutomationActivityAfterReviewBlock({
+    comments,
+    reviewedAt,
+    trustedAuthors,
+  });
+  if (activityBlock) return activityBlock;
+
+  return null;
+}
+
+function envFlagEnabled(value: JsonValue): boolean {
+  if (typeof value !== "string") return false;
+  return ["1", "true", "yes", "on"].includes(value.trim().toLowerCase());
+}
+
+function unconfirmedProductDirectionTrustedCloseEnabled(env: LooseRecord = process.env): boolean {
+  return envFlagEnabled(env.CLAWSWEEPER_UNCONFIRMED_PRODUCT_DIRECTION_CLOSE_ENABLED);
+}
+
+function trustedCloseReasonSpecificBlockReason({
+  reason,
+  closeKind,
+  createdAt,
+  expectedItemUpdatedAt,
+  reviewedAt,
+  labels,
+  assignees,
+  requestedReviewers,
+  requestedTeams,
+  comments,
+  reviews,
+  reviewComments,
+  now,
+}: LooseRecord): string | null {
+  if (closeKind !== "pull_request") return null;
+  if (reason === "unconfirmed_product_direction") {
+    const ageBlock = unconfirmedProductDirectionTrustedCloseAgeBlock({
+      createdAt,
+      expectedItemUpdatedAt,
+      reviewedAt,
+      now,
+    });
+    if (ageBlock) return ageBlock;
+    const exemptLabel = normalizedLabels(labels).find((label) =>
+      UNCONFIRMED_PRODUCT_DIRECTION_EXEMPT_LABELS.has(label),
+    );
+    if (exemptLabel) return `${exemptLabel} exempts this PR from product-direction auto-close`;
+    const humanSignal = trustedCloseHumanSignalBlock({
+      assignees,
+      requestedReviewers,
+      requestedTeams,
+      comments,
+      reviews,
+      reviewComments,
+      productDirection: true,
+    });
+    if (humanSignal) return humanSignal;
+  }
+  if (reason === "low_signal_unmergeable_pr") {
+    const humanSignal = trustedCloseHumanSignalBlock({
+      assignees,
+      requestedReviewers,
+      requestedTeams,
+      comments,
+      reviews,
+      productDirection: false,
+    });
+    if (humanSignal) return humanSignal;
+  }
+  return null;
+}
+
+function unconfirmedProductDirectionTrustedCloseAgeBlock({
+  createdAt,
+  expectedItemUpdatedAt,
+  reviewedAt,
+  now,
+}: LooseRecord): string | null {
+  if (
+    !isOlderThanDays(
+      createdAt,
+      UNCONFIRMED_PRODUCT_DIRECTION_MIN_AGE_DAYS,
+      Number(now) || Date.now(),
+    )
+  ) {
+    return `unconfirmed_product_direction requires PR older than ${UNCONFIRMED_PRODUCT_DIRECTION_MIN_AGE_DAYS} days`;
+  }
+  const sourceUpdatedAtMs = Date.parse(String(expectedItemUpdatedAt ?? ""));
+  const reviewedAtMs = Date.parse(String(reviewedAt ?? ""));
+  if (
+    !Number.isFinite(sourceUpdatedAtMs) ||
+    !Number.isFinite(reviewedAtMs) ||
+    reviewedAtMs - sourceUpdatedAtMs <= UNCONFIRMED_PRODUCT_DIRECTION_MIN_INACTIVE_DAYS * DAY_MS
+  ) {
+    return `unconfirmed_product_direction requires ${UNCONFIRMED_PRODUCT_DIRECTION_MIN_INACTIVE_DAYS} days without source activity before review`;
+  }
+  return null;
+}
+
+function isOlderThanDays(value: JsonValue, days: number, now: number): boolean {
+  const timestamp = Date.parse(String(value ?? ""));
+  return Number.isFinite(timestamp) && now - timestamp > days * DAY_MS;
+}
+
+function trustedCloseHumanSignalBlock({
+  assignees,
+  requestedReviewers,
+  requestedTeams,
+  comments,
+  reviews,
+  reviewComments,
+  productDirection,
+}: LooseRecord): string | null {
+  if (nonEmptyArray(assignees)) {
+    return productDirection
+      ? "assigned PR has active human signal"
+      : "assigned PR has maintainer/human signal";
+  }
+  if (nonEmptyArray(requestedReviewers) || nonEmptyArray(requestedTeams)) {
+    return "requested reviewers or teams indicate active review signal";
+  }
+  if (maintainerAssociatedEntries(comments).length > 0) {
+    return productDirection
+      ? "maintainer issue comment calibrates product direction"
+      : "maintainer issue comment blocks low-signal auto-close";
+  }
+  if (maintainerAssociatedEntries(reviews).length > 0) {
+    return productDirection
+      ? "maintainer PR review calibrates product direction"
+      : "maintainer PR review blocks low-signal auto-close";
+  }
+  if (productDirection && maintainerAssociatedEntries(reviewComments).length > 0) {
+    return "maintainer inline review comment calibrates product direction";
+  }
+  return null;
+}
+
+function nonEmptyArray(value: JsonValue): boolean {
+  return Array.isArray(value) && value.length > 0;
+}
+
+function maintainerAssociatedEntries(entries: JsonValue): JsonValue[] {
+  if (!Array.isArray(entries)) return [];
+  return entries.filter((entry) =>
+    MAINTAINER_AUTHOR_ASSOCIATIONS.has(
+      normalizeAuthorAssociation((entry as LooseRecord).author_association),
+    ),
+  );
+}
+
+function normalizedCloseKind(kind: JsonValue): RepositoryItemKind | null {
+  const value = String(kind ?? "").trim();
+  if (value === "issue" || value === "pull_request") return value;
+  return null;
+}
+
+function trustedCloseRepositoryProfile(repo: JsonValue) {
+  try {
+    return repositoryProfileFor(String(repo ?? ""));
+  } catch (error) {
+    return error instanceof Error
+      ? error.message
+      : "trusted close target repository is unsupported";
+  }
+}
+
+function trustedCloseBlockingProtectedLabels(labels: JsonValue, closeReason: JsonValue): string[] {
+  const blocked = normalizedLabels(labels).filter((label) =>
+    TRUSTED_CLOSE_PROTECTED_LABELS.has(label),
+  );
+  if (!isVerifiedFixedCloseReason(closeReason)) return unique(blocked);
+  return unique(blocked.filter((label) => label !== "maintainer"));
+}
+
+function trustedCloseUpdatedAtBlockReason({
+  expectedItemUpdatedAt,
+  currentItemUpdatedAt,
+  expectedSourceRevision,
+  currentSourceRevision,
+  comments,
+  sourceCommentId,
+  trustedAuthors,
+}: LooseRecord): string | null {
+  const expectedMs = Date.parse(String(expectedItemUpdatedAt ?? ""));
+  if (!Number.isFinite(expectedMs)) {
+    return "trusted close marker must include the reviewed item updated_at timestamp";
+  }
+  const currentMs = Date.parse(String(currentItemUpdatedAt ?? ""));
+  if (!Number.isFinite(currentMs)) return "live issue/PR updated_at could not be verified";
+  if (currentMs <= expectedMs) return null;
+  const expectedRevision = String(expectedSourceRevision ?? "").trim();
+  const currentRevision = String(currentSourceRevision ?? "").trim();
+  if (
+    sourceCommentId &&
+    Array.isArray(comments) &&
+    comments.some((comment: JsonValue) =>
+      isTrustedCloseReviewCommentChurn({
+        comment,
+        sourceCommentId,
+        currentItemUpdatedAt,
+        trustedAuthors,
+      }),
+    ) &&
+    /^[a-f0-9]{64}$/i.test(expectedRevision) &&
+    currentRevision === expectedRevision
+  ) {
+    return null;
+  }
+  if (expectedRevision && currentRevision && currentRevision !== expectedRevision) {
+    return "source issue/PR changed since trusted close review";
+  }
+  return "live issue/PR updated_at changed since trusted close review";
+}
+
+function isTrustedCloseReviewCommentChurn({
+  comment,
+  sourceCommentId,
+  currentItemUpdatedAt,
+  trustedAuthors,
+}: LooseRecord): boolean {
+  if (String(comment?.id ?? "") !== String(sourceCommentId ?? "")) return false;
+  const author = String(comment?.user?.login ?? "")
+    .trim()
+    .toLowerCase();
+  const trusted = new Set(
+    [...trustedAuthors].map((candidate: JsonValue) =>
+      String(candidate ?? "")
+        .trim()
+        .toLowerCase(),
+    ),
+  );
+  if (!trusted.has(author) && !isAutomationAuthor(author)) return false;
+  return (
+    String(comment?.updated_at ?? comment?.created_at ?? "") === String(currentItemUpdatedAt ?? "")
+  );
+}
+
+function normalizedLabels(labels: JsonValue): string[] {
+  if (!Array.isArray(labels)) return [];
+  return labels
+    .map((label) =>
+      String((label as LooseRecord)?.name ?? label)
+        .trim()
+        .toLowerCase(),
+    )
+    .filter(Boolean);
+}
+
+function isVerifiedFixedCloseReason(reason: JsonValue): boolean {
+  return String(reason ?? "") === "implemented_on_main";
+}
+
+function normalizeAuthorAssociation(value: JsonValue): string {
+  const normalized = String(value ?? "")
+    .trim()
+    .toUpperCase();
+  return normalized || "NONE";
+}
+
+function nonAutomationActivityAfterReviewBlock({
+  comments,
+  reviewedAt,
+  trustedAuthors,
+}: LooseRecord): string | null {
+  const reviewedAtMs = Date.parse(String(reviewedAt ?? ""));
+  if (!Number.isFinite(reviewedAtMs))
+    return "trusted close marker must include the reviewed item timestamp";
+  if (!Array.isArray(comments)) return null;
+
+  const trusted = new Set(
+    [...trustedAuthors].map((author: JsonValue) =>
+      String(author ?? "")
+        .trim()
+        .toLowerCase(),
+    ),
+  );
+  const comment = comments.find((entry: JsonValue) => {
+    const updatedAtMs = Date.parse(String(entry?.updated_at ?? entry?.created_at ?? ""));
+    if (!Number.isFinite(updatedAtMs) || updatedAtMs <= reviewedAtMs) return false;
+    const author = String(entry?.user?.login ?? "")
+      .trim()
+      .toLowerCase();
+    return !trusted.has(author) && !isAutomationAuthor(author);
+  });
+  if (!comment) return null;
+  const author = String(comment?.user?.login ?? "unknown author").trim() || "unknown author";
+  return `non-automation activity after trusted close review by ${author}`;
+}
+
+function isAutomationAuthor(author: string): boolean {
+  return (
+    /(?:^|[-_])(bot|app)$|\[bot\]$/i.test(author) || /clawsweeper|github-actions/i.test(author)
+  );
+}
+
 type AutoRepairDispatchEntry = {
   repo?: unknown;
   issue_number?: unknown;
@@ -1157,6 +1576,16 @@ export function parseTrustedAutomation(
   const verdict = clawsweeperMarker(body, "verdict");
   const actionMarker = clawsweeperMarker(body, "action");
   const securityMarker = clawsweeperMarker(body, "security");
+  if (actionMarker?.action === "close-required" || verdict?.action === "close") {
+    const marker = actionMarker ?? verdict;
+    if (marker) {
+      return trustedClose({
+        author,
+        reason: `structured ClawSweeper close marker: ${marker.action}${markerReasonSuffix(marker.attrs)}`,
+        marker,
+      });
+    }
+  }
   if (verdict?.action === "human-review") {
     return trustedHumanReview({
       author,
@@ -2008,6 +2437,27 @@ function trustedMerge({ author, reason, marker = null }: LooseRecord) {
     automation_source: "clawsweeper",
     repair_reason: reason,
     expected_head_sha: marker?.attrs?.sha ?? null,
+    finding_id: marker?.attrs?.finding ?? null,
+  };
+}
+
+function trustedClose({ author, reason, marker = null }: LooseRecord) {
+  return {
+    trigger: "trusted_bot",
+    command: `autoclose ${reason}`,
+    intent: "autoclose",
+    trusted_bot: true,
+    trusted_bot_author: author,
+    automation_source: "clawsweeper",
+    repair_reason: reason,
+    autoclose_message: reason,
+    expected_head_sha: marker?.attrs?.sha ?? null,
+    close_reason: marker?.attrs?.reason ?? null,
+    close_confidence: marker?.attrs?.confidence ?? null,
+    close_action_taken: marker?.attrs?.action_taken ?? null,
+    reviewed_at: marker?.attrs?.reviewed_at ?? null,
+    expected_item_updated_at: marker?.attrs?.updated_at ?? null,
+    expected_source_revision: marker?.attrs?.source_revision ?? null,
     finding_id: marker?.attrs?.finding ?? null,
   };
 }

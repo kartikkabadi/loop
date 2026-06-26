@@ -67,9 +67,11 @@ import {
   staleAutomergeActivationReason,
   staleClosedItemCommandReason,
   shouldClearMaintainerCommandReaction,
+  trustedCloseBlockReason,
   usesSharedAutomergeStatus,
 } from "../../dist/repair/comment-router-core.js";
 import { CLAWSWEEPER_CO_AUTHOR_TRAILER } from "../../dist/repair/co-author-credit.js";
+import { issueSourceRevisionSha256 } from "../../dist/repair/issue-source-guard.js";
 import { parseSimpleYaml, validateJob } from "../../dist/repair/lib.js";
 
 test("planCommandAckConvergence scopes duplicate cleanup to the current status marker", () => {
@@ -1280,6 +1282,52 @@ test("parseTrustedAutomation accepts trusted ClawSweeper pass verdicts for autom
   assert.match(parsed.repair_reason, /verdict: pass/);
 });
 
+test("parseTrustedAutomation accepts trusted ClawSweeper close markers for autoclose", () => {
+  const trustedAuthors = new Set(["clawsweeper[bot]"]);
+  const parsed = parseTrustedAutomation(
+    {
+      user: { login: "clawsweeper[bot]" },
+      body: [
+        "ClawSweeper proposed closing this PR.",
+        "<!-- clawsweeper-verdict:close item=96097 sha=abc123 confidence=high reason=duplicate_or_superseded -->",
+        "<!-- clawsweeper-action:close-required item=96097 sha=abc123 confidence=high reason=duplicate_or_superseded -->",
+      ].join("\n"),
+    },
+    { trustedAuthors },
+  );
+
+  assert.equal(parsed.intent, "autoclose");
+  assert.equal(parsed.trusted_bot, true);
+  assert.equal(parsed.expected_head_sha, "abc123");
+  assert.equal(parsed.close_reason, "duplicate_or_superseded");
+  assert.match(parsed.autoclose_message, /close-required/);
+});
+
+test("trusted close markers carry close policy metadata into autoclose commands", () => {
+  const trustedAuthors = new Set(["clawsweeper[bot]"]);
+  const parsed = parseTrustedAutomation(
+    {
+      user: { login: "clawsweeper[bot]" },
+      body: [
+        "ClawSweeper proposed closing this PR.",
+        "<!-- clawsweeper-action:close-required item=96097 sha=abc123 confidence=high updated_at=2026-06-25T22:00:00Z reviewed_at=2026-06-25T22:05:00Z source_revision=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef action_taken=proposed_close reason=duplicate_or_superseded -->",
+      ].join("\n"),
+    },
+    { trustedAuthors },
+  );
+
+  assert.equal(parsed.intent, "autoclose");
+  assert.equal(parsed.close_reason, "duplicate_or_superseded");
+  assert.equal(parsed.close_confidence, "high");
+  assert.equal(parsed.close_action_taken, "proposed_close");
+  assert.equal(parsed.expected_item_updated_at, "2026-06-25T22:00:00Z");
+  assert.equal(parsed.reviewed_at, "2026-06-25T22:05:00Z");
+  assert.equal(
+    parsed.expected_source_revision,
+    "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+  );
+});
+
 test("repairLoopPauseLabels identifies pause labels for trusted pass resume", () => {
   assert.deepEqual(
     repairLoopPauseLabels([
@@ -1328,6 +1376,311 @@ test("router classifies fresh human-review pauses before label sweeps", () => {
   assert.ok(classifyComments >= 0);
   assert.ok(repairLoopSweeps > classifyComments);
   assert.match(source, /\.filter\(isReadyHumanReviewPause\)/);
+});
+
+test("trusted autoclose markers are live close gated before close execution", () => {
+  const source = readFileSync("src/repair/comment-router.ts", "utf8");
+  const autocloseClassifier = source.slice(
+    source.indexOf("function classifyAutoclose"),
+    source.indexOf("function executeAutoclose"),
+  );
+  const autocloseExecutor = source.slice(
+    source.indexOf("function executeAutoclose"),
+    source.indexOf("function discoverAutocloseTargets"),
+  );
+  const coreSource = readFileSync("src/repair/comment-router-core.ts", "utf8");
+  const trustedCloseGate = coreSource.slice(
+    coreSource.indexOf("export function trustedCloseBlockReason"),
+    coreSource.indexOf("type AutoRepairDispatchEntry"),
+  );
+
+  assert.match(autocloseClassifier, /command\.trusted_bot && pull/);
+  assert.match(autocloseClassifier, /trustedCloseBlockReason\(\{/);
+  assert.match(autocloseClassifier, /createdAt:\s*issue\.created_at/);
+  assert.match(autocloseClassifier, /fetchPullRequestApi\(command\.issue_number\)/);
+  assert.match(autocloseClassifier, /requestedReviewers:\s*pullApi\.requested_reviewers/);
+  assert.match(autocloseExecutor, /liveTrustedCloseBlockReason\(command,\s*liveTarget\)/);
+  assert.match(trustedCloseGate, /reviewedHeadShaBlockReason\(\{/);
+  assert.match(trustedCloseGate, /markerName:\s*"close"/);
+  assert.match(autocloseClassifier, /status:\s*"skipped"/);
+});
+
+test("trusted close gates block protected labels, source drift, and unsupported reasons", () => {
+  const base = {
+    repo: "openclaw/openclaw",
+    kind: "pull_request",
+    labels: [],
+    closeReason: "duplicate_or_superseded",
+    closeConfidence: "high",
+    closeActionTaken: "proposed_close",
+    expectedHeadSha: "abc123",
+    currentHeadSha: "abc123",
+    expectedItemUpdatedAt: "2026-06-25T22:00:00Z",
+    currentItemUpdatedAt: "2026-06-25T22:00:00Z",
+    authorAssociation: "CONTRIBUTOR",
+    reviewedAt: "2026-06-25T22:05:00Z",
+    expectedSourceRevision: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+    currentSourceRevision: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+    trustedAuthors: new Set(["clawsweeper[bot]"]),
+  };
+
+  assert.equal(trustedCloseBlockReason(base), null);
+  const reviewedIssue = {
+    title: "Close duplicate PR",
+    body: "Superseded by the canonical fix.",
+    labels: [{ name: "bug" }],
+  };
+  const reviewedRevision = issueSourceRevisionSha256(reviewedIssue, []);
+  const advisoryLabelRevision = issueSourceRevisionSha256(
+    {
+      ...reviewedIssue,
+      labels: [
+        ...reviewedIssue.labels,
+        { name: "status: ⏳ waiting on author" },
+        { name: "rating: 🧂 unranked krab" },
+        { name: "proof: sufficient" },
+        { name: "merge-risk: 🚨 automation" },
+        { name: "P1" },
+      ],
+    },
+    [],
+  );
+  const userLabelRevision = issueSourceRevisionSha256(
+    { ...reviewedIssue, labels: [...reviewedIssue.labels, { name: "needs-design" }] },
+    [],
+  );
+  assert.equal(advisoryLabelRevision, reviewedRevision);
+  assert.notEqual(userLabelRevision, reviewedRevision);
+  assert.equal(
+    trustedCloseBlockReason({
+      ...base,
+      expectedSourceRevision: reviewedRevision,
+      currentSourceRevision: advisoryLabelRevision,
+      currentItemUpdatedAt: "2026-06-25T22:07:00Z",
+      sourceCommentId: "123",
+      comments: [
+        {
+          id: "123",
+          user: { login: "clawsweeper[bot]" },
+          created_at: "2026-06-25T22:05:00Z",
+          updated_at: "2026-06-25T22:07:00Z",
+        },
+      ],
+    }),
+    null,
+  );
+  assert.match(
+    trustedCloseBlockReason({
+      ...base,
+      expectedSourceRevision: reviewedRevision,
+      currentSourceRevision: userLabelRevision,
+      currentItemUpdatedAt: "2026-06-25T22:07:00Z",
+      sourceCommentId: "123",
+      comments: [
+        {
+          id: "123",
+          user: { login: "clawsweeper[bot]" },
+          created_at: "2026-06-25T22:05:00Z",
+          updated_at: "2026-06-25T22:07:00Z",
+        },
+      ],
+    }),
+    /source issue\/PR changed since trusted close review/,
+  );
+  assert.equal(
+    trustedCloseBlockReason({ ...base, labels: ["release-blocker"] }),
+    "protected label: release-blocker",
+  );
+  assert.match(
+    trustedCloseBlockReason({
+      ...base,
+      comments: [
+        {
+          user: { login: "maintainer" },
+          created_at: "2026-06-25T22:06:00Z",
+          updated_at: "2026-06-25T22:06:00Z",
+        },
+      ],
+    }),
+    /non-automation activity after trusted close review by maintainer/,
+  );
+  assert.match(
+    trustedCloseBlockReason({ ...base, closeReason: "stale_insufficient_info" }),
+    /stale_insufficient_info is not allowed for openclaw\/openclaw pull_request apply policy/,
+  );
+  const originalProductDirectionPolicy =
+    process.env.CLAWSWEEPER_UNCONFIRMED_PRODUCT_DIRECTION_CLOSE_ENABLED;
+  delete process.env.CLAWSWEEPER_UNCONFIRMED_PRODUCT_DIRECTION_CLOSE_ENABLED;
+  const productDirectionBase = {
+    ...base,
+    closeReason: "unconfirmed_product_direction",
+    createdAt: "2026-05-01T00:00:00Z",
+    expectedItemUpdatedAt: "2026-06-01T00:00:00Z",
+    currentItemUpdatedAt: "2026-06-01T00:00:00Z",
+    reviewedAt: "2026-06-10T00:00:00Z",
+    now: Date.parse("2026-06-25T00:00:00Z"),
+  };
+  try {
+    assert.match(
+      trustedCloseBlockReason(productDirectionBase),
+      /unconfirmed product-direction apply policy is disabled/,
+    );
+    process.env.CLAWSWEEPER_UNCONFIRMED_PRODUCT_DIRECTION_CLOSE_ENABLED = "true";
+    assert.equal(trustedCloseBlockReason(productDirectionBase), null);
+    assert.match(
+      trustedCloseBlockReason({
+        ...productDirectionBase,
+        createdAt: "2026-06-20T00:00:00Z",
+      }),
+      /requires PR older than 14 days/,
+    );
+    assert.match(
+      trustedCloseBlockReason({
+        ...productDirectionBase,
+        expectedItemUpdatedAt: "2026-06-08T00:00:00Z",
+      }),
+      /requires 7 days without source activity/,
+    );
+    assert.match(
+      trustedCloseBlockReason({
+        ...productDirectionBase,
+        labels: ["clawsweeper:human-review"],
+      }),
+      /clawsweeper:human-review exempts this PR from product-direction auto-close/,
+    );
+    assert.match(
+      trustedCloseBlockReason({ ...productDirectionBase, assignees: [{ login: "maintainer" }] }),
+      /assigned PR has active human signal/,
+    );
+    assert.match(
+      trustedCloseBlockReason({
+        ...productDirectionBase,
+        requestedReviewers: [{ login: "reviewer" }],
+      }),
+      /requested reviewers or teams indicate active review signal/,
+    );
+    assert.match(
+      trustedCloseBlockReason({
+        ...productDirectionBase,
+        comments: [{ author_association: "MEMBER" }],
+      }),
+      /maintainer issue comment calibrates product direction/,
+    );
+    assert.match(
+      trustedCloseBlockReason({
+        ...productDirectionBase,
+        reviews: [{ author_association: "OWNER" }],
+      }),
+      /maintainer PR review calibrates product direction/,
+    );
+    assert.match(
+      trustedCloseBlockReason({
+        ...productDirectionBase,
+        reviewComments: [{ author_association: "COLLABORATOR" }],
+      }),
+      /maintainer inline review comment calibrates product direction/,
+    );
+  } finally {
+    if (originalProductDirectionPolicy === undefined) {
+      delete process.env.CLAWSWEEPER_UNCONFIRMED_PRODUCT_DIRECTION_CLOSE_ENABLED;
+    } else {
+      process.env.CLAWSWEEPER_UNCONFIRMED_PRODUCT_DIRECTION_CLOSE_ENABLED =
+        originalProductDirectionPolicy;
+    }
+  }
+  assert.equal(
+    trustedCloseBlockReason({ ...base, closeReason: "low_signal_unmergeable_pr" }),
+    null,
+  );
+  assert.match(
+    trustedCloseBlockReason({
+      ...base,
+      closeReason: "low_signal_unmergeable_pr",
+      assignees: [{ login: "maintainer" }],
+    }),
+    /assigned PR has maintainer\/human signal/,
+  );
+  assert.match(
+    trustedCloseBlockReason({
+      ...base,
+      closeReason: "low_signal_unmergeable_pr",
+      requestedTeams: [{ slug: "maintainers" }],
+    }),
+    /requested reviewers or teams indicate active review signal/,
+  );
+  assert.match(
+    trustedCloseBlockReason({
+      ...base,
+      closeReason: "low_signal_unmergeable_pr",
+      comments: [{ author_association: "MEMBER" }],
+    }),
+    /maintainer issue comment blocks low-signal auto-close/,
+  );
+  assert.match(
+    trustedCloseBlockReason({
+      ...base,
+      closeReason: "low_signal_unmergeable_pr",
+      reviews: [{ author_association: "OWNER" }],
+    }),
+    /maintainer PR review blocks low-signal auto-close/,
+  );
+  assert.match(
+    trustedCloseBlockReason({ ...base, closeConfidence: "medium" }),
+    /confidence must be high/,
+  );
+  assert.match(
+    trustedCloseBlockReason({ ...base, closeActionTaken: "kept_open" }),
+    /action_taken must be proposed_close/,
+  );
+  assert.equal(
+    trustedCloseBlockReason({
+      ...base,
+      currentItemUpdatedAt: "2026-06-25T22:07:00Z",
+      sourceCommentId: "123",
+      comments: [
+        {
+          id: "123",
+          user: { login: "clawsweeper[bot]" },
+          created_at: "2026-06-25T22:05:00Z",
+          updated_at: "2026-06-25T22:07:00Z",
+        },
+      ],
+    }),
+    null,
+  );
+  assert.match(
+    trustedCloseBlockReason({
+      ...base,
+      currentItemUpdatedAt: "2026-06-25T22:07:00Z",
+      currentSourceRevision: "abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcd",
+      sourceCommentId: "123",
+      comments: [
+        {
+          id: "123",
+          user: { login: "clawsweeper[bot]" },
+          created_at: "2026-06-25T22:05:00Z",
+          updated_at: "2026-06-25T22:07:00Z",
+        },
+      ],
+    }),
+    /source issue\/PR changed since trusted close review/,
+  );
+  assert.match(
+    trustedCloseBlockReason({
+      ...base,
+      currentItemUpdatedAt: "2026-06-25T22:08:00Z",
+      sourceCommentId: "123",
+      comments: [
+        {
+          id: "123",
+          user: { login: "clawsweeper[bot]" },
+          created_at: "2026-06-25T22:05:00Z",
+          updated_at: "2026-06-25T22:07:00Z",
+        },
+      ],
+    }),
+    /live issue\/PR updated_at changed since trusted close review/,
+  );
 });
 
 test("parseTrustedAutomation repairs trusted pass verdicts that still contain P findings", () => {

@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   canPatchReviewComment,
+  itemSourceRevisionSha256ForTest,
   isCodexReviewCommentBody,
   renderReviewCommentFromReport,
   renderReviewStartStatusComment,
@@ -26,6 +27,7 @@ function implementedCloseReport(overrides = {}) {
     work_candidate: "none",
     work_status: "none",
     item_snapshot_hash: "reviewed-snapshot",
+    item_source_revision: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
     item_created_at: "2026-05-01T00:00:00Z",
     item_updated_at: "2026-05-01T00:00:00Z",
     reproduction_status: "reproduced",
@@ -104,6 +106,55 @@ test("review start status comment is marker-backed and crustacean-friendly", () 
   assert.match(comment, /<!-- clawsweeper-review-status:started item=74453 -->/);
   assert.match(comment, /<!-- clawsweeper-review item=74453 -->/);
   assert.doesNotMatch(comment, /Codex review:/);
+});
+
+test("review item source revision ignores advisory labels but tracks protected labels", () => {
+  const item = {
+    title: "Close duplicate PR",
+    body: "This was superseded by the canonical fix.",
+    labels: [{ name: "bug" }],
+  };
+  const revision = itemSourceRevisionSha256ForTest(item, []);
+
+  assert.equal(
+    itemSourceRevisionSha256ForTest(
+      {
+        ...item,
+        labels: [
+          ...item.labels,
+          { name: "status: ⏳ waiting on author" },
+          { name: "rating: 🧂 unranked krab" },
+          { name: "proof: sufficient" },
+          { name: "merge-risk: 🚨 automation" },
+          { name: "impact:message-loss" },
+          { name: "issue-rating: 🦪 silver shellfish" },
+          { name: "P1" },
+          { name: "feature: ✨ showcase" },
+          { name: "mantis: telegram-visible-proof" },
+          { name: "triage: needs-real-behavior-proof" },
+          { name: "clawsweeper:reviewed" },
+          { name: "no-stale" },
+          { name: "stale" },
+        ],
+      },
+      [],
+    ),
+    revision,
+  );
+  assert.notEqual(
+    itemSourceRevisionSha256ForTest(
+      { ...item, labels: [...item.labels, { name: "needs-design" }] },
+      [],
+    ),
+    revision,
+  );
+  assert.notEqual(
+    itemSourceRevisionSha256ForTest(
+      { ...item, labels: [...item.labels, { name: "release-blocker" }] },
+      [],
+    ),
+    revision,
+  );
 });
 
 test("pull request keep-open review comments label the change summary", () => {
@@ -385,6 +436,28 @@ test("high-confidence root-cause clusters appear in close comments", () => {
   assert.match(comment, /\*\*Root-cause cluster\*\*/);
   assert.match(comment, /Relationship: `duplicate`/);
   assert.match(comment, /Canonical: https:\/\/github\.com\/openclaw\/clawsweeper\/issues\/400/);
+});
+
+test("pull request close comments emit close-required automation markers", () => {
+  const comment = renderReviewCommentFromReport(
+    implementedCloseReport({
+      repository: "openclaw/openclaw",
+      type: "pull_request",
+      number: 74270,
+      pull_head_sha: "abc123def456",
+    }),
+    "implemented_on_main",
+  );
+
+  assert.match(
+    comment,
+    /<!-- clawsweeper-verdict:close item=74270 sha=abc123def456 confidence=high updated_at=2026-05-01T00:00:00Z reviewed_at=[^ ]+ source_revision=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef action_taken=proposed_close reason=implemented_on_main -->/,
+  );
+  assert.match(
+    comment,
+    /<!-- clawsweeper-action:close-required item=74270 sha=abc123def456 confidence=high updated_at=2026-05-01T00:00:00Z reviewed_at=[^ ]+ source_revision=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef action_taken=proposed_close reason=implemented_on_main -->/,
+  );
+  assert.doesNotMatch(comment, /clawsweeper-verdict:needs-human/);
 });
 
 test("issue keep-open review comments suggest concrete reproduction help", () => {
