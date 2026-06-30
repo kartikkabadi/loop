@@ -16918,37 +16918,28 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
   const maybeLogProgress = (message: string): void => {
     if (processedCount % progressEvery === 0) logProgress(message);
   };
-  const reportEntriesForDir = (
+  const applyReportEntriesForDir = (
     dir: string,
     location: "items" | "closed",
-  ): Array<{
-    name: string;
-    number: number;
-    path: string;
-    location: "items" | "closed";
-    priority: number;
-    applyCheckedAt: number;
-  }> => {
-    if (!existsSync(dir)) return [];
-    return readdirSync(dir)
-      .filter((name) => parseReportFileName(name) !== null)
-      .filter((name) => {
-        const markdown = readFileSync(join(dir, name), "utf8");
-        if (!isMarkdownForActiveRepo(markdown, name)) return false;
-        return (
-          requestedItemNumberSet.size === 0 ||
-          requestedItemNumberSet.has(numberForMarkdownFile(name))
-        );
-      })
-      .map((name) => ({
-        name,
-        number: numberForMarkdownFile(name),
-        path: join(dir, name),
+  ): Array<
+    ReportEntry & {
+      location: "items" | "closed";
+      priority: number;
+      applyCheckedAt: number;
+    }
+  > =>
+    reportEntriesForDir(dir)
+      .filter(
+        (entry) =>
+          entry.repo === targetRepo() &&
+          (requestedItemNumberSet.size === 0 || requestedItemNumberSet.has(entry.number)),
+      )
+      .map((entry) => ({
+        ...entry,
         location,
-        ...applyQueueSortFields(readFileSync(join(dir, name), "utf8"), syncCommentsOnly, applyKind),
+        ...applyQueueSortFields(entry.markdown, syncCommentsOnly, applyKind),
       }));
-  };
-  const fileEntries = reportEntriesForDir(itemsDir, "items").sort(
+  const fileEntries = applyReportEntriesForDir(itemsDir, "items").sort(
     (left, right) =>
       left.priority - right.priority ||
       left.applyCheckedAt - right.applyCheckedAt ||
@@ -16980,9 +16971,9 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       logProgress(`stopping apply: max runtime ${maxRuntimeMs}ms reached`);
       break;
     }
-    let markdown = readFileSync(path, "utf8");
-    const repo = markdownRepository(markdown, path);
-    const number = numberForMarkdownFile(file);
+    let markdown = entry.markdown;
+    const repo = entry.repo;
+    const number = entry.number;
     const decision = frontMatterValue(markdown, "decision");
     let closeReason = frontMatterValue(markdown, "close_reason") as CloseReason | undefined;
     const action = frontMatterValue(markdown, "action_taken");
@@ -18824,6 +18815,28 @@ function markdownFiles(dir: string): string[] {
     : [];
 }
 
+interface ReportEntry {
+  name: string;
+  number: number;
+  path: string;
+  repo: string;
+  markdown: string;
+}
+
+function reportEntriesForDir(dir: string): ReportEntry[] {
+  return markdownFiles(dir).map((name) => {
+    const path = join(dir, name);
+    const markdown = readFileSync(path, "utf8");
+    return {
+      name,
+      number: numberForMarkdownFile(name),
+      path,
+      repo: markdownRepository(markdown, path),
+      markdown,
+    };
+  });
+}
+
 function numberForMarkdownFile(file: string): number {
   const parsed = parseReportFileName(file);
   if (!parsed) throw new Error(`Invalid report filename: ${file}`);
@@ -19364,8 +19377,12 @@ function dashboardStats(
   closedDir = defaultClosedDir(),
   profile = targetProfile(),
 ): DashboardStats {
-  const files = markdownFiles(itemsDir);
-  const closedFiles = markdownFiles(closedDir);
+  const entries = reportEntriesForDir(itemsDir).filter(
+    (entry) => entry.repo === profile.targetRepo,
+  );
+  const closedEntries = reportEntriesForDir(closedDir).filter(
+    (entry) => entry.repo === profile.targetRepo,
+  );
   const plansDir = defaultPlansDir(profile);
   const now = Date.now();
   let fresh = 0;
@@ -19386,11 +19403,10 @@ function dashboardStats(
   const recent: DashboardItem[] = [];
   const workQueue: DashboardItem[] = [];
   const recentClosed: DashboardClosedItem[] = [];
-  for (const file of files) {
-    const markdown = readFileSync(join(itemsDir, file), "utf8");
-    if (markdownRepository(markdown, join(itemsDir, file)) !== profile.targetRepo) continue;
-    const repo = markdownRepository(markdown, join(closedDir, file));
-    const number = numberForMarkdownFile(file);
+  for (const entry of entries) {
+    const markdown = entry.markdown;
+    const repo = entry.repo;
+    const number = entry.number;
     const reviewedAt = frontMatterValue(markdown, "reviewed_at");
     const reviewStatus = effectiveReviewStatus(markdown);
     const action = frontMatterValue(markdown, "action_taken") ?? "unknown";
@@ -19436,9 +19452,9 @@ function dashboardStats(
       decision,
       action,
       reviewStatus,
-      reportPath: repoRelativePath(join(itemsDir, file)),
-      planPath: existsSync(join(plansDir, file))
-        ? repoRelativePath(join(plansDir, file))
+      reportPath: repoRelativePath(entry.path),
+      planPath: existsSync(join(plansDir, entry.name))
+        ? repoRelativePath(join(plansDir, entry.name))
         : undefined,
       workCandidate,
       workPriority,
@@ -19449,10 +19465,9 @@ function dashboardStats(
       workQueue.push(dashboardItem);
     }
   }
-  for (const file of closedFiles) {
-    const markdown = readFileSync(join(closedDir, file), "utf8");
-    if (markdownRepository(markdown, join(closedDir, file)) !== profile.targetRepo) continue;
-    const repo = markdownRepository(markdown, join(closedDir, file));
+  for (const entry of closedEntries) {
+    const markdown = entry.markdown;
+    const repo = entry.repo;
     const action = frontMatterValue(markdown, "action_taken") ?? "unknown";
     const closedAt = dashboardClosedAt(markdown);
     if (action === "closed") {
@@ -19461,13 +19476,13 @@ function dashboardStats(
     if (closedAt) {
       recentClosed.push({
         repo,
-        number: numberForMarkdownFile(file),
+        number: entry.number,
         kind: (frontMatterValue(markdown, "type") as ItemKind | undefined) ?? "issue",
         title: frontMatterValue(markdown, "title") ?? "",
         closedAt,
         appliedAt: frontMatterValue(markdown, "applied_at"),
         closeReason: dashboardCloseReason(markdown),
-        reportPath: repoRelativePath(join(closedDir, file)),
+        reportPath: repoRelativePath(entry.path),
       });
     }
     recordDashboardActivity(markdown, activity, now);
@@ -19509,18 +19524,10 @@ function dashboardStats(
     open,
     fresh,
     todo: cadenceDue,
-    files: files.filter(
-      (file) =>
-        markdownRepository(readFileSync(join(itemsDir, file), "utf8"), join(itemsDir, file)) ===
-        profile.targetRepo,
-    ).length,
+    files: entries.length,
     proposedClose,
     closed,
-    archivedFiles: closedFiles.filter(
-      (file) =>
-        markdownRepository(readFileSync(join(closedDir, file), "utf8"), join(closedDir, file)) ===
-        profile.targetRepo,
-    ).length,
+    archivedFiles: closedEntries.length,
     failed,
     stale,
     workCandidates,
