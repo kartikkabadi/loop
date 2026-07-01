@@ -420,6 +420,13 @@ if (args[0] === "api" && /\\/issues\\/comments\\/\\d+$/.test(path)) {
       calls.some((args) => args.some((arg) => arg.includes("/issues/322"))),
       false,
     );
+    const reviewCommentListFetches = calls.filter(
+      (args) =>
+        args[0] === "api" &&
+        (args[1] ?? "").includes("/issues/321/comments") &&
+        args.includes("--paginate"),
+    );
+    assert.equal(reviewCommentListFetches.length, 1);
     assert.deepEqual(JSON.parse(readFileSync(reportPath, "utf8")), [
       {
         number: 321,

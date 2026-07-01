@@ -13348,11 +13348,12 @@ function coveringPrCloseCoveragePullRequestView(
 ): PrCloseCoverageProofPullRequestView {
   const pull = asRecord(ghJson<unknown>(["api", `repos/${targetRepo()}/pulls/${number}`]));
   const issue = asRecord(ghJson<unknown>(["api", `repos/${targetRepo()}/issues/${number}`]));
-  const commentsWindow = ghPagedContextWindow<unknown>(
-    `repos/${targetRepo()}/issues/${number}/comments`,
-    numberOrUndefined(issue.comments),
-    40,
-  );
+  const commentsPath = `repos/${targetRepo()}/issues/${number}/comments`;
+  const commentsCount = numberOrUndefined(issue.comments);
+  const commentsWindow =
+    commentsCount === undefined
+      ? ghPagedLinkHeaderContextWindow<unknown>(commentsPath, 40)
+      : ghPagedContextWindow<unknown>(commentsPath, commentsCount, 40);
   const filteredComments = filterReviewContextComments(commentsWindow.items, number);
   return {
     number,
@@ -13409,13 +13410,21 @@ function prCloseCoverageProofGateResult(options: {
   if (candidateRefs.length === 0) return null;
 
   const source = sourcePrCloseCoveragePullRequestView(options.item, options.context);
+  const coveringViews = new Map<number, PrCloseCoverageProofPullRequestView>();
+  const coveringView = (number: number): PrCloseCoverageProofPullRequestView => {
+    const cached = coveringViews.get(number);
+    if (cached) return cached;
+    const view = coveringPrCloseCoveragePullRequestView(number);
+    coveringViews.set(number, view);
+    return view;
+  };
   let firstKeepOpenBlock: PrCloseCoverageProofGateBlock | null = null;
   let checkedPullRequestCandidate = false;
   for (const candidateRef of candidateRefs) {
     const linkedNumber = candidateRef.number;
     let covering: PrCloseCoverageProofPullRequestView;
     try {
-      covering = coveringPrCloseCoveragePullRequestView(linkedNumber);
+      covering = coveringView(linkedNumber);
     } catch (error) {
       if (candidateRef.kind !== "pull_url" && shorthandRefIsIssue(linkedNumber)) continue;
       return {
@@ -15369,6 +15378,19 @@ function issueReviewComment(
   return codexComments.find(canPatchReviewComment) ?? codexComments[0];
 }
 
+function issueReviewCommentWithBody(
+  number: number,
+  body: string,
+): Record<string, unknown> | undefined {
+  const expected = body.trim();
+  if (!expected) return undefined;
+  const comments = ghPaged<unknown>(`repos/${targetRepo()}/issues/${number}/comments`).map(
+    asRecord,
+  );
+  const exactComments = comments.filter((candidate) => commentBody(candidate)?.trim() === expected);
+  return exactComments.find(canPatchReviewComment) ?? exactComments[0];
+}
+
 function commentUpdatedAt(comment: Record<string, unknown> | undefined): string | undefined {
   const updatedAt = comment?.updated_at;
   if (typeof updatedAt === "string") return updatedAt;
@@ -15518,26 +15540,50 @@ function upsertReviewComment(
   const markedBody = markedReviewCommentBody(number, body);
   const id = commentId(existing);
   const payload = writeCommentPayload(number, markedBody);
+  let args: string[];
   if (id !== null && canPatchReviewComment(existing)) {
-    ghWithRetry([
+    args = [
       "api",
       `repos/${targetRepo()}/issues/comments/${id}`,
       "--method",
       "PATCH",
       "--input",
       payload,
-    ]);
+    ];
   } else {
-    ghWithRetry([
+    args = [
       "api",
       `repos/${targetRepo()}/issues/${number}/comments`,
       "--method",
       "POST",
       "--input",
       payload,
-    ]);
+    ];
   }
-  return issueReviewComment(number, [markedBody]);
+  const response = ghWithRetry(args);
+  const written = reviewCommentFromMutationResponse(response, args);
+  if (written) return written;
+  const fallback = issueReviewCommentWithBody(number, markedBody);
+  if (fallback) return fallback;
+  throw new Error(
+    `GitHub comment mutation for #${number} did not return or expose the synced review comment`,
+  );
+}
+
+function reviewCommentFromMutationResponse(
+  response: string,
+  args: readonly string[],
+): Record<string, unknown> | undefined {
+  if (!response.trim()) return undefined;
+  try {
+    const comment = asRecord(parseGhJson<unknown>(response, args));
+    if (commentId(comment) !== null || commentUrl(comment)) {
+      return comment;
+    }
+  } catch {
+    return undefined;
+  }
+  return undefined;
 }
 
 function issueCommentWithMarker(

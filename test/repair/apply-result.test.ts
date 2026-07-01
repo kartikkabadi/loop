@@ -482,7 +482,7 @@ test("repair apply checks superseded candidate PR coverage before canonical issu
   }
 });
 
-test("repair apply includes recent covering PR comments in coverage proof", () => {
+test("repair apply bounds covering PR comments when issue comment count is absent", () => {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-apply-result-"));
   try {
     const paths = writeApplyFixture(tmp, {
@@ -515,6 +515,7 @@ test("repair apply includes recent covering PR comments in coverage proof", () =
           ),
         ),
       },
+      omitIssueCommentCounts: [202],
       logPath: paths.ghLogPath,
     });
     writeFakeCodex(paths.binDir);
@@ -530,7 +531,7 @@ test("repair apply includes recent covering PR comments in coverage proof", () =
     const coveringCommentFetches = ghCalls(paths.ghLogPath).filter(
       (call) =>
         call.args[0] === "api" &&
-        call.args[1].includes("/issues/202/comments") &&
+        call.args.some((arg) => arg.includes("/issues/202/comments")) &&
         !call.args.includes("--method"),
     );
     assert.equal(
@@ -538,8 +539,12 @@ test("repair apply includes recent covering PR comments in coverage proof", () =
       false,
     );
     assert.equal(coveringCommentFetches.length, 2);
-    assert.match(coveringCommentFetches[0].args[1], /[?&]per_page=25(?:&|$)/);
-    assert.match(coveringCommentFetches[1].args[1], /[?&]per_page=100(?:&|$)/);
+    assert.ok(coveringCommentFetches.every((call) => call.args.includes("-i")));
+    assert.ok(
+      coveringCommentFetches.every((call) =>
+        call.args.some((arg) => /[?&]per_page=100(?:&|$)/.test(arg)),
+      ),
+    );
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
   }
@@ -1137,6 +1142,7 @@ type FakeGhData = {
   issues: Record<number, Record<string, unknown>>;
   pulls: Record<number, Record<string, unknown>>;
   comments: Record<number, Record<string, unknown>[]>;
+  omitIssueCommentCounts?: number[];
   prViewFailure?: { number: number; message: string };
   afterProofPath?: string;
   postProofIssues?: Record<number, Record<string, unknown>>;
@@ -1254,17 +1260,23 @@ function writeFakeGh(binDir: string, data: FakeGhData) {
   fs.writeFileSync(
     path.join(binDir, "gh"),
     `#!/usr/bin/env node
-	const fs = require("node:fs");
+const fs = require("node:fs");
+const path = require("node:path");
 const args = process.argv.slice(2);
 const data = ${JSON.stringify(data)};
 fs.appendFileSync(data.logPath, JSON.stringify({ args }) + "\\n");
+const includeHeaders = args[0] === "api" && args[1] === "-i";
 
 function write(value) {
   process.stdout.write(JSON.stringify(value));
 }
 
+function writeWithHeaders(value, headers = []) {
+  process.stdout.write(["HTTP/2 200", ...headers, "", JSON.stringify(value)].join("\\r\\n"));
+}
+
 if (args[0] === "api") {
-  const apiPath = args[1] || "";
+  const apiPath = includeHeaders ? args[2] || "" : args[1] || "";
   const url = new URL(apiPath, "https://api.github.test/");
   let match = url.pathname.match(/\\/issues\\/(\\d+)\\/comments$/);
   if (match) {
@@ -1281,7 +1293,24 @@ if (args[0] === "api") {
       const perPage = Number(url.searchParams.get("per_page") || comments.length || 100);
       const page = Number(url.searchParams.get("page") || "1");
       const start = Math.max(0, page - 1) * perPage;
-      write(comments.slice(start, start + perPage));
+      const pageComments = comments.slice(start, start + perPage);
+      if (includeHeaders) {
+        const lastPage = Math.max(1, Math.ceil(comments.length / Math.max(1, perPage)));
+        const links = [];
+        if (page < lastPage) {
+          const next = new URL(url.toString());
+          next.searchParams.set("page", String(page + 1));
+          links.push("<" + next.toString() + ">; rel=\\"next\\"");
+        }
+        if (lastPage > 1) {
+          const last = new URL(url.toString());
+          last.searchParams.set("page", String(lastPage));
+          links.push("<" + last.toString() + ">; rel=\\"last\\"");
+        }
+        writeWithHeaders(pageComments, links.length ? ["link: " + links.join(", ")] : []);
+      } else {
+        write(pageComments);
+      }
     }
     process.exit(0);
   }
@@ -1307,7 +1336,9 @@ if (args[0] === "api") {
 		    ...issue,
 		    ...(postProofIssue ? postProofIssue : {}),
 		    ...(postProofUpdatedAt ? { updated_at: postProofUpdatedAt } : {}),
-		    comments: data.comments[number]?.length || 0,
+		    ...((data.omitIssueCommentCounts || []).includes(number)
+		      ? {}
+		      : { comments: data.comments[number]?.length || 0 }),
 		  });
 	  process.exit(0);
 	}

@@ -1262,9 +1262,21 @@ function fetchPrCloseCoverageProofCommentWindow(
 ): { comments: JsonValue[]; total: number } {
   const apiPath = `repos/${repo}/issues/${number}/comments`;
   const total = nonNegativeIntegerFromUnknown(commentsCount);
-  if (total === null || total <= limit) {
-    const comments = ghPaged(apiPath);
-    return { comments, total: total ?? comments.length };
+  if (total === null) {
+    return fetchPrCloseCoverageProofCommentWindowWithoutCount(apiPath, limit);
+  }
+  if (total === 0 || limit <= 0) {
+    return { comments: [], total };
+  }
+  if (total <= limit) {
+    return {
+      comments: fetchPrCloseCoverageProofCommentPage(
+        apiPath,
+        Math.min(total, GITHUB_MAX_PAGE_SIZE),
+        1,
+      ),
+      total,
+    };
   }
 
   if (total <= GITHUB_MAX_PAGE_SIZE) {
@@ -1279,6 +1291,46 @@ function fetchPrCloseCoverageProofCommentWindow(
   const first = fetchPrCloseCoverageProofCommentPage(apiPath, keepStart, 1);
   const last = fetchLastPrCloseCoverageProofComments(apiPath, total, keepEnd);
   return { comments: [...first, ...last], total };
+}
+
+function fetchPrCloseCoverageProofCommentWindowWithoutCount(
+  apiPath: string,
+  limit: number,
+): { comments: JsonValue[]; total: number } {
+  const boundedLimit = Math.max(0, Math.floor(limit));
+  if (boundedLimit <= 0) return { comments: [], total: 0 };
+  const first = fetchPrCloseCoverageProofCommentPageWithHeaders(apiPath, GITHUB_MAX_PAGE_SIZE, 1);
+  const lastPage =
+    first.lastPageNumber ?? (first.comments.length < GITHUB_MAX_PAGE_SIZE ? 1 : null);
+  if (lastPage === null) {
+    const comments = ghPaged(apiPath);
+    return { comments, total: comments.length };
+  }
+  if (lastPage <= 1) {
+    return {
+      comments: first.comments,
+      total: first.comments.length,
+    };
+  }
+
+  const last = fetchPrCloseCoverageProofCommentPageWithHeaders(
+    apiPath,
+    GITHUB_MAX_PAGE_SIZE,
+    lastPage,
+  ).comments;
+  const total = Math.max(0, (lastPage - 1) * GITHUB_MAX_PAGE_SIZE + last.length);
+  const keepStart = Math.floor(boundedLimit / 2);
+  const keepEnd = Math.max(0, boundedLimit - keepStart);
+  const head = first.comments.slice(0, keepStart);
+  let tailSource = last;
+  if (last.length < keepEnd && lastPage > 1) {
+    const previous =
+      lastPage - 1 === 1
+        ? first.comments
+        : fetchPrCloseCoverageProofCommentPage(apiPath, GITHUB_MAX_PAGE_SIZE, lastPage - 1);
+    tailSource = [...previous, ...last];
+  }
+  return { comments: [...head, ...tailSource.slice(-keepEnd)], total };
 }
 
 function fetchLastPrCloseCoverageProofComments(
@@ -1311,6 +1363,47 @@ function fetchPrCloseCoverageProofCommentPage(
 ): JsonValue[] {
   const entries = ghJson<JsonValue[]>(["api", githubLimitedPagePath(apiPath, perPage, page)]);
   return Array.isArray(entries) ? entries : [];
+}
+
+function fetchPrCloseCoverageProofCommentPageWithHeaders(
+  apiPath: string,
+  perPage: number,
+  page: number,
+): { comments: JsonValue[]; lastPageNumber: number | null } {
+  const limitedPath = githubLimitedPagePath(apiPath, perPage, page);
+  const output = ghWithRetry(["api", "-i", limitedPath]);
+  const { body, headers } = splitGithubResponse(output);
+  const entries = JSON.parse(body || "[]") as JsonValue;
+  return {
+    comments: Array.isArray(entries) ? entries : [],
+    lastPageNumber: githubLastPageNumber(headers),
+  };
+}
+
+function splitGithubResponse(output: string): { headers: string; body: string } {
+  const normalized = output.replace(/\r\n/g, "\n");
+  const separator = normalized.lastIndexOf("\n\n");
+  if (separator < 0) return { headers: "", body: normalized };
+  return {
+    headers: normalized.slice(0, separator),
+    body: normalized.slice(separator + 2),
+  };
+}
+
+function githubLastPageNumber(headers: string): number | null {
+  for (const line of headers.split("\n")) {
+    const delimiter = line.indexOf(":");
+    if (delimiter <= 0) continue;
+    if (line.slice(0, delimiter).trim().toLowerCase() !== "link") continue;
+    for (const part of line.slice(delimiter + 1).split(",")) {
+      if (!part.includes('rel="last"')) continue;
+      const page = part.match(/[?&]page=(\d+)/)?.[1];
+      if (!page) continue;
+      const value = Number(page);
+      if (Number.isSafeInteger(value) && value > 0) return value;
+    }
+  }
+  return null;
 }
 
 function compactPrCloseCoverageProofCommentWindow(

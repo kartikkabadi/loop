@@ -451,7 +451,8 @@ export function promotionGhMock(options: {
   const linkedPulls = options.linkedPulls ?? {};
   const linkedIssues = options.linkedIssues ?? {};
   return `
-	const { appendFileSync, existsSync } = require("fs");
+	const { appendFileSync, existsSync, readFileSync, writeFileSync } = require("fs");
+	const { join } = require("path");
 	const rawArgs = process.argv.slice(2);
 	const args = rawArgs[0] === "--repo" ? rawArgs.slice(2) : rawArgs;
 	const path = args[1] || "";
@@ -466,6 +467,31 @@ export function promotionGhMock(options: {
 	const commentWriteLogPath = ${JSON.stringify(options.commentWriteLogPath ?? "")};
 	const closeAppliedBodyLogPath = ${JSON.stringify(options.closeAppliedBodyLogPath ?? "")};
 	const number = ${options.number};
+	const commentStatePath = join(__dirname, "..", "comment-state-" + number + ".json");
+	const mutationComment = (id, body) => ({
+	  id,
+	  html_url: "https://github.com/openclaw/openclaw/pull/" + number + "#issuecomment-" + id,
+	  created_at: "2026-05-01T01:00:00Z",
+	  updated_at: "2026-05-01T02:00:00Z",
+	  user: { login: "clawsweeper[bot]" },
+	  body
+	});
+	const writeMutationComment = () => {
+	  const input = args[args.indexOf("--input") + 1];
+	  const body = JSON.parse(readFileSync(input, "utf8")).body;
+	  const idMatch = path.match(/\\/issues\\/comments\\/(\\d+)$/);
+	  const id = idMatch ? Number(idMatch[1]) : 9000 + number;
+	  const comment = mutationComment(id, body);
+	  writeFileSync(commentStatePath, JSON.stringify(comment), "utf8");
+	  return comment;
+	};
+	const liveComments = () => {
+	  if (!existsSync(commentStatePath)) return comments;
+	  const written = JSON.parse(readFileSync(commentStatePath, "utf8"));
+	  const existingIndex = comments.findIndex((comment) => comment && comment.id === written.id);
+	  if (existingIndex < 0) return [...comments, written];
+	  return comments.map((comment, index) => index === existingIndex ? { ...comment, ...written } : comment);
+	};
 		const title = ${JSON.stringify(title)};
 		const labels = ${JSON.stringify(options.labels ?? ["status: 📣 needs proof"])};
 		const itemCreatedAt = ${JSON.stringify(itemCreatedAt)};
@@ -503,14 +529,15 @@ export function promotionGhMock(options: {
 	  if (commentWriteLogPath) appendFileSync(commentWriteLogPath, args.join(" ") + "\\n");
 	  if (closeAppliedBodyLogPath) {
 	    const input = args[args.indexOf("--input") + 1];
-	    appendFileSync(closeAppliedBodyLogPath, JSON.parse(require("fs").readFileSync(input, "utf8")).body + "\\n---body---\\n");
+	    appendFileSync(closeAppliedBodyLogPath, JSON.parse(readFileSync(input, "utf8")).body + "\\n---body---\\n");
 	  }
-	  console.log("");
+	  console.log(JSON.stringify(writeMutationComment()));
 	} else if (args[0] === "api" && new RegExp("/issues/comments/\\\\d+$").test(path) && args.includes("--method")) {
 	  if (commentWriteLogPath) appendFileSync(commentWriteLogPath, args.join(" ") + "\\n");
-	  console.log("");
+	  console.log(JSON.stringify(writeMutationComment()));
 	} else if (args[0] === "api" && new RegExp("/issues/" + number + "/comments(?:\\\\?|$)").test(path)) {
-	  console.log(JSON.stringify(slurp ? [comments] : comments));
+	  const currentComments = liveComments();
+	  console.log(JSON.stringify(slurp ? [currentComments] : currentComments));
 	} else if (args[0] === "api" && new RegExp("/issues/" + number + "/timeline(?:\\\\?|$)").test(path)) {
   console.log(JSON.stringify(slurp ? [timeline] : timeline));
 } else if (args[0] === "api" && new RegExp("/issues/" + number + "$").test(path)) {

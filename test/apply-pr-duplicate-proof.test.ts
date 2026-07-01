@@ -336,15 +336,12 @@ test("apply-decisions keeps existing duplicate PR close proposals open when cove
       retryReport.some((entry) => entry.action === "closed"),
       false,
     );
-    assert.equal(
-      retryReport.find((entry) => entry.number === 348)?.action,
-      "review_comment_synced",
-    );
+    assert.equal(retryReport.find((entry) => entry.number === 348)?.action, "kept_open");
     assert.equal(
       retryReport.some((entry) => /proof should not rerun/.test(entry.reason)),
       false,
     );
-    assert.match(readFileSync(commentWriteLogPath, "utf8"), /issues\/comments\/9348/);
+    assert.equal(readFileSync(commentWriteLogPath, "utf8"), "");
     assert.equal(existsSync(join(closedDir, "348.md")), false);
   } finally {
     rmSync(root, { recursive: true, force: true });
