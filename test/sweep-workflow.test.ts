@@ -135,19 +135,34 @@ test("apply workflow bounds checkpoints and requeues with a fresh token", () => 
   assert.match(applyStep, /processed-limit "\$close_processed_limit"/);
   assert.match(applyStep, /comment_sync_processed_limit=1000/);
   assert.match(applyStep, /--processed-limit "\$comment_sync_processed_limit"/);
+  const applyFlagInit = applyStep.indexOf('explicit_item_numbers="$item_numbers"');
+  assert.ok(applyFlagInit > applyStep.indexOf('item_numbers="${{'));
+  assert.ok(applyFlagInit < applyStep.indexOf("auto_selected_apply_batch=true"));
+  assert.match(applyStep, /apply_cursor_path="results\/apply-cursors\/\$\{target_slug\}\.json"/);
+  assert.match(applyStep, /--batch-size "\$close_processed_limit"/);
+  assert.match(applyStep, /--cursor-path "\$apply_cursor_path"/);
+  assert.match(applyStep, /write-apply-cursor/);
+  assert.match(applyStep, /--item-numbers "\$item_numbers"/);
+  assert.match(applyStep, /results\/apply-cursors/);
   assert.match(applyStep, /reached its \$close_processed_limit-record budget/);
+  assert.match(applyStep, /next scheduled apply run will advance the next window/);
   assert.match(applyStep, /apply_close_reasons="\$\(printf '%s\\n' "\$apply_close_reasons"/);
   assert.match(applyStep, /No enabled close reasons remain after policy filtering/);
   assert.match(applyStep, /true\|1\|yes\|on\) product_direction_enabled=true/);
-  assert.match(
+  assert.match(applyStep, /if \[ "\$result_count" -ge "\$close_processed_limit" \]; then/);
+  assert.doesNotMatch(
     applyStep,
     /if \[ "\$result_count" -ge "\$close_processed_limit" \] && \[ "\$closed_in_chunk" -gt 0 \]/,
   );
   assert.match(applyStep, /sync_comments_only" != "true" .*apply_close_reasons/);
   assert.match(applyStep, /continue_apply=true/);
   assert.match(applyStep, /break\n\s+done/);
+  assert.match(applyStep, /next_apply_item_numbers="\$item_numbers"/);
+  assert.match(applyStep, /next_apply_item_numbers=""/);
   assert.match(applyStep, /echo "APPLY_CONTINUE=\$continue_apply"/);
+  assert.match(applyStep, /echo "APPLY_AUTO_SELECTED_BATCH=\$auto_selected_apply_batch"/);
   assert.match(continueStep, /APPLY_CONTINUE:-false/);
+  assert.match(continueStep, /-f apply_item_numbers="\$APPLY_ITEM_NUMBERS"/);
   assert.doesNotMatch(continueStep, /APPLY_CLOSED_TOTAL:-0.*APPLY_LIMIT:-0/);
 });
 

@@ -9,6 +9,7 @@ import { AUTOMATION_LIMITS, WORKER_CONFIG, workerLimit, type WorkerLane } from "
 
 type ApplyAction = {
   action: string;
+  number?: number;
 };
 
 const args = parseArgs(process.argv.slice(2));
@@ -78,6 +79,14 @@ function runCli(): void {
         requiredString("cursor-path"),
         numberArg("next-cursor", 0),
         requiredString("target-repo"),
+      );
+      break;
+    case "write-apply-cursor":
+      writeApplyCursor(
+        requiredString("cursor-path"),
+        requiredString("report"),
+        requiredString("target-repo"),
+        optionalString("item-numbers"),
       );
       break;
     case "merge-apply-reports":
@@ -261,6 +270,8 @@ type ProposedItemOptions = {
   staleMinAgeDays: number;
   minAgeDays: number;
   minAgeMinutes: number | null;
+  batchSize?: number | null;
+  cursorPath?: string | null;
   itemNumbers?: ReadonlySet<number> | null;
 };
 
@@ -272,24 +283,27 @@ type CommentSyncBatchOptions = {
 };
 
 export function proposedItemNumbers(options: ProposedItemOptions): number[] {
-  return selectedProposedItemNumbers(options, "all");
+  return selectedProposedItemCandidates(options, "all").map((candidate) => candidate.number);
 }
 
 export function proposedPrCloseCoverageItemNumbers(options: ProposedItemOptions): number[] {
-  return selectedProposedItemNumbers(options, "pr-close-coverage-proof");
+  return selectedProposedItemCandidates(options, "pr-close-coverage-proof").map(
+    (candidate) => candidate.number,
+  );
 }
 
 type ProposedItemSelection = "all" | "pr-close-coverage-proof";
 
-function selectedProposedItemNumbers(
+type ProposedItemCandidate = {
+  number: number;
+  applyCheckedAt: string;
+};
+
+function selectedProposedItemCandidates(
   options: ProposedItemOptions,
   selection: ProposedItemSelection,
-): number[] {
-  const targetSlug = options.targetRepo
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-  const itemsDir = path.join("records", targetSlug, "items");
+): ProposedItemCandidate[] {
+  const itemsDir = path.join("records", targetSlug(options.targetRepo), "items");
   if (!fs.existsSync(itemsDir)) return [];
 
   const allowedReasons = new Set([
@@ -318,7 +332,7 @@ function selectedProposedItemNumbers(
       ? options.minAgeDays * 24 * 60 * 60 * 1000
       : options.minAgeMinutes * 60 * 1000;
 
-  return fs
+  const candidates = fs
     .readdirSync(itemsDir)
     .filter((name) => /(?:^|[a-z0-9-]-)\d+\.md$/.test(name))
     .flatMap((name) => {
@@ -366,9 +380,52 @@ function selectedProposedItemNumbers(
         return [];
       }
       if (!olderThan(frontMatterValue(markdown, "item_created_at"), minAgeMs)) return [];
-      return [number];
+      return [{ number, applyCheckedAt: frontMatterValue(markdown, "apply_checked_at") }];
     })
-    .sort((left, right) => left - right);
+    .sort((left, right) => left.number - right.number);
+  const batchSize = options.batchSize ?? null;
+  if (!batchSize || batchSize <= 0) return candidates;
+  const sorted = [...candidates].sort(compareApplyCursorCandidate);
+  const cursor = options.cursorPath ? readApplyCursor(options.cursorPath) : null;
+  if (!cursor) return sorted.slice(0, batchSize);
+  const afterCursor = sorted.filter(
+    (candidate) => compareCandidateToApplyCursor(candidate, cursor) > 0,
+  );
+  return [
+    ...afterCursor,
+    ...sorted.filter((candidate) => compareCandidateToApplyCursor(candidate, cursor) <= 0),
+  ].slice(0, batchSize);
+}
+
+function compareApplyCursorCandidate(
+  left: ProposedItemCandidate,
+  right: ProposedItemCandidate,
+): number {
+  return (
+    compareApplyCheckedAt(left.applyCheckedAt, right.applyCheckedAt) || left.number - right.number
+  );
+}
+
+function compareCandidateToApplyCursor(
+  candidate: ProposedItemCandidate,
+  cursor: ApplyCursor,
+): number {
+  return (
+    compareApplyCheckedAt(candidate.applyCheckedAt, cursor.applyCheckedAt) ||
+    candidate.number - cursor.number
+  );
+}
+
+function compareApplyCheckedAt(left: string, right: string): number {
+  const leftMs = timestampValue(left);
+  const rightMs = timestampValue(right);
+  return leftMs - rightMs;
+}
+
+function timestampValue(value: string): number {
+  if (!value) return 0;
+  const parsed = Date.parse(value);
+  return Number.isFinite(parsed) ? parsed : 0;
 }
 
 const SELECTABLE_CLOSE_ACTIONS = new Set([
@@ -514,7 +571,76 @@ export function writeCommentSyncCursor(
   );
 }
 
+type ApplyCursor = {
+  applyCheckedAt: string;
+  number: number;
+};
+
+function readApplyCursor(cursorPath: string): ApplyCursor | null {
+  if (!fs.existsSync(cursorPath)) return null;
+  const parsed: unknown = JSON.parse(fs.readFileSync(cursorPath, "utf8"));
+  if (!isJsonObject(parsed)) return null;
+  const number = Number(parsed.next_after_number);
+  if (!Number.isInteger(number) || number < 0) return null;
+  const applyCheckedAt =
+    typeof parsed.next_after_apply_checked_at === "string"
+      ? parsed.next_after_apply_checked_at
+      : "";
+  return { number, applyCheckedAt };
+}
+
+export function writeApplyCursor(
+  cursorPath: string,
+  reportPath: string,
+  targetRepo: string,
+  itemNumbers = "",
+): void {
+  const actions = readApplyActions(reportPath);
+  const processed = actions.flatMap((action) =>
+    typeof action.number === "number" ? [action.number] : [],
+  );
+  const selected = csvItems(itemNumbers)
+    .map((item) => Number(item))
+    .filter((number) => Number.isInteger(number) && number > 0);
+  const processedSet = new Set(processed);
+  const number =
+    selected.filter((itemNumber) => processedSet.has(itemNumber)).at(-1) ??
+    selected.at(-1) ??
+    processed.at(-1) ??
+    0;
+  const applyCheckedAt = number > 0 ? applyCheckedAtForItem(targetRepo, number) : "";
+  fs.mkdirSync(path.dirname(cursorPath), { recursive: true });
+  fs.writeFileSync(
+    cursorPath,
+    `${JSON.stringify(
+      {
+        target_repo: targetRepo,
+        next_after_number: number,
+        next_after_apply_checked_at: applyCheckedAt,
+        updated_at: new Date().toISOString(),
+      },
+      null,
+      2,
+    )}\n`,
+  );
+}
+
+function applyCheckedAtForItem(targetRepo: string, itemNumber: number): string {
+  const baseDir = path.join("records", targetSlug(targetRepo));
+  for (const stateDir of ["items", "closed"]) {
+    const dir = path.join(baseDir, stateDir);
+    if (!fs.existsSync(dir)) continue;
+    const name = fs
+      .readdirSync(dir)
+      .find((entry) => /(?:^|[a-z0-9-]-)\d+\.md$/.test(entry) && numberFor(entry) === itemNumber);
+    if (!name) continue;
+    return frontMatterValue(fs.readFileSync(path.join(dir, name), "utf8"), "apply_checked_at");
+  }
+  return "";
+}
+
 function proposedItemOptions(): ProposedItemOptions {
+  const batchSizeText = optionalString("batch-size");
   return {
     targetRepo: requiredString("target-repo"),
     applyKind: optionalString("apply-kind") || "all",
@@ -522,6 +648,8 @@ function proposedItemOptions(): ProposedItemOptions {
     staleMinAgeDays: numberArg("stale-min-age-days", 60),
     minAgeDays: numberArg("min-age-days", 0),
     minAgeMinutes: optionalString("min-age-minutes") ? numberArg("min-age-minutes", 0) : null,
+    batchSize: batchSizeText ? numberArg("batch-size", 0) : null,
+    cursorPath: optionalString("cursor-path") || null,
     itemNumbers: itemNumberSet(optionalString("item-numbers")),
   };
 }
@@ -579,7 +707,9 @@ function readApplyActions(reportPath: string): ApplyAction[] {
   if (!Array.isArray(parsed)) throw new Error(`${reportPath} must contain an array`);
   return parsed.map((entry) => {
     if (!isJsonObject(entry) || typeof entry.action !== "string") return { action: "" };
-    return { action: entry.action };
+    const number = Number(entry.number);
+    if (!Number.isInteger(number) || number <= 0) return { action: entry.action };
+    return { action: entry.action, number };
   });
 }
 
@@ -713,6 +843,13 @@ function repoFor(markdown: string, name: string): string {
   return (
     frontMatterValue(markdown, "repository") || (/^\d+\.md$/.test(name) ? "openclaw/openclaw" : "")
   );
+}
+
+function targetSlug(targetRepo: string): string {
+  return targetRepo
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
 }
 
 function numberFor(name: string): number {

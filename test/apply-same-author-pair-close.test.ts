@@ -145,6 +145,8 @@ if (args[0] === "api" && args[1] === "-i" && /\\/issues\\/(320|321)\\/timeline(?
           "--dry-run",
           "--apply-kind",
           "all",
+          "--item-numbers",
+          "321",
           "--processed-limit",
           "4",
         ],

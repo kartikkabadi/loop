@@ -16969,6 +16969,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
   const applyReportEntriesForDir = (
     dir: string,
     location: "items" | "closed",
+    filterRequested = true,
   ): Array<
     ReportEntry & {
       location: "items" | "closed";
@@ -16980,7 +16981,9 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       .filter(
         (entry) =>
           entry.repo === targetRepo() &&
-          (requestedItemNumberSet.size === 0 || requestedItemNumberSet.has(entry.number)),
+          (!filterRequested ||
+            requestedItemNumberSet.size === 0 ||
+            requestedItemNumberSet.has(entry.number)),
       )
       .map((entry) => ({
         ...entry,
@@ -16994,9 +16997,8 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       left.number - right.number,
   );
   const files = fileEntries.map((entry) => entry.name);
-  const openFileEntryByNumber = new Map(
-    fileEntries.filter((entry) => entry.location === "items").map((entry) => [entry.number, entry]),
-  );
+  const allOpenFileEntries = applyReportEntriesForDir(itemsDir, "items", false);
+  const openFileEntryByNumber = new Map(allOpenFileEntries.map((entry) => [entry.number, entry]));
   const closedThisRun = new Set<string>();
   if (fileEntries.length === 0 && !existsSync(itemsDir)) {
     console.log("No items directory.");
@@ -17052,7 +17054,12 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       });
       renameSync(path, join(closedDir, file));
     };
+    const markApplyChecked = (): void => {
+      markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
+      if (!dryRun) writeFileSync(path, markdown, "utf8");
+    };
     const recordApplySkipped = (actionTaken: ActionTaken, reason: string): boolean => {
+      markApplyChecked();
       results.push({ number, action: actionTaken, reason });
       processedCount += 1;
       maybeLogProgress(`skipped #${number}: ${reason}`);
@@ -17060,8 +17067,6 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
     };
     const markApplySkipped = (actionTaken: ActionTaken, reason: string): boolean => {
       markdown = replaceFrontMatterValue(markdown, "action_taken", actionTaken);
-      markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
-      if (!dryRun) writeFileSync(path, markdown, "utf8");
       return recordApplySkipped(actionTaken, reason);
     };
     const markLabelSyncAuthSkipped = (labelKind: string): boolean =>
@@ -17081,6 +17086,13 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
         action !== "retry_pr_close_coverage_proof" &&
         !shouldProbeClosedState)
     ) {
+      if (
+        !storedHash &&
+        requestedItemNumberSet.has(number) &&
+        recordApplySkipped("kept_open", "review lacks an item snapshot hash")
+      ) {
+        break;
+      }
       continue;
     }
     let isCloseProposal = isApplyCloseCandidateReport(markdown);
@@ -17318,6 +17330,9 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
               }) === null &&
               counterpartOpenClosingPullRequestReason === null &&
               counterpartSameAuthorReason === null;
+            if (result && !fileEntries.some((entry) => entry.number === counterpartNumber)) {
+              fileEntries.push(counterpartEntry);
+            }
           }
         }
       }
@@ -17326,6 +17341,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       return result;
     };
     if (syncCommentsOnly && state !== "open") {
+      markApplyChecked();
       results.push({ number, action: "skipped_already_closed", reason: `state is ${state}` });
       processedCount += 1;
       maybeLogProgress(`skipped comment sync #${number}: already ${state}`);
@@ -17525,16 +17541,13 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
         : reviewedAuthorAssociation;
       markdown = replaceFrontMatterValue(markdown, "author_association", authorAssociation);
       markdown = replaceFrontMatterValue(markdown, "action_taken", "skipped_maintainer_authored");
-      markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
-      if (!dryRun) writeFileSync(path, markdown, "utf8");
-      results.push({
-        number,
-        action: "skipped_maintainer_authored",
-        reason: `author association is ${authorAssociation}`,
-      });
-      processedCount += 1;
-      maybeLogProgress(`skipped #${number}: maintainer authored`);
-      if (processedCount >= processedLimit) break;
+      if (
+        recordApplySkipped(
+          "skipped_maintainer_authored",
+          `author association is ${authorAssociation}`,
+        )
+      )
+        break;
       continue;
     }
     const updatedSinceReview = Boolean(storedUpdatedAt && item.updatedAt !== storedUpdatedAt);
@@ -17689,6 +17702,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
           "applied_at",
           commentUpdatedAt(existingReviewComment) ?? new Date().toISOString(),
         );
+        markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
         archiveClosed(markdown);
         closedCount += 1;
         processedCount += 1;
@@ -18027,6 +18041,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
         syncReasons.push("recorded existing durable comment metadata");
       }
       markdown = updateReviewCommentMetadata(markdown, syncedComment, markedReviewComment);
+      markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
       if (!dryRun) writeFileSync(path, markdown, "utf8");
       results.push({
         number,
@@ -18041,6 +18056,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
     }
     if (proofBlockedForCommentSync) {
       if (!needsReviewCommentSync) {
+        markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
         if (!dryRun) writeFileSync(path, markdown, "utf8");
         results.push({
           number,
@@ -18058,6 +18074,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       !needsReviewCommentSync &&
       (!isCloseProposal || syncCommentsOnly)
     ) {
+      markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
       if (!dryRun) writeFileSync(path, markdown, "utf8");
       results.push({
         number,
@@ -18074,25 +18091,18 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
     }
     if (closedCount >= limit) break;
     if (applyKind !== "all" && item.kind !== applyKind) {
-      results.push({
-        number,
-        action: "kept_open",
-        reason: `type is ${item.kind}; apply kind is ${applyKind}`,
-      });
-      processedCount += 1;
-      maybeLogProgress(`skipped #${number}: type is ${item.kind}`);
-      if (processedCount >= processedLimit) break;
+      if (recordApplySkipped("kept_open", `type is ${item.kind}; apply kind is ${applyKind}`))
+        break;
       continue;
     }
     if (!closeReasonEnabled(closeReason, applyCloseReasons)) {
-      results.push({
-        number,
-        action: "kept_open",
-        reason: `close reason ${closeReason} is not enabled for this apply run`,
-      });
-      processedCount += 1;
-      maybeLogProgress(`skipped #${number}: close reason ${closeReason} not enabled`);
-      if (processedCount >= processedLimit) break;
+      if (
+        recordApplySkipped(
+          "kept_open",
+          `close reason ${closeReason} is not enabled for this apply run`,
+        )
+      )
+        break;
       continue;
     }
     const currentReportValidation = validateCloseDecision(
@@ -18126,14 +18136,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       staleMinAgeDays,
     });
     if (ageSkipReason) {
-      results.push({
-        number,
-        action: "kept_open",
-        reason: ageSkipReason,
-      });
-      processedCount += 1;
-      maybeLogProgress(`skipped #${number}: ${ageSkipReason}`);
-      if (processedCount >= processedLimit) break;
+      if (recordApplySkipped("kept_open", ageSkipReason)) break;
       continue;
     }
     const prCloseCoverageBlock =
@@ -18222,6 +18225,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
     markdown = replaceFrontMatterValue(markdown, "close_comment_sha256", sha256(reviewComment));
     markdown = replaceFrontMatterValue(markdown, "action_taken", "closed");
     markdown = replaceFrontMatterValue(markdown, "applied_at", new Date().toISOString());
+    markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
     archiveClosed(markdown);
     closedCount += 1;
     processedCount += 1;

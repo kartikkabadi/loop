@@ -447,6 +447,8 @@ if (args[0] === "api" && /\\/issues\\/comments\\/\\d+$/.test(path)) {
     assert.doesNotMatch(patchedComment, /remove `clawsweeper:linked-pr-open`/);
     assert.doesNotMatch(patchedComment, /remove `clawsweeper:no-new-fix-pr`/);
     assert.match(readFileSync(join(itemsDir, "321.md"), "utf8"), /^labels_synced_at: /m);
+    assert.match(readFileSync(join(itemsDir, "321.md"), "utf8"), /^apply_checked_at: /m);
+    assert.doesNotMatch(readFileSync(join(itemsDir, "322.md"), "utf8"), /^apply_checked_at: /m);
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
@@ -578,6 +580,7 @@ if (args[0] === "api" && /\\/issues\\/comments\\/\\d+$/.test(path)) {
     assert.match(updatedReport, /^labels: .*"P1"/m);
     assert.match(updatedReport, /^labels: .*"impact:message-loss"/m);
     assert.match(updatedReport, /^labels_synced_at: /m);
+    assert.match(updatedReport, /^apply_checked_at: /m);
   } finally {
     rmSync(root, { recursive: true, force: true });
   }

@@ -17,6 +17,7 @@ import {
   plannedItemNumberCsv,
   proposedItemNumbers,
   proposedPrCloseCoverageItemNumbers,
+  writeApplyCursor,
   writeCommentSyncCursor,
 } from "../../dist/repair/workflow-utils.js";
 import {
@@ -862,6 +863,84 @@ test("workflow utilities select gated product-direction PR close proposals", () 
   );
 });
 
+test("workflow utilities rotate bounded apply candidate batches by apply cursor", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-workflow-"));
+  const oldDate = "2024-01-01T00:00:00Z";
+  const cursorPath = path.join(root, "results/apply-cursors/openclaw-openclaw.json");
+  writeProposedRecord(root, 10, "issue", "proposed_close", "implemented_on_main", oldDate, {
+    applyCheckedAt: "2026-01-02T00:00:00Z",
+  });
+  writeProposedRecord(root, 20, "issue", "proposed_close", "implemented_on_main", oldDate);
+  writeProposedRecord(root, 30, "issue", "proposed_close", "implemented_on_main", oldDate, {
+    applyCheckedAt: "2026-01-01T00:00:00Z",
+  });
+  writeProposedRecord(root, 40, "issue", "proposed_close", "implemented_on_main", oldDate, {
+    applyCheckedAt: "2026-01-03T00:00:00Z",
+  });
+  const options = {
+    targetRepo: "openclaw/openclaw",
+    applyKind: "all",
+    applyCloseReasons: "all",
+    staleMinAgeDays: 60,
+    minAgeDays: 0,
+    minAgeMinutes: null,
+    batchSize: 2,
+    cursorPath,
+  };
+
+  assert.deepEqual(
+    withCwd(root, () => proposedItemNumbers(options)),
+    [20, 30],
+  );
+  write(
+    cursorPath,
+    JSON.stringify({ next_after_number: 30, next_after_apply_checked_at: "2026-01-01T00:00:00Z" }),
+  );
+  assert.deepEqual(
+    withCwd(root, () => proposedItemNumbers(options)),
+    [10, 40],
+  );
+  write(
+    cursorPath,
+    JSON.stringify({ next_after_number: 40, next_after_apply_checked_at: "2026-01-03T00:00:00Z" }),
+  );
+  assert.deepEqual(
+    withCwd(root, () => proposedItemNumbers(options)),
+    [20, 30],
+  );
+});
+
+test("workflow utilities persist apply cursor from processed or selected items", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-workflow-"));
+  const cursorPath = path.join(root, "results/apply-cursors/openclaw-openclaw.json");
+  const reportPath = path.join(root, "apply-report.json");
+  const oldDate = "2024-01-01T00:00:00Z";
+  writeProposedRecord(root, 10, "issue", "proposed_close", "implemented_on_main", oldDate);
+  writeProposedRecord(root, 20, "issue", "proposed_close", "implemented_on_main", oldDate, {
+    applyCheckedAt: "2026-01-02T00:00:00Z",
+  });
+
+  for (const [report, selected] of [
+    [[{ number: 20, action: "kept_open" }], ""],
+    [
+      [
+        { number: 20, action: "kept_open" },
+        { number: 10, action: "closed" },
+      ],
+      "10,20",
+    ],
+    [[], "10,20"],
+  ]) {
+    write(reportPath, JSON.stringify(report));
+    withCwd(root, () => writeApplyCursor(cursorPath, reportPath, "openclaw/openclaw", selected));
+    const cursor = JSON.parse(fs.readFileSync(cursorPath, "utf8"));
+    assert.deepEqual(
+      [cursor.target_repo, cursor.next_after_number, cursor.next_after_apply_checked_at],
+      ["openclaw/openclaw", 20, "2026-01-02T00:00:00Z"],
+    );
+  }
+});
+
 test("workflow utilities select cursor-based PR comment sync batches", () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-workflow-"));
   const cursorPath = path.join(root, "results/comment-sync-cursors/openclaw-openclaw.json");
@@ -945,21 +1024,30 @@ function write(file, content) {
   fs.writeFileSync(file, content);
 }
 
-function writeProposedRecord(root, number, type, actionTaken, closeReason, itemCreatedAt) {
+function writeProposedRecord(
+  root,
+  number,
+  type,
+  actionTaken,
+  closeReason,
+  itemCreatedAt,
+  options = {},
+) {
+  const lines = [
+    "---",
+    "repository: openclaw/openclaw",
+    `type: ${type}`,
+    "decision: close",
+    "confidence: high",
+    `action_taken: ${actionTaken}`,
+    `close_reason: ${closeReason}`,
+    `item_created_at: ${itemCreatedAt}`,
+  ];
+  if (options.applyCheckedAt) lines.push(`apply_checked_at: ${options.applyCheckedAt}`);
+  lines.push("---", "");
   write(
     path.join(root, `records/openclaw-openclaw/items/openclaw-openclaw-${number}.md`),
-    [
-      "---",
-      "repository: openclaw/openclaw",
-      `type: ${type}`,
-      "decision: close",
-      "confidence: high",
-      `action_taken: ${actionTaken}`,
-      `close_reason: ${closeReason}`,
-      `item_created_at: ${itemCreatedAt}`,
-      "---",
-      "",
-    ].join("\n"),
+    lines.join("\n"),
   );
 }
 

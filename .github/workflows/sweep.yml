@@ -2259,6 +2259,8 @@ jobs:
             sync_open_pr_batch="true"
             item_numbers=""
           fi
+          explicit_item_numbers="$item_numbers"
+          auto_selected_apply_batch=false
           sync_comments_only="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.apply_sync_comments_only || 'false' }}"
           product_direction_enabled=false
           case "${CLAWSWEEPER_UNCONFIRMED_PRODUCT_DIRECTION_CLOSE_ENABLED,,}" in
@@ -2276,6 +2278,7 @@ jobs:
           target_slug="$TARGET_REPO"
           target_slug="${target_slug//\//-}"
           cursor_path="results/comment-sync-cursors/${target_slug}.json"
+          apply_cursor_path="results/apply-cursors/${target_slug}.json"
           next_cursor=""
           if [ "$sync_open_pr_batch" = "true" ]; then
             sync_comments_only="true"
@@ -2363,13 +2366,16 @@ jobs:
               --apply-close-reasons "$apply_close_reasons" \
               --stale-min-age-days "$stale_min_age_days" \
               --min-age-days "$min_age_days" \
-              --min-age-minutes "$min_age_minutes")"
+              --min-age-minutes "$min_age_minutes" \
+              --batch-size "$close_processed_limit" \
+              --cursor-path "$apply_cursor_path")"
             if [ -n "$item_numbers" ]; then
+              auto_selected_apply_batch=true
               proposed_count="$(pnpm run --silent workflow -- count-csv --items "$item_numbers")"
               if [ "$proposed_count" -lt "$limit" ]; then
                 limit="$proposed_count"
               fi
-              echo "Auto-selected $proposed_count proposed close(s): $item_numbers"
+              echo "Auto-selected $proposed_count proposed close candidate(s) from apply cursor window: $item_numbers"
             fi
           fi
           item_numbers_arg=()
@@ -2478,7 +2484,16 @@ jobs:
             result_count="$(pnpm run --silent workflow -- count-report --report ".artifacts/apply-reports/apply-report-$checkpoint.json")"
             closed_total=$((closed_total + closed_in_chunk))
             echo "Checkpoint $checkpoint result_count=$result_count closed_in_chunk=$closed_in_chunk closed_total=$closed_total/$limit"
-            publish_changes "chore: apply sweep decisions checkpoint $checkpoint" records apply-report.json
+            apply_publish_paths=(records apply-report.json)
+            if [ "$auto_selected_apply_batch" = "true" ]; then
+              pnpm run workflow -- write-apply-cursor \
+                --cursor-path "$apply_cursor_path" \
+                --report ".artifacts/apply-reports/apply-report-$checkpoint.json" \
+                --target-repo "$TARGET_REPO" \
+                --item-numbers "$item_numbers"
+              apply_publish_paths+=(results/apply-cursors)
+            fi
+            publish_changes "chore: apply sweep decisions checkpoint $checkpoint" "${apply_publish_paths[@]}"
             pnpm run status -- \
               --target-repo "$TARGET_REPO" \
               --state "Apply in progress" \
@@ -2486,9 +2501,15 @@ jobs:
               --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             publish_status "chore: update sweep apply checkpoint $checkpoint status"
             echo "::endgroup::"
-            if [ "$result_count" -ge "$close_processed_limit" ] && [ "$closed_in_chunk" -gt 0 ]; then
-              echo "Close scan reached its $close_processed_limit-record budget; queueing a fresh-token continuation."
-              continue_apply=true
+            if [ "$result_count" -ge "$close_processed_limit" ]; then
+              if [ "$closed_in_chunk" -gt 0 ]; then
+                echo "Close scan reached its $close_processed_limit-record budget; queueing a fresh-token continuation."
+                continue_apply=true
+              elif [ "$auto_selected_apply_batch" = "true" ]; then
+                echo "Close scan reached its $close_processed_limit-record budget with no fresh closes; cursor is persisted and the next scheduled apply run will advance the next window."
+              else
+                echo "Explicit close scan reached its $close_processed_limit-record budget without fresh closes; stopping to avoid a retry loop."
+              fi
               break
             fi
             if [ "$result_count" -eq 0 ]; then
@@ -2508,6 +2529,10 @@ jobs:
             --detail "Apply/comment-sync run finished with $closed_total fresh closes out of requested limit $limit. See apply-report.json for per-item results." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           publish_status "chore: mark sweep apply finished"
+          next_apply_item_numbers="$item_numbers"
+          if [ "$auto_selected_apply_batch" = "true" ] && [ -z "$explicit_item_numbers" ]; then
+            next_apply_item_numbers=""
+          fi
           {
             echo "APPLY_CLOSED_TOTAL=$closed_total"
             echo "APPLY_LIMIT=$limit"
@@ -2520,10 +2545,11 @@ jobs:
             echo "APPLY_CLOSE_DELAY_MS=$close_delay_ms"
             echo "APPLY_PROGRESS_EVERY=$progress_every"
             echo "APPLY_CHECKPOINT_SIZE=$checkpoint_size"
-            echo "APPLY_ITEM_NUMBERS=$item_numbers"
+            echo "APPLY_ITEM_NUMBERS=$next_apply_item_numbers"
             echo "APPLY_TARGET_REPO=$TARGET_REPO"
             echo "APPLY_SYNC_COMMENTS_ONLY=$sync_comments_only"
             echo "APPLY_SYNC_OPEN_PR_BATCH=$sync_open_pr_batch"
+            echo "APPLY_AUTO_SELECTED_BATCH=$auto_selected_apply_batch"
             echo "APPLY_COMMENT_SYNC_MIN_AGE_DAYS=$comment_sync_min_age_days"
           } >> "$GITHUB_ENV"
 
@@ -2544,6 +2570,9 @@ jobs:
           )
           if [ "${APPLY_SYNC_OPEN_PR_BATCH:-false}" = "true" ]; then
             publish_args+=(--path results/comment-sync-cursors)
+          fi
+          if [ "${APPLY_AUTO_SELECTED_BATCH:-false}" = "true" ]; then
+            publish_args+=(--path results/apply-cursors)
           fi
           pnpm run repair:publish-main -- "${publish_args[@]}"
 
