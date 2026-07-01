@@ -895,6 +895,12 @@ interface ProofLaneCandidate {
   sortAt: number;
 }
 
+interface ProofLaneCursor {
+  likely: boolean;
+  number: number;
+  sortAt: number;
+}
+
 interface ProofNudgeComment {
   author?: string | undefined;
   body?: string | undefined;
@@ -18392,29 +18398,105 @@ function proofLaneCandidateRecords(
       if (frontMatterValue(markdown, "type") !== "pull_request") return false;
       return true;
     })
-    .sort(
-      (left, right) =>
-        Number(right.likely) - Number(left.likely) ||
-        left.sortAt - right.sortAt ||
-        left.number - right.number,
+    .sort((left, right) => compareProofLaneSortKey(left, right));
+}
+
+function proofLaneSortAt(value: number): number {
+  return Number.isFinite(value) ? value : Number.NEGATIVE_INFINITY;
+}
+
+function compareProofLaneSortKey(
+  left: Pick<ProofLaneCursor, "likely" | "number" | "sortAt">,
+  right: Pick<ProofLaneCursor, "likely" | "number" | "sortAt">,
+): number {
+  if (left.likely !== right.likely) return left.likely ? -1 : 1;
+  return proofLaneSortAt(left.sortAt) - proofLaneSortAt(right.sortAt) || left.number - right.number;
+}
+
+function rotateProofLaneCandidates<T extends ProofLaneCandidate>(
+  candidates: readonly T[],
+  cursor: ProofLaneCursor | null,
+): T[] {
+  if (!cursor) return [...candidates];
+  return [
+    ...candidates.filter((candidate) => compareProofLaneSortKey(candidate, cursor) > 0),
+    ...candidates.filter((candidate) => compareProofLaneSortKey(candidate, cursor) <= 0),
+  ];
+}
+
+function proofLaneCursorPath(args: Args, requestedItemNumbers: readonly number[]): string | null {
+  if (requestedItemNumbers.length > 0) return null;
+  const rawPath = stringArg(args.cursor_path, "").trim();
+  return rawPath ? resolve(rawPath) : null;
+}
+
+function proofLaneProcessedLimit(args: Args, fallback: number): number {
+  const value = numberArg(args.processed_limit, fallback);
+  if (!Number.isInteger(value) || value < 1) {
+    throw new UserFacingCommandError("--processed-limit must be a positive integer");
+  }
+  return value;
+}
+
+function readProofLaneCursor(path: string): ProofLaneCursor | null {
+  if (!existsSync(path)) return null;
+  try {
+    const parsed = asRecord(JSON.parse(readFileSync(path, "utf8")));
+    const number = Number(parsed.next_cursor_number);
+    if (!Number.isInteger(number) || number <= 0) return null;
+    return {
+      likely: parsed.next_cursor_likely === true,
+      number,
+      sortAt:
+        typeof parsed.next_cursor_sort_at_ms === "number" &&
+        Number.isFinite(parsed.next_cursor_sort_at_ms)
+          ? parsed.next_cursor_sort_at_ms
+          : Number.NEGATIVE_INFINITY,
+    };
+  } catch (error) {
+    console.warn(
+      `Ignoring invalid proof lane cursor ${path}: ${error instanceof Error ? error.message : String(error)}`,
     );
+    return null;
+  }
+}
+
+function writeProofLaneCursor(path: string, lane: string, candidate: ProofLaneCandidate): void {
+  ensureDir(dirname(path));
+  writeFileSync(
+    path,
+    `${JSON.stringify(
+      {
+        repository: targetRepo(),
+        lane,
+        next_cursor_number: candidate.number,
+        next_cursor_likely: candidate.likely,
+        next_cursor_sort_at_ms: Number.isFinite(candidate.sortAt) ? candidate.sortAt : null,
+        reviewed_at: candidate.reviewedAt ?? null,
+        updated_at: new Date().toISOString(),
+      },
+      null,
+      2,
+    )}\n`,
+    "utf8",
+  );
 }
 
 function proofNudgeCandidateRecords(
   itemsDir: string,
   requestedItemNumbers: readonly number[],
-): (ProofLaneCandidate & { likelyProofNudge: boolean })[] {
+): ProofLaneCandidate[] {
   return proofLaneCandidateRecords(
     itemsDir,
     requestedItemNumbers,
     realBehaviorProofNeedsContributorNudge,
-  ).map((candidate) => ({ ...candidate, likelyProofNudge: candidate.likely }));
+  );
 }
 
 function botProofCandidateRecords(
   itemsDir: string,
   requestedItemNumbers: readonly number[],
-): (ProofLaneCandidate & { likelyBotProof: boolean })[] {
+): ProofLaneCandidate[] {
   return proofLaneCandidateRecords(itemsDir, requestedItemNumbers, (markdown) => {
     return (
       frontMatterValue(markdown, "review_status") === "complete" &&
@@ -18422,7 +18504,7 @@ function botProofCandidateRecords(
       isClawSweeperAppAuthor(frontMatterValue(markdown, "author")) &&
       realBehaviorProofBlocksBotOwnedMerge(markdown)
     );
-  }).map((candidate) => ({ ...candidate, likelyBotProof: candidate.likely }));
+  });
 }
 
 function proofNudgeLiveFetchFailureReason(error: unknown): string {
@@ -18443,6 +18525,13 @@ export function proofNudgeCandidateRecordsForTest(
   return proofNudgeCandidateRecords(itemsDir, requestedItemNumbers);
 }
 
+export function rotateProofLaneCandidatesForTest<T extends ProofLaneCandidate>(
+  candidates: readonly T[],
+  cursor: ProofLaneCursor | null,
+): T[] {
+  return rotateProofLaneCandidates(candidates, cursor);
+}
+
 export function botProofCandidateRecordsForTest(
   itemsDir: string,
   requestedItemNumbers: readonly number[] = [],
@@ -18454,7 +18543,7 @@ function proofNudgesCommand(args: Args): void {
   repoFromArgs(args);
   const itemsDir = resolve(stringArg(args.items_dir, defaultItemsDir()));
   const limit = Math.max(0, numberArg(args.limit, DEFAULT_PROOF_NUDGE_LIMIT));
-  const processedLimit = Math.max(1, numberArg(args.processed_limit, Math.max(limit * 20, 50)));
+  const processedLimit = proofLaneProcessedLimit(args, Math.max(limit * 20, 50));
   const minAgeDays = Math.max(0, numberArg(args.min_age_days, DEFAULT_PROOF_NUDGE_MIN_AGE_DAYS));
   const cooldownDays = Math.max(
     0,
@@ -18465,6 +18554,7 @@ function proofNudgesCommand(args: Args): void {
   const maxRuntimeMs = numberArg(args.max_runtime_ms, 0);
   const reportPath = resolve(stringArg(args.report_path, join(ROOT, "proof-nudge-report.json")));
   const requestedItemNumbers = itemNumbersArg(args.item_numbers, args.item_number);
+  const cursorPath = proofLaneCursorPath(args, requestedItemNumbers);
 
   if (!existsSync(itemsDir)) {
     const results: ProofNudgeResult[] = [];
@@ -18474,11 +18564,18 @@ function proofNudgesCommand(args: Args): void {
     return;
   }
 
-  const candidates = proofNudgeCandidateRecords(itemsDir, requestedItemNumbers);
+  const allCandidates = proofNudgeCandidateRecords(itemsDir, requestedItemNumbers);
+  const cursor = cursorPath ? readProofLaneCursor(cursorPath) : null;
+  const candidates = rotateProofLaneCandidates(allCandidates, cursor);
   const startedAtMs = Date.now();
   const results: ProofNudgeResult[] = [];
   let processedCount = 0;
   let nudgeCount = 0;
+  let lastProcessedCandidate: ProofLaneCandidate | null = null;
+  const markProcessed = (candidate: ProofLaneCandidate): void => {
+    processedCount += 1;
+    lastProcessedCandidate = candidate;
+  };
   const logProgress = (message: string): void => {
     const counts = results.reduce<Record<string, number>>((accumulator, result) => {
       accumulator[result.action] = (accumulator[result.action] ?? 0) + 1;
@@ -18496,7 +18593,7 @@ function proofNudgesCommand(args: Args): void {
   };
 
   logProgress(
-    `starting proof nudges: candidates=${candidates.length} min_age_days=${minAgeDays} cooldown_days=${cooldownDays} item_numbers=${requestedItemNumbers.join(",") || "all"}`,
+    `starting proof nudges: candidates=${allCandidates.length} min_age_days=${minAgeDays} cooldown_days=${cooldownDays} item_numbers=${requestedItemNumbers.join(",") || "all"} cursor_path=${cursorPath ?? "none"}`,
   );
   for (const candidate of candidates) {
     if (nudgeCount >= limit) break;
@@ -18529,7 +18626,7 @@ function proofNudgesCommand(args: Args): void {
         action: "skipped_live_fetch_failed",
         reason: proofNudgeLiveFetchFailureReason(error),
       });
-      processedCount += 1;
+      markProcessed(candidate);
       continue;
     }
     if (state !== "open") {
@@ -18538,7 +18635,7 @@ function proofNudgesCommand(args: Args): void {
         action: "skipped_not_open",
         reason: `state is ${state}`,
       });
-      processedCount += 1;
+      markProcessed(candidate);
       continue;
     }
     let pullDetails: Partial<ProofNudgePullRequestDetails> = {};
@@ -18563,7 +18660,7 @@ function proofNudgesCommand(args: Args): void {
         action: "skipped_live_fetch_failed",
         reason: proofNudgeLiveFetchFailureReason(error),
       });
-      processedCount += 1;
+      markProcessed(candidate);
       continue;
     }
     const eligibility = proofNudgeEligibility({
@@ -18584,7 +18681,7 @@ function proofNudgesCommand(args: Args): void {
         reason: eligibility.reason,
         headSha: pullDetails.headSha,
       });
-      processedCount += 1;
+      markProcessed(candidate);
       continue;
     }
 
@@ -18596,7 +18693,7 @@ function proofNudgesCommand(args: Args): void {
         action: "skipped_no_live_head",
         reason: "live PR head SHA could not be inspected",
       });
-      processedCount += 1;
+      markProcessed(candidate);
       continue;
     }
     const body = renderProofNudgeComment({ item, headSha, timestamp });
@@ -18617,9 +18714,12 @@ function proofNudgesCommand(args: Args): void {
         headSha,
       });
     }
-    processedCount += 1;
+    markProcessed(candidate);
     nudgeCount += 1;
     logProgress(`${dryRun ? "planned" : "posted"} proof nudge #${candidate.number}`);
+  }
+  if (!dryRun && cursorPath && lastProcessedCandidate) {
+    writeProofLaneCursor(cursorPath, "proof_nudges", lastProcessedCandidate);
   }
   ensureDir(dirname(reportPath));
   writeFileSync(reportPath, JSON.stringify(results, null, 2), "utf8");
@@ -18631,12 +18731,13 @@ function botProofCommand(args: Args): void {
   repoFromArgs(args);
   const itemsDir = resolve(stringArg(args.items_dir, defaultItemsDir()));
   const limit = Math.max(0, numberArg(args.limit, DEFAULT_PROOF_NUDGE_LIMIT));
-  const processedLimit = Math.max(1, numberArg(args.processed_limit, Math.max(limit * 20, 50)));
+  const processedLimit = proofLaneProcessedLimit(args, Math.max(limit * 20, 50));
   const execute = boolArg(args.execute);
   const dryRun = !execute;
   const maxRuntimeMs = numberArg(args.max_runtime_ms, 0);
   const reportPath = resolve(stringArg(args.report_path, join(ROOT, "bot-proof-report.json")));
   const requestedItemNumbers = itemNumbersArg(args.item_numbers, args.item_number);
+  const cursorPath = proofLaneCursorPath(args, requestedItemNumbers);
 
   if (!existsSync(itemsDir)) {
     const results: BotProofResult[] = [];
@@ -18646,11 +18747,18 @@ function botProofCommand(args: Args): void {
     return;
   }
 
-  const candidates = botProofCandidateRecords(itemsDir, requestedItemNumbers);
+  const allCandidates = botProofCandidateRecords(itemsDir, requestedItemNumbers);
+  const cursor = cursorPath ? readProofLaneCursor(cursorPath) : null;
+  const candidates = rotateProofLaneCandidates(allCandidates, cursor);
   const startedAtMs = Date.now();
   const results: BotProofResult[] = [];
   let processedCount = 0;
   let actionCount = 0;
+  let lastProcessedCandidate: ProofLaneCandidate | null = null;
+  const markProcessed = (candidate: ProofLaneCandidate): void => {
+    processedCount += 1;
+    lastProcessedCandidate = candidate;
+  };
   const logProgress = (message: string): void => {
     const counts = results.reduce<Record<string, number>>((accumulator, result) => {
       accumulator[result.action] = (accumulator[result.action] ?? 0) + 1;
@@ -18668,7 +18776,7 @@ function botProofCommand(args: Args): void {
   };
 
   logProgress(
-    `starting bot proof handling: candidates=${candidates.length} item_numbers=${requestedItemNumbers.join(",") || "all"}`,
+    `starting bot proof handling: candidates=${allCandidates.length} item_numbers=${requestedItemNumbers.join(",") || "all"} cursor_path=${cursorPath ?? "none"}`,
   );
   for (const candidate of candidates) {
     if (actionCount >= limit) break;
@@ -18704,7 +18812,7 @@ function botProofCommand(args: Args): void {
         action: "skipped_live_fetch_failed",
         reason: proofNudgeLiveFetchFailureReason(error),
       });
-      processedCount += 1;
+      markProcessed(candidate);
       continue;
     }
     if (state !== "open") {
@@ -18713,7 +18821,7 @@ function botProofCommand(args: Args): void {
         action: "skipped_not_open",
         reason: `state is ${state}`,
       });
-      processedCount += 1;
+      markProcessed(candidate);
       continue;
     }
     const eligibility = botProofEligibility({
@@ -18729,7 +18837,7 @@ function botProofCommand(args: Args): void {
         reason: eligibility.reason,
         headSha: pullDetails.headSha,
       });
-      processedCount += 1;
+      markProcessed(candidate);
       continue;
     }
     const headSha = pullDetails.headSha;
@@ -18739,7 +18847,7 @@ function botProofCommand(args: Args): void {
         action: "skipped_no_live_head",
         reason: "live PR head SHA could not be inspected",
       });
-      processedCount += 1;
+      markProcessed(candidate);
       continue;
     }
     const commentBody = renderBotProofDecisionComment({
@@ -18774,9 +18882,12 @@ function botProofCommand(args: Args): void {
         headSha,
       });
     }
-    processedCount += 1;
+    markProcessed(candidate);
     actionCount += 1;
     logProgress(`${dryRun ? "planned" : "posted"} bot proof handling #${candidate.number}`);
+  }
+  if (!dryRun && cursorPath && lastProcessedCandidate) {
+    writeProofLaneCursor(cursorPath, "bot_proof", lastProcessedCandidate);
   }
   ensureDir(dirname(reportPath));
   writeFileSync(reportPath, JSON.stringify(results, null, 2), "utf8");

@@ -260,6 +260,8 @@ test("proof nudge workflow is manual-first and scheduled behind repo vars", () =
   assert.match(job, /PROOF_NUDGES_ITEM_NUMBERS:/);
   assert.match(job, /item_numbers must be a comma-separated list/);
   assert.match(job, /PROOF_NUDGES_LIMIT:/);
+  assert.match(job, /PROOF_NUDGES_PROCESSED_LIMIT:/);
+  assert.match(job, /PROOF_NUDGES_PROCESSED_LIMIT must be a positive integer/);
   assert.match(job, /PROOF_NUDGES_MIN_AGE_DAYS:/);
   assert.match(job, /PROOF_NUDGES_COOLDOWN_DAYS:/);
   assert.match(job, /permission-pull-requests: write/);
@@ -269,8 +271,30 @@ test("proof nudge workflow is manual-first and scheduled behind repo vars", () =
   );
   assert.match(job, /execute_arg=\(\)/);
   assert.match(job, /if \[ "\$PROOF_NUDGES_EXECUTE" = "true" \]/);
+  assert.match(job, /processed_limit_arg=\(\)/);
+  assert.match(job, /--processed-limit "\$PROOF_NUDGES_PROCESSED_LIMIT"/);
+  assert.match(job, /--cursor-path "results\/proof-nudge-cursors\/\$\{target_slug\}\.json"/);
+  assert.match(job, /--cursor-path "results\/bot-proof-cursors\/\$\{target_slug\}\.json"/);
   assert.match(job, /pnpm run proof-nudges/);
   assert.match(job, /vars\.CLAWSWEEPER_PROOF_NUDGES_LIMIT/);
+  assert.match(job, /vars\.CLAWSWEEPER_PROOF_NUDGES_PROCESSED_LIMIT/);
+  assert.match(job, /repair:publish-main/);
+  assert.match(job, /results\/proof-nudge-cursors/);
+  assert.match(job, /results\/bot-proof-cursors/);
+});
+
+test("proof nudge workflow publishes exact cursor files only for executed lanes", () => {
+  const workflow = readFileSync(".github/workflows/proof-nudges.yml", "utf8");
+  const job = workflow.slice(workflow.indexOf("  proof-nudges:"), workflow.length);
+  assert.match(job, /proof_cursor_path="results\/proof-nudge-cursors\/\$\{target_slug\}\.json"/);
+  assert.match(job, /bot_cursor_path="results\/bot-proof-cursors\/\$\{target_slug\}\.json"/);
+  assert.match(job, /if \[ "\$PROOF_NUDGES_EXECUTE" = "true" \] && \[ -f "\$proof_cursor_path" \]/);
+  assert.match(job, /if \[ "\$BOT_PROOF_EXECUTE" = "true" \] && \[ -f "\$bot_cursor_path" \]/);
+  assert.match(job, /cursor_publish_args\+=\(--path "\$(?:proof|bot)_cursor_path"\)/);
+  assert.doesNotMatch(
+    job,
+    /cursor_publish_args\+=\(--path results\/(?:proof-nudge|bot-proof)-cursors\)/,
+  );
 });
 
 test("read-only checkout mode restores file modes and leaves git metadata writable", () => {
