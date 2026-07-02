@@ -54,6 +54,7 @@ import {
   issueImplementationClusterId,
   issueImplementationJobPath,
   isReadyHumanReviewPause,
+  maintainerModeCommandCanResumePausedMode,
   maintainerAutomergeOptInApprovesNeedsHuman as maintainerAutomergeOptInApprovesNeedsHumanReason,
   latestRepairLoopResumeTime,
   parseRoutedCommentCommand,
@@ -655,6 +656,10 @@ function classifyCommand(command: LooseRecord): JsonValue {
           command.issue_number,
           command.intent,
         ),
+        allowNewMaintainerModeCommand: maintainerModeCommandCanResumePausedMode({
+          command: next,
+          entries: repairLoopControlEntries(),
+        }),
         forceReprocess,
       })
     ) {
@@ -1406,7 +1411,9 @@ function repairLoopControlEntries() {
 }
 
 function isRepairLoopControlIntent(command: LooseRecord) {
-  return ["stop", "autofix", "automerge"].includes(String(command?.intent ?? ""));
+  return ["stop", "autofix", "automerge", "clawsweeper_needs_human"].includes(
+    String(command?.intent ?? ""),
+  );
 }
 
 function executeCommand(command: LooseRecord) {
