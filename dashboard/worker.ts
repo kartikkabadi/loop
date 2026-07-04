@@ -3584,6 +3584,7 @@ async function readApplyHealthMarker(env, targetRepo) {
       lanes: applyHealthLanes(health.lanes),
       next_actions: nextActions,
       next_action_buckets: numericRecord(health.next_action_buckets),
+      cycle: applyHealthCycle(health.cycle),
       attention_reasons: Array.isArray(health.attention_reasons)
         ? health.attention_reasons
             .map((reason) => String(reason))
@@ -3620,6 +3621,7 @@ async function readApplyHealthMarker(env, targetRepo) {
       lanes: emptyApplyHealthLanes(),
       next_actions: [],
       next_action_buckets: {},
+      cycle: emptyApplyHealthCycle(),
       attention_reasons: [],
       cursor: null,
     };
@@ -3638,6 +3640,7 @@ function emptyApplyHealthStatus(targetRepos) {
       lanes: emptyApplyHealthLanes(),
       next_actions: [],
       next_action_buckets: {},
+      cycle: emptyApplyHealthCycle(),
       attention_reasons: [],
       cursor: null,
     })),
@@ -3698,6 +3701,31 @@ function applyHealthNextActions(value) {
     })
     .filter(Boolean)
     .slice(0, 12);
+}
+
+function applyHealthCycle(value) {
+  const source = objectValue(value);
+  return {
+    basis: nullableString(source.basis),
+    apply_ready_count: optionalNumber(source.apply_ready_count),
+    window_size: optionalNumber(source.window_size),
+    estimated_full_cycle_windows: optionalNumber(source.estimated_full_cycle_windows),
+    estimated_full_cycle_minutes: optionalNumber(source.estimated_full_cycle_minutes),
+    scheduled_interval_minutes: optionalNumber(source.scheduled_interval_minutes),
+    label: nullableString(source.label),
+  };
+}
+
+function emptyApplyHealthCycle() {
+  return {
+    basis: null,
+    apply_ready_count: null,
+    window_size: null,
+    estimated_full_cycle_windows: null,
+    estimated_full_cycle_minutes: null,
+    scheduled_interval_minutes: null,
+    label: null,
+  };
 }
 function latestIso(values) {
   const timestamps = values
@@ -4761,6 +4789,11 @@ function nullableString(value) {
 function numberOrNull(value) {
   const number = Number(value);
   return Number.isFinite(number) ? number : null;
+}
+
+function optionalNumber(value) {
+  if (value === null || value === undefined || value === "") return null;
+  return numberOrNull(value);
 }
 
 function numberFrom(value, fallback) {
@@ -6890,13 +6923,22 @@ function renderApplyHealth(data) {
     const syncProcessed = Number.isFinite(item.lanes?.comment_sync?.processed) ? fmt.format(item.lanes.comment_sync.processed) : processed;
     const closureSynced = Number.isFinite(item.lanes?.closure?.comment_synced) ? fmt.format(item.lanes.closure.comment_synced) : "0";
     const syncLaneSynced = Number.isFinite(item.lanes?.comment_sync?.comment_synced) ? fmt.format(item.lanes.comment_sync.comment_synced) : "0";
+    const cycle = applyHealthCyclePill(item.cycle);
     return '<div class="apply-health-alert" role="status" title="' + esc(topInfo.summary + " Next: " + topInfo.action) + '">' +
       '<div class="apply-health-heading"><strong>Pruning sweep ' + esc(applyHealthStatusLabel(item.status)) + " - " + esc(item.target_repo || "target repo") + '</strong><span class="pill" title="' + esc("Latest " + applyHealthModeLabel(item.mode) + " status from the sweep-status marker.") + '">' + esc(applyHealthModeLabel(item.mode)) + '</span></div>' +
       '<p>' + esc(applyHealthOperatorSummary(item, topInfo)) + '</p>' +
       '<p class="apply-health-next"><strong>Next check:</strong> ' + esc(topInfo.action) + '</p>' +
       applyHealthActionHtml(action) +
-      '<div class="apply-health-meta"><span class="pill" title="Records checked in this pruning window.">' + esc(processed) + ' processed</span><span class="pill" title="' + esc("Closure lane: " + closureProcessed + " records processed; " + closed + " closed.") + '">' + esc(closed) + ' closed</span><span class="pill" title="' + esc("Durable review comments refreshed across lanes: " + synced + ". Closure lane refreshed " + closureSynced + "; comment-sync lane refreshed " + syncLaneSynced + " from " + syncProcessed + " records.") + '">' + esc(synced) + ' comments synced</span>' + cursorPill + reasons + buckets + linkClass(item.run_url, "workflow run", "pill run-link") + '</div></div>';
+      '<div class="apply-health-meta"><span class="pill" title="Records checked in this pruning window.">' + esc(processed) + ' processed</span><span class="pill" title="' + esc("Closure lane: " + closureProcessed + " records processed; " + closed + " closed.") + '">' + esc(closed) + ' closed</span><span class="pill" title="' + esc("Durable review comments refreshed across lanes: " + synced + ". Closure lane refreshed " + closureSynced + "; comment-sync lane refreshed " + syncLaneSynced + " from " + syncProcessed + " records.") + '">' + esc(synced) + ' comments synced</span>' + cycle + cursorPill + reasons + buckets + linkClass(item.run_url, "workflow run", "pill run-link") + '</div></div>';
   }).join("");
+}
+function applyHealthCyclePill(cycle) {
+  if (!cycle || cycle.basis !== "scheduled_close_cursor") return "";
+  const windows = Number(cycle.estimated_full_cycle_windows);
+  const label = Number.isFinite(windows)
+    ? "revisit ~" + fmt.format(windows) + " window" + (windows === 1 ? "" : "s")
+    : "revisit estimate";
+  return '<span class="pill" title="' + esc(cycle.label || "Estimated time to revisit the current apply-ready close queue.") + '">' + esc(label) + '</span>';
 }
 function applyHealthNeedsAttention(status) {
   return ["attention", "blocked", "degraded", "failed", "needs_attention", "warning"].includes(String(status || "").toLowerCase());

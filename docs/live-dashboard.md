@@ -134,6 +134,10 @@ is absent or a cache event lands in another Cloudflare colo.
 - skip next-action buckets in apply health JSON so stale reviews, missing close
   proof, protected labels, stable skips, invalid reports, and open closing PRs
   are discoverable without reading individual item records
+- scheduled close-cycle telemetry in apply-health JSON, including current
+  apply-ready candidate count and an estimated number of cursor windows to
+  revisit the close queue; scheduled cadence time is explanatory only because
+  successful windows can dispatch immediate continuations
 
 The Worker fetches job details only for the bounded active-run set, limits that
 GitHub fanout to 12 concurrent requests, and caches each run's jobs for 60

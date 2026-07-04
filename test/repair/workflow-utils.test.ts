@@ -6,6 +6,7 @@ import path from "node:path";
 import test from "node:test";
 
 import {
+  applyCursorAdvanceCount,
   artifactItemNumbers,
   automationLimit,
   commentSyncBatchOutput,
@@ -215,6 +216,9 @@ test("workflow utilities summarize apply health with skip buckets and cursor", (
     closeLimit: 5,
     cursorPath,
     cursorRequired: true,
+    candidateCount: 12,
+    cursorAdvanceCount: 4,
+    scheduledIntervalMinutes: 15,
   });
 
   assert.equal(summary.status, "ok");
@@ -252,6 +256,16 @@ test("workflow utilities summarize apply health with skip buckets and cursor", (
     summary.next_actions.find((action) => action.reason === "skipped_comment_auth")?.next_step,
     "Repair the GitHub App write token before retrying comment sync.",
   );
+  assert.deepEqual(summary.cycle, {
+    basis: "scheduled_close_cursor",
+    apply_ready_count: 12,
+    window_size: 4,
+    estimated_full_cycle_windows: 3,
+    estimated_full_cycle_minutes: 45,
+    scheduled_interval_minutes: 15,
+    label:
+      "12 apply-ready close candidates at 4 records per latest cursor advance: about 3 windows; scheduled cadence alone would take roughly 45 min at 15-minute intervals, while successful windows can continue sooner.",
+  });
   assert.equal(summary.cursor?.next_after_number, 40);
 });
 
@@ -388,6 +402,8 @@ test("workflow utilities flag full-window close scans without the required curso
     closeLimit: 5,
     cursorPath: path.join(root, "missing-cursor.json"),
     cursorRequired: true,
+    candidateCount: null,
+    scheduledIntervalMinutes: null,
   });
 
   assert.equal(summary.status, "needs_attention");
@@ -1299,6 +1315,24 @@ test("workflow utilities persist apply cursor from processed or selected items",
       ["openclaw/openclaw", 20, "2026-01-02T00:00:00Z"],
     );
   }
+});
+
+test("workflow utilities count records advanced by the apply cursor", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-workflow-"));
+  const reportPath = path.join(root, "apply-report.json");
+
+  write(
+    reportPath,
+    JSON.stringify([
+      { number: 10, action: "review_comment_synced" },
+      { number: 10, action: "closed" },
+      { number: 30, action: "skipped_changed_since_review" },
+    ]),
+  );
+  assert.equal(applyCursorAdvanceCount(reportPath, "10,20,30,40"), 3);
+
+  write(reportPath, "[]");
+  assert.equal(applyCursorAdvanceCount(reportPath, "10,20,30,40"), 4);
 });
 
 test("workflow utilities select cursor-based PR comment sync batches", () => {

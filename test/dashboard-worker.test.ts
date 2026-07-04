@@ -1557,6 +1557,16 @@ test("dashboard exposes apply health from sweep status without broad scans", asy
       next_action_buckets: {
         review_refresh: 2,
       },
+      cycle: {
+        basis: "scheduled_close_cursor",
+        apply_ready_count: 1200,
+        window_size: 300,
+        estimated_full_cycle_windows: 4,
+        estimated_full_cycle_minutes: null,
+        scheduled_interval_minutes: null,
+        label:
+          "1200 apply-ready close candidates at 300 records per latest cursor advance: about 4 windows.",
+      },
       attention_reasons: ["cursor_required_but_missing_after_full_window"],
       cursor: null,
     },
@@ -1619,6 +1629,8 @@ test("dashboard exposes apply health from sweep status without broad scans", asy
       status.recent.apply_health.items[0].next_actions[0].next_step,
       "Queue a fresh ClawSweeper review before any close retry.",
     );
+    assert.equal(status.recent.apply_health.items[0].cycle.estimated_full_cycle_minutes, null);
+    assert.equal(status.recent.apply_health.items[0].cycle.apply_ready_count, 1200);
     assert.equal(status.recent.apply_health.items[0].cursor, null);
   } finally {
     globalThis.fetch = originalFetch;

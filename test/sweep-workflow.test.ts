@@ -148,6 +148,11 @@ test("apply workflow bounds checkpoints and requeues with a fresh token", () => 
   assert.ok(applyFlagInit < applyStep.indexOf("auto_selected_apply_batch=true"));
   assert.match(applyStep, /apply_cursor_path="results\/apply-cursors\/\$\{target_slug\}\.json"/);
   assert.match(applyStep, /write_apply_health\(\)/);
+  assert.match(applyStep, /proposed-item-count/);
+  assert.match(applyStep, /apply-cursor-advance-count/);
+  assert.match(applyStep, /--candidate-count "\$health_candidate_count"/);
+  assert.match(applyStep, /--cursor-advance-count "\$health_cursor_advance_count"/);
+  assert.match(applyStep, /--scheduled-interval-minutes "\$health_scheduled_interval_minutes"/);
   assert.match(applyStep, /pnpm run --silent workflow -- summarize-apply-report/);
   assert.match(applyStep, /health_cursor_path="\$\{5:-\}"/);
   assert.match(applyStep, /comment_sync_health_cursor_path="\$cursor_path"/);

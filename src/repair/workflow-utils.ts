@@ -21,6 +21,9 @@ type ApplyReportSummaryOptions = {
   closeLimit: number | null;
   cursorPath: string;
   cursorRequired: boolean;
+  candidateCount?: number | null;
+  cursorAdvanceCount?: number | null;
+  scheduledIntervalMinutes?: number | null;
 };
 
 type ApplyReportSummary = {
@@ -43,6 +46,7 @@ type ApplyReportSummary = {
   };
   next_actions: ApplySkipNextAction[];
   next_action_buckets: Record<string, number>;
+  cycle: ApplyCycleSummary;
   attention_reasons: string[];
   cursor_required: boolean;
   cursor: {
@@ -84,6 +88,20 @@ type ApplySkipNextAction = {
 };
 
 type ApplySkipNextActionDetail = Omit<ApplySkipNextAction, "reason" | "count">;
+type ApplyCycleSummary = {
+  basis:
+    | "scheduled_close_cursor"
+    | "not_close_cursor"
+    | "missing_candidate_count"
+    | "missing_window_size"
+    | "no_apply_ready_candidates";
+  apply_ready_count: number | null;
+  window_size: number | null;
+  estimated_full_cycle_windows: number | null;
+  estimated_full_cycle_minutes: number | null;
+  scheduled_interval_minutes: number | null;
+  label: string;
+};
 const args = parseArgs(process.argv.slice(2));
 
 function runCli(): void {
@@ -109,6 +127,11 @@ function runCli(): void {
     case "count-actions":
       console.log(countActions(requiredString("report"), requiredString("action")));
       break;
+    case "apply-cursor-advance-count":
+      console.log(
+        applyCursorAdvanceCount(requiredString("report"), optionalString("item-numbers")),
+      );
+      break;
     case "summarize-apply-report":
       process.stdout.write(
         `${JSON.stringify(
@@ -120,6 +143,15 @@ function runCli(): void {
             closeLimit: optionalString("close-limit") ? numberArg("close-limit", 0) : null,
             cursorPath: optionalString("cursor-path"),
             cursorRequired: booleanArg("cursor-required", false),
+            candidateCount: optionalString("candidate-count")
+              ? nonNegativeIntegerArg("candidate-count")
+              : null,
+            cursorAdvanceCount: optionalString("cursor-advance-count")
+              ? nonNegativeIntegerArg("cursor-advance-count")
+              : null,
+            scheduledIntervalMinutes: optionalString("scheduled-interval-minutes")
+              ? positiveIntegerArg("scheduled-interval-minutes")
+              : null,
           }),
           null,
           2,
@@ -156,6 +188,9 @@ function runCli(): void {
       break;
     case "proposed-item-numbers":
       process.stdout.write(proposedItemNumbers(proposedItemOptions()).join(","));
+      break;
+    case "proposed-item-count":
+      process.stdout.write(String(proposedItemCount(proposedItemOptions())));
       break;
     case "proposed-pr-close-coverage-item-numbers":
       process.stdout.write(proposedPrCloseCoverageItemNumbers(proposedItemOptions()).join(","));
@@ -334,6 +369,13 @@ export function summarizeApplyReport(options: ApplyReportSummaryOptions): ApplyR
 
   const cursor = readApplyCursorForSummary(options.cursorPath);
   const processedLimit = options.processedLimit > 0 ? options.processedLimit : null;
+  const cycle = applyCycleSummary({
+    mode: options.mode,
+    cursorRequired: options.cursorRequired,
+    candidateCount: options.candidateCount ?? null,
+    cursorAdvanceCount: options.cursorAdvanceCount ?? null,
+    scheduledIntervalMinutes: options.scheduledIntervalMinutes ?? null,
+  });
   const attentionReasons: string[] = [];
   if (
     options.cursorRequired &&
@@ -392,6 +434,7 @@ export function summarizeApplyReport(options: ApplyReportSummaryOptions): ApplyR
     lanes,
     next_actions: nextActions,
     next_action_buckets: applyNextActionBuckets(nextActions),
+    cycle,
     attention_reasons: attentionReasons,
     cursor_required: options.cursorRequired,
     cursor,
@@ -644,6 +687,97 @@ function alreadyResolvedAction(): ApplySkipNextActionDetail {
     next_step: "No action is needed unless this bucket dominates repeated runs.",
   };
 }
+
+function applyCycleSummary(options: {
+  mode: string;
+  cursorRequired: boolean;
+  candidateCount: number | null;
+  cursorAdvanceCount: number | null;
+  scheduledIntervalMinutes: number | null;
+}): ApplyCycleSummary {
+  const closeCursorMode =
+    String(options.mode || "").toLowerCase() === "close" && options.cursorRequired;
+  const windowSize =
+    options.cursorAdvanceCount !== null && options.cursorAdvanceCount > 0
+      ? options.cursorAdvanceCount
+      : null;
+  const cadence = options.scheduledIntervalMinutes;
+  if (!closeCursorMode) {
+    return {
+      basis: "not_close_cursor",
+      apply_ready_count: options.candidateCount,
+      window_size: windowSize,
+      estimated_full_cycle_windows: null,
+      estimated_full_cycle_minutes: null,
+      scheduled_interval_minutes: cadence,
+      label: "Cycle estimate is only reported for scheduled close cursor windows.",
+    };
+  }
+  if (options.candidateCount === null) {
+    return {
+      basis: "missing_candidate_count",
+      apply_ready_count: null,
+      window_size: windowSize,
+      estimated_full_cycle_windows: null,
+      estimated_full_cycle_minutes: null,
+      scheduled_interval_minutes: cadence,
+      label:
+        "Cycle estimate is unavailable because the apply-ready candidate count was not recorded.",
+    };
+  }
+  if (options.candidateCount === 0) {
+    return {
+      basis: "no_apply_ready_candidates",
+      apply_ready_count: 0,
+      window_size: windowSize,
+      estimated_full_cycle_windows: 0,
+      estimated_full_cycle_minutes: 0,
+      scheduled_interval_minutes: cadence,
+      label: "No apply-ready close candidates are waiting in this lane.",
+    };
+  }
+  if (!windowSize) {
+    return {
+      basis: "missing_window_size",
+      apply_ready_count: options.candidateCount,
+      window_size: null,
+      estimated_full_cycle_windows: null,
+      estimated_full_cycle_minutes: null,
+      scheduled_interval_minutes: cadence,
+      label: "Cycle estimate is unavailable because no scan window size was recorded.",
+    };
+  }
+  const windows = Math.ceil(options.candidateCount / windowSize);
+  const minutes = cadence && cadence > 0 ? windows * cadence : null;
+  return {
+    basis: "scheduled_close_cursor",
+    apply_ready_count: options.candidateCount,
+    window_size: windowSize,
+    estimated_full_cycle_windows: windows,
+    estimated_full_cycle_minutes: minutes,
+    scheduled_interval_minutes: cadence,
+    label: cycleLabel(options.candidateCount, windowSize, windows, minutes, cadence),
+  };
+}
+
+function cycleLabel(
+  candidateCount: number,
+  windowSize: number,
+  windows: number,
+  minutes: number | null,
+  cadence: number | null,
+): string {
+  const base = `${candidateCount} apply-ready close candidates at ${windowSize} records per latest cursor advance: about ${windows} window${windows === 1 ? "" : "s"}`;
+  if (!minutes || !cadence) return `${base}.`;
+  return `${base}; scheduled cadence alone would take roughly ${durationLabel(minutes)} at ${cadence}-minute intervals, while successful windows can continue sooner.`;
+}
+
+function durationLabel(minutes: number): string {
+  if (minutes < 60) return `${minutes} min`;
+  const hours = Math.floor(minutes / 60);
+  const remainder = minutes % 60;
+  return remainder === 0 ? `${hours}h` : `${hours}h ${remainder}m`;
+}
 function applyReportHealthSummary(options: {
   status: ApplyReportSummary["status"];
   processed: number;
@@ -724,6 +858,11 @@ type CommentSyncBatchOptions = {
 
 export function proposedItemNumbers(options: ProposedItemOptions): number[] {
   return selectedProposedItemCandidates(options, "all").map((candidate) => candidate.number);
+}
+
+export function proposedItemCount(options: ProposedItemOptions): number {
+  return selectedProposedItemCandidates({ ...options, batchSize: null, cursorPath: null }, "all")
+    .length;
 }
 
 export function proposedPrCloseCoverageItemNumbers(options: ProposedItemOptions): number[] {
@@ -1049,19 +1188,7 @@ export function writeApplyCursor(
   targetRepo: string,
   itemNumbers = "",
 ): void {
-  const actions = readApplyActions(reportPath);
-  const processed = actions.flatMap((action) =>
-    typeof action.number === "number" ? [action.number] : [],
-  );
-  const selected = csvItems(itemNumbers)
-    .map((item) => Number(item))
-    .filter((number) => Number.isInteger(number) && number > 0);
-  const processedSet = new Set(processed);
-  const number =
-    selected.filter((itemNumber) => processedSet.has(itemNumber)).at(-1) ??
-    selected.at(-1) ??
-    processed.at(-1) ??
-    0;
+  const { number } = applyCursorAdvance(reportPath, itemNumbers);
   const applyCheckedAt = number > 0 ? applyCheckedAtForItem(targetRepo, number) : "";
   fs.mkdirSync(path.dirname(cursorPath), { recursive: true });
   fs.writeFileSync(
@@ -1077,6 +1204,35 @@ export function writeApplyCursor(
       2,
     )}\n`,
   );
+}
+
+export function applyCursorAdvanceCount(reportPath: string, itemNumbers = ""): number {
+  return applyCursorAdvance(reportPath, itemNumbers).count;
+}
+
+function applyCursorAdvance(
+  reportPath: string,
+  itemNumbers: string,
+): { number: number; count: number } {
+  const processed = readApplyActions(reportPath).flatMap((action) =>
+    typeof action.number === "number" ? [action.number] : [],
+  );
+  const selected = csvItems(itemNumbers)
+    .map((item) => Number(item))
+    .filter((number) => Number.isInteger(number) && number > 0);
+  if (selected.length === 0) {
+    return {
+      number: processed.at(-1) ?? 0,
+      count: new Set(processed).size,
+    };
+  }
+  const processedSet = new Set(processed);
+  const lastProcessedIndex = selected.findLastIndex((number) => processedSet.has(number));
+  const cursorIndex = lastProcessedIndex >= 0 ? lastProcessedIndex : selected.length - 1;
+  return {
+    number: selected[cursorIndex] ?? 0,
+    count: cursorIndex + 1,
+  };
 }
 
 function applyCheckedAtForItem(targetRepo: string, itemNumber: number): string {
@@ -1228,6 +1384,22 @@ function numberArg(name: string, fallback: number): number {
   if (!value) return fallback;
   const parsed = Number(value);
   if (!Number.isFinite(parsed)) throw new Error(`--${name} must be numeric`);
+  return parsed;
+}
+
+function nonNegativeIntegerArg(name: string): number {
+  const parsed = numberArg(name, 0);
+  if (!Number.isInteger(parsed) || parsed < 0) {
+    throw new Error(`--${name} must be a non-negative integer`);
+  }
+  return parsed;
+}
+
+function positiveIntegerArg(name: string): number {
+  const parsed = numberArg(name, 0);
+  if (!Number.isInteger(parsed) || parsed < 1) {
+    throw new Error(`--${name} must be a positive integer`);
+  }
   return parsed;
 }
 
