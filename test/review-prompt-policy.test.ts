@@ -129,6 +129,18 @@ test("review prompt treats plugin API changes as compatibility-sensitive P1 repa
   );
 });
 
+test("review prompt makes ClawHub closes a self-serve handoff", () => {
+  const prompt = readFileSync("prompts/review-item.md", "utf8");
+
+  assert.match(prompt, /For `clawhub` closes/);
+  assert.match(prompt, /self-serve handoff/);
+  assert.match(prompt, /skill, plugin, provider, channel, bundle, or MCP integration/);
+  assert.match(prompt, /metadata, entrypoint, permissions, secrets\/config/);
+  assert.match(prompt, /should not open a ClawHub issue/);
+  assert.match(prompt, /open a ClawHub PR/);
+  assert.match(prompt, /publish the package on the contributor's behalf/);
+});
+
 test("review prompt requires upgrade and preference overwrite checks", () => {
   const prompt = readFileSync("prompts/review-item.md", "utf8");
 

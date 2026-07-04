@@ -9072,7 +9072,7 @@ function closeOutro(reason: CloseReason, canonicalLinks: string[] = []): string 
     case "mostly_implemented_on_main":
       return "So I’m closing this older PR as already covered on `main` rather than keeping a mostly-duplicated branch open.";
     case "clawhub":
-      return `So I’m closing this as a scope-fit item for the plugin/community path. Please upload or publish it through ${markdownLink("ClawHub.com", targetProfile().communityUrl ?? "https://clawhub.ai/")} so it can live as an installable community skill instead of a bundled OpenClaw core change.`;
+      return `So I’m closing this as a scope-fit item for the plugin/community path. Please upload or publish it through ${markdownLink("ClawHub.com", targetProfile().communityUrl ?? "https://clawhub.ai/")} so it can live as an installable ClawHub package instead of a bundled OpenClaw core change.`;
     case "duplicate_or_superseded":
       return canonicalLinks.length
         ? `So I’m closing this here and keeping the remaining discussion on ${formatCanonicalLinks(canonicalLinks)}.`
@@ -9090,6 +9090,17 @@ function closeOutro(reason: CloseReason, canonicalLinks: string[] = []): string 
     default:
       return "";
   }
+}
+
+function closeClawHubHandoffBlock(reason: CloseReason): string {
+  if (reason !== "clawhub") return "";
+  return [
+    "If you want to carry this forward, package it as a self-serve ClawHub item rather than a core patch:",
+    "",
+    "- Scope: choose the smallest skill, plugin, provider, channel, bundle, or MCP integration that matches the requested capability.",
+    "- Checklist: include package metadata/manifest, entrypoint, required permissions, secrets/config notes, install/update docs, example usage, and a smoke test or proof command.",
+    "- Boundary: ClawSweeper will not open a ClawHub issue or PR, create a tracking issue, or publish the package automatically; the contributor should create that ClawHub work separately.",
+  ].join("\n");
 }
 
 function issueOrPullReferenceNumbers(value: string): string[] {
@@ -14328,6 +14339,8 @@ function renderCloseComment(options: {
   if (evidence.length) details.push("", "What I checked:", "", ...evidence);
   if (likelyOwners.length) details.push("", "Likely related people:", "", ...likelyOwners);
 
+  const clawhubHandoff = closeClawHubHandoffBlock(options.reason);
+  if (clawhubHandoff) lines.push("", "**ClawHub handoff**", clawhubHandoff);
   const outro = closeOutro(options.reason, canonicalLinks);
   if (outro) lines.push("", outro);
   if (options.reviewLine) details.push("", options.reviewLine);

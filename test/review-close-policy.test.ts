@@ -472,7 +472,11 @@ test("skill-only OpenClaw PRs can close through ClawHub with upload guidance", (
   assert.equal(action.actionTaken, "proposed_close");
   assert.match(action.closeComment, /ClawHub\.com/);
   assert.match(action.closeComment, /upload or publish/i);
-  assert.match(action.closeComment, /installable community skill/);
+  assert.match(action.closeComment, /ClawHub handoff/);
+  assert.match(action.closeComment, /skill, plugin, provider, channel, bundle, or MCP integration/);
+  assert.match(action.closeComment, /package metadata\/manifest/);
+  assert.match(action.closeComment, /will not open a ClawHub issue or PR/);
+  assert.match(action.closeComment, /installable ClawHub package/);
 });
 
 test("ClawHub policy allows main-implemented issue and PR close proposals", () => {
