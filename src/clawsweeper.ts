@@ -759,6 +759,7 @@ interface WorkflowStatusSummary {
   state: string;
   detail: string;
   runUrl: string | undefined;
+  applyHealth: Record<string, unknown> | undefined;
   plannedCount: number | undefined;
   plannedCapacity: number | undefined;
   plannedShards: number | undefined;
@@ -1918,9 +1919,14 @@ function writeSweepStatus(options: {
   failedReviewRetryExhaustions?: number;
   botOwnedProofDecisionsRequested?: number;
   botOwnedProofDispatches?: number;
+  applyHealth?: Record<string, unknown> | null;
 }): void {
   const profile = options.profile ?? targetProfile();
   const updatedAt = new Date().toISOString();
+  const applyHealth =
+    options.applyHealth === undefined
+      ? readSweepStatusSummary(profile)?.applyHealth
+      : options.applyHealth;
   const payload = {
     schema_version: 1,
     slug: profile.slug,
@@ -1942,6 +1948,7 @@ function writeSweepStatus(options: {
     failed_review_retry_exhaustions: options.failedReviewRetryExhaustions ?? null,
     bot_owned_proof_decisions_requested: options.botOwnedProofDecisionsRequested ?? null,
     bot_owned_proof_dispatches: options.botOwnedProofDispatches ?? null,
+    apply_health: applyHealth ?? null,
     updated_at: updatedAt,
   };
   const outputPath = sweepStatusPath(profile);
@@ -8286,6 +8293,7 @@ function readSweepStatusSummary(profile = targetProfile()): WorkflowStatusSummar
       state: stringOrUndefined(parsed.state) ?? "Idle",
       detail: stringOrUndefined(parsed.detail) ?? "No workflow status has been published yet.",
       runUrl: stringOrUndefined(parsed.run_url),
+      applyHealth: recordOrUndefined(parsed.apply_health),
       plannedCount: numberOrUndefined(parsed.planned_count),
       plannedCapacity: numberOrUndefined(parsed.planned_capacity),
       plannedShards: numberOrUndefined(parsed.planned_shards),
@@ -8314,6 +8322,12 @@ function stringOrUndefined(value: unknown): string | undefined {
 function numberOrUndefined(value: unknown): number | undefined {
   const number = typeof value === "number" ? value : Number(value);
   return Number.isFinite(number) ? number : undefined;
+}
+
+function recordOrUndefined(value: unknown): Record<string, unknown> | undefined {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : undefined;
 }
 
 function currentWorkflowStatusBlock(readme: string, profile = targetProfile()): string {
@@ -8373,6 +8387,7 @@ function workflowStatusSummary(block: string): WorkflowStatusSummary {
     state,
     detail,
     runUrl,
+    applyHealth: undefined,
     plannedCount: numberOrUndefined(planMatch?.[1]),
     plannedShards: numberOrUndefined(planMatch?.[2]),
     plannedCapacity: numberOrUndefined(planMatch?.[3]),
@@ -20386,6 +20401,13 @@ function statusCommand(args: Args): void {
     args.bot_owned_proof_decisions_requested,
   );
   const botOwnedProofDispatches = optionalNumberArg(args.bot_owned_proof_dispatches);
+  const applyHealthArg = applyHealthStatusArg(args);
+  const applyHealth =
+    applyHealthArg === undefined
+      ? state.startsWith("Apply ")
+        ? null
+        : readSweepStatusSummary(profile)?.applyHealth
+      : applyHealthArg;
   const statusOptions: Parameters<typeof writeSweepStatus>[0] = {
     state,
     detail,
@@ -20410,8 +20432,24 @@ function statusCommand(args: Args): void {
     statusOptions.botOwnedProofDecisionsRequested = botOwnedProofDecisionsRequested;
   if (botOwnedProofDispatches !== undefined)
     statusOptions.botOwnedProofDispatches = botOwnedProofDispatches;
+  if (applyHealth !== undefined) statusOptions.applyHealth = applyHealth;
   writeSweepStatus(statusOptions);
   console.log(JSON.stringify({ status_path: sweepStatusRelativePath(profile), state, detail }));
+}
+
+function applyHealthStatusArg(args: Args): Record<string, unknown> | undefined {
+  const filePath = stringArg(args.apply_health_file, "");
+  const jsonText = stringArg(args.apply_health_json, "");
+  if (filePath && jsonText) {
+    throw new Error("--apply-health-file and --apply-health-json are mutually exclusive");
+  }
+  const text = filePath ? readFileSync(resolve(filePath), "utf8") : jsonText;
+  if (!text.trim()) return undefined;
+  const parsed = JSON.parse(text) as unknown;
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    throw new Error("apply health status must be a JSON object");
+  }
+  return parsed as Record<string, unknown>;
 }
 
 function assistCommand(args: Args): void {

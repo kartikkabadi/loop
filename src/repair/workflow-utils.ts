@@ -10,6 +10,41 @@ import { AUTOMATION_LIMITS, WORKER_CONFIG, workerLimit, type WorkerLane } from "
 type ApplyAction = {
   action: string;
   number?: number;
+  reason?: string;
+};
+
+type ApplyReportSummaryOptions = {
+  reportPath: string;
+  targetRepo: string;
+  mode: string;
+  processedLimit: number;
+  closeLimit: number | null;
+  cursorPath: string;
+  cursorRequired: boolean;
+};
+
+type ApplyReportSummary = {
+  schema_version: 1;
+  generated_at: string;
+  target_repo: string;
+  mode: string;
+  status: "ok" | "idle" | "needs_attention";
+  summary: string;
+  processed: number;
+  processed_limit: number | null;
+  close_limit: number | null;
+  closed: number;
+  comment_synced: number;
+  skipped: number;
+  skip_reasons: Record<string, number>;
+  attention_reasons: string[];
+  cursor_required: boolean;
+  cursor: {
+    path: string;
+    next_after_number: number;
+    next_after_apply_checked_at: string | null;
+    updated_at: string | null;
+  } | null;
 };
 
 const args = parseArgs(process.argv.slice(2));
@@ -36,6 +71,23 @@ function runCli(): void {
       break;
     case "count-actions":
       console.log(countActions(requiredString("report"), requiredString("action")));
+      break;
+    case "summarize-apply-report":
+      process.stdout.write(
+        `${JSON.stringify(
+          summarizeApplyReport({
+            reportPath: requiredString("report"),
+            targetRepo: requiredString("target-repo"),
+            mode: optionalString("mode") || "close",
+            processedLimit: numberArg("processed-limit", 0),
+            closeLimit: optionalString("close-limit") ? numberArg("close-limit", 0) : null,
+            cursorPath: optionalString("cursor-path"),
+            cursorRequired: booleanArg("cursor-required", false),
+          }),
+          null,
+          2,
+        )}\n`,
+      );
       break;
     case "count-command-actions":
       console.log(
@@ -225,6 +277,110 @@ export function artifactItemNumbers(artifactDir: string): number[] {
 export function countActions(reportPath: string, action: string): number {
   if (!action) return readApplyActions(reportPath).length;
   return readApplyActions(reportPath).filter((entry) => entry.action === action).length;
+}
+
+export function summarizeApplyReport(options: ApplyReportSummaryOptions): ApplyReportSummary {
+  const actions = readApplyActions(options.reportPath);
+  const skipReasons: Record<string, number> = {};
+  let closed = 0;
+  let commentSynced = 0;
+  let skipped = 0;
+  for (const entry of actions) {
+    if (entry.action === "closed") closed += 1;
+    if (reportsReviewCommentSync(entry)) commentSynced += 1;
+    const productive =
+      entry.action === "closed" ||
+      entry.action === "review_comment_synced" ||
+      (entry.action === "kept_open" && isSuccessfulLabelSyncReason(entry.reason));
+    if (!productive) {
+      skipped += 1;
+      skipReasons[entry.action] = (skipReasons[entry.action] || 0) + 1;
+    }
+  }
+
+  const cursor = readApplyCursorForSummary(options.cursorPath);
+  const processedLimit = options.processedLimit > 0 ? options.processedLimit : null;
+  const attentionReasons: string[] = [];
+  if (
+    options.cursorRequired &&
+    processedLimit !== null &&
+    actions.length >= processedLimit &&
+    !cursor
+  ) {
+    attentionReasons.push("cursor_required_but_missing_after_full_window");
+  }
+  for (const reason of ["skipped_runtime_budget", "skipped_live_fetch_failed"]) {
+    if ((skipReasons[reason] || 0) > 0) attentionReasons.push(reason);
+  }
+  if (actions.length > 0 && skipped === actions.length) {
+    const benignSkipReasons = new Set([
+      "skipped_already_closed",
+      "skipped_closed",
+      "skipped_not_open",
+    ]);
+    for (const reason of Object.keys(skipReasons).sort()) {
+      if (!benignSkipReasons.has(reason) && !attentionReasons.includes(reason)) {
+        attentionReasons.push(reason);
+      }
+    }
+  }
+
+  const status =
+    actions.length === 0 ? "idle" : attentionReasons.length > 0 ? "needs_attention" : "ok";
+  const summary = applyReportHealthSummary({
+    status,
+    processed: actions.length,
+    processedLimit,
+    closed,
+    commentSynced,
+    skipped,
+    cursor,
+    attentionReasons,
+  });
+
+  return {
+    schema_version: 1,
+    generated_at: new Date().toISOString(),
+    target_repo: options.targetRepo,
+    mode: options.mode,
+    status,
+    summary,
+    processed: actions.length,
+    processed_limit: processedLimit,
+    close_limit: options.closeLimit,
+    closed,
+    comment_synced: commentSynced,
+    skipped,
+    skip_reasons: Object.fromEntries(
+      Object.entries(skipReasons).sort(([left], [right]) => left.localeCompare(right)),
+    ),
+    attention_reasons: attentionReasons,
+    cursor_required: options.cursorRequired,
+    cursor,
+  };
+}
+
+function applyReportHealthSummary(options: {
+  status: ApplyReportSummary["status"];
+  processed: number;
+  processedLimit: number | null;
+  closed: number;
+  commentSynced: number;
+  skipped: number;
+  cursor: ApplyReportSummary["cursor"];
+  attentionReasons: string[];
+}): string {
+  if (options.status === "idle") return "Apply processed no records in this run.";
+  const budget =
+    options.processedLimit === null
+      ? `${options.processed} processed`
+      : `${options.processed}/${options.processedLimit} processed`;
+  const cursorText = options.cursor
+    ? `cursor at #${options.cursor.next_after_number}`
+    : "no cursor recorded";
+  const base = `${budget}; ${options.closed} closed, ${options.commentSynced} comments synced, ${options.skipped} skipped; ${cursorText}.`;
+  if (options.attentionReasons.length === 0) return base;
+  return `${base} Attention: ${options.attentionReasons.join(", ")}.`;
 }
 
 export function countCommandActions(reportPath: string, action: string, status = ""): number {
@@ -574,6 +730,7 @@ export function writeCommentSyncCursor(
 type ApplyCursor = {
   applyCheckedAt: string;
   number: number;
+  updatedAt: string | null;
 };
 
 function readApplyCursor(cursorPath: string): ApplyCursor | null {
@@ -586,7 +743,20 @@ function readApplyCursor(cursorPath: string): ApplyCursor | null {
     typeof parsed.next_after_apply_checked_at === "string"
       ? parsed.next_after_apply_checked_at
       : "";
-  return { number, applyCheckedAt };
+  const updatedAt = typeof parsed.updated_at === "string" ? parsed.updated_at : null;
+  return { number, applyCheckedAt, updatedAt };
+}
+
+function readApplyCursorForSummary(cursorPath: string): ApplyReportSummary["cursor"] {
+  if (!cursorPath) return null;
+  const cursor = readApplyCursor(cursorPath);
+  if (!cursor) return null;
+  return {
+    path: cursorPath,
+    next_after_number: cursor.number,
+    next_after_apply_checked_at: cursor.applyCheckedAt || null,
+    updated_at: cursor.updatedAt,
+  };
 }
 
 export function writeApplyCursor(
@@ -707,10 +877,25 @@ function readApplyActions(reportPath: string): ApplyAction[] {
   if (!Array.isArray(parsed)) throw new Error(`${reportPath} must contain an array`);
   return parsed.map((entry) => {
     if (!isJsonObject(entry) || typeof entry.action !== "string") return { action: "" };
+    const action: ApplyAction = { action: entry.action };
+    if (typeof entry.reason === "string") action.reason = entry.reason;
     const number = Number(entry.number);
-    if (!Number.isInteger(number) || number <= 0) return { action: entry.action };
-    return { action: entry.action, number };
+    if (Number.isInteger(number) && number > 0) action.number = number;
+    return action;
   });
+}
+
+function isSuccessfulLabelSyncReason(reason: string | undefined): boolean {
+  return /^(?:synced|dry-run: would sync) (?:advisory issue|ClawSweeper) labels$/.test(
+    reason || "",
+  );
+}
+
+function reportsReviewCommentSync(entry: ApplyAction): boolean {
+  return (
+    entry.action === "review_comment_synced" ||
+    (entry.reason || "").split("; ").includes("updated durable Codex review comment")
+  );
 }
 
 function resultFiles(reportDir: string): string[] {
@@ -760,6 +945,14 @@ function numberArg(name: string, fallback: number): number {
   const parsed = Number(value);
   if (!Number.isFinite(parsed)) throw new Error(`--${name} must be numeric`);
   return parsed;
+}
+
+function booleanArg(name: string, fallback: boolean): boolean {
+  const value = optionalString(name).toLowerCase();
+  if (!value) return fallback;
+  if (["1", "true", "yes", "on"].includes(value)) return true;
+  if (["0", "false", "no", "off"].includes(value)) return false;
+  throw new Error(`--${name} must be boolean`);
 }
 
 function positiveNumber(value: string, fallback: number): number {

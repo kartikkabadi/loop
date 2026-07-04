@@ -1764,7 +1764,7 @@ async function statusSnapshot(env) {
       TERMINAL_BAD_CONCLUSIONS.has(String(run.conclusion)),
   );
   const activeJobs = await activeWorkerSnapshot(env, repo, workerRuns);
-  const [workerHealth, pipeline, clusterRepair, automerge, closed, storedEvents] =
+  const [workerHealth, pipeline, clusterRepair, applyHealth, automerge, closed, storedEvents] =
     await Promise.all([
       withTimeout(
         recentWorkerHealth(env, repo, completedWorkflowRuns),
@@ -1789,6 +1789,14 @@ async function statusSnapshot(env) {
       ).catch((error) => {
         errors.push(error.message);
         return emptyClusterRepairStatus(targetRepos);
+      }),
+      withTimeout(
+        applyHealthStatus(env, targetRepos),
+        OPTIONAL_SECTION_TIMEOUT_MS,
+        "apply health",
+      ).catch((error) => {
+        errors.push(error.message);
+        return emptyApplyHealthStatus(targetRepos);
       }),
       withTimeout(
         recentAutomerge(env, targetRepos[0] || "openclaw/openclaw"),
@@ -1844,6 +1852,7 @@ async function statusSnapshot(env) {
     pipeline,
     recent: {
       cluster_repair: clusterRepair,
+      apply_health: applyHealth,
       automerge: automerge.items,
       closed_items: closed.items,
       closed_stats: closed.stats,
@@ -3525,6 +3534,131 @@ async function clusterRepairStatus(env, repo, targetRepos, activeRuns) {
       .filter((run) => workflowRunNameIncludes(run, "repair cluster worker"))
       .map(workflowRunSummary),
   };
+}
+
+async function applyHealthStatus(env, targetRepos) {
+  const items = await Promise.all(
+    targetRepos.map((targetRepo) => readApplyHealthMarker(env, targetRepo)),
+  );
+  const attention = items.filter((item) => applyHealthNeedsAttention(item.status));
+  return {
+    items,
+    attention_count: attention.length,
+    latest_attention_at: latestIso(attention.map((item) => item.updated_at)),
+  };
+}
+
+async function readApplyHealthMarker(env, targetRepo) {
+  const stateRepo = String(env.CLAWSWEEPER_STATE_REPO || CLAWSWEEPER_STATE_REPO);
+  const stateRef = String(env.CLAWSWEEPER_STATE_REF || CLAWSWEEPER_STATE_REF);
+  const repoSlug = String(targetRepo || "").replace(/\//g, "-");
+  const statusPath = `results/sweep-status/${repoSlug}.json`;
+  try {
+    const content = await githubJson(
+      env,
+      `/repos/${stateRepo}/contents/${githubPath(statusPath)}?ref=${encodeURIComponent(stateRef)}`,
+    );
+    const status = parseJsonObject(decodeGithubContent(content?.content)) || {};
+    const health = objectValue(status.apply_health);
+    const skipReasons = numericRecord(health.skip_reasons);
+    const cursor = objectValue(health.cursor);
+    return {
+      target_repo: nullableString(status.target_repo) || targetRepo,
+      status_path: statusPath,
+      state: nullableString(status.state),
+      detail: nullableString(status.detail),
+      run_url: nullableString(status.run_url),
+      updated_at: nullableString(health.generated_at) || nullableString(status.updated_at),
+      mode: nullableString(health.mode),
+      status: nullableString(health.status) || "unavailable",
+      summary: nullableString(health.summary),
+      processed: numberOrNull(health.processed),
+      processed_limit: numberOrNull(health.processed_limit),
+      close_limit: numberOrNull(health.close_limit),
+      closed: numberOrNull(health.closed),
+      comment_synced: numberOrNull(health.comment_synced),
+      skipped: numberOrNull(health.skipped),
+      skip_reasons: skipReasons,
+      cursor_required: health.cursor_required === true,
+      attention_reasons: Array.isArray(health.attention_reasons)
+        ? health.attention_reasons
+            .map((reason) => String(reason))
+            .filter(Boolean)
+            .slice(0, 8)
+        : [],
+      cursor: cursor.next_after_number
+        ? {
+            next_after_number: numberOrNull(cursor.next_after_number),
+            next_after_apply_checked_at: nullableString(cursor.next_after_apply_checked_at),
+            updated_at: nullableString(cursor.updated_at),
+          }
+        : null,
+    };
+  } catch {
+    return {
+      target_repo: targetRepo,
+      status_path: statusPath,
+      state: null,
+      detail: null,
+      run_url: null,
+      updated_at: null,
+      mode: null,
+      status: "unavailable",
+      summary: null,
+      processed: null,
+      processed_limit: null,
+      close_limit: null,
+      closed: null,
+      comment_synced: null,
+      skipped: null,
+      skip_reasons: {},
+      cursor_required: false,
+      attention_reasons: [],
+      cursor: null,
+    };
+  }
+}
+
+function emptyApplyHealthStatus(targetRepos) {
+  return {
+    items: targetRepos.map((targetRepo) => ({
+      target_repo: targetRepo,
+      status_path: `results/sweep-status/${String(targetRepo || "").replace(/\//g, "-")}.json`,
+      status: "unavailable",
+      updated_at: null,
+      skip_reasons: {},
+      cursor_required: false,
+      attention_reasons: [],
+      cursor: null,
+    })),
+    attention_count: 0,
+    latest_attention_at: null,
+  };
+}
+
+function applyHealthNeedsAttention(status) {
+  return ["attention", "blocked", "degraded", "failed", "needs_attention", "warning"].includes(
+    String(status || "").toLowerCase(),
+  );
+}
+
+function latestIso(values) {
+  const timestamps = values
+    .map((value) => Date.parse(value || ""))
+    .filter((value) => Number.isFinite(value));
+  if (!timestamps.length) return null;
+  return new Date(Math.max(...timestamps)).toISOString();
+}
+
+function numericRecord(value) {
+  const record = objectValue(value);
+  return Object.fromEntries(
+    Object.entries(record)
+      .map(([key, count]) => ({ key, count: numberOrNull(count) }))
+      .filter((entry) => entry.count !== null && entry.count > 0)
+      .sort((left, right) => left.key.localeCompare(right.key))
+      .map((entry) => [entry.key, entry.count]),
+  );
 }
 
 async function readClusterRepairMarker(env, targetRepo) {
@@ -5717,6 +5851,63 @@ h2 {
 .status-dot.waiting { background: var(--amber); }
 .status-dot.done { background: var(--green); }
 .status-dot.failed { background: var(--red); }
+.apply-health-alert {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 11px 12px;
+  border: 1px solid rgba(243,183,89,0.5);
+  border-left: 3px solid var(--amber);
+  border-radius: 8px;
+  background: rgba(243,183,89,0.08);
+}
+.apply-health-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.apply-health-heading strong { color: #ffe0a8; }
+.apply-health-alert p { margin: 0; color: var(--muted); }
+.apply-health-next strong { color: var(--text); }
+.apply-health-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.apply-health-meta .pill {
+  min-height: 22px;
+  padding: 2px 8px;
+  font-size: 11px;
+}
+.apply-health-reason {
+  cursor: help;
+  border-color: rgba(243,183,89,0.35);
+}
+.apply-health-action {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 6px;
+  align-items: center;
+}
+.apply-health-command {
+  min-width: 0;
+  padding: 5px 8px;
+  color: #dce7f5;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  background: rgba(6,10,15,0.45);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  line-height: 1.45;
+}
+.apply-health-copy {
+  min-height: 27px;
+}
+@media (max-width: 740px) {
+  .apply-health-action { grid-template-columns: 1fr; }
+}
 .automatic-head { margin-top: 24px; }
 .automatic-grid {
   display: grid;
@@ -6224,6 +6415,7 @@ a:hover { color: #89c8ff; text-decoration: underline; }
       <span><i class="waiting"></i>waiting</span>
       <span><i></i>available</span>
     </div>
+    <div id="apply-health"></div>
     <div class="automatic-head">
       <h2>Automatic Builds</h2>
       <span class="muted" id="automatic-summary"></span>
@@ -6596,6 +6788,7 @@ function renderDashboard(data, note) {
     metric("🎯 Capacity", fleet.budget_used_percent + "%", "fleet utilization", fleet.budget_used_percent, "var(--green)")
   ].join("");
   renderSystemMap(data);
+  renderApplyHealth(data);
   renderAutomaticWork(data.automatic_work || []);
   renderWorkers(data.workers || []);
   openWorkerFromHash();
@@ -6607,6 +6800,225 @@ function renderDashboard(data, note) {
   renderWorkerHealth(data.health);
   renderOperations(data.recent.operation_counts);
   renderEvents(data.recent.events || []);
+}
+function renderApplyHealth(data) {
+  const target = document.getElementById("apply-health");
+  if (!target) return;
+  const items = (data.recent?.apply_health?.items || []).filter(item => applyHealthNeedsAttention(item.status));
+  if (!items.length) {
+    target.innerHTML = "";
+    return;
+  }
+  target.innerHTML = items.map(item => {
+    const topReason = applyHealthPrimaryReason(item);
+    const topInfo = applyHealthReasonInfo(topReason);
+    const action = applyHealthRecommendedAction(item, topReason);
+    const reasons = applyHealthReasonEntries(item)
+      .slice(0, 4)
+      .map(([reason, count]) => applyHealthReasonPill(reason, count))
+      .join("");
+    const showCursor = item.cursor_required || Boolean(item.cursor?.next_after_number);
+    const cursor = item.cursor?.next_after_number ? "cursor #" + item.cursor.next_after_number : "cursor missing";
+    const cursorTitle = item.cursor?.next_after_number
+      ? "Rotation cursor was recorded; the next pruning run should continue after this item."
+      : "No rotation cursor was recorded. If this was a full scan window, the next pruning run can repeat the same records.";
+    const cursorPill = showCursor
+      ? '<span class="pill" title="' + esc(cursorTitle) + '">' + esc(cursor) + '</span>'
+      : "";
+    const processed = Number.isFinite(item.processed) ? fmt.format(item.processed) : "unknown";
+    const closed = Number.isFinite(item.closed) ? fmt.format(item.closed) : "unknown";
+    const synced = Number.isFinite(item.comment_synced) ? fmt.format(item.comment_synced) : "unknown";
+    return '<div class="apply-health-alert" role="status" title="' + esc(topInfo.summary + " Next: " + topInfo.action) + '">' +
+      '<div class="apply-health-heading"><strong>Pruning sweep ' + esc(applyHealthStatusLabel(item.status)) + " - " + esc(item.target_repo || "target repo") + '</strong><span class="pill" title="' + esc("Latest " + applyHealthModeLabel(item.mode) + " status from the sweep-status marker.") + '">' + esc(applyHealthModeLabel(item.mode)) + '</span></div>' +
+      '<p>' + esc(applyHealthOperatorSummary(item, topInfo)) + '</p>' +
+      '<p class="apply-health-next"><strong>Next check:</strong> ' + esc(topInfo.action) + '</p>' +
+      applyHealthActionHtml(action) +
+      '<div class="apply-health-meta"><span class="pill" title="Records checked in this pruning window.">' + esc(processed) + ' processed</span><span class="pill" title="Issues or pull requests closed by this window.">' + esc(closed) + ' closed</span><span class="pill" title="Review comments refreshed by this window.">' + esc(synced) + ' comments synced</span>' + cursorPill + reasons + linkClass(item.run_url, "workflow run", "pill run-link") + '</div></div>';
+  }).join("");
+}
+function applyHealthNeedsAttention(status) {
+  return ["attention", "blocked", "degraded", "failed", "needs_attention", "warning"].includes(String(status || "").toLowerCase());
+}
+function applyHealthStatusLabel(status) {
+  const value = String(status || "").toLowerCase();
+  if (value === "failed") return "failed";
+  if (value === "degraded" || value === "warning" || value === "attention") return "degraded";
+  return "blocked";
+}
+function applyHealthModeLabel(mode) {
+  const value = String(mode || "").toLowerCase();
+  if (value === "comment_sync") return "comment-sync lane";
+  if (value === "close") return "close lane";
+  return "pruning lane";
+}
+function applyHealthReasonEntries(item) {
+  const entries = [];
+  const seen = new Set();
+  const skipReasons = item.skip_reasons || {};
+  for (const reason of item.attention_reasons || []) {
+    if (!reason || seen.has(reason)) continue;
+    seen.add(reason);
+    const skipCount = skipReasons[reason];
+    entries.push([reason, Number.isFinite(skipCount) ? skipCount : null]);
+  }
+  for (const entry of Object.entries(skipReasons).sort((left, right) => Number(right[1]) - Number(left[1]))) {
+    if (seen.has(entry[0])) continue;
+    seen.add(entry[0]);
+    entries.push(entry);
+  }
+  return entries;
+}
+function applyHealthPrimaryReason(item) {
+  return applyHealthReasonEntries(item)[0]?.[0] || item.status || "";
+}
+function applyHealthReasonPill(reason, count) {
+  const info = applyHealthReasonInfo(reason);
+  const countText = Number.isFinite(count) ? " " + fmt.format(count) : "";
+  return '<span class="pill apply-health-reason" title="' + esc(info.summary + " Next: " + info.action) + '">' + esc(info.label + countText) + '</span>';
+}
+function applyHealthActionHtml(action) {
+  if (!action) return "";
+  const command = action.command || "";
+  const commandHtml = command
+    ? '<code class="apply-health-command" title="' + esc(command) + '">' + esc(command) + '</code><button class="filter-button apply-health-copy" type="button" data-copy-command="' + esc(command) + '" title="Copy this maintainer command">Copy command</button>'
+    : '<span class="apply-health-command" title="' + esc(action.detail || "") + '">' + esc(action.detail || "No safe automatic action is available from the dashboard.") + '</span>';
+  return '<div class="apply-health-action" title="' + esc(action.title || "") + '">' + commandHtml + linkClass(action.url, action.linkLabel || "open workflow", "pill run-link") + '</div>';
+}
+function applyHealthRecommendedAction(item, reason) {
+  const targetRepo = String(item.target_repo || "openclaw/openclaw");
+  const mode = String(item.mode || "").toLowerCase();
+  const workflowUrl = "https://github.com/openclaw/clawsweeper/actions/workflows/sweep.yml";
+  if (reason === "cursor_required_but_missing_after_full_window") {
+    return {
+      title: "Maintainer action: inspect the current run before rerunning, because a missing cursor can make the next run repeat the same window.",
+      detail: "Inspect the cursor-write and state-publish steps; rerun only after the cursor write failure is understood.",
+      url: item.run_url || workflowUrl,
+      linkLabel: item.run_url ? "open run" : "open workflow",
+    };
+  }
+  if (reason === "skipped_changed_since_review") {
+    return {
+      title: "Maintainer action: refresh review records before trying to close changed items.",
+      command: "gh workflow run sweep.yml --repo openclaw/clawsweeper -f target_repo=" + targetRepo + " -f apply_existing=false",
+      url: workflowUrl,
+      linkLabel: "open workflow",
+    };
+  }
+  if (reason === "skipped_pr_close_coverage_proof") {
+    return {
+      title: "Maintainer action: add close-coverage proof before retrying PR pruning.",
+      detail: "Add or refresh close-coverage proof, then rerun the close lane.",
+      url: item.run_url || workflowUrl,
+      linkLabel: item.run_url ? "open run" : "open workflow",
+    };
+  }
+  if (mode === "comment_sync") {
+    return {
+      title: "Maintainer action: run the next comment-sync cursor window. GitHub permissions control who can run it.",
+      command: "gh workflow run sweep.yml --repo openclaw/clawsweeper -f target_repo=" + targetRepo + " -f apply_existing=true -f apply_sync_comments_only=true -f apply_item_numbers=__cursor__ -f apply_limit=25",
+      url: workflowUrl,
+      linkLabel: "open workflow",
+    };
+  }
+  const closeLimit = Number.isFinite(item.close_limit) && item.close_limit > 0 ? item.close_limit : 5;
+  return {
+    title: "Maintainer action: rerun the bounded close lane. GitHub permissions control who can run it.",
+    command: "gh workflow run sweep.yml --repo openclaw/clawsweeper -f target_repo=" + targetRepo + " -f apply_existing=true -f apply_limit=" + closeLimit + " -f apply_kind=all -f apply_close_reasons=all",
+    url: workflowUrl,
+    linkLabel: "open workflow",
+  };
+}
+function applyHealthReasonInfo(reason) {
+  const value = String(reason || "");
+  if (value === "cursor_required_but_missing_after_full_window") {
+    return {
+      label: "Rotation cursor missing",
+      summary: "The pruning sweep processed the full bounded window but did not publish the next cursor.",
+      action: "Open the workflow run and check the cursor-write step; until the cursor is written, the next run can repeat this window.",
+    };
+  }
+  if (value === "skipped_runtime_budget") {
+    return {
+      label: "Runtime budget hit",
+      summary: "The workflow stopped processing because it reached its bounded runtime.",
+      action: "Let the next scheduled sweep continue; if this repeats, reduce the batch size or raise the apply runtime budget.",
+    };
+  }
+  if (value === "skipped_live_fetch_failed") {
+    return {
+      label: "GitHub live check failed",
+      summary: "ClawSweeper could not confirm live GitHub state before mutating an item.",
+      action: "Inspect the workflow run for GitHub API, auth, or rate-limit failures, then rerun after live checks recover.",
+    };
+  }
+  if (value === "skipped_changed_since_review") {
+    return {
+      label: "Changed since review",
+      summary: "The item changed after the ClawSweeper review that proposed the close.",
+      action: "Refresh the ClawSweeper review for those items before closing; this skip is a safety guard.",
+    };
+  }
+  if (value === "skipped_pr_close_coverage_proof") {
+    return {
+      label: "PR close proof needed",
+      summary: "The PR needs coverage proof before ClawSweeper can close it as duplicate or superseded.",
+      action: "Add or refresh close-coverage proof, then rerun the sweep.",
+    };
+  }
+  if (value === "skipped_open_closing_pr") {
+    return {
+      label: "Closing PR still open",
+      summary: "The issue appears covered by an open pull request, so ClawSweeper avoided closing it early.",
+      action: "Review or land the linked closing PR before expecting the issue to close.",
+    };
+  }
+  if (value === "skipped_maintainer_authored") {
+    return {
+      label: "Maintainer-authored item",
+      summary: "Automation will not close this maintainer-authored item without human review.",
+      action: "Have a maintainer decide whether to close it manually or update the review policy.",
+    };
+  }
+  if (value === "skipped_policy_exempt" || value === "skipped_protected_label") {
+    return {
+      label: "Policy-protected item",
+      summary: "A label or policy exemption blocked automated pruning.",
+      action: "Check the policy or label before taking manual action.",
+    };
+  }
+  if (value === "skipped_not_open" || value === "skipped_already_closed" || value === "skipped_closed") {
+    return {
+      label: "Already closed",
+      summary: "The item was no longer open by the time ClawSweeper checked it.",
+      action: "No action is usually needed; investigate only if already-closed records dominate repeated runs.",
+    };
+  }
+  return {
+    label: applyHealthReasonLabel(value || "blocked_condition"),
+    summary: "ClawSweeper reported this skip bucket while checking whether it could safely prune an item.",
+    action: "Open the workflow run and inspect this skip bucket before rerunning or changing limits.",
+  };
+}
+function applyHealthReasonLabel(reason) {
+  return String(reason || "")
+    .replace(/^skipped_/, "")
+    .replace(/_/g, " ")
+    .replace(/\\b\\w/g, letter => letter.toUpperCase());
+}
+function applyHealthOperatorSummary(item, reasonInfo) {
+  const processed = applyHealthCount(item.processed, "record", "records");
+  const skipped = Number.isFinite(item.skipped) ? "; " + applyHealthCount(item.skipped, "record", "records") + " skipped" : "";
+  const closed = Number.isFinite(item.closed) ? item.closed : 0;
+  const synced = Number.isFinite(item.comment_synced) ? item.comment_synced : 0;
+  const useful = closed + synced;
+  const result = useful > 0
+    ? "ClawSweeper processed " + processed + " and completed " + applyHealthCount(useful, "close/comment update", "close/comment updates")
+    : "ClawSweeper processed " + processed + " without closing or syncing anything";
+  return result + skipped + ". Main signal: " + reasonInfo.label + ".";
+}
+function applyHealthCount(value, singular, plural) {
+  if (!Number.isFinite(value)) return "unknown " + plural;
+  return fmt.format(value) + " " + (value === 1 ? singular : plural);
 }
 function renderPipeline(rows) {
   if (!rows.length) {
@@ -6700,6 +7112,21 @@ document.getElementById("automatic-work").addEventListener("click", event => {
   if (!button) return;
   const row = automaticIndex.get(String(button.dataset.automaticId));
   if (row) renderAutomaticDialog(row);
+});
+document.addEventListener("click", event => {
+  const button = event.target.closest("button[data-copy-command]");
+  if (!button) return;
+  const command = String(button.dataset.copyCommand || "");
+  if (!command) return;
+  const copied = navigator.clipboard?.writeText(command);
+  if (!copied) return;
+  copied.then(() => {
+    const original = button.textContent;
+    button.textContent = "Copied";
+    setTimeout(() => {
+      button.textContent = original || "Copy command";
+    }, 1500);
+  }).catch(() => undefined);
 });
 document.getElementById("worker-dialog-close").addEventListener("click", closeWorkerDialog);
 document.getElementById("worker-dialog").addEventListener("click", event => {

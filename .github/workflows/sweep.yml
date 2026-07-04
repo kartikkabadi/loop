@@ -2326,6 +2326,28 @@ jobs:
               git restore results/sweep-status || true
             fi
           }
+          write_apply_health() {
+            report_path="$1"
+            output_path="$2"
+            health_mode="$3"
+            health_processed_limit="$4"
+            health_cursor_path="${5:-}"
+            health_cursor_required="${6:-false}"
+            health_args=(
+              --target-repo "$TARGET_REPO"
+              --report "$report_path"
+              --mode "$health_mode"
+              --processed-limit "$health_processed_limit"
+              --close-limit "$limit"
+            )
+            if [ -n "$health_cursor_path" ]; then
+              health_args+=(--cursor-path "$health_cursor_path")
+            fi
+            if [ "$health_cursor_required" = "true" ]; then
+              health_args+=(--cursor-required true)
+            fi
+            pnpm run --silent workflow -- summarize-apply-report "${health_args[@]}" > "$output_path"
+          }
           reconcile_args=(--target-repo "$TARGET_REPO" --skip-closed-at)
           if [ -n "$item_numbers" ]; then
             reconcile_args+=(--item-numbers "$item_numbers")
@@ -2396,6 +2418,12 @@ jobs:
           fi
           if [ "$sync_comments_only" != "true" ] && [ -z "$item_numbers" ]; then
             echo "No unchanged high-confidence close proposals are awaiting apply. Scheduled apply wakes every 15 minutes and exits without scanning unrelated keep-open records when there is no close work."
+            pnpm run status -- \
+              --target-repo "$TARGET_REPO" \
+              --state "Apply idle" \
+              --detail "No unchanged high-confidence close proposals are awaiting apply. Scheduled apply wakes every 15 minutes and exits without scanning unrelated keep-open records when there is no close work." \
+              --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            publish_status "chore: update idle sweep apply status"
             {
               echo "APPLY_CLOSED_TOTAL=0"
               echo "APPLY_LIMIT=1"
@@ -2455,11 +2483,21 @@ jobs:
                 --target-repo "$TARGET_REPO"
             fi
             publish_changes "chore: sync sweep review comments checkpoint $checkpoint" records apply-report.json results/comment-sync-cursors
+            comment_sync_health_cursor_path=""
+            comment_sync_health_cursor_required="false"
+            comment_sync_health_processed_limit="$comment_sync_processed_limit"
+            if [ "$sync_open_pr_batch" = "true" ]; then
+              comment_sync_health_cursor_path="$cursor_path"
+              comment_sync_health_cursor_required="true"
+              comment_sync_health_processed_limit="$sync_batch_size"
+            fi
+            write_apply_health ".artifacts/apply-reports/apply-report-$checkpoint.json" ".artifacts/apply-health-$checkpoint.json" "comment_sync" "$comment_sync_health_processed_limit" "$comment_sync_health_cursor_path" "$comment_sync_health_cursor_required"
             pnpm run status -- \
               --target-repo "$TARGET_REPO" \
               --state "Apply comments synced" \
               --detail "Comment-only apply checkpoint $checkpoint finished. Synced durable review comments: $synced_count. Result records: $result_count. Item numbers: ${item_numbers:-all}. Next cursor: ${next_cursor:-none}." \
-              --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+              --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              --apply-health-file ".artifacts/apply-health-$checkpoint.json"
             publish_status "chore: update sweep comment sync status"
             echo "::endgroup::"
           fi
@@ -2506,11 +2544,17 @@ jobs:
               apply_publish_paths+=(results/apply-cursors)
             fi
             publish_changes "chore: apply sweep decisions checkpoint $checkpoint" "${apply_publish_paths[@]}"
+            close_health_cursor_path=""
+            if [ "$auto_selected_apply_batch" = "true" ]; then
+              close_health_cursor_path="$apply_cursor_path"
+            fi
+            write_apply_health ".artifacts/apply-reports/apply-report-$checkpoint.json" ".artifacts/apply-health-$checkpoint.json" "close" "$close_processed_limit" "$close_health_cursor_path" "$auto_selected_apply_batch"
             pnpm run status -- \
               --target-repo "$TARGET_REPO" \
               --state "Apply in progress" \
               --detail "Checkpoint $checkpoint finished. Fresh closes in checkpoint: $closed_in_chunk. Total fresh closes in this run: $closed_total/$limit. Result records in checkpoint: $result_count, including durable review comment syncs." \
-              --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+              --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              --apply-health-file ".artifacts/apply-health-$checkpoint.json"
             publish_status "chore: update sweep apply checkpoint $checkpoint status"
             echo "::endgroup::"
             if [ "$result_count" -ge "$close_processed_limit" ]; then
@@ -2535,11 +2579,30 @@ jobs:
             continue_apply=true
             break
           done
+          final_health_mode="close"
+          final_health_processed_limit="$close_processed_limit"
+          final_health_cursor_path=""
+          final_health_cursor_required="$auto_selected_apply_batch"
+          if [ "$auto_selected_apply_batch" = "true" ]; then
+            final_health_cursor_path="$apply_cursor_path"
+          fi
+          if [ "$sync_comments_only" = "true" ]; then
+            final_health_mode="comment_sync"
+            final_health_processed_limit="$comment_sync_processed_limit"
+            final_health_cursor_required="false"
+            if [ "$sync_open_pr_batch" = "true" ]; then
+              final_health_cursor_path="$cursor_path"
+              final_health_cursor_required="true"
+              final_health_processed_limit="$sync_batch_size"
+            fi
+          fi
+          write_apply_health "apply-report.json" ".artifacts/apply-health-final.json" "$final_health_mode" "$final_health_processed_limit" "$final_health_cursor_path" "$final_health_cursor_required"
           pnpm run status -- \
             --target-repo "$TARGET_REPO" \
             --state "Apply finished" \
             --detail "Apply/comment-sync run finished with $closed_total fresh closes out of requested limit $limit. See apply-report.json for per-item results." \
-            --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --apply-health-file ".artifacts/apply-health-final.json"
           publish_status "chore: mark sweep apply finished"
           next_apply_item_numbers="$item_numbers"
           if [ "$auto_selected_apply_batch" = "true" ] && [ -z "$explicit_item_numbers" ]; then

@@ -17,6 +17,7 @@ import {
   plannedItemNumberCsv,
   proposedItemNumbers,
   proposedPrCloseCoverageItemNumbers,
+  summarizeApplyReport,
   writeApplyCursor,
   writeCommentSyncCursor,
 } from "../../dist/repair/workflow-utils.js";
@@ -172,6 +173,186 @@ test("workflow utilities derive artifact item numbers and action counts", () => 
   assert.deepEqual(artifactItemNumbers(path.join(root, "artifacts")), [7, 42]);
   assert.equal(countActions(path.join(root, "apply-report.json"), ""), 2);
   assert.equal(countActions(path.join(root, "apply-report.json"), "closed"), 1);
+});
+
+test("workflow utilities summarize apply health with skip buckets and cursor", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-workflow-"));
+  const reportPath = path.join(root, "apply-report.json");
+  const cursorPath = path.join(root, "results/apply-cursors/openclaw-openclaw.json");
+  write(
+    reportPath,
+    JSON.stringify([
+      { number: 10, action: "closed" },
+      { number: 20, action: "review_comment_synced" },
+      { number: 30, action: "skipped_changed_since_review" },
+      { number: 40, action: "skipped_changed_since_review" },
+    ]),
+  );
+  write(
+    cursorPath,
+    JSON.stringify({
+      next_after_number: 40,
+      next_after_apply_checked_at: "2026-07-01T00:00:00Z",
+      updated_at: "2026-07-03T10:00:00Z",
+    }),
+  );
+
+  const summary = summarizeApplyReport({
+    reportPath,
+    targetRepo: "openclaw/openclaw",
+    mode: "close",
+    processedLimit: 300,
+    closeLimit: 5,
+    cursorPath,
+    cursorRequired: true,
+  });
+
+  assert.equal(summary.status, "ok");
+  assert.equal(summary.processed, 4);
+  assert.equal(summary.closed, 1);
+  assert.equal(summary.comment_synced, 1);
+  assert.deepEqual(summary.skip_reasons, { skipped_changed_since_review: 2 });
+  assert.equal(summary.cursor?.next_after_number, 40);
+});
+
+test("workflow utilities flag full-window close scans without the required cursor", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-workflow-"));
+  const reportPath = path.join(root, "apply-report.json");
+  write(
+    reportPath,
+    JSON.stringify([
+      { number: 10, action: "skipped_changed_since_review" },
+      { number: 20, action: "skipped_changed_since_review" },
+    ]),
+  );
+
+  const summary = summarizeApplyReport({
+    reportPath,
+    targetRepo: "openclaw/openclaw",
+    mode: "close",
+    processedLimit: 2,
+    closeLimit: 5,
+    cursorPath: path.join(root, "missing-cursor.json"),
+    cursorRequired: true,
+  });
+
+  assert.equal(summary.status, "needs_attention");
+  assert.deepEqual(summary.attention_reasons, [
+    "cursor_required_but_missing_after_full_window",
+    "skipped_changed_since_review",
+  ]);
+  assert.match(summary.summary, /Attention:/);
+});
+
+test("workflow utilities require the cursor after a full window that closed an item", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-workflow-"));
+  const reportPath = path.join(root, "apply-report.json");
+  write(
+    reportPath,
+    JSON.stringify([
+      { number: 10, action: "closed" },
+      { number: 20, action: "skipped_changed_since_review" },
+    ]),
+  );
+
+  const summary = summarizeApplyReport({
+    reportPath,
+    targetRepo: "openclaw/openclaw",
+    mode: "close",
+    processedLimit: 2,
+    closeLimit: 5,
+    cursorPath: path.join(root, "missing-cursor.json"),
+    cursorRequired: true,
+  });
+
+  assert.equal(summary.status, "needs_attention");
+  assert.equal(summary.closed, 1);
+  assert.deepEqual(summary.attention_reasons, ["cursor_required_but_missing_after_full_window"]);
+});
+
+test("workflow utilities flag operator-action skips when every result is blocked", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-workflow-"));
+  const reportPath = path.join(root, "apply-report.json");
+  write(
+    reportPath,
+    JSON.stringify([
+      { number: 10, action: "skipped_changed_since_review" },
+      {
+        number: 20,
+        action: "skipped_pr_close_coverage_proof",
+        reason: "close proof kept this open; updated durable Codex review comment",
+      },
+      { number: 30, action: "skipped_maintainer_authored" },
+      { number: 40, action: "skipped_invalid_decision" },
+      { number: 50, action: "skipped_open_closing_pr" },
+      { number: 60, action: "skipped_same_author_pair" },
+      { number: 70, action: "skipped_protected_label" },
+      { number: 80, action: "skipped_already_closed" },
+      {
+        number: 90,
+        action: "kept_open",
+        reason: "review lacks verified local checkout access",
+      },
+      {
+        number: 100,
+        action: "retry_pr_close_coverage_proof",
+        reason: "linked canonical PR changed after coverage proof",
+      },
+    ]),
+  );
+
+  const summary = summarizeApplyReport({
+    reportPath,
+    targetRepo: "openclaw/openclaw",
+    mode: "close",
+    processedLimit: 300,
+    closeLimit: 5,
+    cursorRequired: false,
+  });
+
+  assert.equal(summary.status, "needs_attention");
+  assert.equal(summary.comment_synced, 1);
+  assert.deepEqual(summary.attention_reasons, [
+    "kept_open",
+    "retry_pr_close_coverage_proof",
+    "skipped_changed_since_review",
+    "skipped_invalid_decision",
+    "skipped_maintainer_authored",
+    "skipped_open_closing_pr",
+    "skipped_pr_close_coverage_proof",
+    "skipped_protected_label",
+    "skipped_same_author_pair",
+  ]);
+});
+
+test("workflow utilities keep all-benign skip windows quiet", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-workflow-"));
+  const reportPath = path.join(root, "apply-report.json");
+  write(
+    reportPath,
+    JSON.stringify([
+      { number: 10, action: "skipped_already_closed" },
+      { number: 20, action: "skipped_not_open" },
+      { number: 30, action: "kept_open", reason: "synced ClawSweeper labels" },
+    ]),
+  );
+
+  const summary = summarizeApplyReport({
+    reportPath,
+    targetRepo: "openclaw/openclaw",
+    mode: "close",
+    processedLimit: 300,
+    closeLimit: 5,
+    cursorRequired: false,
+  });
+
+  assert.equal(summary.status, "ok");
+  assert.equal(summary.skipped, 2);
+  assert.deepEqual(summary.skip_reasons, {
+    skipped_already_closed: 1,
+    skipped_not_open: 1,
+  });
+  assert.deepEqual(summary.attention_reasons, []);
 });
 
 test("workflow utilities count nested command actions by status", () => {

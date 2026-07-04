@@ -1988,6 +1988,16 @@ test("sweep dashboard status writes are scoped to the target repository", () => 
   }
 });
 
+test("sweep status writer preserves non-apply health and clears stale apply updates", () => {
+  const source = readText("src/clawsweeper.ts");
+
+  assert.match(
+    source,
+    /state\.startsWith\("Apply "\)\s+\?\s+null\s+:\s+readSweepStatusSummary\(profile\)\?\.applyHealth/,
+  );
+  assert.match(source, /apply_health: applyHealth \?\? null/);
+});
+
 test("review parser strips environment access caveats from risks", () => {
   const parsed = parseDecision(
     closeDecision({
