@@ -13,6 +13,33 @@ const DEFAULT_IGNORED_CHECKS = [
 ];
 const TRANSIENT_CANCELLED_CHECKS = new Set(["real behavior proof"]);
 
+export function dispatchClaimLookupKeys(entry: LooseRecord) {
+  const keys: string[] = [];
+  const commentId = String(entry.comment_id ?? "").trim();
+  const commentUpdatedAt = String(entry.comment_updated_at ?? "").trim();
+  if (commentId && commentUpdatedAt) keys.push(`comment:${commentId}:${commentUpdatedAt}`);
+  const idempotencyKey = String(entry.idempotency_key ?? "").trim();
+  if (idempotencyKey) keys.push(`idempotency:${idempotencyKey}`);
+  return keys;
+}
+
+export function dispatchReceiptKeyMaterial(entry: LooseRecord, claim: LooseRecord | null) {
+  const idempotencyKey = String(entry.idempotency_key ?? entry.comment_version_key ?? "unknown");
+  if (entry.automation_source !== "repair_loop_label_sweep") return idempotencyKey;
+  const attempt = String(
+    claim?.processed_at ?? entry.processed_at ?? entry.comment_updated_at ?? "unknown-attempt",
+  );
+  return `${idempotencyKey}:${attempt}`;
+}
+
+export function hasSuccessfulDispatchExecutionJob(jobs: LooseRecord[], requiredJobName: string) {
+  return jobs.some(
+    (job) =>
+      String(job.name ?? "") === requiredJobName &&
+      String(job.conclusion ?? "").toLowerCase() === "success",
+  );
+}
+
 export function summarizeChecks(checks: LooseRecord[]) {
   const ignored = ignoredCheckNames();
   const latestChecks = latestCheckRuns(checks);
@@ -113,6 +140,49 @@ export function shouldSuppressProcessedCommentVersion(entry: LooseRecord) {
     return false;
   }
   return true;
+}
+
+export function dispatchClaimDecision({
+  claim,
+  runs,
+  expectedTitle,
+  nowMs = Date.now(),
+  graceMs = 300_000,
+}: {
+  claim: LooseRecord | null;
+  runs: LooseRecord[];
+  expectedTitle: string;
+  nowMs?: number;
+  graceMs?: number;
+}) {
+  if (!claim) return { action: "dispatch", run: null };
+  const normalizedGraceMs = Number.isFinite(graceMs) ? Math.max(0, graceMs) : 300_000;
+  const claimedAtMs = Date.parse(String(claim.processed_at ?? ""));
+  const matchingRuns = runs.filter((run) => {
+    if (String(run.display_title ?? run.displayTitle ?? "") !== expectedTitle) return false;
+    const createdAtMs = Date.parse(String(run.created_at ?? run.createdAt ?? ""));
+    return (
+      Number.isFinite(claimedAtMs) &&
+      Number.isFinite(createdAtMs) &&
+      createdAtMs >= claimedAtMs - 5_000
+    );
+  });
+  const successfulRun = matchingRuns.find(
+    (run) =>
+      String(run.conclusion ?? "").toLowerCase() === "success" &&
+      run.dispatch_execution_verified !== false,
+  );
+  if (successfulRun) return { action: "recover", run: successfulRun };
+  const activeRun = matchingRuns.find((run) =>
+    ["queued", "in_progress", "waiting", "pending", "requested"].includes(
+      String(run.status ?? "").toLowerCase(),
+    ),
+  );
+  if (activeRun) return { action: "wait", run: null };
+  if (Number.isFinite(claimedAtMs) && nowMs - claimedAtMs >= normalizedGraceMs) {
+    return { action: "dispatch", run: null };
+  }
+  return { action: "wait", run: null };
 }
 
 export function sortCommentsForRouting(comments: LooseRecord[]) {
@@ -244,7 +314,9 @@ export function readLedger(file: JsonValue) {
 
 export function appendLedger(current: LooseRecord, entries: LooseRecord[]) {
   const compact = entries
-    .filter((entry: JsonValue) => ["executed", "skipped", "waiting"].includes(entry.status))
+    .filter((entry: JsonValue) =>
+      ["claimed", "executed", "skipped", "waiting"].includes(entry.status),
+    )
     .filter((entry: JsonValue) => !isNoopSkip(entry))
     .map((entry: JsonValue) => {
       const actions = compactLedgerActions(entry.actions);
@@ -271,7 +343,7 @@ export function appendLedger(current: LooseRecord, entries: LooseRecord[]) {
         expected_head_sha: entry.expected_head_sha ?? null,
         finding_id: entry.finding_id ?? null,
         status: entry.status,
-        processed_at: new Date().toISOString(),
+        processed_at: entry.processed_at ?? new Date().toISOString(),
         target: entry.target
           ? {
               kind: entry.target.kind,
@@ -313,10 +385,20 @@ function isNoopSkip(entry: LooseRecord) {
 }
 
 function stableLedgerEntry(entry: LooseRecord) {
-  return JSON.stringify({ ...entry, processed_at: null });
+  return JSON.stringify({
+    ...entry,
+    processed_at: entry.status === "claimed" ? entry.processed_at : null,
+  });
 }
 
 function ledgerEntryKey(entry: LooseRecord) {
+  if (
+    !entry.comment_version_key &&
+    entry.automation_source === "repair_loop_label_sweep" &&
+    entry.idempotency_key
+  ) {
+    return `idempotency:${entry.idempotency_key}`;
+  }
   return (
     entry.comment_version_key ??
     `${entry.comment_id ?? "unknown"}:${entry.comment_updated_at ?? "unknown"}`

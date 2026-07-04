@@ -1456,6 +1456,72 @@ test("router classifies fresh human-review pauses before label sweeps", () => {
   assert.match(source, /\.filter\(isReadyHumanReviewPause\)/);
 });
 
+test("comment router durably claims dispatch commands and recovers exact workflow receipts", () => {
+  const source = readFileSync("src/repair/comment-router.ts", "utf8");
+  const sweepWorkflow = readFileSync(".github/workflows/sweep.yml", "utf8");
+  const assistWorkflow = readFileSync(".github/workflows/assist.yml", "utf8");
+  const repairWorkflow = readFileSync(".github/workflows/repair-cluster-worker.yml", "utf8");
+  const executeBlock = source.slice(
+    source.indexOf('await measureAsync("execute_commands"'),
+    source.indexOf('report.ledger_changed = measure("append_ledger"'),
+  );
+  const claimIndex = executeBlock.indexOf("claimDispatchCommands(actionable)");
+  const ackIndex = executeBlock.indexOf("convergePrecreatedCommandAckComments(command)");
+  const executeIndex = executeBlock.indexOf("executeCommand(command)");
+  const claimFunction = source.slice(
+    source.indexOf("function claimDispatchCommands"),
+    source.indexOf("function assertMutationActorIsClawsweeperBot"),
+  );
+
+  assert.ok(claimIndex >= 0);
+  assert.ok(ackIndex > claimIndex);
+  assert.ok(executeIndex > claimIndex);
+  assert.match(claimFunction, /status:\s*"claimed"/);
+  assert.match(claimFunction, /commandHasAction\(command,\s*"dispatch_clawsweeper"\)/);
+  assert.match(claimFunction, /commandHasAction\(command,\s*"dispatch_repair"\)/);
+  assert.match(claimFunction, /commandHasAction\(command,\s*"dispatch_assist"\)/);
+  assert.match(source, /function claimedDispatchState/);
+  assert.match(source, /function refreshDispatchClaim/);
+  assert.match(source, /writeLedger\(ledgerPath\(\), ledger\)/);
+  assert.match(source, /function verifyDispatchExecutionRuns/);
+  assert.match(source, /actions\/runs\/\$\{runId\}\/jobs\?per_page=100/);
+  assert.match(source, /Plan and review cluster/);
+  assert.match(source, /dispatch_execution_verified/);
+  assert.match(source, /dispatchClaimDecision\(\{/);
+  assert.match(source, /dispatchClaimLookupKeys\(entry\)/);
+  assert.match(claimFunction, /dispatchClaimLookupKeys\(command\)/);
+  assert.match(source, /\/runs\?per_page=100&page=\$\{page\}/);
+  assert.match(source, /status:\s*"recovered"/);
+  assert.match(source, /`item_numbers=\$\{dispatchKey\}`/);
+  assert.match(source, /event:\s*"workflow_dispatch"/);
+  assert.match(source, /workflow_dispatch=\$\{fallback\.stderr \|\| fallback\.stdout\}/);
+  assert.match(sweepWorkflow, /Review event item \{0\}#\{1\} \[\{2\}\]/);
+  assert.match(sweepWorkflow, /startsWith\(github\.event\.inputs\.item_numbers, 'router-'\)/);
+  assert.match(
+    sweepWorkflow,
+    /ITEM_NUMBERS:.*startsWith\(github\.event\.inputs\.item_numbers, 'router-'\)/,
+  );
+  assert.match(assistWorkflow, /Assist \{0\}#\{1\} \[\{2\}\]/);
+  assert.match(sweepWorkflow, /delivery_id: dispatchKey/);
+  assert.match(sweepWorkflow, /`router:\$\{dispatchKey\}`/);
+  assert.match(assistWorkflow, /dispatch-receipt-owner\.sh/);
+  assert.match(assistWorkflow, /assist\.yml.*assist/s);
+  assert.match(repairWorkflow, /dispatch-receipt-owner\.sh/);
+  assert.match(repairWorkflow, /repair-cluster-worker\.yml.*Plan and review cluster/s);
+  assert.match(repairWorkflow, /dispatch_key:/);
+});
+
+test("command receipt gates let the oldest same-key run proceed when a newer duplicate is pending", () => {
+  const receiptGate = readFileSync("scripts/dispatch-receipt-owner.sh", "utf8");
+
+  assert.match(receiptGate, /\.display_title == \$title and \.id < \(\$current \| tonumber\)/);
+  assert.match(receiptGate, /\.status == "in_progress"/);
+  assert.match(receiptGate, /\.conclusion == "success"/);
+  assert.match(receiptGate, /actions\/runs\/\$\{run_id\}\/jobs\?per_page=100/);
+  assert.match(receiptGate, /\.name == \$required and \.conclusion == "success"/);
+  assert.doesNotMatch(receiptGate, /\(\.id \| tostring\) != \$current/);
+});
+
 test("trusted autoclose markers are live close gated before close execution", () => {
   const source = readFileSync("src/repair/comment-router.ts", "utf8");
   const autocloseClassifier = source.slice(
