@@ -9,6 +9,7 @@ const QUEUED_RUN_STATUSES = new Set(["queued", "waiting", "requested", "pending"
 type DashboardEnv = Record<string, unknown>;
 type DashboardContext = { waitUntil?: (promise: Promise<unknown>) => void };
 type GithubAppJsonOptions = { method?: string; body?: BodyInit; errorLabel?: string };
+type GithubJsonReader = (path: string) => ReturnType<typeof githubJson>;
 type StoredValue = { value: string; expires_at?: number };
 type WorkflowRunSummary = {
   id: number | string;
@@ -1726,6 +1727,7 @@ async function statusSnapshot(env) {
   const cached = await readCachedSnapshot(env, ttl);
   if (cached) return cached;
 
+  const github = createGithubJsonCache(env);
   const generatedAt = new Date().toISOString();
   const errors = [];
   const repo = env.CLAWSWEEPER_REPO || "openclaw/clawsweeper";
@@ -1735,15 +1737,15 @@ async function statusSnapshot(env) {
     .filter(Boolean);
   const budget = numberFrom(env.WORKER_BUDGET, 128);
   const [runs, completedRuns, filteredActiveRuns] = await Promise.all([
-    githubJson(env, `/repos/${repo}/actions/runs?per_page=100`).catch((error) => {
+    github(`/repos/${repo}/actions/runs?per_page=100`).catch((error) => {
       errors.push(`workflow runs: ${error.message}`);
       return null;
     }),
-    githubJson(env, `/repos/${repo}/actions/runs?status=completed&per_page=100`).catch((error) => {
+    github(`/repos/${repo}/actions/runs?status=completed&per_page=100`).catch((error) => {
       errors.push(`workflow runs completed: ${error.message}`);
       return null;
     }),
-    activeWorkflowRuns(env, repo, errors),
+    activeWorkflowRuns(env, repo, errors, github),
   ]);
   const workflowRuns = Array.isArray(runs?.workflow_runs) ? runs.workflow_runs : [];
   const completedWorkflowRuns = uniqueWorkflowRuns([
@@ -1763,11 +1765,11 @@ async function statusSnapshot(env) {
       codexJobName(`${run.name || ""} ${run.display_title || ""}`) &&
       TERMINAL_BAD_CONCLUSIONS.has(String(run.conclusion)),
   );
-  const activeJobs = await activeWorkerSnapshot(env, repo, workerRuns);
+  const activeJobs = await activeWorkerSnapshot(env, repo, workerRuns, github);
   const [workerHealth, pipeline, clusterRepair, applyHealth, automerge, closed, storedEvents] =
     await Promise.all([
       withTimeout(
-        recentWorkerHealth(env, repo, completedWorkflowRuns),
+        recentWorkerHealth(env, repo, completedWorkflowRuns, github),
         OPTIONAL_SECTION_TIMEOUT_MS * 2,
         "worker health",
       ).catch((error) => {
@@ -1775,7 +1777,7 @@ async function statusSnapshot(env) {
         return emptyWorkerHealth(generatedAt);
       }),
       withTimeout(
-        pipelineItems(env, workerRuns.slice(0, 30)),
+        pipelineItems(env, workerRuns.slice(0, 30), github),
         OPTIONAL_SECTION_TIMEOUT_MS,
         "pipeline",
       ).catch((error) => {
@@ -1783,7 +1785,7 @@ async function statusSnapshot(env) {
         return workerRuns.slice(0, 30).map((run) => classifyRun(run));
       }),
       withTimeout(
-        clusterRepairStatus(env, repo, targetRepos, activeRuns),
+        clusterRepairStatus(env, repo, targetRepos, activeRuns, github),
         OPTIONAL_SECTION_TIMEOUT_MS,
         "cluster repair intake",
       ).catch((error) => {
@@ -1791,7 +1793,7 @@ async function statusSnapshot(env) {
         return emptyClusterRepairStatus(targetRepos);
       }),
       withTimeout(
-        applyHealthStatus(env, targetRepos),
+        applyHealthStatus(env, targetRepos, github),
         OPTIONAL_SECTION_TIMEOUT_MS,
         "apply health",
       ).catch((error) => {
@@ -1799,7 +1801,7 @@ async function statusSnapshot(env) {
         return emptyApplyHealthStatus(targetRepos);
       }),
       withTimeout(
-        recentAutomerge(env, targetRepos[0] || "openclaw/openclaw"),
+        recentAutomerge(env, targetRepos[0] || "openclaw/openclaw", github),
         OPTIONAL_SECTION_TIMEOUT_MS,
         "automerge timing",
       ).catch((error) => {
@@ -1807,7 +1809,7 @@ async function statusSnapshot(env) {
         return { average_ms: null, samples: 0, items: [] };
       }),
       withTimeout(
-        recentClawsweeperClosed(env, targetRepos),
+        recentClawsweeperClosed(env, targetRepos, github),
         OPTIONAL_SECTION_TIMEOUT_MS,
         "recent closed",
       ).catch((error) => {
@@ -2732,7 +2734,12 @@ function githubSearchUrl(query) {
   return `https://github.com/issues?q=${encodeURIComponent(query)}&s=created&o=desc`;
 }
 
-async function activeWorkerSnapshot(env, repo, runs) {
+async function activeWorkerSnapshot(
+  env,
+  repo,
+  runs,
+  github: GithubJsonReader = (path) => githubJson(env, path),
+) {
   const detailRunLimit = Math.max(
     1,
     numberFrom(env.WORKER_DETAIL_RUN_LIMIT, DEFAULT_WORKER_DETAIL_RUN_LIMIT),
@@ -2744,7 +2751,7 @@ async function activeWorkerSnapshot(env, repo, runs) {
   const detailRuns: WorkflowRunSummary[] = runs.slice(0, detailRunLimit);
   const results = await mapWithConcurrency(detailRuns, fetchConcurrency, async (run) => {
     try {
-      const jobs = await workflowJobsForRun(env, repo, run.id);
+      const jobs = await workflowJobsForRun(env, repo, run.id, github);
       return {
         run,
         workers: jobs
@@ -2814,7 +2821,12 @@ async function activeWorkerSnapshot(env, repo, runs) {
   };
 }
 
-async function recentWorkerHealth(env, repo, runs: WorkflowRunSummary[]) {
+async function recentWorkerHealth(
+  env,
+  repo,
+  runs: WorkflowRunSummary[],
+  github: GithubJsonReader = (path) => githubJson(env, path),
+) {
   const cacheKey = `worker-health:v1:${String(repo || "").toLowerCase()}`;
   const cached = await readStoredJson(env, cacheKey);
   if (cached) return cached;
@@ -2837,7 +2849,7 @@ async function recentWorkerHealth(env, repo, runs: WorkflowRunSummary[]) {
   const results = await mapWithConcurrency(completedRuns, fetchConcurrency, async (run) => {
     try {
       return {
-        attempts: (await workflowJobsForRun(env, repo, run.id))
+        attempts: (await workflowJobsForRun(env, repo, run.id, github))
           .filter((job) => isCodexWorkerJob(job))
           .map((job) => workerHealthAttempt(run, job))
           .filter(Boolean),
@@ -3104,14 +3116,18 @@ async function mapWithConcurrency<Item, Result>(
   return results;
 }
 
-async function workflowJobsForRun(env, repo, runId) {
+async function workflowJobsForRun(
+  env,
+  repo,
+  runId,
+  github: GithubJsonReader = (path) => githubJson(env, path),
+) {
   const key = `workflow-jobs:${repo}:${runId}`;
   const cached = await readStoredJson(env, key);
   if (Array.isArray(cached)) return cached;
   const jobs = [];
   for (let page = 1; page <= WORKER_JOB_PAGE_LIMIT; page += 1) {
-    const payload = await githubJson(
-      env,
+    const payload = await github(
       `/repos/${repo}/actions/runs/${runId}/jobs?filter=latest&per_page=100&page=${page}`,
     );
     const pageJobs = Array.isArray(payload?.jobs) ? payload.jobs : [];
@@ -3284,16 +3300,20 @@ function workerStatusRank(status) {
   return 2;
 }
 
-async function activeWorkflowRuns(env, repo, errors) {
+async function activeWorkflowRuns(
+  env,
+  repo,
+  errors,
+  github: GithubJsonReader = (path) => githubJson(env, path),
+) {
   const pages = await Promise.all(
     ACTIVE_RUN_STATUS_FILTERS.map(async (status) => {
-      const runs = await githubJson(
-        env,
-        `/repos/${repo}/actions/runs?status=${status}&per_page=100`,
-      ).catch((error) => {
-        errors.push(`workflow runs ${status}: ${error.message}`);
-        return null;
-      });
+      const runs = await github(`/repos/${repo}/actions/runs?status=${status}&per_page=100`).catch(
+        (error) => {
+          errors.push(`workflow runs ${status}: ${error.message}`);
+          return null;
+        },
+      );
       return Array.isArray(runs?.workflow_runs) ? runs.workflow_runs : [];
     }),
   );
@@ -3334,7 +3354,11 @@ function newestWorkflowRunFirst(left, right) {
   return Date.parse(right.created_at || "") - Date.parse(left.created_at || "");
 }
 
-async function pipelineItems(env, runs) {
+async function pipelineItems(
+  env,
+  runs,
+  github: GithubJsonReader = (path) => githubJson(env, path),
+) {
   const items = [];
   const prCandidates = [];
   for (const run of runs) {
@@ -3348,7 +3372,7 @@ async function pipelineItems(env, runs) {
       prCandidates
         .filter((item) => !item.ci || item.ci.source === "workflow" || item.ci.state === "unknown")
         .slice(0, 4)
-        .map((item) => attachCiStatus(env, item)),
+        .map((item) => attachCiStatus(env, item, github)),
     );
   }
   return items.sort(
@@ -3435,12 +3459,15 @@ async function attachStoredCiStatuses(env, items) {
   );
 }
 
-async function attachCiStatus(env, item) {
+async function attachCiStatus(
+  env,
+  item,
+  github: GithubJsonReader = (path) => githubJson(env, path),
+) {
   try {
-    const pr = await githubJson(env, `/repos/${item.repository}/pulls/${item.item_number}`);
+    const pr = await github(`/repos/${item.repository}/pulls/${item.item_number}`);
     if (!pr?.head?.sha) return;
-    const checks = await githubJson(
-      env,
+    const checks = await github(
       `/repos/${item.repository}/commits/${pr.head.sha}/check-runs?per_page=100`,
     );
     const runs = Array.isArray(checks?.check_runs) ? checks.check_runs : [];
@@ -3464,37 +3491,20 @@ async function attachCiStatus(env, item) {
   }
 }
 
-async function recentAutomerge(env, repo) {
+async function recentAutomerge(
+  env,
+  repo,
+  github: GithubJsonReader = (path) => githubJson(env, path),
+) {
   const cacheKey = `recent-automerge:${String(repo).toLowerCase()}`;
   const cached = await readStoredJson(env, cacheKey);
   if (cached?.items && Array.isArray(cached.items)) return cached;
 
-  const search = await githubJson(
-    env,
+  const search = await github(
     `/search/issues?q=${encodeURIComponent(`repo:${repo} is:pr is:merged label:clawsweeper:automerge sort:updated-desc`)}&per_page=${AVERAGE_LIMIT}`,
   );
-  const items = await Promise.all(
-    (Array.isArray(search?.items) ? search.items : []).map(async (issue) => {
-      const number = issue.number;
-      const [pr, comments] = await Promise.all([
-        githubJson(env, `/repos/${repo}/pulls/${number}`),
-        githubJson(env, `/repos/${repo}/issues/${number}/comments?per_page=100`),
-      ]);
-      const commandAt = firstAutomergeCommandAt(comments);
-      const mergedAt = pr?.merged_at || null;
-      const durationMs =
-        commandAt && mergedAt ? Date.parse(mergedAt) - Date.parse(commandAt) : null;
-      return {
-        url: issue.html_url,
-        title: issue.title,
-        number,
-        command_at: commandAt,
-        merged_at: mergedAt,
-        duration_ms: durationMs,
-        merge_commit_sha: pr?.merge_commit_sha || null,
-      };
-    }),
-  );
+  const issues = Array.isArray(search?.items) ? search.items : [];
+  const items = await recentAutomergeItems(env, repo, issues, github);
   const durations = items
     .map((item) => item.duration_ms)
     .filter((value) => Number.isFinite(value) && value >= 0);
@@ -3514,13 +3524,102 @@ async function recentAutomerge(env, repo) {
   return result;
 }
 
-async function clusterRepairStatus(env, repo, targetRepos, activeRuns) {
+async function recentAutomergeItems(env, repo, issues, github: GithubJsonReader) {
+  if (hasGithubAuth(env) && issues.length) {
+    try {
+      return await recentAutomergeItemsGraphql(env, repo, issues);
+    } catch {
+      // Keep dashboards on the existing REST path when GraphQL hydration is unavailable.
+    }
+  }
+  return Promise.all(issues.map((issue) => recentAutomergeItemRest(repo, issue, github)));
+}
+
+async function recentAutomergeItemsGraphql(env, repo, issues) {
+  const [owner, name] = String(repo || "").split("/");
+  if (!owner || !name) throw new Error(`invalid repository ${repo}`);
+  const aliases = issues
+    .map(
+      (issue, index) => `
+        pr${index}: pullRequest(number: ${Number(issue.number)}) {
+          mergedAt
+          mergeCommit { oid }
+          comments(first: 100) {
+            nodes {
+              body
+              createdAt
+            }
+          }
+        }`,
+    )
+    .join("\n");
+  const data = await githubGraphql(
+    env,
+    `query RecentAutomerge($owner: String!, $name: String!) {
+      repository(owner: $owner, name: $name) {
+        ${aliases}
+      }
+    }`,
+    { owner, name },
+  );
+  const repository = data?.repository || {};
+  return issues.map((issue, index) => {
+    const pr = repository[`pr${index}`];
+    if (!pr) throw new Error(`missing automerge PR ${issue.number}`);
+    const comments = Array.isArray(pr?.comments?.nodes)
+      ? pr.comments.nodes.map((comment) => ({
+          body: comment?.body || "",
+          created_at: comment?.createdAt || null,
+        }))
+      : [];
+    return recentAutomergeItem(issue, {
+      merged_at: pr.mergedAt || null,
+      merge_commit_sha: pr.mergeCommit?.oid || null,
+      comments,
+    });
+  });
+}
+
+async function recentAutomergeItemRest(repo, issue, github: GithubJsonReader) {
+  const number = issue.number;
+  const [pr, comments] = await Promise.all([
+    github(`/repos/${repo}/pulls/${number}`),
+    github(`/repos/${repo}/issues/${number}/comments?per_page=100`),
+  ]);
+  return recentAutomergeItem(issue, {
+    merged_at: pr?.merged_at || null,
+    merge_commit_sha: pr?.merge_commit_sha || null,
+    comments,
+  });
+}
+
+function recentAutomergeItem(issue, details) {
+  const commandAt = firstAutomergeCommandAt(details.comments);
+  const mergedAt = details.merged_at || null;
+  const durationMs = commandAt && mergedAt ? Date.parse(mergedAt) - Date.parse(commandAt) : null;
+  return {
+    url: issue.html_url,
+    title: issue.title,
+    number: issue.number,
+    command_at: commandAt,
+    merged_at: mergedAt,
+    duration_ms: durationMs,
+    merge_commit_sha: details.merge_commit_sha || null,
+  };
+}
+
+async function clusterRepairStatus(
+  env,
+  repo,
+  targetRepos,
+  activeRuns,
+  github: GithubJsonReader = (path) => githubJson(env, path),
+) {
   const [workflowRuns, markers] = await Promise.all([
-    githubJson(
-      env,
+    github(
       `/repos/${repo}/actions/workflows/${encodeURIComponent(CLUSTER_REPAIR_INTAKE_WORKFLOW)}/runs?per_page=5`,
     ).catch(() => ({ workflow_runs: [] })),
-    Promise.all(targetRepos.map((targetRepo) => readClusterRepairMarker(env, targetRepo))),
+    Promise.all(targetRepos.map((targetRepo) => readClusterRepairMarker(env, targetRepo, github))),
   ]);
   const intakeRuns = Array.isArray(workflowRuns?.workflow_runs) ? workflowRuns.workflow_runs : [];
   return {
@@ -3536,9 +3635,13 @@ async function clusterRepairStatus(env, repo, targetRepos, activeRuns) {
   };
 }
 
-async function applyHealthStatus(env, targetRepos) {
+async function applyHealthStatus(
+  env,
+  targetRepos,
+  github: GithubJsonReader = (path) => githubJson(env, path),
+) {
   const items = await Promise.all(
-    targetRepos.map((targetRepo) => readApplyHealthMarker(env, targetRepo)),
+    targetRepos.map((targetRepo) => readApplyHealthMarker(env, targetRepo, github)),
   );
   const attention = items.filter((item) => applyHealthNeedsAttention(item.status));
   return {
@@ -3548,14 +3651,17 @@ async function applyHealthStatus(env, targetRepos) {
   };
 }
 
-async function readApplyHealthMarker(env, targetRepo) {
+async function readApplyHealthMarker(
+  env,
+  targetRepo,
+  github: GithubJsonReader = (path) => githubJson(env, path),
+) {
   const stateRepo = String(env.CLAWSWEEPER_STATE_REPO || CLAWSWEEPER_STATE_REPO);
   const stateRef = String(env.CLAWSWEEPER_STATE_REF || CLAWSWEEPER_STATE_REF);
   const repoSlug = String(targetRepo || "").replace(/\//g, "-");
   const statusPath = `results/sweep-status/${repoSlug}.json`;
   try {
-    const content = await githubJson(
-      env,
+    const content = await github(
       `/repos/${stateRepo}/contents/${githubPath(statusPath)}?ref=${encodeURIComponent(stateRef)}`,
     );
     const status = parseJsonObject(decodeGithubContent(content?.content)) || {};
@@ -3746,14 +3852,17 @@ function numericRecord(value) {
   );
 }
 
-async function readClusterRepairMarker(env, targetRepo) {
+async function readClusterRepairMarker(
+  env,
+  targetRepo,
+  github: GithubJsonReader = (path) => githubJson(env, path),
+) {
   const stateRepo = String(env.CLAWSWEEPER_STATE_REPO || CLAWSWEEPER_STATE_REPO);
   const stateRef = String(env.CLAWSWEEPER_STATE_REF || CLAWSWEEPER_STATE_REF);
   const repoSlug = String(targetRepo || "").replace(/\//g, "-");
   const markerPath = `results/cluster-repair-intake/${repoSlug}.json`;
   try {
-    const content = await githubJson(
-      env,
+    const content = await github(
       `/repos/${stateRepo}/contents/${githubPath(markerPath)}?ref=${encodeURIComponent(stateRef)}`,
     );
     const marker = JSON.parse(decodeGithubContent(content?.content));
@@ -3825,7 +3934,11 @@ function decodeGithubContent(value) {
   return new TextDecoder().decode(bytes);
 }
 
-async function recentClawsweeperClosed(env, repos) {
+async function recentClawsweeperClosed(
+  env,
+  repos,
+  github: GithubJsonReader = (path) => githubJson(env, path),
+) {
   const trustedBotLogins = clawsweeperBotLogins(env);
   const cacheKey = [
     "recent-closed",
@@ -3837,7 +3950,7 @@ async function recentClawsweeperClosed(env, repos) {
 
   const since = new Date(Date.now() - CLOSED_STATS_HOURS * 60 * 60 * 1000).toISOString();
   const rows = await Promise.all(
-    repos.map((repo) => recentClawsweeperClosedForRepo(env, repo, since, trustedBotLogins)),
+    repos.map((repo) => recentClawsweeperClosedForRepo(env, repo, since, trustedBotLogins, github)),
   );
   const items = rows
     .flat()
@@ -3855,14 +3968,20 @@ async function recentClawsweeperClosed(env, repos) {
   return result;
 }
 
-async function recentClawsweeperClosedForRepo(env, repo, since, trustedBotLogins) {
+async function recentClawsweeperClosedForRepo(
+  env,
+  repo,
+  since,
+  trustedBotLogins,
+  github: GithubJsonReader = (path) => githubJson(env, path),
+) {
   const items = [];
-  const firstPage = await githubJson(env, closedIssuesPath(repo, since, 1)).catch(() => []);
+  const firstPage = await github(closedIssuesPath(repo, since, 1)).catch(() => []);
   const pages = [Array.isArray(firstPage) ? firstPage : []];
   if (pages[0].length >= 100 && CLOSED_STATS_PAGE_LIMIT > 1) {
     const remainingPages = await Promise.all(
       Array.from({ length: CLOSED_STATS_PAGE_LIMIT - 1 }, (_, index) =>
-        githubJson(env, closedIssuesPath(repo, since, index + 2)).catch(() => []),
+        github(closedIssuesPath(repo, since, index + 2)).catch(() => []),
       ),
     );
     pages.push(...remainingPages.map((issues) => (Array.isArray(issues) ? issues : [])));
@@ -4250,12 +4369,20 @@ function emptyClosedStats(generatedAt) {
 
 function firstAutomergeCommandAt(comments) {
   if (!Array.isArray(comments)) return null;
-  const command = comments.find((comment) =>
-    /@clawsweeper\s+auto\s*-?\s*merge|@clawsweeper\s+automerge|\/clawsweeper\s+auto\s*-?\s*merge|\/clawsweeper\s+automerge/i.test(
-      String(comment.body || ""),
-    ),
-  );
+  const command = comments
+    .slice()
+    .sort((left, right) => automergeCommentTime(left) - automergeCommentTime(right))
+    .find((comment) =>
+      /@clawsweeper\s+auto\s*-?\s*merge|@clawsweeper\s+automerge|\/clawsweeper\s+auto\s*-?\s*merge|\/clawsweeper\s+automerge/i.test(
+        String(comment.body || ""),
+      ),
+    );
   return command?.created_at || null;
+}
+
+function automergeCommentTime(comment) {
+  const timestamp = Date.parse(String(comment?.created_at || ""));
+  return Number.isFinite(timestamp) ? timestamp : Number.MAX_SAFE_INTEGER;
 }
 
 async function readCachedSnapshot(env, ttlSeconds) {
@@ -4395,6 +4522,19 @@ function storeCacheRequest(key) {
   return new Request(`https://clawsweeper.internal/store/${encodeURIComponent(key)}`, {
     method: "GET",
   });
+}
+
+function createGithubJsonCache(env): GithubJsonReader {
+  const cache = new Map<string, ReturnType<typeof githubJson>>();
+  return (path: string) => {
+    const key = String(path);
+    let request = cache.get(key);
+    if (!request) {
+      request = githubJson(env, key);
+      cache.set(key, request);
+    }
+    return request;
+  };
 }
 
 async function githubJson(env, path) {

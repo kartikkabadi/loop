@@ -1994,6 +1994,115 @@ test("dashboard parallelizes and caches historical GitHub telemetry", async () =
   }
 });
 
+test("dashboard batches recent automerge hydration with GraphQL when authenticated", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalCaches = globalThis.caches;
+  Object.defineProperty(globalThis, "caches", {
+    configurable: true,
+    value: {
+      default: {
+        match: async () => undefined,
+        put: async () => undefined,
+      },
+    },
+  });
+  let searchRequests = 0;
+  let graphqlRequests = 0;
+  let restDetailRequests = 0;
+  globalThis.fetch = async (input) => {
+    const url = new URL(String(input));
+    if (url.pathname.includes("/actions/")) return jsonResponse({ workflow_runs: [] });
+    if (url.pathname === "/search/issues") {
+      searchRequests += 1;
+      return jsonResponse({
+        items: [101, 102].map((number) => ({
+          number,
+          title: `Merged PR ${number}`,
+          html_url: `https://github.com/openclaw/openclaw/pull/${number}`,
+        })),
+      });
+    }
+    if (url.pathname === "/graphql") {
+      graphqlRequests += 1;
+      return jsonResponse({
+        data: {
+          repository: {
+            pr0: {
+              mergedAt: "2026-06-13T18:01:00Z",
+              mergeCommit: { oid: "abc101" },
+              comments: {
+                nodes: [
+                  {
+                    body: "@clawsweeper automerge",
+                    createdAt: "2026-06-13T18:00:30Z",
+                  },
+                  {
+                    body: "/clawsweeper automerge",
+                    createdAt: "2026-06-13T18:00:00Z",
+                  },
+                ],
+              },
+            },
+            pr1: {
+              mergedAt: "2026-06-13T18:04:00Z",
+              mergeCommit: { oid: "abc102" },
+              comments: {
+                nodes: [
+                  {
+                    body: "/clawsweeper automerge",
+                    createdAt: "2026-06-13T18:02:00Z",
+                  },
+                ],
+              },
+            },
+          },
+        },
+      });
+    }
+    if (/^\/repos\/openclaw\/openclaw\/(?:pulls\/\d+|issues\/\d+\/comments)$/.test(url.pathname)) {
+      restDetailRequests += 1;
+      return jsonResponse({});
+    }
+    if (url.pathname === "/repos/openclaw/openclaw/issues") return jsonResponse([]);
+    throw new Error(`unexpected fetch ${url}`);
+  };
+
+  try {
+    const response = await worker.fetch(
+      new Request("https://clawsweeper.openclaw.ai/api/status"),
+      {
+        CLAWSWEEPER_REPO: "openclaw/clawsweeper",
+        TARGET_REPOS: "openclaw/openclaw",
+        CACHE_TTL_SECONDS: "-1",
+        GITHUB_TOKEN: "test-token",
+      },
+      {
+        waitUntil: () => undefined,
+      },
+    );
+    const status = await response.json();
+    assert.equal(response.status, 200);
+    assert.equal(status.averages.automerge_samples, 2);
+    assert.equal(status.averages.automerge_command_to_merge_ms, 90_000);
+    assert.equal(searchRequests, 1);
+    assert.equal(graphqlRequests, 1);
+    assert.equal(restDetailRequests, 0);
+    assert.deepEqual(
+      status.recent.automerge.map((item: { number: number; merge_commit_sha: string }) => [
+        item.number,
+        item.merge_commit_sha,
+      ]),
+      [
+        [101, "abc101"],
+        [102, "abc102"],
+      ],
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+    Object.defineProperty(globalThis, "caches", { configurable: true, value: originalCaches });
+  }
+});
+
 test("dashboard preserves repeated untargeted activity events", async () => {
   const originalFetch = globalThis.fetch;
   const originalCaches = globalThis.caches;
@@ -2182,6 +2291,119 @@ test("dashboard keeps workflow CI status when live PR checks fail", async () => 
     const status = await response.json();
     assert.equal(status.pipeline[0].ci.state, "pending");
     assert.equal(status.pipeline[0].ci.source, "workflow");
+  } finally {
+    globalThis.fetch = originalFetch;
+    Object.defineProperty(globalThis, "caches", { configurable: true, value: originalCaches });
+  }
+});
+
+test("dashboard reuses live PR CI hydration within one status snapshot", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalCaches = globalThis.caches;
+  Object.defineProperty(globalThis, "caches", {
+    configurable: true,
+    value: {
+      default: new MemoryCache(),
+    },
+  });
+  const runs = [
+    {
+      id: 8060901,
+      name: "ClawSweeper",
+      display_title: "Review event item openclaw/openclaw#80609",
+      status: "in_progress",
+      conclusion: null,
+      html_url: "https://github.com/openclaw/clawsweeper/actions/runs/8060901",
+      created_at: isoAgo(120_000),
+      updated_at: isoAgo(10_000),
+    },
+    {
+      id: 8060902,
+      name: "ClawSweeper",
+      display_title: "Review event item openclaw/openclaw#80609",
+      status: "in_progress",
+      conclusion: null,
+      html_url: "https://github.com/openclaw/clawsweeper/actions/runs/8060902",
+      created_at: isoAgo(90_000),
+      updated_at: isoAgo(5_000),
+    },
+  ];
+  let pullRequests = 0;
+  let checkRequests = 0;
+  globalThis.fetch = async (input) => {
+    const url = new URL(String(input));
+    if (url.pathname === "/repos/openclaw/clawsweeper/actions/runs") {
+      const status = url.searchParams.get("status");
+      return jsonResponse({ workflow_runs: !status || status === "in_progress" ? runs : [] });
+    }
+    if (/^\/repos\/openclaw\/clawsweeper\/actions\/runs\/\d+\/jobs$/.test(url.pathname)) {
+      return jsonResponse({ jobs: [] });
+    }
+    if (url.pathname === "/repos/openclaw/openclaw/pulls/80609") {
+      pullRequests += 1;
+      return jsonResponse({ head: { sha: "head-80609" } });
+    }
+    if (url.pathname === "/repos/openclaw/openclaw/commits/head-80609/check-runs") {
+      checkRequests += 1;
+      return jsonResponse({
+        check_runs: [
+          {
+            name: "test",
+            status: "completed",
+            conclusion: "success",
+          },
+        ],
+      });
+    }
+    if (
+      url.pathname ===
+      "/repos/openclaw/clawsweeper/actions/workflows/repair-cluster-intake.yml/runs"
+    ) {
+      return jsonResponse({ workflow_runs: [] });
+    }
+    if (url.pathname === "/search/issues") return jsonResponse({ items: [] });
+    if (url.pathname === "/repos/openclaw/openclaw/issues") return jsonResponse([]);
+    throw new Error(`unexpected fetch ${url}`);
+  };
+
+  try {
+    const response = await worker.fetch(
+      new Request("https://clawsweeper.openclaw.ai/api/status"),
+      {
+        CLAWSWEEPER_REPO: "openclaw/clawsweeper",
+        TARGET_REPOS: "openclaw/openclaw",
+        CACHE_TTL_SECONDS: "0",
+        INCLUDE_CI_STATUS: "1",
+      },
+      {
+        waitUntil: () => undefined,
+      },
+    );
+    const status = await response.json();
+    assert.equal(response.status, 200);
+    assert.equal(pullRequests, 1);
+    assert.equal(checkRequests, 1);
+    assert.deepEqual(
+      status.pipeline.map((row: { ci: { source: string; state: string } }) => row.ci),
+      [
+        {
+          state: "green",
+          head_sha: "head-80609",
+          total: 1,
+          failing: 0,
+          pending: 0,
+          source: "live",
+        },
+        {
+          state: "green",
+          head_sha: "head-80609",
+          total: 1,
+          failing: 0,
+          pending: 0,
+          source: "live",
+        },
+      ],
+    );
   } finally {
     globalThis.fetch = originalFetch;
     Object.defineProperty(globalThis, "caches", { configurable: true, value: originalCaches });
