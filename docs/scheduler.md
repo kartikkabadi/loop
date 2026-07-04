@@ -459,6 +459,14 @@ continuation with a fresh GitHub App token after any checkpoint that closes at
 least one item. A saturated scan that closes nothing stops without chaining so
 the same records cannot create an unbounded runner loop.
 
+Apply and comment-sync Actions run titles include the target repository. Before
+dispatching a default cursor-based apply continuation, the workflow checks
+recent active or queued same-target default cursor runs and treats one of those
+runs as the continuation instead of adding another pending run. Custom-input
+and explicit-item runs have a different title and cannot suppress the default
+cursor lane; their own continuations still dispatch with the exact inputs. The
+log identifies the default cursor run that covered the continuation.
+
 ## Continuation and Recovery
 
 When a normal or hot review run fills its planned capacity, the publish job

@@ -136,6 +136,12 @@ test("apply workflow bounds checkpoints and requeues with a fresh token", () => 
     applyJob.indexOf("- name: Queue review backstops"),
   );
 
+  assert.match(workflow, /format\('Apply default ClawSweeper closures for \{0\}'/);
+  assert.match(workflow, /format\('Apply custom ClawSweeper closures for \{0\}'/);
+  assert.match(
+    workflow,
+    /github\.event\.schedule == '8,23,38,53 \* \* \* \*'\) && 'openclaw\/clawhub'/,
+  );
   assert.match(inputBlock, /apply_limit:[\s\S]*default: "5"/);
   assert.match(inputBlock, /apply_checkpoint_size:[\s\S]*default: "5"/);
   assert.match(applyStep, /Capping apply checkpoint size at 5/);
@@ -185,6 +191,24 @@ test("apply workflow bounds checkpoints and requeues with a fresh token", () => 
   assert.match(applyStep, /echo "APPLY_CONTINUE=\$continue_apply"/);
   assert.match(applyStep, /echo "APPLY_AUTO_SELECTED_BATCH=\$auto_selected_apply_batch"/);
   assert.match(continueStep, /APPLY_CONTINUE:-false/);
+  assert.match(continueStep, /can_share_apply_continuation=false/);
+  assert.match(continueStep, /\[ "\$\{APPLY_AUTO_SELECTED_BATCH:-false\}" = "true" \]/);
+  assert.match(continueStep, /\[ -z "\$\{APPLY_ITEM_NUMBERS:-\}" \]/);
+  assert.match(continueStep, /\[ "\$\{APPLY_COMMENT_SYNC_MIN_AGE_DAYS:-7\}" = "7" \]/);
+  assert.match(continueStep, /preserving exact continuation dispatch/);
+  assert.match(
+    continueStep,
+    /gh api --paginate "repos\/\$\{\{ github\.repository \}\}\/actions\/runs\?per_page=100&status=\$\{run_status\}"/,
+  );
+  assert.match(continueStep, /workflowPath:\.path/);
+  assert.doesNotMatch(continueStep, /workflowName:\.name/);
+  assert.doesNotMatch(continueStep, /gh run list/);
+  assert.match(continueStep, /pnpm run --silent workflow -- apply-continuation-blocker/);
+  assert.match(continueStep, /--current-run-id "\$\{\{ github\.run_id \}\}"/);
+  assert.match(continueStep, /--target-repo "\$\{APPLY_TARGET_REPO:-openclaw\/openclaw\}"/);
+  assert.match(continueStep, /APPLY_CONTINUATION_BLOCKED/);
+  assert.match(continueStep, /existing default cursor run will continue the lane/);
+  assert.match(continueStep, /already covered by \$/);
   assert.match(continueStep, /-f apply_item_numbers="\$APPLY_ITEM_NUMBERS"/);
   assert.doesNotMatch(continueStep, /APPLY_CLOSED_TOTAL:-0.*APPLY_LIMIT:-0/);
 });

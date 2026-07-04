@@ -13,6 +13,17 @@ type ApplyAction = {
   reason?: string;
 };
 
+type ApplyContinuationBlocker = {
+  databaseId: string;
+  status: string;
+};
+
+type ApplyContinuationBlockerOptions = {
+  currentRunId: string;
+  targetRepo: string;
+  nowMs?: number;
+};
+
 type ApplyReportSummaryOptions = {
   reportPath: string;
   targetRepo: string;
@@ -132,6 +143,18 @@ function runCli(): void {
         applyCursorAdvanceCount(requiredString("report"), optionalString("item-numbers")),
       );
       break;
+    case "apply-continuation-blocker": {
+      const blocker = applyContinuationBlocker(readJsonArray(requiredString("runs")), {
+        currentRunId: requiredString("current-run-id"),
+        targetRepo: requiredString("target-repo"),
+      });
+      printOutput({
+        APPLY_CONTINUATION_BLOCKED: blocker ? "true" : "false",
+        APPLY_CONTINUATION_BLOCKER_RUN_ID: blocker?.databaseId ?? "",
+        APPLY_CONTINUATION_BLOCKER_STATUS: blocker?.status ?? "",
+      });
+      break;
+    }
     case "summarize-apply-report":
       process.stdout.write(
         `${JSON.stringify(
@@ -349,6 +372,37 @@ export function artifactItemNumbers(artifactDir: string): number[] {
 export function countActions(reportPath: string, action: string): number {
   if (!action) return readApplyActions(reportPath).length;
   return readApplyActions(reportPath).filter((entry) => entry.action === action).length;
+}
+
+export function applyContinuationBlocker(
+  values: readonly unknown[],
+  options: ApplyContinuationBlockerOptions,
+): ApplyContinuationBlocker | null {
+  const expectedTitle = `Apply default ClawSweeper closures for ${options.targetRepo}`;
+  const activeStatuses = new Set(["in_progress", "pending", "queued", "waiting", "requested"]);
+  const queuedStatuses = new Set(["pending", "queued", "waiting", "requested"]);
+  const staleQueuedMs = 6 * 60 * 60 * 1000;
+  const nowMs = options.nowMs ?? Date.now();
+  const seen = new Set<string>();
+
+  for (const value of values) {
+    if (!isJsonObject(value)) continue;
+    const databaseId = String(value.databaseId ?? "");
+    if (!databaseId || seen.has(databaseId)) continue;
+    seen.add(databaseId);
+    if (databaseId === options.currentRunId) continue;
+    if (value.workflowPath !== ".github/workflows/sweep.yml") continue;
+    if (value.displayTitle !== expectedTitle) continue;
+    const status = String(value.status ?? "");
+    if (!activeStatuses.has(status)) continue;
+    if (queuedStatuses.has(status)) {
+      const updatedAt = String(value.updatedAt || value.createdAt || "");
+      const lastChangedAt = Date.parse(updatedAt);
+      if (Number.isFinite(lastChangedAt) && nowMs - lastChangedAt > staleQueuedMs) continue;
+    }
+    return { databaseId, status };
+  }
+  return null;
 }
 
 export function summarizeApplyReport(options: ApplyReportSummaryOptions): ApplyReportSummary {
@@ -1356,6 +1410,12 @@ function resultActions(reportPath: string): LooseRecord[] {
 function readJsonObject(filePath: string): LooseRecord {
   const parsed: unknown = JSON.parse(fs.readFileSync(filePath, "utf8"));
   if (!isJsonObject(parsed)) throw new Error(`${filePath} must contain a JSON object`);
+  return parsed;
+}
+
+function readJsonArray(filePath: string): unknown[] {
+  const parsed: unknown = JSON.parse(fs.readFileSync(filePath, "utf8"));
+  if (!Array.isArray(parsed)) throw new Error(`${filePath} must contain a JSON array`);
   return parsed;
 }
 
