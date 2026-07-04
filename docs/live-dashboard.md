@@ -128,6 +128,9 @@ is absent or a cache event lands in another Cloudflare colo.
 - problem-focused pruning alerts from latest sweep status files when apply runs
   report blocked or degraded progress, with reason tooltips and maintainer
   workflow commands for safe follow-up
+- lane-level apply health in status JSON so closure processing and durable
+  review-comment sync are reported separately even when they share the same
+  applicator
 
 The Worker fetches job details only for the bounded active-run set, limits that
 GitHub fanout to 12 concurrent requests, and caches each run's jobs for 60

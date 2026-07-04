@@ -37,6 +37,10 @@ type ApplyReportSummary = {
   comment_synced: number;
   skipped: number;
   skip_reasons: Record<string, number>;
+  lanes: {
+    closure: ApplyLaneSummary;
+    comment_sync: ApplyLaneSummary;
+  };
   attention_reasons: string[];
   cursor_required: boolean;
   cursor: {
@@ -45,6 +49,14 @@ type ApplyReportSummary = {
     next_after_apply_checked_at: string | null;
     updated_at: string | null;
   } | null;
+};
+
+type ApplyLaneSummary = {
+  processed: number;
+  closed: number;
+  comment_synced: number;
+  skipped: number;
+  skip_reasons: Record<string, number>;
 };
 
 const args = parseArgs(process.argv.slice(2));
@@ -281,6 +293,7 @@ export function countActions(reportPath: string, action: string): number {
 
 export function summarizeApplyReport(options: ApplyReportSummaryOptions): ApplyReportSummary {
   const actions = readApplyActions(options.reportPath);
+  const lanes = summarizeApplyLanes(actions, options.mode);
   const skipReasons: Record<string, number> = {};
   let closed = 0;
   let commentSynced = 0;
@@ -288,11 +301,7 @@ export function summarizeApplyReport(options: ApplyReportSummaryOptions): ApplyR
   for (const entry of actions) {
     if (entry.action === "closed") closed += 1;
     if (reportsReviewCommentSync(entry)) commentSynced += 1;
-    const productive =
-      entry.action === "closed" ||
-      entry.action === "review_comment_synced" ||
-      (entry.action === "kept_open" && isSuccessfulLabelSyncReason(entry.reason));
-    if (!productive) {
+    if (!isProductiveApplyAction(entry)) {
       skipped += 1;
       skipReasons[entry.action] = (skipReasons[entry.action] || 0) + 1;
     }
@@ -354,10 +363,76 @@ export function summarizeApplyReport(options: ApplyReportSummaryOptions): ApplyR
     skip_reasons: Object.fromEntries(
       Object.entries(skipReasons).sort(([left], [right]) => left.localeCompare(right)),
     ),
+    lanes,
     attention_reasons: attentionReasons,
     cursor_required: options.cursorRequired,
     cursor,
   };
+}
+
+function summarizeApplyLanes(
+  actions: ApplyAction[],
+  mode: string,
+): { closure: ApplyLaneSummary; comment_sync: ApplyLaneSummary } {
+  const lanes = {
+    closure: emptyApplyLaneSummary(),
+    comment_sync: emptyApplyLaneSummary(),
+  };
+  for (const entry of actions) {
+    const laneName = applyActionLane(entry.action, mode);
+    const lane = lanes[laneName];
+    lane.processed += 1;
+    if (entry.action === "closed") lane.closed += 1;
+    if (reportsReviewCommentSync(entry)) lane.comment_synced += 1;
+    if (!isProductiveApplyAction(entry)) {
+      lane.skipped += 1;
+      lane.skip_reasons[entry.action] = (lane.skip_reasons[entry.action] || 0) + 1;
+    }
+  }
+  return {
+    closure: sortApplyLaneSummary(lanes.closure),
+    comment_sync: sortApplyLaneSummary(lanes.comment_sync),
+  };
+}
+
+function emptyApplyLaneSummary(): ApplyLaneSummary {
+  return {
+    processed: 0,
+    closed: 0,
+    comment_synced: 0,
+    skipped: 0,
+    skip_reasons: {},
+  };
+}
+
+function sortApplyLaneSummary(lane: ApplyLaneSummary): ApplyLaneSummary {
+  return {
+    ...lane,
+    skip_reasons: Object.fromEntries(
+      Object.entries(lane.skip_reasons).sort(([left], [right]) => left.localeCompare(right)),
+    ),
+  };
+}
+
+function applyActionLane(action: string, mode: string): "closure" | "comment_sync" {
+  if (
+    String(mode || "").toLowerCase() === "comment_sync" ||
+    action === "review_comment_synced" ||
+    action === "skipped_comment_auth" ||
+    action === "skipped_locked_conversation" ||
+    action === "skipped_stale_review_comment_sync"
+  ) {
+    return "comment_sync";
+  }
+  return "closure";
+}
+
+function isProductiveApplyAction(entry: ApplyAction): boolean {
+  return (
+    entry.action === "closed" ||
+    entry.action === "review_comment_synced" ||
+    (entry.action === "kept_open" && isSuccessfulLabelSyncReason(entry.reason))
+  );
 }
 
 function applyReportHealthSummary(options: {

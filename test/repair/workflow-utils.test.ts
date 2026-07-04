@@ -186,6 +186,16 @@ test("workflow utilities summarize apply health with skip buckets and cursor", (
       { number: 20, action: "review_comment_synced" },
       { number: 30, action: "skipped_changed_since_review" },
       { number: 40, action: "skipped_changed_since_review" },
+      {
+        number: 50,
+        action: "skipped_comment_auth",
+        reason: "GitHub rejected durable review comment write with Requires authentication",
+      },
+      {
+        number: 60,
+        action: "skipped_locked_conversation",
+        reason: "conversation was locked while syncing review comment",
+      },
     ]),
   );
   write(
@@ -208,11 +218,76 @@ test("workflow utilities summarize apply health with skip buckets and cursor", (
   });
 
   assert.equal(summary.status, "ok");
-  assert.equal(summary.processed, 4);
+  assert.equal(summary.processed, 6);
   assert.equal(summary.closed, 1);
   assert.equal(summary.comment_synced, 1);
-  assert.deepEqual(summary.skip_reasons, { skipped_changed_since_review: 2 });
+  assert.deepEqual(summary.skip_reasons, {
+    skipped_changed_since_review: 2,
+    skipped_comment_auth: 1,
+    skipped_locked_conversation: 1,
+  });
+  assert.deepEqual(summary.lanes.closure, {
+    processed: 3,
+    closed: 1,
+    comment_synced: 0,
+    skipped: 2,
+    skip_reasons: { skipped_changed_since_review: 2 },
+  });
+  assert.deepEqual(summary.lanes.comment_sync, {
+    processed: 3,
+    closed: 0,
+    comment_synced: 1,
+    skipped: 2,
+    skip_reasons: {
+      skipped_comment_auth: 1,
+      skipped_locked_conversation: 1,
+    },
+  });
   assert.equal(summary.cursor?.next_after_number, 40);
+});
+
+test("workflow utilities summarize comment-sync apply reports separately from closure", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-workflow-"));
+  const reportPath = path.join(root, "apply-report.json");
+  write(
+    reportPath,
+    JSON.stringify([
+      { number: 10, action: "review_comment_synced" },
+      { number: 20, action: "skipped_stale_review_comment_sync" },
+      { number: 30, action: "skipped_pr_close_coverage_proof" },
+    ]),
+  );
+
+  const summary = summarizeApplyReport({
+    reportPath,
+    targetRepo: "openclaw/openclaw",
+    mode: "comment_sync",
+    processedLimit: 25,
+    closeLimit: null,
+    cursorPath: path.join(root, "missing-cursor.json"),
+    cursorRequired: false,
+  });
+
+  assert.equal(summary.mode, "comment_sync");
+  assert.equal(summary.closed, 0);
+  assert.equal(summary.comment_synced, 1);
+  assert.deepEqual(summary.lanes.closure, {
+    processed: 0,
+    closed: 0,
+    comment_synced: 0,
+    skipped: 0,
+    skip_reasons: {},
+  });
+  assert.deepEqual(summary.lanes.comment_sync, {
+    processed: 3,
+    closed: 0,
+    comment_synced: 1,
+    skipped: 2,
+    skip_reasons: {
+      skipped_pr_close_coverage_proof: 1,
+      skipped_stale_review_comment_sync: 1,
+    },
+  });
 });
 
 test("workflow utilities flag full-window close scans without the required cursor", () => {
@@ -323,6 +398,11 @@ test("workflow utilities flag operator-action skips when every result is blocked
     "skipped_protected_label",
     "skipped_same_author_pair",
   ]);
+  assert.equal(summary.lanes.closure.skipped, 10);
+  assert.equal(summary.lanes.closure.comment_synced, 1);
+  assert.equal(summary.lanes.closure.skip_reasons.kept_open, 1);
+  assert.equal(summary.lanes.closure.skip_reasons.retry_pr_close_coverage_proof, 1);
+  assert.equal(summary.lanes.closure.skip_reasons.skipped_pr_close_coverage_proof, 1);
 });
 
 test("workflow utilities keep all-benign skip windows quiet", () => {
@@ -349,6 +429,11 @@ test("workflow utilities keep all-benign skip windows quiet", () => {
   assert.equal(summary.status, "ok");
   assert.equal(summary.skipped, 2);
   assert.deepEqual(summary.skip_reasons, {
+    skipped_already_closed: 1,
+    skipped_not_open: 1,
+  });
+  assert.equal(summary.lanes.closure.skipped, 2);
+  assert.deepEqual(summary.lanes.closure.skip_reasons, {
     skipped_already_closed: 1,
     skipped_not_open: 1,
   });

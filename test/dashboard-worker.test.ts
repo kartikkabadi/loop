@@ -1524,6 +1524,24 @@ test("dashboard exposes apply health from sweep status without broad scans", asy
       skip_reasons: {
         skipped_changed_since_review: 2,
       },
+      lanes: {
+        closure: {
+          processed: 2,
+          closed: 0,
+          comment_synced: 0,
+          skipped: 2,
+          skip_reasons: {
+            skipped_changed_since_review: 2,
+          },
+        },
+        comment_sync: {
+          processed: 0,
+          closed: 0,
+          comment_synced: 0,
+          skipped: 0,
+          skip_reasons: {},
+        },
+      },
       attention_reasons: ["cursor_required_but_missing_after_full_window"],
       cursor: null,
     },
@@ -1569,6 +1587,16 @@ test("dashboard exposes apply health from sweep status without broad scans", asy
     assert.deepEqual(status.recent.apply_health.items[0].skip_reasons, {
       skipped_changed_since_review: 2,
     });
+    assert.deepEqual(status.recent.apply_health.items[0].lanes.closure, {
+      processed: 2,
+      closed: 0,
+      comment_synced: 0,
+      skipped: 2,
+      skip_reasons: {
+        skipped_changed_since_review: 2,
+      },
+    });
+    assert.equal(status.recent.apply_health.items[0].lanes.comment_sync.processed, 0);
     assert.equal(status.recent.apply_health.items[0].cursor, null);
   } finally {
     globalThis.fetch = originalFetch;

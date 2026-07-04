@@ -3580,6 +3580,7 @@ async function readApplyHealthMarker(env, targetRepo) {
       skipped: numberOrNull(health.skipped),
       skip_reasons: skipReasons,
       cursor_required: health.cursor_required === true,
+      lanes: applyHealthLanes(health.lanes),
       attention_reasons: Array.isArray(health.attention_reasons)
         ? health.attention_reasons
             .map((reason) => String(reason))
@@ -3613,6 +3614,7 @@ async function readApplyHealthMarker(env, targetRepo) {
       skipped: null,
       skip_reasons: {},
       cursor_required: false,
+      lanes: emptyApplyHealthLanes(),
       attention_reasons: [],
       cursor: null,
     };
@@ -3628,6 +3630,7 @@ function emptyApplyHealthStatus(targetRepos) {
       updated_at: null,
       skip_reasons: {},
       cursor_required: false,
+      lanes: emptyApplyHealthLanes(),
       attention_reasons: [],
       cursor: null,
     })),
@@ -3640,6 +3643,32 @@ function applyHealthNeedsAttention(status) {
   return ["attention", "blocked", "degraded", "failed", "needs_attention", "warning"].includes(
     String(status || "").toLowerCase(),
   );
+}
+
+function applyHealthLanes(value) {
+  const source = objectValue(value);
+  return {
+    closure: applyHealthLane(source.closure),
+    comment_sync: applyHealthLane(source.comment_sync),
+  };
+}
+
+function emptyApplyHealthLanes() {
+  return {
+    closure: applyHealthLane(null),
+    comment_sync: applyHealthLane(null),
+  };
+}
+
+function applyHealthLane(value) {
+  const source = objectValue(value);
+  return {
+    processed: numberOrNull(source.processed),
+    closed: numberOrNull(source.closed),
+    comment_synced: numberOrNull(source.comment_synced),
+    skipped: numberOrNull(source.skipped),
+    skip_reasons: numericRecord(source.skip_reasons),
+  };
 }
 
 function latestIso(values) {
@@ -6828,12 +6857,16 @@ function renderApplyHealth(data) {
     const processed = Number.isFinite(item.processed) ? fmt.format(item.processed) : "unknown";
     const closed = Number.isFinite(item.closed) ? fmt.format(item.closed) : "unknown";
     const synced = Number.isFinite(item.comment_synced) ? fmt.format(item.comment_synced) : "unknown";
+    const closureProcessed = Number.isFinite(item.lanes?.closure?.processed) ? fmt.format(item.lanes.closure.processed) : processed;
+    const syncProcessed = Number.isFinite(item.lanes?.comment_sync?.processed) ? fmt.format(item.lanes.comment_sync.processed) : processed;
+    const closureSynced = Number.isFinite(item.lanes?.closure?.comment_synced) ? fmt.format(item.lanes.closure.comment_synced) : "0";
+    const syncLaneSynced = Number.isFinite(item.lanes?.comment_sync?.comment_synced) ? fmt.format(item.lanes.comment_sync.comment_synced) : "0";
     return '<div class="apply-health-alert" role="status" title="' + esc(topInfo.summary + " Next: " + topInfo.action) + '">' +
       '<div class="apply-health-heading"><strong>Pruning sweep ' + esc(applyHealthStatusLabel(item.status)) + " - " + esc(item.target_repo || "target repo") + '</strong><span class="pill" title="' + esc("Latest " + applyHealthModeLabel(item.mode) + " status from the sweep-status marker.") + '">' + esc(applyHealthModeLabel(item.mode)) + '</span></div>' +
       '<p>' + esc(applyHealthOperatorSummary(item, topInfo)) + '</p>' +
       '<p class="apply-health-next"><strong>Next check:</strong> ' + esc(topInfo.action) + '</p>' +
       applyHealthActionHtml(action) +
-      '<div class="apply-health-meta"><span class="pill" title="Records checked in this pruning window.">' + esc(processed) + ' processed</span><span class="pill" title="Issues or pull requests closed by this window.">' + esc(closed) + ' closed</span><span class="pill" title="Review comments refreshed by this window.">' + esc(synced) + ' comments synced</span>' + cursorPill + reasons + linkClass(item.run_url, "workflow run", "pill run-link") + '</div></div>';
+      '<div class="apply-health-meta"><span class="pill" title="Records checked in this pruning window.">' + esc(processed) + ' processed</span><span class="pill" title="' + esc("Closure lane: " + closureProcessed + " records processed; " + closed + " closed.") + '">' + esc(closed) + ' closed</span><span class="pill" title="' + esc("Durable review comments refreshed across lanes: " + synced + ". Closure lane refreshed " + closureSynced + "; comment-sync lane refreshed " + syncLaneSynced + " from " + syncProcessed + " records.") + '">' + esc(synced) + ' comments synced</span>' + cursorPill + reasons + linkClass(item.run_url, "workflow run", "pill run-link") + '</div></div>';
   }).join("");
 }
 function applyHealthNeedsAttention(status) {
