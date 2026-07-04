@@ -115,6 +115,11 @@ import {
 } from "./target-validation.js";
 import { uniqueStrings } from "./validation-command-utils.js";
 import {
+  changedFilesFromNameOnlyZ,
+  enforceRepairContract,
+  repairContract,
+} from "./repair-contract.js";
+import {
   rebaseConflictEditDecision,
   unresolvedRebaseConflictReason,
 } from "./rebase-conflict-policy.js";
@@ -1996,6 +2001,8 @@ function editValidatePrepareMerge({
   let producedChanges = allowExistingChanges;
   let previousSummary = "";
   const checkpointCommits: JsonValue[] = [];
+  const hasRepairContract = repairContract(fixArtifact) !== null;
+  const pushIntermediateCheckpoint = hasRepairContract ? null : pushCheckpoint;
   if (
     !producedChanges &&
     canTreatRebaseAsCompleteRepair({
@@ -2210,7 +2217,7 @@ function editValidatePrepareMerge({
   });
   if (firstCheckpoint) {
     checkpointCommits.push(firstCheckpoint);
-    pushCheckpoint?.();
+    pushIntermediateCheckpoint?.();
   }
 
   let codexReview = null;
@@ -2241,7 +2248,7 @@ function editValidatePrepareMerge({
         });
         if (checkpoint) {
           checkpointCommits.push(checkpoint);
-          pushCheckpoint?.();
+          pushIntermediateCheckpoint?.();
         }
       },
     });
@@ -2272,7 +2279,7 @@ function editValidatePrepareMerge({
     });
     if (checkpoint) {
       checkpointCommits.push(checkpoint);
-      pushCheckpoint?.();
+      pushIntermediateCheckpoint?.();
     }
     if (attempt === maxFinalBaseSyncAttempts) {
       codexReview.final_base_sync = {
@@ -2292,7 +2299,7 @@ function editValidatePrepareMerge({
   });
   if (finalCheckpoint) {
     checkpointCommits.push(finalCheckpoint);
-    pushCheckpoint?.();
+    pushIntermediateCheckpoint?.();
   }
   const historyCompaction =
     mode === "replacement"
@@ -2304,7 +2311,8 @@ function editValidatePrepareMerge({
           checkpointCommits,
         })
       : null;
-  if (historyCompaction?.status === "compacted") {
+  enforceFinalRepairContract({ fixArtifact, targetDir, baseBranch });
+  if (hasRepairContract || historyCompaction?.status === "compacted") {
     pushCheckpoint?.();
   }
   const commit = run("git", ["rev-parse", "HEAD"], { cwd: targetDir }).trim();
@@ -3365,6 +3373,15 @@ function commitCheckpointIfNeeded({ targetDir, message, trailers = [] }: LooseRe
   for (const trailer of uniqueStrings(trailers)) args.push("-m", trailer);
   runGitNetwork(args, targetDir);
   return run("git", ["rev-parse", "HEAD"], { cwd: targetDir }).trim();
+}
+
+function enforceFinalRepairContract({ fixArtifact, targetDir, baseBranch }: LooseRecord) {
+  if (!repairContract(fixArtifact)) return;
+  const baseRef = `origin/${baseBranch}`;
+  const changedFiles = changedFilesFromNameOnlyZ(
+    run("git", ["diff", "--name-only", "-z", `${baseRef}..HEAD`], { cwd: targetDir }),
+  );
+  enforceRepairContract({ fixArtifact, changedFiles });
 }
 
 function pushRecoverableBranch({ targetDir, branch }: LooseRecord) {

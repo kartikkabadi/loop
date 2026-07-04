@@ -176,3 +176,38 @@ test("issue implementation rechecks opt-out labels immediately before branch pus
   assert.match(source.slice(helperStart, helperEnd), /repairPauseLabel\(issue\.labels\)/);
   assert.match(source.slice(helperStart, helperEnd), /refusing to push or open a PR/);
 });
+
+test("repair contract gates the final cumulative tree, not individual checkpoints", () => {
+  const source = readText(path.join(process.cwd(), "src/repair/execute-fix-artifact.ts"));
+  assert.equal(
+    [...source.matchAll(/commitCheckpointIfNeeded\(/g)].length,
+    5,
+    "four checkpoint call sites plus the ordinary commit helper should remain",
+  );
+  assert.doesNotMatch(source, /commitRepairCheckpointIfNeeded|checkpointBaseHead/);
+  assert.match(source, /enforceFinalRepairContract\(\{ fixArtifact, targetDir, baseBranch \}\)/);
+  assert.equal(
+    [...source.matchAll(/pushIntermediateCheckpoint\?\.\(\)/g)].length,
+    4,
+    "contract jobs must defer all four recovery pushes until final validation",
+  );
+  assert.match(source, /if \(hasRepairContract \|\| historyCompaction\?\.status === "compacted"\)/);
+
+  const compact = source.indexOf("const historyCompaction =");
+  const enforce = source.indexOf("enforceFinalRepairContract(", compact);
+  const publish = source.indexOf("if (hasRepairContract", enforce);
+  const commit = source.indexOf('const commit = run("git", ["rev-parse", "HEAD"]', publish);
+  assert.ok(compact < enforce && enforce < publish && publish < commit);
+});
+
+test("final repair contract compares the repaired tree with the latest base", () => {
+  const source = readText(path.join(process.cwd(), "src/repair/execute-fix-artifact.ts"));
+  const start = source.indexOf("function enforceFinalRepairContract(");
+  const end = source.indexOf("function pushRecoverableBranch(", start);
+  const helper = source.slice(start, end);
+  assert.match(source, /\.\/repair-contract\.js/);
+  assert.match(helper, /const baseRef = `origin\/\$\{baseBranch\}`/);
+  assert.match(helper, /"diff", "--name-only", "-z", `\$\{baseRef\}\.\.HEAD`/);
+  assert.match(helper, /enforceRepairContract\(\{ fixArtifact, changedFiles \}\)/);
+  assert.doesNotMatch(helper, /--porcelain=v1|phase|checkpoint/);
+});
