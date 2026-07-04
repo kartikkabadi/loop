@@ -2368,6 +2368,8 @@ jobs:
             echo "Capping apply checkpoint size at 20 to keep each GitHub App token within its lifetime."
             checkpoint_size=20
           fi
+          candidate_quality_summary="not evaluated"
+          candidate_quality_detail=""
           mkdir -p .artifacts/apply-reports
           publish_changes() {
             message="$1"
@@ -2424,6 +2426,26 @@ jobs:
             reconcile_args+=(--item-numbers "$item_numbers")
           fi
           pnpm run reconcile -- "${reconcile_args[@]}"
+          if [ "$sync_comments_only" != "true" ]; then
+            quality_args=(
+              --target-repo "$TARGET_REPO"
+              --apply-kind "$apply_kind"
+              --apply-close-reasons "$apply_close_reasons"
+              --stale-min-age-days "$stale_min_age_days"
+              --min-age-days "$min_age_days"
+              --min-age-minutes "$min_age_minutes"
+            )
+            if [ -n "$item_numbers" ]; then
+              quality_args+=(--item-numbers "$item_numbers")
+            else
+              quality_args+=(--batch-size "$close_processed_limit" --cursor-path "$apply_cursor_path")
+            fi
+            candidate_quality_env=".artifacts/apply-candidate-quality.env"
+            pnpm run --silent workflow -- proposed-item-quality-summary "${quality_args[@]}" > "$candidate_quality_env"
+            cat "$candidate_quality_env"
+            candidate_quality_summary="$(awk -F= '$1 == "candidate_quality_summary" { print $2 }' "$candidate_quality_env")"
+            candidate_quality_detail=" Close candidate mix: $candidate_quality_summary."
+          fi
           if [ "$sync_open_pr_batch" = "true" ] && [ -z "$item_numbers" ]; then
             batch_env=".artifacts/comment-sync-batch.env"
             pnpm run --silent workflow -- comment-sync-batch \
@@ -2499,7 +2521,7 @@ jobs:
             pnpm run status -- \
               --target-repo "$TARGET_REPO" \
               --state "Apply idle" \
-              --detail "No unchanged high-confidence close proposals are awaiting apply. Scheduled apply wakes every 15 minutes and exits without scanning unrelated keep-open records when there is no close work." \
+              --detail "No unchanged high-confidence close proposals are awaiting apply.$candidate_quality_detail Scheduled apply wakes every 15 minutes and exits without scanning unrelated keep-open records when there is no close work." \
               --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             publish_status "chore: update idle sweep apply status"
             {
@@ -2523,7 +2545,7 @@ jobs:
           pnpm run status -- \
             --target-repo "$TARGET_REPO" \
             --state "Apply in progress" \
-            --detail "Starting apply/comment-sync run for up to $limit fresh $apply_kind closes. Close reasons: $apply_close_reasons. Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by ${comment_sync_min_age_days} day(s); checkpoints commit every $checkpoint_size fresh closes; close delay is ${close_delay_ms}ms; sync-comments-only=$sync_comments_only; item numbers=${item_numbers:-all}." \
+            --detail "Starting apply/comment-sync run for up to $limit fresh $apply_kind closes. Close reasons: $apply_close_reasons.$candidate_quality_detail Existing Codex automated review comments are updated in place when closing or when comment-only sync is stale by ${comment_sync_min_age_days} day(s); checkpoints commit every $checkpoint_size fresh closes; close delay is ${close_delay_ms}ms; sync-comments-only=$sync_comments_only; item numbers=${item_numbers:-all}." \
             --run-url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           if ! publish_changes "chore: mark sweep apply in progress" records results/sweep-status; then
             echo "Best-effort apply start status update failed"
@@ -2716,6 +2738,7 @@ jobs:
             echo "APPLY_SYNC_OPEN_PR_BATCH=$sync_open_pr_batch"
             echo "APPLY_AUTO_SELECTED_BATCH=$auto_selected_apply_batch"
             echo "APPLY_COMMENT_SYNC_MIN_AGE_DAYS=$comment_sync_min_age_days"
+            echo "APPLY_CANDIDATE_QUALITY_SUMMARY=$candidate_quality_summary"
           } >> "$GITHUB_ENV"
 
       - name: Commit apply results

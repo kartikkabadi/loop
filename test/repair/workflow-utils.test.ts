@@ -17,6 +17,7 @@ import {
   mergeApplyReports,
   planOutputFields,
   plannedItemNumberCsv,
+  proposedItemQualitySummary,
   proposedItemNumbers,
   proposedPrCloseCoverageItemNumbers,
   summarizeApplyReport,
@@ -1169,6 +1170,81 @@ test("workflow utilities allow ClawHub implemented-on-main issue proposals", () 
   );
 
   assert.deepEqual(selected, [7]);
+});
+
+test("workflow utilities summarize proposed close candidate quality buckets", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-workflow-"));
+  const oldDate = "2024-01-01T00:00:00Z";
+  writeProposedRecord(root, 5, "issue", "proposed_close", "implemented_on_main", oldDate);
+  writeProposedRecord(root, 6, "issue", "proposed_close", "duplicate_or_superseded", oldDate);
+  writeProposedRecord(
+    root,
+    7,
+    "pull_request",
+    "proposed_close",
+    "duplicate_or_superseded",
+    oldDate,
+  );
+  writeProposedRecord(root, 8, "issue", "proposed_close", "stale_insufficient_info", oldDate);
+  writeProposedRecord(
+    root,
+    9,
+    "pull_request",
+    "proposed_close",
+    "unconfirmed_product_direction",
+    oldDate,
+  );
+  writeProposedRecord(
+    root,
+    10,
+    "issue",
+    "skipped_invalid_decision",
+    "implemented_on_main",
+    oldDate,
+  );
+  writeProposedRecord(root, 11, "pull_request", "proposed_close", "stalled_unproven_pr", oldDate);
+  writeProposedRecord(root, 12, "pull_request", "proposed_close", "abandoned_pr", oldDate);
+
+  const summary = withCwd(root, () =>
+    proposedItemQualitySummary({
+      targetRepo: "openclaw/openclaw",
+      applyKind: "all",
+      applyCloseReasons: "all",
+      staleMinAgeDays: 60,
+      minAgeDays: 0,
+      minAgeMinutes: null,
+    }),
+  );
+
+  const selected = withCwd(root, () =>
+    proposedItemNumbers({
+      targetRepo: "openclaw/openclaw",
+      applyKind: "all",
+      applyCloseReasons: "all",
+      staleMinAgeDays: 60,
+      minAgeDays: 0,
+      minAgeMinutes: null,
+    }),
+  );
+
+  assert.equal(summary.total, 8);
+  assert.deepEqual(selected, [5, 6, 7, 8, 9, 10]);
+  assert.equal(
+    summary.summary,
+    "1 implemented-on-main, 1 duplicate/superseded, 1 needs PR close proof, 3 aging/low-signal, 1 policy-sensitive, 1 retry after guard skip",
+  );
+  assert.deepEqual(
+    summary.buckets.map((bucket) => [bucket.bucket, bucket.count]),
+    [
+      ["ready_implemented", 1],
+      ["duplicate_or_superseded", 1],
+      ["needs_pr_close_coverage", 1],
+      ["aging_or_low_signal", 3],
+      ["policy_sensitive", 1],
+      ["retry_after_guard_skip", 1],
+    ],
+  );
+  assert.match(summary.buckets[2]?.next_step ?? "", /close-coverage proof/);
 });
 
 test("workflow utilities select proposed PR closes that can need coverage proof", () => {

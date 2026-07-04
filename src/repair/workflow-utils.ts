@@ -215,6 +215,9 @@ function runCli(): void {
     case "proposed-item-count":
       process.stdout.write(String(proposedItemCount(proposedItemOptions())));
       break;
+    case "proposed-item-quality-summary":
+      printProposedItemQualitySummary(proposedItemOptions());
+      break;
     case "proposed-pr-close-coverage-item-numbers":
       process.stdout.write(proposedPrCloseCoverageItemNumbers(proposedItemOptions()).join(","));
       break;
@@ -925,11 +928,38 @@ export function proposedPrCloseCoverageItemNumbers(options: ProposedItemOptions)
   );
 }
 
-type ProposedItemSelection = "all" | "pr-close-coverage-proof";
+type ProposedItemSelection = "all" | "pr-close-coverage-proof" | "quality-summary";
 
 type ProposedItemCandidate = {
   number: number;
   applyCheckedAt: string;
+  kind: string;
+  closeReason: string;
+  action: string;
+  qualityBucket: ProposedItemQualityBucket;
+};
+
+type ProposedItemQualityBucket =
+  | "ready_implemented"
+  | "duplicate_or_superseded"
+  | "needs_pr_close_coverage"
+  | "aging_or_low_signal"
+  | "policy_sensitive"
+  | "retry_after_guard_skip"
+  | "other";
+
+type ProposedItemQualityBucketSummary = {
+  bucket: ProposedItemQualityBucket;
+  label: string;
+  count: number;
+  next_step: string;
+};
+
+type ProposedItemQualitySummary = {
+  schema_version: 1;
+  total: number;
+  summary: string;
+  buckets: ProposedItemQualityBucketSummary[];
 };
 
 function selectedProposedItemCandidates(
@@ -951,6 +981,7 @@ function selectedProposedItemCandidates(
     "stale_insufficient_info",
     "unconfirmed_product_direction",
   ]);
+  const qualitySummaryOnlyReasons = new Set(["abandoned_pr", "stalled_unproven_pr"]);
   const allowedCloseReasons =
     options.applyCloseReasons === "all"
       ? null
@@ -983,7 +1014,10 @@ function selectedProposedItemCandidates(
         decision === "close" &&
         confidence === "high" &&
         isSelectableCloseAction(action, reason) &&
-        allowedForTarget(options.targetRepo, type, reason, allowedReasons) &&
+        (allowedForTarget(options.targetRepo, type, reason, allowedReasons) ||
+          (selection === "quality-summary" &&
+            type === "pull_request" &&
+            qualitySummaryOnlyReasons.has(reason))) &&
         (!allowedCloseReasons || allowedCloseReasons.has(reason));
       const selectablePromotion =
         decision === "keep_open" &&
@@ -1013,7 +1047,21 @@ function selectedProposedItemCandidates(
         return [];
       }
       if (!olderThan(frontMatterValue(markdown, "item_created_at"), minAgeMs)) return [];
-      return [{ number, applyCheckedAt: frontMatterValue(markdown, "apply_checked_at") }];
+      const candidateCloseReason = selectablePromotion ? "duplicate_or_superseded" : reason;
+      return [
+        {
+          number,
+          applyCheckedAt: frontMatterValue(markdown, "apply_checked_at"),
+          kind: type,
+          closeReason: candidateCloseReason,
+          action,
+          qualityBucket: proposedItemQualityBucket({
+            action,
+            closeReason: candidateCloseReason,
+            prCloseCoverageProofCanRun,
+          }),
+        },
+      ];
     })
     .sort((left, right) => left.number - right.number);
   const batchSize = options.batchSize ?? null;
@@ -1028,6 +1076,115 @@ function selectedProposedItemCandidates(
     ...afterCursor,
     ...sorted.filter((candidate) => compareCandidateToApplyCursor(candidate, cursor) <= 0),
   ].slice(0, batchSize);
+}
+
+export function proposedItemQualitySummary(
+  options: ProposedItemOptions,
+): ProposedItemQualitySummary {
+  const candidates = selectedProposedItemCandidates(options, "quality-summary");
+  const counts = new Map<ProposedItemQualityBucket, number>();
+  for (const candidate of candidates) {
+    counts.set(candidate.qualityBucket, (counts.get(candidate.qualityBucket) || 0) + 1);
+  }
+  const buckets = QUALITY_BUCKET_ORDER.flatMap((bucket) => {
+    const count = counts.get(bucket) || 0;
+    if (count === 0) return [];
+    const metadata = QUALITY_BUCKET_METADATA[bucket];
+    return [{ bucket, count, label: metadata.label, next_step: metadata.nextStep }];
+  });
+  return {
+    schema_version: 1,
+    total: candidates.length,
+    summary: qualitySummaryText(buckets),
+    buckets,
+  };
+}
+
+function printProposedItemQualitySummary(options: ProposedItemOptions): void {
+  const summary = proposedItemQualitySummary(options);
+  printOutput({
+    candidate_quality_total: String(summary.total),
+    candidate_quality_summary: summary.summary,
+    candidate_quality_buckets_json: JSON.stringify(summary.buckets),
+  });
+}
+
+const QUALITY_BUCKET_ORDER: ProposedItemQualityBucket[] = [
+  "ready_implemented",
+  "duplicate_or_superseded",
+  "needs_pr_close_coverage",
+  "aging_or_low_signal",
+  "policy_sensitive",
+  "retry_after_guard_skip",
+  "other",
+];
+
+const QUALITY_BUCKET_METADATA: Record<
+  ProposedItemQualityBucket,
+  { label: string; nextStep: string }
+> = {
+  ready_implemented: {
+    label: "implemented-on-main",
+    nextStep: "Live-state checks can close these if the item is still unchanged.",
+  },
+  duplicate_or_superseded: {
+    label: "duplicate/superseded",
+    nextStep: "Confirm the canonical or superseding item is still valid before close.",
+  },
+  needs_pr_close_coverage: {
+    label: "needs PR close proof",
+    nextStep: "Run or reuse close-coverage proof before closing the PR.",
+  },
+  aging_or_low_signal: {
+    label: "aging/low-signal",
+    nextStep: "Rely on stale-age and live-state checks; inspect if this bucket dominates.",
+  },
+  policy_sensitive: {
+    label: "policy-sensitive",
+    nextStep: "Close only when the explicit policy gate remains enabled.",
+  },
+  retry_after_guard_skip: {
+    label: "retry after guard skip",
+    nextStep: "Retry only after the previous guard condition has been rechecked.",
+  },
+  other: {
+    label: "other close candidates",
+    nextStep: "Inspect repeated entries and add a deterministic bucket if needed.",
+  },
+};
+
+function proposedItemQualityBucket(options: {
+  action: string;
+  closeReason: string;
+  prCloseCoverageProofCanRun: boolean;
+}): ProposedItemQualityBucket {
+  if (options.prCloseCoverageProofCanRun) return "needs_pr_close_coverage";
+  if (options.closeReason === "unconfirmed_product_direction") return "policy_sensitive";
+  if (
+    options.closeReason === "abandoned_pr" ||
+    options.closeReason === "stale_insufficient_info" ||
+    options.closeReason === "stalled_unproven_pr" ||
+    options.closeReason === "mostly_implemented_on_main" ||
+    options.closeReason === "low_signal_unmergeable_pr"
+  ) {
+    return "aging_or_low_signal";
+  }
+  if (
+    options.action === "skipped_invalid_decision" ||
+    options.action === "skipped_maintainer_authored"
+  ) {
+    return "retry_after_guard_skip";
+  }
+  if (options.closeReason === "duplicate_or_superseded") return "duplicate_or_superseded";
+  if (options.closeReason === "implemented_on_main" || options.closeReason === "clawhub") {
+    return "ready_implemented";
+  }
+  return "other";
+}
+
+function qualitySummaryText(buckets: ProposedItemQualityBucketSummary[]): string {
+  if (buckets.length === 0) return "no close candidates";
+  return buckets.map((bucket) => `${bucket.count} ${bucket.label}`).join(", ");
 }
 
 function compareApplyCursorCandidate(

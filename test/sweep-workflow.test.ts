@@ -168,6 +168,20 @@ test("apply workflow bounds checkpoints and requeues with a fresh token", () => 
   assert.match(applyStep, /--apply-health-file "\.artifacts\/apply-health-\$checkpoint\.json"/);
   assert.match(applyStep, /--apply-health-file "\.artifacts\/apply-health-final\.json"/);
   assert.match(applyStep, /--state "Apply idle"/);
+  assert.match(applyStep, /proposed-item-quality-summary/);
+  assert.match(applyStep, /candidate_quality_summary="\$\(awk -F=/);
+  assert.match(
+    applyStep,
+    /candidate_quality_detail=" Close candidate mix: \$candidate_quality_summary\."/,
+  );
+  assert.match(applyStep, /awaiting apply\.\$candidate_quality_detail Scheduled apply/);
+  assert.match(applyStep, /\$apply_close_reasons\.\$candidate_quality_detail Existing Codex/);
+  const applyReconcileIndex = applyStep.indexOf('pnpm run reconcile -- "${reconcile_args[@]}"');
+  const qualitySummaryIndex = applyStep.indexOf("proposed-item-quality-summary");
+  const proposedNumbersIndex = applyStep.indexOf("proposed-item-numbers");
+  assert.notEqual(applyReconcileIndex, -1);
+  assert.ok(qualitySummaryIndex > applyReconcileIndex);
+  assert.ok(proposedNumbersIndex > qualitySummaryIndex);
   assert.match(applyStep, /--batch-size "\$close_processed_limit"/);
   assert.match(applyStep, /--cursor-path "\$apply_cursor_path"/);
   assert.match(applyStep, /write-apply-cursor/);
@@ -190,6 +204,7 @@ test("apply workflow bounds checkpoints and requeues with a fresh token", () => 
   assert.match(applyStep, /next_apply_item_numbers=""/);
   assert.match(applyStep, /echo "APPLY_CONTINUE=\$continue_apply"/);
   assert.match(applyStep, /echo "APPLY_AUTO_SELECTED_BATCH=\$auto_selected_apply_batch"/);
+  assert.match(applyStep, /echo "APPLY_CANDIDATE_QUALITY_SUMMARY=\$candidate_quality_summary"/);
   assert.match(continueStep, /APPLY_CONTINUE:-false/);
   assert.match(continueStep, /can_share_apply_continuation=false/);
   assert.match(continueStep, /\[ "\$\{APPLY_AUTO_SELECTED_BATCH:-false\}" = "true" \]/);

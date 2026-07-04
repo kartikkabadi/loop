@@ -459,6 +459,14 @@ continuation with a fresh GitHub App token after any checkpoint that closes at
 least one item. A saturated scan that closes nothing stops without chaining so
 the same records cannot create an unbounded runner loop.
 
+Before a close-mode apply run starts, the workflow summarizes the selected close
+candidate mix by quality bucket in the status detail. Buckets such as
+implemented-on-main, duplicate/superseded, needs PR close proof,
+aging/low-signal (including stalled-unproven and abandoned PRs),
+policy-sensitive, and retry-after-guard-skip are
+operator-facing telemetry only; they do not change candidate eligibility, close
+limits, live-state checks, or policy gates.
+
 Apply and comment-sync Actions run titles include the target repository. Before
 dispatching a default cursor-based apply continuation, the workflow checks
 recent active or queued same-target default cursor runs and treats one of those
