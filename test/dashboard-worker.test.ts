@@ -1542,6 +1542,21 @@ test("dashboard exposes apply health from sweep status without broad scans", asy
           skip_reasons: {},
         },
       },
+      next_actions: [
+        {
+          reason: "skipped_changed_since_review",
+          count: 2,
+          bucket: "review_refresh",
+          owner: "clawsweeper",
+          retryable: true,
+          label: "Refresh review",
+          summary: "The item changed after the review that proposed closing it.",
+          next_step: "Queue a fresh ClawSweeper review before any close retry.",
+        },
+      ],
+      next_action_buckets: {
+        review_refresh: 2,
+      },
       attention_reasons: ["cursor_required_but_missing_after_full_window"],
       cursor: null,
     },
@@ -1597,6 +1612,13 @@ test("dashboard exposes apply health from sweep status without broad scans", asy
       },
     });
     assert.equal(status.recent.apply_health.items[0].lanes.comment_sync.processed, 0);
+    assert.deepEqual(status.recent.apply_health.items[0].next_action_buckets, {
+      review_refresh: 2,
+    });
+    assert.equal(
+      status.recent.apply_health.items[0].next_actions[0].next_step,
+      "Queue a fresh ClawSweeper review before any close retry.",
+    );
     assert.equal(status.recent.apply_health.items[0].cursor, null);
   } finally {
     globalThis.fetch = originalFetch;

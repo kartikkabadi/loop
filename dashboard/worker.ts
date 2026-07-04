@@ -3561,6 +3561,7 @@ async function readApplyHealthMarker(env, targetRepo) {
     const status = parseJsonObject(decodeGithubContent(content?.content)) || {};
     const health = objectValue(status.apply_health);
     const skipReasons = numericRecord(health.skip_reasons);
+    const nextActions = applyHealthNextActions(health.next_actions);
     const cursor = objectValue(health.cursor);
     return {
       target_repo: nullableString(status.target_repo) || targetRepo,
@@ -3581,6 +3582,8 @@ async function readApplyHealthMarker(env, targetRepo) {
       skip_reasons: skipReasons,
       cursor_required: health.cursor_required === true,
       lanes: applyHealthLanes(health.lanes),
+      next_actions: nextActions,
+      next_action_buckets: numericRecord(health.next_action_buckets),
       attention_reasons: Array.isArray(health.attention_reasons)
         ? health.attention_reasons
             .map((reason) => String(reason))
@@ -3615,6 +3618,8 @@ async function readApplyHealthMarker(env, targetRepo) {
       skip_reasons: {},
       cursor_required: false,
       lanes: emptyApplyHealthLanes(),
+      next_actions: [],
+      next_action_buckets: {},
       attention_reasons: [],
       cursor: null,
     };
@@ -3631,6 +3636,8 @@ function emptyApplyHealthStatus(targetRepos) {
       skip_reasons: {},
       cursor_required: false,
       lanes: emptyApplyHealthLanes(),
+      next_actions: [],
+      next_action_buckets: {},
       attention_reasons: [],
       cursor: null,
     })),
@@ -3671,6 +3678,27 @@ function applyHealthLane(value) {
   };
 }
 
+function applyHealthNextActions(value) {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((entry) => {
+      const source = objectValue(entry);
+      const reason = nullableString(source.reason);
+      if (!reason) return null;
+      return {
+        reason,
+        count: numberOrNull(source.count),
+        bucket: nullableString(source.bucket),
+        owner: nullableString(source.owner),
+        retryable: Boolean(source.retryable),
+        label: nullableString(source.label),
+        summary: nullableString(source.summary),
+        next_step: nullableString(source.next_step),
+      };
+    })
+    .filter(Boolean)
+    .slice(0, 12);
+}
 function latestIso(values) {
   const timestamps = values
     .map((value) => Date.parse(value || ""))
@@ -6840,13 +6868,14 @@ function renderApplyHealth(data) {
   }
   target.innerHTML = items.map(item => {
     const topReason = applyHealthPrimaryReason(item);
-    const topInfo = applyHealthReasonInfo(topReason);
+    const topInfo = applyHealthReasonInfo(topReason, item);
     const action = applyHealthRecommendedAction(item, topReason);
     const reasons = applyHealthReasonEntries(item)
       .slice(0, 4)
-      .map(([reason, count]) => applyHealthReasonPill(reason, count))
+      .map(([reason, count]) => applyHealthReasonPill(reason, count, item))
       .join("");
     const showCursor = item.cursor_required || Boolean(item.cursor?.next_after_number);
+    const buckets = applyHealthNextActionBucketPills(item);
     const cursor = item.cursor?.next_after_number ? "cursor #" + item.cursor.next_after_number : "cursor missing";
     const cursorTitle = item.cursor?.next_after_number
       ? "Rotation cursor was recorded; the next pruning run should continue after this item."
@@ -6866,7 +6895,7 @@ function renderApplyHealth(data) {
       '<p>' + esc(applyHealthOperatorSummary(item, topInfo)) + '</p>' +
       '<p class="apply-health-next"><strong>Next check:</strong> ' + esc(topInfo.action) + '</p>' +
       applyHealthActionHtml(action) +
-      '<div class="apply-health-meta"><span class="pill" title="Records checked in this pruning window.">' + esc(processed) + ' processed</span><span class="pill" title="' + esc("Closure lane: " + closureProcessed + " records processed; " + closed + " closed.") + '">' + esc(closed) + ' closed</span><span class="pill" title="' + esc("Durable review comments refreshed across lanes: " + synced + ". Closure lane refreshed " + closureSynced + "; comment-sync lane refreshed " + syncLaneSynced + " from " + syncProcessed + " records.") + '">' + esc(synced) + ' comments synced</span>' + cursorPill + reasons + linkClass(item.run_url, "workflow run", "pill run-link") + '</div></div>';
+      '<div class="apply-health-meta"><span class="pill" title="Records checked in this pruning window.">' + esc(processed) + ' processed</span><span class="pill" title="' + esc("Closure lane: " + closureProcessed + " records processed; " + closed + " closed.") + '">' + esc(closed) + ' closed</span><span class="pill" title="' + esc("Durable review comments refreshed across lanes: " + synced + ". Closure lane refreshed " + closureSynced + "; comment-sync lane refreshed " + syncLaneSynced + " from " + syncProcessed + " records.") + '">' + esc(synced) + ' comments synced</span>' + cursorPill + reasons + buckets + linkClass(item.run_url, "workflow run", "pill run-link") + '</div></div>';
   }).join("");
 }
 function applyHealthNeedsAttention(status) {
@@ -6904,10 +6933,42 @@ function applyHealthReasonEntries(item) {
 function applyHealthPrimaryReason(item) {
   return applyHealthReasonEntries(item)[0]?.[0] || item.status || "";
 }
-function applyHealthReasonPill(reason, count) {
-  const info = applyHealthReasonInfo(reason);
+function applyHealthReasonPill(reason, count, item) {
+  const info = applyHealthReasonInfo(reason, item);
   const countText = Number.isFinite(count) ? " " + fmt.format(count) : "";
   return '<span class="pill apply-health-reason" title="' + esc(info.summary + " Next: " + info.action) + '">' + esc(info.label + countText) + '</span>';
+}
+function applyHealthNextActionForReason(item, reason) {
+  return (item.next_actions || []).find(action => action.reason === reason) || null;
+}
+function applyHealthNextActionBucketPills(item) {
+  const buckets = item.next_action_buckets || {};
+  const entries = Object.entries(buckets)
+    .filter(([, count]) => Number.isFinite(count) && count > 0)
+    .sort((left, right) => Number(right[1]) - Number(left[1]));
+  if (entries.length < 2) return "";
+  const total = entries.reduce((sum, [, count]) => sum + Number(count), 0);
+  const summary = entries
+    .slice(0, 4)
+    .map(([bucket, count]) => applyHealthBucketLabel(bucket) + " " + fmt.format(Number(count)))
+    .join("; ");
+  return '<span class="pill apply-health-reason" title="' + esc("Follow-up buckets: " + summary) + '">' + esc("follow-ups " + fmt.format(total)) + '</span>';
+}
+function applyHealthBucketLabel(bucket) {
+  const labels = {
+    already_resolved: "already resolved",
+    close_coverage_proof: "needs close proof",
+    conversation_unlock: "unlock conversation",
+    defer_until_closing_pr: "defer for PR state",
+    inspect: "inspect skips",
+    live_state_recovery: "live check recovery",
+    maintainer_review: "maintainer decision",
+    report_quality_repair: "repair review report",
+    review_refresh: "refresh reviews",
+    run_budget: "runtime budget",
+    stable_skip: "stable skips",
+  };
+  return labels[bucket] || applyHealthReasonLabel(bucket);
 }
 function applyHealthActionHtml(action) {
   if (!action) return "";
@@ -6921,6 +6982,7 @@ function applyHealthRecommendedAction(item, reason) {
   const targetRepo = String(item.target_repo || "openclaw/openclaw");
   const mode = String(item.mode || "").toLowerCase();
   const workflowUrl = "https://github.com/openclaw/clawsweeper/actions/workflows/sweep.yml";
+  const nextAction = applyHealthNextActionForReason(item, reason);
   if (reason === "cursor_required_but_missing_after_full_window") {
     return {
       title: "Maintainer action: inspect the current run before rerunning, because a missing cursor can make the next run repeat the same window.",
@@ -6931,7 +6993,7 @@ function applyHealthRecommendedAction(item, reason) {
   }
   if (reason === "skipped_changed_since_review") {
     return {
-      title: "Maintainer action: refresh review records before trying to close changed items.",
+      title: "Maintainer action: " + (nextAction?.next_step || "refresh review records before trying to close changed items."),
       command: "gh workflow run sweep.yml --repo openclaw/clawsweeper -f target_repo=" + targetRepo + " -f apply_existing=false",
       url: workflowUrl,
       linkLabel: "open workflow",
@@ -6939,8 +7001,32 @@ function applyHealthRecommendedAction(item, reason) {
   }
   if (reason === "skipped_pr_close_coverage_proof") {
     return {
-      title: "Maintainer action: add close-coverage proof before retrying PR pruning.",
-      detail: "Add or refresh close-coverage proof, then rerun the close lane.",
+      title: "Maintainer action: " + (nextAction?.next_step || "add close-coverage proof before retrying PR pruning."),
+      detail: nextAction?.next_step || "Add or refresh close-coverage proof, then rerun the close lane.",
+      url: item.run_url || workflowUrl,
+      linkLabel: item.run_url ? "open run" : "open workflow",
+    };
+  }
+  if (nextAction && !nextAction.retryable) {
+    return {
+      title: "Maintainer action: " + (nextAction.next_step || "inspect this stable or policy-gated skip before rerunning."),
+      detail: nextAction.next_step || "No automatic rerun is recommended for this skip bucket.",
+      url: item.run_url || workflowUrl,
+      linkLabel: item.run_url ? "open run" : "open workflow",
+    };
+  }
+  if (nextAction && nextAction.bucket === "report_quality_repair") {
+    return {
+      title: "Maintainer action: " + (nextAction.next_step || "repair or refresh the review report."),
+      detail: nextAction.next_step || "Queue report-quality repair or re-review before retrying apply.",
+      url: item.run_url || workflowUrl,
+      linkLabel: item.run_url ? "open run" : "open workflow",
+    };
+  }
+  if (nextAction) {
+    return {
+      title: "Maintainer action: " + (nextAction.next_step || "inspect this follow-up before rerunning."),
+      detail: nextAction.next_step || "Inspect this follow-up bucket before retrying apply.",
       url: item.run_url || workflowUrl,
       linkLabel: item.run_url ? "open run" : "open workflow",
     };
@@ -6961,7 +7047,15 @@ function applyHealthRecommendedAction(item, reason) {
     linkLabel: "open workflow",
   };
 }
-function applyHealthReasonInfo(reason) {
+function applyHealthReasonInfo(reason, item) {
+  const nextAction = item ? applyHealthNextActionForReason(item, reason) : null;
+  if (nextAction?.label || nextAction?.summary || nextAction?.next_step) {
+    return {
+      label: nextAction.label || applyHealthReasonLabel(reason),
+      summary: nextAction.summary || "ClawSweeper classified this skip bucket with a deterministic follow-up.",
+      action: nextAction.next_step || "Inspect this follow-up bucket before rerunning.",
+    };
+  }
   const value = String(reason || "");
   if (value === "cursor_required_but_missing_after_full_window") {
     return {

@@ -131,6 +131,9 @@ is absent or a cache event lands in another Cloudflare colo.
 - lane-level apply health in status JSON so closure processing and durable
   review-comment sync are reported separately even when they share the same
   applicator
+- skip next-action buckets in apply health JSON so stale reviews, missing close
+  proof, protected labels, stable skips, invalid reports, and open closing PRs
+  are discoverable without reading individual item records
 
 The Worker fetches job details only for the bounded active-run set, limits that
 GitHub fanout to 12 concurrent requests, and caches each run's jobs for 60
