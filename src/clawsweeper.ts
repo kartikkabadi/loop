@@ -56,6 +56,7 @@ import {
   compareHotIntakeDueCandidates,
   hasReviewPolicyMismatch,
   nextReviewDueAtMs,
+  reviewContentCacheHit,
   reviewedAtMs,
   reviewPriority,
   schedulerBucket,
@@ -346,6 +347,9 @@ interface ExistingReview {
   decision: string | undefined;
   reviewStatus: string | undefined;
   reviewPolicy: string | undefined;
+  contentDigest: string | undefined;
+  lastFullReviewAt: string | undefined;
+  lastFullReviewDecision: string | undefined;
 }
 
 interface LatestRelease {
@@ -564,6 +568,7 @@ interface ItemContext {
   comments: unknown[];
   timeline: unknown[];
   sourceRevision?: string;
+  timelineRevision?: string;
   previousClawSweeperReview?: unknown;
   closingPullRequests?: unknown[];
   referencingMergedPullRequests?: unknown[];
@@ -572,6 +577,7 @@ interface ItemContext {
   pullFiles?: unknown[];
   pullCommits?: unknown[];
   pullReviewComments?: unknown[];
+  pullReviewCommentsRevision?: string;
   counts?: {
     comments: number;
     commentsHydrated?: number;
@@ -2305,6 +2311,101 @@ function isClawSweeperAdvisorySourceRevisionLabel(label: string): boolean {
 
 export function itemSourceRevisionSha256ForTest(issue: unknown, comments: unknown[] = []): string {
   return itemSourceRevisionSha256(issue, comments);
+}
+
+function reviewCommentDigestParts(entries: unknown): unknown {
+  if (!Array.isArray(entries)) return null;
+  return entries
+    .map(asRecord)
+    .filter(
+      (entry) =>
+        typeof entry.author !== "string" ||
+        !CLAWSWEEPER_BOT_AUTHORS.has(entry.author.toLowerCase()),
+    )
+    .map((entry) => {
+      const omitted = githubCount(entry.omitted);
+      if (omitted !== null) return { omitted };
+      return {
+        id: entry.id ?? null,
+        author: entry.author ?? null,
+        authorAssociation: entry.authorAssociation ?? null,
+        body: entry.body ?? null,
+      };
+    });
+}
+
+function reviewCommentContentRevision(entries: readonly unknown[]): string {
+  return sha256(stableJson(reviewCommentDigestParts(entries)));
+}
+
+export function reviewCommentContentRevisionForTest(entries: readonly unknown[]): string {
+  return reviewCommentContentRevision(entries);
+}
+
+function reviewTimelineDigestParts(entries: unknown): unknown {
+  if (!Array.isArray(entries)) return null;
+  return entries
+    .map(asRecord)
+    .filter((entry) => {
+      const actor = typeof entry.actor === "string" ? entry.actor.toLowerCase() : "";
+      if (actor && CLAWSWEEPER_BOT_AUTHORS.has(actor)) return false;
+      const label = typeof entry.label === "string" ? normalizeLabelName(entry.label) : "";
+      return !label || !isIgnorableSourceRevisionLabel(label);
+    })
+    .map((entry) => ({
+      id: entry.id ?? null,
+      event: entry.event ?? null,
+      actor: entry.actor ?? null,
+      commitId: entry.commitId ?? null,
+      label: entry.label ?? null,
+      rename: entry.rename ?? null,
+      sourceIssue: entry.sourceIssue ?? null,
+    }));
+}
+
+function itemContentDigest(item: Item, context: ItemContext, git?: GitInfo): string {
+  const isPull = item.kind === "pull_request";
+  const pull = asRecord(context.pullRequest);
+  const base = asRecord(pull.base);
+  const baseSha = typeof base.sha === "string" ? base.sha : null;
+  return sha256(
+    stableJson({
+      kind: item.kind,
+      source: context.sourceRevision ?? null,
+      timeline: context.timelineRevision ?? reviewTimelineDigestParts(context.timeline),
+      relations: {
+        closingPullRequests: context.closingPullRequests ?? null,
+        referencingMergedPullRequests: context.referencingMergedPullRequests ?? null,
+        relatedItems: context.relatedItems ?? null,
+      },
+      latestRelease: git?.latestRelease
+        ? { tagName: git.latestRelease.tagName ?? null, sha: git.latestRelease.sha ?? null }
+        : null,
+      targetMainSha: isPull ? null : (git?.mainSha ?? null),
+      headSha: isPull ? pullHeadShaFromContext(context) : null,
+      baseSha: isPull ? baseSha : null,
+      pullState: isPull
+        ? {
+            draft: pull.draft ?? null,
+            mergeable: pull.mergeable ?? null,
+            mergeableState: pull.mergeableState ?? null,
+            additions: pull.additions ?? null,
+            deletions: pull.deletions ?? null,
+            changedFiles: pull.changedFiles ?? null,
+          }
+        : null,
+      diff: isPull ? (context.pullFiles ?? null) : null,
+      commits: isPull ? (context.pullCommits ?? null) : null,
+      reviewComments: isPull
+        ? (context.pullReviewCommentsRevision ??
+          reviewCommentDigestParts(context.pullReviewComments))
+        : null,
+    }),
+  );
+}
+
+export function itemContentDigestForTest(item: Item, context: ItemContext, git?: GitInfo): string {
+  return itemContentDigest(item, context, git);
 }
 
 function reviewPolicyHash(options: {
@@ -5308,6 +5409,14 @@ function frontMatterBoolean(markdown: string, key: string): boolean {
   return /^true$/i.test(frontMatterValue(markdown, key) ?? "");
 }
 
+function reviewReportCanPromoteToClose(markdown: string): boolean {
+  return !frontMatterBoolean(markdown, "review_cache_hit");
+}
+
+export function reviewReportCanPromoteToCloseForTest(markdown: string): boolean {
+  return reviewReportCanPromoteToClose(markdown);
+}
+
 function existingReview(
   item: Pick<Item, "number" | "repo">,
   itemsDir: string,
@@ -5330,6 +5439,9 @@ function existingReview(
     decision: frontMatterValue(markdown, "decision"),
     reviewStatus: effectiveReviewStatus(markdown),
     reviewPolicy: frontMatterValue(markdown, "review_policy"),
+    contentDigest: frontMatterValue(markdown, "review_content_digest"),
+    lastFullReviewAt: frontMatterValue(markdown, "last_full_review_at"),
+    lastFullReviewDecision: frontMatterValue(markdown, "last_full_review_decision"),
   };
 }
 
@@ -5358,6 +5470,9 @@ function buildExistingReviewIndex(itemsDir: string): ExistingReviewIndex {
       decision: frontMatterValue(markdown, "decision"),
       reviewStatus: effectiveReviewStatus(markdown),
       reviewPolicy: frontMatterValue(markdown, "review_policy"),
+      contentDigest: frontMatterValue(markdown, "review_content_digest"),
+      lastFullReviewAt: frontMatterValue(markdown, "last_full_review_at"),
+      lastFullReviewDecision: frontMatterValue(markdown, "last_full_review_decision"),
     });
   }
   return { byKey };
@@ -6315,7 +6430,7 @@ function planCandidates(options: {
 
 function collectItemContext(
   item: Item,
-  options: { fullTimelineForRelations?: boolean } = {},
+  options: { fullTimelineForRelations?: boolean; reviewCacheDigest?: boolean } = {},
 ): ItemContext {
   const issue = ghJson<unknown>(["api", `repos/${targetRepo()}/issues/${item.number}`]);
   const issueRecord = asRecord(issue);
@@ -6335,6 +6450,10 @@ function collectItemContext(
     80,
   );
   const timeline = timelineWindow.items;
+  const fullTimeline =
+    timelineWindow.truncated && (options.fullTimelineForRelations || options.reviewCacheDigest)
+      ? ghPaged<unknown>(`repos/${targetRepo()}/issues/${item.number}/timeline`)
+      : null;
   const context: ItemContext = {
     issue: compactIssue(issue),
     sourceRevision: itemSourceRevisionSha256(issue, sourceRevisionComments),
@@ -6356,10 +6475,16 @@ function collectItemContext(
       timelineTruncated: timelineWindow.truncated,
     },
   };
+  if (options.reviewCacheDigest) {
+    context.timelineRevision = sha256(
+      stableJson(reviewTimelineDigestParts((fullTimeline ?? timeline).map(compactTimelineEvent))),
+    );
+  }
   if (previousClawSweeperReview) context.previousClawSweeperReview = previousClawSweeperReview;
   let pullRequest: unknown = null;
   let pullReviewComments: unknown[] | null = null;
   let filteredPullReviewComments: { included: unknown[]; filtered: number } | null = null;
+  let digestPullReviewComments: { included: unknown[]; filtered: number } | null = null;
   if (item.kind === "issue") {
     const closingPullRequests = closingPullRequestsForIssue(item.number);
     if (closingPullRequests.length > 0) {
@@ -6409,6 +6534,14 @@ function collectItemContext(
     );
     pullReviewComments = pullReviewCommentsWindow.items;
     filteredPullReviewComments = filterReviewContextComments(pullReviewComments, item.number);
+    const fullPullReviewComments =
+      options.reviewCacheDigest && pullReviewCommentsWindow.truncated
+        ? ghPaged<unknown>(`repos/${targetRepo()}/pulls/${item.number}/comments`)
+        : pullReviewComments;
+    digestPullReviewComments =
+      fullPullReviewComments === pullReviewComments
+        ? filteredPullReviewComments
+        : filterReviewContextComments(fullPullReviewComments, item.number);
     context.pullRequest = compactPullRequest(pullRequest);
     context.pullFiles = compactMappedWindow(pullFiles, pullFilesWindow.total, 80, compactPullFile);
     context.pullCommits = compactMappedWindow(
@@ -6423,6 +6556,11 @@ function collectItemContext(
       40,
       compactComment,
     );
+    if (options.reviewCacheDigest) {
+      context.pullReviewCommentsRevision = reviewCommentContentRevision(
+        digestPullReviewComments.included.map(compactComment),
+      );
+    }
     context.counts = {
       ...context.counts,
       comments: commentsWindow.total,
@@ -6446,10 +6584,7 @@ function collectItemContext(
       pullReviewCommentsFiltered: filteredPullReviewComments.filtered,
     };
   }
-  const relationTimeline =
-    options.fullTimelineForRelations && timelineWindow.truncated
-      ? ghPaged<unknown>(`repos/${targetRepo()}/issues/${item.number}/timeline`)
-      : timeline;
+  const relationTimeline = fullTimeline ?? timeline;
   const relatedOptions: Parameters<typeof relatedItemsContext>[0] = {
     item,
     issue,
@@ -6457,8 +6592,9 @@ function collectItemContext(
     timeline: relationTimeline,
   };
   if (pullRequest) relatedOptions.pullRequest = pullRequest;
-  if (filteredPullReviewComments)
-    relatedOptions.pullReviewComments = filteredPullReviewComments.included;
+  const relatedPullReviewComments = digestPullReviewComments ?? filteredPullReviewComments;
+  if (relatedPullReviewComments)
+    relatedOptions.pullReviewComments = relatedPullReviewComments.included;
   const relatedItems = relatedItemsContext(relatedOptions);
   if (relatedItems.length) {
     context.relatedItems = relatedItems;
@@ -13701,6 +13837,7 @@ function pullRequestClosePromotion(
   options: { reportDirs?: readonly string[] } = {},
 ): PullRequestClosePromotion | null {
   if (item.kind !== "pull_request") return null;
+  if (!reviewReportCanPromoteToClose(markdown)) return null;
   if (frontMatterValue(markdown, "decision") !== "keep_open") return null;
   if (frontMatterValue(markdown, "action_taken") !== "kept_open") return null;
   if (frontMatterValue(markdown, "review_status") !== "complete") return null;
@@ -16284,10 +16421,12 @@ function markdownFor(options: {
   action: Action;
   reviewMode: "propose" | "apply";
   snapshotHash: string;
+  contentDigest: string;
   reviewPolicy: string;
   runtime: ReviewRuntime;
 }): string {
   const labels = options.item.labels.length ? options.item.labels.join(", ") : "none";
+  const reviewedAt = new Date().toISOString();
   const fixedPullRequest = options.decision.fixedPullRequest;
   const evidence = options.decision.evidence.length
     ? options.decision.evidence
@@ -16354,7 +16493,7 @@ item_updated_at: ${options.item.updatedAt}
 author: ${options.item.author}
 author_association: ${options.item.authorAssociation}
 labels: ${JSON.stringify(options.item.labels)}
-reviewed_at: ${new Date().toISOString()}
+reviewed_at: ${reviewedAt}
 main_sha: ${options.git.mainSha}
 pull_head_sha: ${pullHeadShaFromContext(options.context) ?? "unknown"}
 latest_release: ${options.git.latestRelease?.tagName ?? "unknown"}
@@ -16386,6 +16525,10 @@ review_status: ${options.decision.summary.startsWith("Codex review failed") ? "f
 review_terminal_failure: ${options.decision.codexTerminalFailure === true}
 local_checkout_access: verified
 item_snapshot_hash: ${options.snapshotHash}
+review_content_digest: ${options.contentDigest}
+last_full_review_at: ${reviewedAt}
+last_full_review_decision: ${options.decision.decision}
+review_cache_hit: false
 item_source_revision: ${options.context.sourceRevision ?? "unknown"}
 close_comment_sha256: ${options.action.closeComment ? sha256(options.action.closeComment) : "none"}
 review_comment_sha256: none
@@ -16864,6 +17007,12 @@ function reviewCommand(args: Args): void {
       ? gitInfo(openclawDir, { targetBranch: checkout.gitTargetBranch })
       : gitInfo(openclawDir);
   const reviewPolicy = reviewPolicyHash({ model, reasoningEffort, sandboxMode, serviceTier });
+  // Planned background shards receive exact item numbers from the planner, but they are not
+  // user-requested exact reviews. Only the workflow may opt those batches into cache reuse.
+  const plannedAutomaticReview = boolArg(args.planned_automatic_review);
+  const explicitDispatch =
+    !plannedAutomaticReview && (itemNumber !== undefined || itemNumbers !== undefined);
+  const maintainerRequest = additionalPrompt.trim().length > 0;
   const readonlyModeSnapshots = readonlyOpenclaw ? makeTreeReadOnly(openclawDir) : [];
   try {
     const selectionOptions: Parameters<typeof selectCandidates>[0] = {
@@ -16902,6 +17051,7 @@ function reviewCommand(args: Args): void {
     );
     let completed = 0;
     let codexFailures = 0;
+    let cacheHits = 0;
     const codexFailureReports: string[] = [];
     for (const item of candidates) {
       if (humanLocalReview) {
@@ -16913,8 +17063,50 @@ function reviewCommand(args: Args): void {
         );
       }
       const contextStartedAt = Date.now();
-      const context = localRangeData ? localRangeData.context : collectItemContext(item);
+      const context = localRangeData
+        ? localRangeData.context
+        : collectItemContext(item, {
+            fullTimelineForRelations: true,
+            reviewCacheDigest: true,
+          });
       const contextElapsedMs = Date.now() - contextStartedAt;
+      const contentDigest = itemContentDigest(item, context, git);
+      const priorReview =
+        explicitDispatch || maintainerRequest ? null : existingReview(item, itemsDir);
+      if (
+        reviewContentCacheHit({
+          review: priorReview,
+          reviewPolicy,
+          contentDigest,
+          now: Date.now(),
+          explicitDispatch,
+          maintainerRequest,
+        })
+      ) {
+        const reportPath = join(artifactDir, reportFileName(item.repo, item.number));
+        let carried = priorReview!.markdown;
+        carried = replaceFrontMatterValue(carried, "reviewed_at", new Date().toISOString());
+        carried = replaceFrontMatterValue(carried, "item_updated_at", item.updatedAt);
+        carried = replaceFrontMatterValue(
+          carried,
+          "item_snapshot_hash",
+          itemSnapshotHash(item, context),
+        );
+        carried = replaceFrontMatterValue(carried, "review_cache_hit", "true");
+        writeFileSync(reportPath, carried, "utf8");
+        completed += 1;
+        cacheHits += 1;
+        if (humanLocalReview) {
+          console.error("");
+          console.error("Review cache hit; content unchanged since the last review");
+          console.error(`  report: ${displayPath(reportPath)}`);
+        } else {
+          console.error(
+            `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} cache-hit content-unchanged skip-model #${item.number} (${completed}/${candidates.length})`,
+          );
+        }
+        continue;
+      }
       const codexWorkDir = join(artifactDir, "codex");
       const proofScratchDir = join(codexWorkDir, "proof-scratch", String(item.number));
       // --local-range is a pre-PR LOCAL code review — it has no telegram-visible-proof to
@@ -17034,6 +17226,7 @@ function reviewCommand(args: Args): void {
           action,
           reviewMode: "propose",
           snapshotHash,
+          contentDigest,
           reviewPolicy,
           runtime,
         }),
@@ -17057,7 +17250,7 @@ function reviewCommand(args: Args): void {
     }
     if (!humanLocalReview) {
       console.error(
-        `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} complete reviewed=${completed}`,
+        `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} complete reviewed=${completed} cache_hits=${cacheHits}`,
       );
     }
     if (codexFailures > 0) {
@@ -17867,7 +18060,8 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       action === "kept_open" &&
       storedUpdatedAt &&
       item.updatedAt === storedUpdatedAt &&
-      livePullRequestHasNoDiff(currentItemContext())
+      livePullRequestHasNoDiff(currentItemContext()) &&
+      reviewReportCanPromoteToClose(markdown)
     ) {
       markdown = upgradeNoDiffPullRequestReport(markdown, item);
       closeReason = "duplicate_or_superseded";

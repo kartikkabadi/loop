@@ -779,6 +779,28 @@ test("scheduled normal review keeps workers warm with multi-item shards", () => 
   );
 });
 
+test("planned background reviews allow safe content-cache reuse without weakening exact reviews", () => {
+  const workflow = readText(".github/workflows/sweep.yml");
+  const eventReviewJobStart = workflow.indexOf("\n  event-review-apply:");
+  const planJobStart = workflow.indexOf("\n  plan:", eventReviewJobStart);
+  const eventReviewJob = workflow.slice(eventReviewJobStart, planJobStart);
+  const reviewJobStart = workflow.indexOf("\n  review:");
+  const publishJobStart = workflow.indexOf("\n  publish:", reviewJobStart);
+  const reviewJob = workflow.slice(reviewJobStart, publishJobStart);
+
+  assert.match(
+    reviewJob,
+    /EXACT_ITEM: \$\{\{ github\.event\.client_payload\.item_number \|\| github\.event\.inputs\.item_number \|\| github\.event\.inputs\.item_numbers \|\| '' \}\}/,
+  );
+  assert.match(reviewJob, /if \[ -z "\$EXACT_ITEM" \]; then/);
+  assert.match(reviewJob, /planned_automatic_review_arg=\(--planned-automatic-review\)/);
+  assert.match(
+    reviewJob,
+    /--item-numbers "\$\{\{ matrix\.item_numbers \}\}" \\\n+\s+"\$\{planned_automatic_review_arg\[@\]\}"/,
+  );
+  assert.doesNotMatch(eventReviewJob, /--planned-automatic-review/);
+});
+
 test("sweep event reviews and target fanout avoid storm amplification", () => {
   const workflow = readText(".github/workflows/sweep.yml");
   const legacyIntakeBlock = workflow.slice(
