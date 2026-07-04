@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   featureShowcaseLabelsForTest,
+  goodFirstIssueLabelOptedOutForTest,
   impactLabelsForTest,
   impactLabelSchemeForTest,
   issueAdvisoryLabelsForTest,
@@ -852,6 +853,157 @@ test("ClawSweeper issue advisory labels expose work-lane routing state", () => {
   );
 });
 
+test("ClawSweeper labels only small verified strict bugs as good first issues", () => {
+  const eligibleState = {
+    type: "issue",
+    itemCategory: "bug",
+    reproductionStatus: "reproduced",
+    reproductionConfidence: "high",
+    requiresNewFeature: false,
+    requiresNewConfigOption: false,
+    requiresProductDecision: false,
+    implementationComplexity: "small",
+    autoImplementationCandidate: "strict_bug",
+    securityReviewStatus: "not_applicable",
+    workCandidate: "queue_fix_pr",
+    workStatus: "candidate",
+    workConfidence: "high",
+    hasWorkShape: true,
+    hasWorkPrompt: true,
+    hasWorkValidation: true,
+    goodFirstIssueOptedOut: false,
+    locked: false,
+    hasOpenLinkedPullRequest: false,
+  };
+
+  assert.equal(
+    issueAdvisoryLabelsForTest(["bug"], eligibleState).includes("good first issue"),
+    true,
+  );
+
+  for (const ineligibleState of [
+    { reproductionStatus: "source_reproducible" },
+    { reproductionConfidence: "medium" },
+    { itemCategory: "feature" },
+    { requiresNewFeature: true },
+    { requiresNewConfigOption: true },
+    { requiresProductDecision: true },
+    { implementationComplexity: "medium" },
+    { autoImplementationCandidate: "none" },
+    { securityReviewStatus: "needs_attention" },
+    { workCandidate: "manual_review" },
+    { workStatus: "manual_review" },
+    { workConfidence: "medium" },
+    { hasWorkPrompt: false },
+    { hasWorkValidation: false },
+    { goodFirstIssueOptedOut: true },
+    { locked: true },
+    { hasOpenLinkedPullRequest: true },
+  ]) {
+    assert.equal(
+      issueAdvisoryLabelsForTest(["bug"], { ...eligibleState, ...ineligibleState }).includes(
+        "good first issue",
+      ),
+      false,
+      JSON.stringify(ineligibleState),
+    );
+  }
+
+  for (const securityLabel of [
+    "security",
+    "security-sensitive",
+    "security:sensitive",
+    "security/internal",
+    "impact:security",
+  ]) {
+    assert.equal(
+      issueAdvisoryLabelsForTest(["bug", securityLabel], eligibleState).includes(
+        "good first issue",
+      ),
+      false,
+      securityLabel,
+    );
+  }
+  assert.equal(
+    issueAdvisoryLabelsForTest(["bug", "maintainer"], eligibleState).includes("good first issue"),
+    false,
+  );
+  assert.equal(
+    issueAdvisoryLabelsForTest(["bug", "good first issue"], {
+      ...eligibleState,
+      implementationComplexity: "medium",
+    }).includes("good first issue"),
+    true,
+  );
+});
+
+test("ClawSweeper respects human good first issue removal", () => {
+  assert.equal(
+    goodFirstIssueLabelOptedOutForTest([
+      {
+        id: 1,
+        event: "labeled",
+        label: { name: "good first issue" },
+        actor: { login: "openclaw-clawsweeper[bot]" },
+        created_at: "2026-07-01T00:00:00Z",
+      },
+      {
+        id: 2,
+        event: "unlabeled",
+        label: { name: "good first issue" },
+        actor: { login: "maintainer" },
+        created_at: "2026-07-02T00:00:00Z",
+      },
+      {
+        id: 3,
+        event: "labeled",
+        label: { name: "good first issue" },
+        actor: { login: "openclaw-clawsweeper[bot]" },
+        created_at: "2026-07-03T00:00:00Z",
+      },
+    ]),
+    true,
+  );
+  assert.equal(
+    goodFirstIssueLabelOptedOutForTest([
+      {
+        id: 2,
+        event: "unlabeled",
+        label: "good first issue",
+        actor: "maintainer",
+        createdAt: "2026-07-02T00:00:00Z",
+      },
+      {
+        id: 3,
+        event: "labeled",
+        label: "good first issue",
+        actor: "maintainer",
+        createdAt: "2026-07-03T00:00:00Z",
+      },
+      {
+        id: 4,
+        event: "unlabeled",
+        label: "good first issue",
+        actor: "github-actions[bot]",
+        createdAt: "2026-07-04T00:00:00Z",
+      },
+    ]),
+    false,
+  );
+  assert.equal(
+    goodFirstIssueLabelOptedOutForTest([
+      {
+        id: 1,
+        event: "unlabeled",
+        label: "good first issue",
+        actor: "openclaw-clawsweeper[bot]",
+        createdAt: "2026-07-02T00:00:00Z",
+      },
+    ]),
+    false,
+  );
+});
+
 test("ClawSweeper issue advisory labels protect queueable issues from stale automation", () => {
   const queueableLabels = issueAdvisoryLabelsForTest(["bug", "stale"], {
     type: "issue",
@@ -999,6 +1151,7 @@ test("ClawSweeper issue advisory labels remove stale owned labels and preserve o
         "clawsweeper:linked-pr-open",
         "clawsweeper:no-new-fix-pr",
         "clawsweeper:queueable-fix",
+        "good first issue",
         "clawsweeper:fix-shape-clear",
         "clawsweeper:needs-product-decision",
         "clawsweeper:needs-security-review",
@@ -1019,6 +1172,7 @@ test("ClawSweeper issue advisory labels remove stale owned labels and preserve o
     ),
     [
       "bug",
+      "good first issue",
       "clawsweeper:autofix",
       "clawsweeper:automerge",
       "clawsweeper:human-review",

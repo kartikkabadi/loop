@@ -473,8 +473,14 @@ test("apply-decisions syncs labels when first review placeholder advanced issue 
       item_updated_at: "2026-05-01T00:00:00Z",
       triage_priority: "P1",
       impact_labels: JSON.stringify(["impact:message-loss"]),
-      reproduction_status: "source_reproducible",
+      item_category: "bug",
+      reproduction_status: "reproduced",
       reproduction_confidence: "high",
+      requires_new_feature: false,
+      requires_new_config_option: false,
+      requires_product_decision: false,
+      implementation_complexity: "small",
+      auto_implementation_candidate: "strict_bug",
     });
     writeFileSync(join(itemsDir, "321.md"), report, "utf8");
     const placeholder = renderReviewStartStatusComment({
@@ -540,6 +546,8 @@ if (args[0] === "api" && /\\/issues\\/comments\\/\\d+$/.test(path)) {
   }));
 } else if (args[0] === "issue" && args[1] === "view") {
   console.log(JSON.stringify({ closedByPullRequestsReferences: [] }));
+} else if (args[0] === "api" && path.startsWith("search/issues?")) {
+  console.log(JSON.stringify({ items: [] }));
 } else if (args[0] === "label" && args[1] === "create") {
   console.log("");
 } else if (args[0] === "issue" && args[1] === "edit") {
@@ -567,7 +575,20 @@ if (args[0] === "api" && /\\/issues\\/comments\\/\\d+$/.test(path)) {
     );
     assert.ok(
       editCalls.some(
-        (args) => args.includes("--add-label") && args.includes("clawsweeper:source-repro"),
+        (args) => args.includes("--add-label") && args.includes("clawsweeper:current-main-repro"),
+      ),
+    );
+    assert.ok(
+      editCalls.some((args) => args.includes("--add-label") && args.includes("good first issue")),
+    );
+    assert.ok(
+      calls.some(
+        (args) =>
+          args[0] === "label" &&
+          args[1] === "create" &&
+          args[2] === "good first issue" &&
+          args.includes("7057FF") &&
+          args.includes("Good for newcomers"),
       ),
     );
     assert.deepEqual(JSON.parse(readFileSync(reportPath, "utf8")), [
@@ -580,6 +601,7 @@ if (args[0] === "api" && /\\/issues\\/comments\\/\\d+$/.test(path)) {
     const updatedReport = readFileSync(join(itemsDir, "321.md"), "utf8");
     assert.match(updatedReport, /^labels: .*"P1"/m);
     assert.match(updatedReport, /^labels: .*"impact:message-loss"/m);
+    assert.match(updatedReport, /^labels: .*"good first issue"/m);
     assert.match(updatedReport, /^labels_synced_at: /m);
     assert.match(updatedReport, /^apply_checked_at: /m);
   } finally {

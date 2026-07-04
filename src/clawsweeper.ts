@@ -563,10 +563,13 @@ interface AgentsPolicyStatus {
   summary: string;
 }
 
+type GoodFirstIssueHumanLabelState = "removed" | "added" | "unknown";
+
 interface ItemContext {
   issue: unknown;
   comments: unknown[];
   timeline: unknown[];
+  goodFirstIssueHumanLabelState?: GoodFirstIssueHumanLabelState;
   sourceRevision?: string;
   timelineRevision?: string;
   previousClawSweeperReview?: unknown;
@@ -1453,6 +1456,12 @@ const MATURITY_LABELS = [
 const MATURITY_LABEL_NAMES: ReadonlySet<string> = new Set(
   MATURITY_LABELS.map((label) => label.name),
 );
+const GOOD_FIRST_ISSUE_LABEL = "good first issue";
+const GOOD_FIRST_ISSUE_LABEL_DEFINITION = {
+  name: GOOD_FIRST_ISSUE_LABEL,
+  color: "7057FF",
+  description: "Good for newcomers",
+} as const;
 const ISSUE_ADVISORY_LABELS = [
   {
     name: "issue-rating: 🦀 challenger crab",
@@ -2304,6 +2313,7 @@ function isClawSweeperAdvisorySourceRevisionLabel(label: string): boolean {
     /^(?:status|rating|proof|merge-risk|impact|issue-rating):/.test(label) ||
     /^p[0-3]$/.test(label) ||
     label === "feature: ✨ showcase" ||
+    label === GOOD_FIRST_ISSUE_LABEL ||
     label === "mantis: telegram-visible-proof" ||
     label === "triage: needs-real-behavior-proof"
   );
@@ -4085,6 +4095,46 @@ function compactTimelineEvent(value: unknown): unknown {
           }
         : undefined,
   };
+}
+
+function goodFirstIssueHumanLabelState(
+  timeline: readonly unknown[],
+): GoodFirstIssueHumanLabelState {
+  const events = timeline
+    .map((value) => {
+      const event = asRecord(value);
+      const labelValue = event.label;
+      const label =
+        typeof labelValue === "string"
+          ? labelValue
+          : (stringOrUndefined(asRecord(labelValue).name) ?? "");
+      const actorValue = event.actor;
+      const actor = typeof actorValue === "string" ? actorValue : (login(actorValue) ?? "");
+      return {
+        event: stringOrUndefined(event.event) ?? "",
+        label: normalizeLabelName(label),
+        actor: actor.toLowerCase(),
+        createdAt: stringOrUndefined(event.createdAt) ?? stringOrUndefined(event.created_at) ?? "",
+        id: Number(event.id ?? 0),
+      };
+    })
+    .filter((event) => event.label === GOOD_FIRST_ISSUE_LABEL)
+    .filter(
+      (event) =>
+        !isAutomationReportAuthor(event.actor) && !CLAWSWEEPER_BOT_AUTHORS.has(event.actor),
+    )
+    .sort(
+      (left, right) =>
+        timestampValueMs(left.createdAt) - timestampValueMs(right.createdAt) || left.id - right.id,
+    );
+  const latest = events.at(-1);
+  if (latest?.event === "unlabeled") return "removed";
+  if (latest?.event === "labeled") return "added";
+  return "unknown";
+}
+
+export function goodFirstIssueLabelOptedOutForTest(timeline: readonly unknown[]): boolean {
+  return goodFirstIssueHumanLabelState(timeline) === "removed";
 }
 
 function compactPullRequest(value: unknown): unknown {
@@ -6464,6 +6514,7 @@ function collectItemContext(
       compactComment,
     ),
     timeline: compactMappedWindow(timeline, timelineWindow.total, 80, compactTimelineEvent),
+    goodFirstIssueHumanLabelState: goodFirstIssueHumanLabelState(fullTimeline ?? timeline),
     counts: {
       comments: commentsWindow.total,
       commentsHydrated: commentsWindow.hydrated,
@@ -11263,17 +11314,69 @@ interface IssueAdvisoryLabelState {
   itemCategory: string | undefined;
   reproductionStatus: string | undefined;
   reproductionConfidence: string | undefined;
+  requiresNewFeature: boolean;
+  requiresNewConfigOption: boolean;
   requiresProductDecision: boolean;
+  implementationComplexity: string | undefined;
+  autoImplementationCandidate: string | undefined;
   securityReviewStatus: string | undefined;
   workCandidate: string | undefined;
   workStatus: string | undefined;
   workConfidence: string | undefined;
   hasWorkShape: boolean;
+  hasWorkPrompt: boolean;
+  hasWorkValidation: boolean;
+  goodFirstIssueOptedOut: boolean;
+  locked: boolean;
   hasOpenLinkedPullRequest: boolean;
 }
 
 function isIssueAdvisoryLabel(label: string): boolean {
   return ISSUE_ADVISORY_LABEL_NAMES.has(label.toLowerCase());
+}
+
+function isSecuritySensitiveLabel(label: string): boolean {
+  const normalized = normalizeLabelName(label);
+  return (
+    normalized === "impact:security" ||
+    normalized === "security" ||
+    normalized === "security-sensitive" ||
+    normalized === "security sensitive" ||
+    normalized === "type: security" ||
+    normalized === "type:security" ||
+    normalized === "kind: security" ||
+    normalized === "kind:security" ||
+    normalized.startsWith("security:") ||
+    normalized.startsWith("security/")
+  );
+}
+
+function isGoodFirstIssue(
+  state: IssueAdvisoryLabelState,
+  currentLabels: readonly string[],
+): boolean {
+  return (
+    state.type === "issue" &&
+    state.itemCategory === "bug" &&
+    state.reproductionStatus === "reproduced" &&
+    state.reproductionConfidence === "high" &&
+    !state.requiresNewFeature &&
+    !state.requiresNewConfigOption &&
+    !state.requiresProductDecision &&
+    state.implementationComplexity === "small" &&
+    state.autoImplementationCandidate === "strict_bug" &&
+    state.securityReviewStatus !== "needs_attention" &&
+    state.workCandidate === "queue_fix_pr" &&
+    state.workStatus === "candidate" &&
+    state.workConfidence === "high" &&
+    state.hasWorkPrompt &&
+    state.hasWorkValidation &&
+    !state.goodFirstIssueOptedOut &&
+    !state.locked &&
+    !currentLabels.some(isSecuritySensitiveLabel) &&
+    protectedLabels(currentLabels).length === 0 &&
+    !state.hasOpenLinkedPullRequest
+  );
 }
 
 function issueRatingLabelForState(state: IssueAdvisoryLabelState): string {
@@ -11310,7 +11413,10 @@ function issueRatingLabelForState(state: IssueAdvisoryLabelState): string {
   return "issue-rating: 🧂 unranked krab";
 }
 
-function wantedIssueAdvisoryLabels(state: IssueAdvisoryLabelState): Set<string> {
+function wantedIssueAdvisoryLabels(
+  state: IssueAdvisoryLabelState,
+  currentLabels: readonly string[],
+): Set<string> {
   const labels = new Set<string>();
   if (state.type !== "issue") return labels;
   const issueRatingLabel = issueRatingLabelForState(state);
@@ -11338,6 +11444,9 @@ function wantedIssueAdvisoryLabels(state: IssueAdvisoryLabelState): Set<string> 
     state.workConfidence === "high"
   ) {
     labels.add(QUEUEABLE_FIX_LABEL);
+  }
+  if (isGoodFirstIssue(state, currentLabels)) {
+    labels.add(GOOD_FIRST_ISSUE_LABEL);
   }
   if (
     state.workConfidence === "high" &&
@@ -11385,7 +11494,7 @@ function nextIssueAdvisoryLabels(
   labels: readonly string[],
   state: IssueAdvisoryLabelState,
 ): string[] {
-  const wantedLabels = wantedIssueAdvisoryLabels(state);
+  const wantedLabels = wantedIssueAdvisoryLabels(state, labels);
   const needsStaleProtection = issueAdvisoryStateNeedsStaleProtection(state);
   const hadQueueableProtection = issueAdvisoryLabelsHadQueueableProtection(labels);
   const nextLabels = labels.filter(
@@ -11400,6 +11509,12 @@ function nextIssueAdvisoryLabels(
   for (const label of ISSUE_ADVISORY_LABELS) {
     if (wantedLabels.has(label.name)) nextLabels.push(label.name);
   }
+  if (
+    wantedLabels.has(GOOD_FIRST_ISSUE_LABEL) &&
+    !nextLabels.some((label) => label.toLowerCase() === GOOD_FIRST_ISSUE_LABEL)
+  ) {
+    nextLabels.push(GOOD_FIRST_ISSUE_LABEL);
+  }
   return nextLabels;
 }
 
@@ -11412,19 +11527,31 @@ export function issueAdvisoryLabelsForTest(
     itemCategory: state.itemCategory,
     reproductionStatus: state.reproductionStatus,
     reproductionConfidence: state.reproductionConfidence,
+    requiresNewFeature: state.requiresNewFeature ?? false,
+    requiresNewConfigOption: state.requiresNewConfigOption ?? false,
     requiresProductDecision: state.requiresProductDecision ?? false,
+    implementationComplexity: state.implementationComplexity,
+    autoImplementationCandidate: state.autoImplementationCandidate,
     securityReviewStatus: state.securityReviewStatus,
     workCandidate: state.workCandidate,
     workStatus: state.workStatus,
     workConfidence: state.workConfidence,
     hasWorkShape: state.hasWorkShape ?? false,
+    hasWorkPrompt: state.hasWorkPrompt ?? false,
+    hasWorkValidation: state.hasWorkValidation ?? false,
+    goodFirstIssueOptedOut: state.goodFirstIssueOptedOut ?? false,
+    locked: state.locked ?? false,
     hasOpenLinkedPullRequest: state.hasOpenLinkedPullRequest ?? false,
   });
 }
 
 function issueAdvisoryLabelStateFromReport(
   markdown: string,
-  options: { hasOpenLinkedPullRequest?: boolean } = {},
+  options: {
+    goodFirstIssueOptedOut?: boolean;
+    hasOpenLinkedPullRequest?: boolean;
+    locked?: boolean;
+  } = {},
 ): IssueAdvisoryLabelState {
   const workLikelyFiles = frontMatterStringArray(markdown, "work_likely_files");
   const workValidation = frontMatterStringArray(markdown, "work_validation");
@@ -11434,12 +11561,20 @@ function issueAdvisoryLabelStateFromReport(
     itemCategory: frontMatterValue(markdown, "item_category"),
     reproductionStatus: frontMatterValue(markdown, "reproduction_status"),
     reproductionConfidence: frontMatterValue(markdown, "reproduction_confidence"),
+    requiresNewFeature: frontMatterValue(markdown, "requires_new_feature") === "true",
+    requiresNewConfigOption: frontMatterValue(markdown, "requires_new_config_option") === "true",
     requiresProductDecision: frontMatterValue(markdown, "requires_product_decision") === "true",
+    implementationComplexity: frontMatterValue(markdown, "implementation_complexity"),
+    autoImplementationCandidate: frontMatterValue(markdown, "auto_implementation_candidate"),
     securityReviewStatus: reportSecurityReview(markdown).status,
     workCandidate: frontMatterValue(markdown, "work_candidate"),
     workStatus: frontMatterValue(markdown, "work_status"),
     workConfidence: frontMatterValue(markdown, "work_confidence"),
     hasWorkShape: Boolean(workPrompt || workLikelyFiles.length || workValidation.length),
+    hasWorkPrompt: Boolean(workPrompt),
+    hasWorkValidation: workValidation.length > 0,
+    goodFirstIssueOptedOut: options.goodFirstIssueOptedOut === true,
+    locked: options.locked === true,
     hasOpenLinkedPullRequest: options.hasOpenLinkedPullRequest === true,
   };
 }
@@ -11447,6 +11582,9 @@ function issueAdvisoryLabelStateFromReport(
 function ensureIssueAdvisorySyncLabel(name: string): void {
   const definition =
     ISSUE_ADVISORY_LABELS.find((label) => label.name === name) ??
+    (name.toLowerCase() === GOOD_FIRST_ISSUE_LABEL
+      ? GOOD_FIRST_ISSUE_LABEL_DEFINITION
+      : undefined) ??
     (name.toLowerCase() === ISSUE_STALE_PROTECTION_LABEL.name
       ? ISSUE_STALE_PROTECTION_LABEL
       : undefined);
@@ -11640,7 +11778,9 @@ function syncIssueAdvisoryLabels(options: {
   const nextLabelKeys = new Set(nextLabels.map((label) => label.toLowerCase()));
   const labelsToAdd = nextLabels.filter(
     (label) =>
-      (isIssueAdvisoryLabel(label) || label.toLowerCase() === NO_STALE_LABEL) &&
+      (isIssueAdvisoryLabel(label) ||
+        label.toLowerCase() === GOOD_FIRST_ISSUE_LABEL ||
+        label.toLowerCase() === NO_STALE_LABEL) &&
       !currentLabelKeys.has(label.toLowerCase()),
   );
   const labelsToRemove = options.labels.filter(
@@ -17816,6 +17956,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
     }
     const { item, state } = liveItem;
     const previousLabels = [...item.labels];
+    const reportLabelsBeforeApply = frontMatterStringArray(markdown, "labels");
     let currentContext: ItemContext | undefined;
     let currentClosingPullRequests: unknown[] | undefined;
     let clawSweeperLabelsChanged = false;
@@ -18623,12 +18764,26 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
         const hasOpenLinkedPullRequest =
           openClosingPullRequestApplyReason(currentClosingPullRequests) !== null;
         renderOptions.hasOpenLinkedPullRequest = hasOpenLinkedPullRequest;
+        const advisoryState = issueAdvisoryLabelStateFromReport(markdown, {
+          hasOpenLinkedPullRequest,
+          locked: item.locked === true,
+        });
+        const currentHasGoodFirstIssue = item.labels.some(
+          (label) => label.toLowerCase() === GOOD_FIRST_ISSUE_LABEL,
+        );
+        if (!currentHasGoodFirstIssue && isGoodFirstIssue(advisoryState, item.labels)) {
+          const reportHadGoodFirstIssue = reportLabelsBeforeApply.some(
+            (label) => label.toLowerCase() === GOOD_FIRST_ISSUE_LABEL,
+          );
+          const humanLabelState = currentItemContext().goodFirstIssueHumanLabelState ?? "unknown";
+          advisoryState.goodFirstIssueOptedOut =
+            humanLabelState === "removed" ||
+            (humanLabelState === "unknown" && reportHadGoodFirstIssue);
+        }
         const syncResult = syncIssueAdvisoryLabels({
           number,
           labels: item.labels,
-          state: issueAdvisoryLabelStateFromReport(markdown, {
-            hasOpenLinkedPullRequest,
-          }),
+          state: advisoryState,
           dryRun,
         });
         item.labels = syncResult.labels;

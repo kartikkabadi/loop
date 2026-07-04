@@ -312,6 +312,7 @@ test("apply-decisions clears stale PR review labels when live head changed", () 
       "merge-risk: 🚨 session-state",
       "status: 🔁 re-review loop",
       "proof: sufficient",
+      "good first issue",
     ];
     const sourceReport = `${reportFrontMatter({
       repository: "openclaw/openclaw",
@@ -465,7 +466,7 @@ if (args[0] === "api" && /\\/issues\\/74481$/.test(path)) {
     assert.doesNotMatch(patchedBody, /clawsweeper-verdict:/);
     const updatedReport = readFileSync(itemPath, "utf8");
     assert.match(updatedReport, /^current_pull_head_sha: new-head$/m);
-    assert.match(updatedReport, /^labels: \["P2"\]$/m);
+    assert.match(updatedReport, /^labels: \["P2","good first issue"\]$/m);
     assert.deepEqual(JSON.parse(readFileSync(reportPath, "utf8")), [
       {
         number: 74481,

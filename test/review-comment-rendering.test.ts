@@ -130,6 +130,7 @@ test("review item source revision ignores advisory labels but tracks protected l
           { name: "issue-rating: 🦪 silver shellfish" },
           { name: "P1" },
           { name: "feature: ✨ showcase" },
+          { name: "good first issue" },
           { name: "mantis: telegram-visible-proof" },
           { name: "triage: needs-real-behavior-proof" },
           { name: "clawsweeper:reviewed" },
