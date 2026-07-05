@@ -784,7 +784,7 @@ test("dashboard HTML preserves UTF-8 emoji labels", async () => {
 test("dashboard hero treats apply health attention as needs attention", async () => {
   const response = await worker.fetch(new Request("https://clawsweeper.openclaw.ai/"));
   const html = await response.text();
-  const script = html.match(/<script>\n([\s\S]*)\n<\/script>/)?.[1];
+  const script = [...html.matchAll(/<script>\n([\s\S]*?)\n<\/script>/g)].at(-1)?.[1];
   assert.ok(script);
 
   const elements = new Map();
@@ -900,6 +900,7 @@ test("dashboard hero treats apply health attention as needs attention", async ()
     document: {
       addEventListener: () => undefined,
       body: { classList: { add: () => undefined, remove: () => undefined } },
+      documentElement: { dataset: {} },
       getElementById: elementFor,
       querySelector: () => null,
       querySelectorAll: () => [],
@@ -927,6 +928,29 @@ test("dashboard hero treats apply health attention as needs attention", async ()
   assert.equal(elementFor("hero-dot").className, "hero-dot amber");
   assert.match(elementFor("hero-headline").textContent, /^Needs attention/);
   assert.match(elementFor("apply-health").innerHTML, /Pruning sweep blocked/);
+});
+
+test("dashboard HTML emits early persistent theme controls", async () => {
+  for (const path of ["/", "/triage", "/pr-proof-triage"]) {
+    const response = await worker.fetch(new Request("https://clawsweeper.openclaw.ai" + path));
+    const html = await response.text();
+    const themeInit = html.indexOf('const themeKey = "clawsweeper-theme";');
+    const styles = html.indexOf("<style>");
+
+    assert.notEqual(themeInit, -1, path + " should initialize theme preference");
+    assert.notEqual(styles, -1, path + " should include CSS");
+    assert.ok(themeInit < styles, path + " should apply saved theme before styles");
+    assert.match(html, /:root\[data-theme="light"\] \{ color-scheme: light; \}/);
+    assert.match(html, /:root\[data-theme="dark"\] \{ color-scheme: dark; \}/);
+    assert.match(html, /data-theme-choice="system"/);
+    assert.match(html, /data-theme-choice="light"/);
+    assert.match(html, /data-theme-choice="dark"/);
+    assert.match(html, /window\.localStorage\?\.setItem\(themeKey, choice\)/);
+    assert.match(html, /typeof themeQuery\?\.addEventListener === "function"/);
+    assert.match(html, /themeQuery\.addEventListener\("change", updateSystemTheme\)/);
+    assert.match(html, /themeQuery\?\.addListener\?\.\(updateSystemTheme\)/);
+    assert.match(html, /setAttribute\("aria-pressed", selected \? "true" : "false"\)/);
+  }
 });
 
 test("dashboard groups automatic issue lifecycle events with active workers", () => {

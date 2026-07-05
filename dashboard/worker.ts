@@ -5076,6 +5076,133 @@ function externalHttpUrl(value, fallback) {
   }
 }
 
+function dashboardThemeInitScript() {
+  return `<script>
+(() => {
+  const themeKey = "clawsweeper-theme";
+  const themeChoices = new Set(["system", "light", "dark"]);
+  const themeQuery = window.matchMedia?.("(prefers-color-scheme: dark)");
+  const themeColor = { light: "#f6f3ec", dark: "#141110" };
+  let themeChoice = "system";
+  try {
+    const saved = window.localStorage?.getItem(themeKey);
+    if (themeChoices.has(saved)) themeChoice = saved;
+  } catch {}
+  const active = themeChoice === "system" && themeQuery?.matches ? "dark" : themeChoice === "dark" ? "dark" : "light";
+  document.documentElement.dataset.theme = active;
+  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", themeColor[active]);
+})();
+</script>`;
+}
+
+function dashboardThemeCss() {
+  return `
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+.theme-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+}
+.theme-control > span {
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.theme-options {
+  display: inline-grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  padding: 2px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+}
+.theme-options button {
+  appearance: none;
+  min-width: 48px;
+  min-height: 24px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.theme-options button:hover {
+  color: var(--text);
+}
+.theme-options button[aria-pressed="true"] {
+  color: var(--claw);
+  background: color-mix(in srgb, var(--claw) 10%, transparent);
+}
+`;
+}
+
+function dashboardThemeControlHtml() {
+  return `<div class="theme-control" aria-label="Theme">
+        <span>Theme</span>
+        <div class="theme-options" role="group" aria-label="Theme preference">
+          <button type="button" data-theme-choice="system" aria-pressed="true">System</button>
+          <button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
+          <button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
+        </div>
+      </div>`;
+}
+
+function dashboardThemeControlScript() {
+  return `(() => {
+  const themeKey = "clawsweeper-theme";
+  const themeChoices = new Set(["system", "light", "dark"]);
+  const themeColor = { light: "#f6f3ec", dark: "#141110" };
+  const themeQuery = window.matchMedia?.("(prefers-color-scheme: dark)");
+  const themeButtons = document.querySelectorAll("[data-theme-choice]");
+  const readThemeChoice = () => {
+    try {
+      const saved = window.localStorage?.getItem(themeKey);
+      return themeChoices.has(saved) ? saved : "system";
+    } catch {
+      return "system";
+    }
+  };
+  let themeChoice = readThemeChoice();
+  const activeTheme = () => themeChoice === "system" && themeQuery?.matches ? "dark" : themeChoice === "dark" ? "dark" : "light";
+  const applyTheme = () => {
+    const active = activeTheme();
+    document.documentElement.dataset.theme = active;
+    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", themeColor[active]);
+    themeButtons.forEach(button => {
+      const selected = button.dataset.themeChoice === themeChoice;
+      button.setAttribute("aria-pressed", selected ? "true" : "false");
+    });
+  };
+  themeButtons.forEach(button => button.addEventListener("click", () => {
+    const choice = button.dataset.themeChoice;
+    if (!themeChoices.has(choice)) return;
+    themeChoice = choice;
+    try {
+      window.localStorage?.setItem(themeKey, choice);
+    } catch {}
+    applyTheme();
+  }));
+  const updateSystemTheme = () => {
+    if (themeChoice === "system") applyTheme();
+  };
+  if (typeof themeQuery?.addEventListener === "function") {
+    themeQuery.addEventListener("change", updateSystemTheme);
+  } else {
+    themeQuery?.addListener?.(updateSystemTheme);
+  }
+  applyTheme();
+})();`;
+}
+
 function serializedPageConfig(config) {
   return JSON.stringify(config).replace(/</g, "\\u003c");
 }
@@ -5095,7 +5222,9 @@ function triageHtml(config) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f6f3ec">
 <title>${escapeHtml(config.title)}</title>
+${dashboardThemeInitScript()}
 <style>
 :root {
   color-scheme: light dark;
@@ -5113,6 +5242,7 @@ function triageHtml(config) {
 }
 * { box-sizing: border-box; }
 html { scrollbar-color: light-dark(#cfc6b6, #3a332b) transparent; }
+${dashboardThemeCss()}
 body {
   margin: 0;
   background: var(--bg);
@@ -5460,6 +5590,7 @@ body.resizing-col {
     </div>
     <div class="top-links">
       ${config.links.map((link) => `<a class="top-link" href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a>`).join("")}
+      ${dashboardThemeControlHtml()}
       <span class="muted mono" id="updated"></span>
     </div>
   </header>
@@ -5501,6 +5632,7 @@ body.resizing-col {
   <section id="diagnostics" class="muted"></section>
 </main>
 <script>
+${dashboardThemeControlScript()}
 const PAGE = ${pageConfig};
 const fmt = new Intl.NumberFormat();
 const rel = new Intl.RelativeTimeFormat(undefined, { numeric: "auto" });
@@ -5917,6 +6049,8 @@ function dashboardHtml(env: DashboardEnv = {}) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f6f3ec">
+${dashboardThemeInitScript()}
 <title>🦞 ClawSweeper Live</title>
 <style>
 :root {
@@ -5936,6 +6070,7 @@ function dashboardHtml(env: DashboardEnv = {}) {
 }
 * { box-sizing: border-box; }
 html { scrollbar-color: light-dark(#cfc6b6, #3a332b) transparent; }
+${dashboardThemeCss()}
 body {
   margin: 0;
   background: var(--bg);
@@ -6689,6 +6824,7 @@ a.pill:hover { color: var(--claw); text-decoration: none; }
       <a class="top-link" href="/triage">Issue triage</a>
       <a class="top-link" href="/pr-proof-triage">PR proof triage</a>
       <a class="top-link" href="${escapeHtml(crabfleetUrl)}">Live terminals</a>
+      ${dashboardThemeControlHtml()}
       <span class="muted mono" id="updated"></span>
     </div>
   </header>
@@ -6760,6 +6896,7 @@ a.pill:hover { color: var(--claw); text-decoration: none; }
   </div>
 </dialog>
 <script>
+${dashboardThemeControlScript()}
 const fmt = new Intl.NumberFormat();
 const rel = new Intl.RelativeTimeFormat(undefined, { numeric: "auto" });
 function elapsed(ms) {
