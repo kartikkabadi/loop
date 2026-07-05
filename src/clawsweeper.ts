@@ -255,6 +255,7 @@ type MantisRecommendationScenario =
   | "telegram_desktop_proof"
   | "discord_status_reactions"
   | "discord_thread_attachment"
+  | "web_ui_chat_proof"
   | "slack_desktop_smoke"
   | "visual_task";
 type VisionFitStatus = "aligned" | "rejected" | "unclear" | "not_applicable";
@@ -1719,6 +1720,7 @@ const MANTIS_RECOMMENDATION_SCENARIOS = new Set<MantisRecommendationScenario>([
   "telegram_desktop_proof",
   "discord_status_reactions",
   "discord_thread_attachment",
+  "web_ui_chat_proof",
   "slack_desktop_smoke",
   "visual_task",
 ]);
@@ -9314,7 +9316,42 @@ function prStatusLabelKindFromReportLabels(markdown: string): PrStatusLabelKind 
   return PR_STATUS_LABELS.find((label) => rawLabels.includes(label.name))?.kind ?? null;
 }
 
-function publicMantisRecommendationBlock(recommendation: MantisRecommendation): string {
+function mantisMaintainerCommentRequestsMutation(comment: string): boolean {
+  const commandBody = comment.replace(/^@openclaw-mantis\s+/i, "").trim();
+  const mutationVerb = String.raw`(?:add|apply|approve|assign|cancel|change|close|comment|commit|create|delete|disable|edit|enable|file|fix|implement|label|land|lock|make|mark|merge|modify|open|post|publish|push|rebase|remove|reopen|repair|request|resolve|restart|resume|re-?run|retry|re-?trigger|review|rewrite|run|set|submit|triage|trigger|unlock|update|write)`;
+  const mutationObject = String.raw`(?:automerge|branch(?:es)?|change(?:s)?|check(?:s)?|CI|code(?!\s+(?:block|snippet|sample|example)\b)|commit(?:s)?|GitHub(?:\s+state)?|issue(?:s)?|item(?:s)?|label(?:s)?|comment(?:s)?|patch(?:es)?|pull\s+request(?:s)?|PRs?|ready\s+for\s+review|repositor(?:y|ies)|repo(?:s)?|review(?:s|\s+request(?:s)?)?|workflow(?:s)?)`;
+  const scopedMutation = new RegExp(
+    `\\b${mutationVerb}\\b(?:\\s+\\S+){0,12}\\s+\\b${mutationObject}\\b`,
+    "i",
+  );
+  const explicitToolMutation = new RegExp(
+    `\\b(?:gh|git|GitHub)\\b(?:\\s+\\S+){0,12}\\s+\\b${mutationVerb}\\b`,
+    "i",
+  );
+  const maintenanceVerb = String.raw`(?:apply|approve|assign|close|comment|commit|create|file|fix|implement|label|land|lock|make|merge|modify|publish|push|rebase|reopen|repair|resolve|review|rewrite|submit|triage|unlock)`;
+  const bareMutationImperative = new RegExp(
+    `(?:^|[,.!?:;]\\s*|\\b(?:and|then|also)\\s+)(?:(?:please|kindly)\\s+|(?:can|could|would|will)\\s+you\\s+)*${maintenanceVerb}\\b`,
+    "i",
+  );
+  return (
+    scopedMutation.test(commandBody) ||
+    explicitToolMutation.test(commandBody) ||
+    bareMutationImperative.test(commandBody) ||
+    new RegExp(`\\b${mutationVerb}\\b\\s+(?:it|this|that|them|these|those)\\b`, "i").test(
+      commandBody,
+    ) ||
+    /\b(?:gh\s+workflow|workflow_dispatch|dispatch|trigger\s+the\s+workflow)\b/i.test(commandBody)
+  );
+}
+
+function mantisMaintainerCommentHasProofIntent(comment: string): boolean {
+  const commandBody = comment.replace(/^@openclaw-mantis\s+/i, "").trim();
+  return /\b(?:proof|verify|reproduce|capture|inspect|record|test|check|confirm|compare|exercise|demonstrate|show)\b/i.test(
+    commandBody,
+  );
+}
+
+function validMantisMaintainerComment(recommendation: MantisRecommendation): string {
   if (recommendation.status !== "recommended" || recommendation.scenario === "none") return "";
   const comment = recommendation.maintainerComment.trim();
   const accountMention = "@openclaw-mantis";
@@ -9322,7 +9359,8 @@ function publicMantisRecommendationBlock(recommendation: MantisRecommendation): 
   if (
     !comment.startsWith(`${accountMention} `) ||
     ambiguousMantisMention.test(comment) ||
-    /\b(?:gh\s+workflow|workflow_dispatch|dispatch|trigger\s+the\s+workflow)\b/i.test(comment) ||
+    !mantisMaintainerCommentHasProofIntent(comment) ||
+    mantisMaintainerCommentRequestsMutation(comment) ||
     comment.length > 500 ||
     comment.includes("\n")
   ) {
@@ -9330,11 +9368,64 @@ function publicMantisRecommendationBlock(recommendation: MantisRecommendation): 
   }
   const commandBody = comment.slice(accountMention.length).trim();
   if (!commandBody) return "";
+  return `${accountMention} ${commandBody}`;
+}
+
+function isSupportedMantisScenario(scenario: MantisRecommendationScenario): boolean {
+  return (
+    scenario === "telegram_live" ||
+    scenario === "telegram_desktop_proof" ||
+    scenario === "discord_status_reactions" ||
+    scenario === "discord_thread_attachment" ||
+    scenario === "web_ui_chat_proof"
+  );
+}
+
+function publicMantisRecommendationBlock(recommendation: MantisRecommendation): string {
+  if (!hasDispatchableMantisScenario(recommendation)) return "";
+  const comment = validMantisMaintainerComment(recommendation);
+  if (!comment) return "";
   const reason = sentence(recommendation.reason);
   const intro = reason
     ? `${reason} A maintainer can ask Mantis to capture proof by posting this exact PR comment:`
     : "A maintainer can ask Mantis to capture proof by posting this exact PR comment:";
-  return [intro, "", "```text", `${accountMention} ${commandBody}`, "```"].join("\n");
+  return [intro, "", "```text", comment, "```"].join("\n");
+}
+
+function publicNonDispatchableMantisRecommendationBlock(
+  recommendation: MantisRecommendation,
+): string {
+  if (recommendation.status !== "recommended" || recommendation.scenario === "none") return "";
+  const mutationRequest = mantisMaintainerCommentRequestsMutation(
+    recommendation.maintainerComment.trim(),
+  );
+  const missingProofIntent = !mantisMaintainerCommentHasProofIntent(
+    recommendation.maintainerComment.trim(),
+  );
+  if (
+    isSupportedMantisScenario(recommendation.scenario) &&
+    !mutationRequest &&
+    !missingProofIntent
+  ) {
+    return "";
+  }
+  const reason = sentence(recommendation.reason);
+  if (mutationRequest || missingProofIntent) {
+    const intro = reason
+      ? `${reason} Mantis is proof-only, so it must not be asked to change code or mutate GitHub state.`
+      : "Mantis is proof-only, so it must not be asked to change code or mutate GitHub state.";
+    return [
+      intro,
+      "Use ClawSweeper's repair, apply, or automerge lanes for code changes, branch updates, labels, comments, PR repair, closes, or merges.",
+    ].join("\n");
+  }
+  const intro = reason
+    ? `${reason} Mantis is currently scoped to Telegram, Discord, and web UI chat proof, so it is not the right proof path for this surface.`
+    : "Mantis is currently scoped to Telegram, Discord, and web UI chat proof, so it is not the right proof path for this surface.";
+  return [
+    intro,
+    "Use maintainer screenshot/manual proof, browser or Playwright proof, Crabbox where appropriate, or normal local artifact proof instead.",
+  ].join("\n");
 }
 
 function closeIntro(reason: CloseReason): string {
@@ -12735,11 +12826,8 @@ function isClawSweeperAppAuthor(author: string | undefined): boolean {
 function hasDispatchableMantisScenario(recommendation: MantisRecommendation): boolean {
   return (
     recommendation.status === "recommended" &&
-    (recommendation.scenario === "telegram_live" ||
-      recommendation.scenario === "telegram_desktop_proof" ||
-      recommendation.scenario === "discord_status_reactions" ||
-      recommendation.scenario === "discord_thread_attachment" ||
-      recommendation.scenario === "slack_desktop_smoke")
+    isSupportedMantisScenario(recommendation.scenario) &&
+    Boolean(validMantisMaintainerComment(recommendation))
   );
 }
 
@@ -12846,10 +12934,13 @@ function renderBotProofDecisionComment(options: {
     recommendation.scenario !== "none" &&
     recommendation.maintainerComment.trim()
   ) {
-    const heading = hasDispatchableMantisScenario(recommendation)
-      ? "Mantis proof suggestion:"
-      : "Possible manual Mantis/desktop proof suggestion:";
-    lines.push("", heading, "", "```text", recommendation.maintainerComment.trim(), "```");
+    if (hasDispatchableMantisScenario(recommendation)) {
+      const comment = validMantisMaintainerComment(recommendation);
+      if (comment) lines.push("", "Mantis proof suggestion:", "", "```text", comment, "```");
+    } else {
+      const scopeText = publicNonDispatchableMantisRecommendationBlock(recommendation);
+      if (scopeText) lines.push("", "Proof path suggestion:", "", scopeText);
+    }
   }
   lines.push("", marker);
   return lines.join("\n");
@@ -15320,6 +15411,12 @@ function renderKeepOpenCommentFromReport(
     ? publicMantisRecommendationBlock(mantisRecommendation)
     : "";
   if (mantisSuggestion) appendPublicSection(lines, "Mantis proof suggestion", mantisSuggestion);
+  const unsupportedMantisSuggestion = isPullRequest
+    ? publicNonDispatchableMantisRecommendationBlock(mantisRecommendation)
+    : "";
+  if (unsupportedMantisSuggestion) {
+    appendPublicSection(lines, "Proof path suggestion", unsupportedMantisSuggestion);
+  }
   if (mergeRiskLine) appendPublicSection(lines, "Risk before merge", mergeRiskLine);
   appendPublicSection(
     lines,

@@ -774,7 +774,7 @@
     "mantisRecommendation": {
       "type": "object",
       "additionalProperties": false,
-      "description": "For PRs, recommend a copy-paste maintainer comment for OpenClaw Mantis only when live transport or visual proof would materially help review. Do not claim Mantis has run and do not dispatch any workflow.",
+      "description": "For PRs, recommend a copy-paste maintainer comment for OpenClaw Mantis only when Telegram, Discord, or web UI chat proof would materially help review. Mantis is proof-only: it may reproduce or inspect those surfaces and return redacted screenshots, transcripts, logs, or interaction results. Do not ask Mantis to edit code, fix CI, update branches, push commits, repair PRs, change labels or comments, close items, or perform other GitHub mutations; those belong to ClawSweeper's deterministic repair, apply, and automerge lanes. Do not claim Mantis has run and do not dispatch any workflow.",
       "required": ["status", "scenario", "reason", "maintainerComment"],
       "properties": {
         "status": {
@@ -789,17 +789,16 @@
             "telegram_desktop_proof",
             "discord_status_reactions",
             "discord_thread_attachment",
-            "slack_desktop_smoke",
-            "visual_task"
+            "web_ui_chat_proof"
           ]
         },
         "reason": {
           "type": "string",
-          "description": "One concise sentence explaining why this Mantis lane would or would not add useful maintainer proof."
+          "description": "One concise sentence explaining why this supported Mantis lane would or would not add useful maintainer proof. For unsupported proof surfaces such as WinUI, generic browser pages, screenshots, local artifacts, or terminal-only behavior, explain the better non-Mantis proof path while using not_recommended."
         },
         "maintainerComment": {
           "type": "string",
-          "description": "When recommended, a single-line PR comment starting with @openclaw-mantis that a maintainer can paste. ClawSweeper validates and renders this mention inside a fenced text block so the public recommendation is directly copyable without starting Mantis workflows. Do not use shorter or ambiguous Mantis account mentions. For not_recommended, use an empty string."
+          "description": "When recommended, a single-line proof-only PR comment starting with @openclaw-mantis that asks Mantis to reproduce or inspect supported Telegram, Discord, or web UI chat behavior and return redacted evidence. Include an explicit proof action such as verify, reproduce, capture, inspect, record, or test; ambiguous requests without proof intent fail closed. Never ask for code edits, CI fixes, branch updates, commits, PR repair, labels, comments, closes, merges, or other GitHub mutations. ClawSweeper validates and renders this mention inside a fenced text block so the public recommendation is directly copyable without starting Mantis workflows. Do not use shorter or ambiguous Mantis account mentions. For not_recommended, use an empty string."
         }
       }
     },

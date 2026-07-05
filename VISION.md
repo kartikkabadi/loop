@@ -90,6 +90,11 @@ local checkout, but model subprocesses do not receive GitHub write credentials.
 Deterministic executor steps own comments, labels, branch pushes, closes, checks,
 and merges.
 
+Mantis is a proof worker, not a mutation worker. ClawSweeper may recommend it
+for supported Telegram, Discord, or web UI chat reproduction and redacted
+evidence capture, but never for code changes, CI fixes, branch updates, PR
+repair, or GitHub mutations. Those remain in ClawSweeper's deterministic lanes.
+
 ### 6. Public state must be durable and safe
 
 Durable records, dashboard output, labels, and comments are operational history.

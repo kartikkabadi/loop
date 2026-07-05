@@ -40,6 +40,12 @@ posts a durable Mantis proof request comment. Otherwise it updates one durable
 status comment asking maintainers to choose proof capture, proof override, or
 pause. It does not post contributor reminders.
 
+Mantis requests are proof-only. They may ask Mantis to reproduce or inspect
+supported Telegram, Discord, or web UI chat behavior and return redacted
+screenshots, transcripts, logs, or interaction results. Code changes, CI fixes,
+branch updates, commits, PR repair, labels, comments, closes, and merges stay in
+ClawSweeper's deterministic repair, apply, and automerge lanes.
+
 For dashboard accounting, status-only maintainer requests use
 `bot_proof_decision_planned` or `bot_proof_decision_posted`. Mantis proof
 requests use `bot_proof_mantis_request_planned` or

@@ -31,6 +31,7 @@ checkpoint, and status-only commits are intentionally omitted.
 
 ### Fixed
 
+- Scoped Mantis recommendations to supported proof capture and kept code changes, PR repair, and GitHub mutations in ClawSweeper's deterministic lanes. Thanks @brokemac79.
 - Bounded automatic close-apply checkpoints to ten minutes, persisted exact cursor progress before immediate continuation, and limited close-coverage proofs to the time remaining in the checkpoint.
 - Kept automatic apply windows responsive by running at most one PR close-coverage proof after fast candidates and advancing independent fast/proof cursors only through records actually examined.
 - Prevented malformed `maintainer_decision` records from repeatedly consuming apply queue slots by recording their deterministic apply bookkeeping. Thanks @brokemac79.
