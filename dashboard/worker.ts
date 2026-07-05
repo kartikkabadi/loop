@@ -7084,11 +7084,15 @@ async function load() {
 
 function renderDashboard(data, note) {
   const unresolved = data.health?.unresolved_failures || 0;
+  const applyAttention = (data.recent?.apply_health?.items || []).filter(item =>
+    applyHealthNeedsAttention(item.status)
+  ).length;
+  const needsAttention = unresolved || applyAttention;
   const workerCount = (data.workers || []).length;
   const repoCount = (data.source.target_repositories || []).length;
-  document.getElementById("hero-dot").className = "hero-dot " + (unresolved ? "amber" : "ok");
+  document.getElementById("hero-dot").className = "hero-dot " + (needsAttention ? "amber" : "ok");
   document.getElementById("hero-headline").textContent =
-    (unresolved ? "Needs attention" : "All clear") + " — " +
+    (needsAttention ? "Needs attention" : "All clear") + " — " +
     fmt.format(workerCount) + " claw worker" + (workerCount === 1 ? "" : "s") + " sweeping " +
     fmt.format(repoCount) + " " + (repoCount === 1 ? "repository" : "repositories");
   document.getElementById("subtitle").textContent = data.source.target_repositories.join(", ");

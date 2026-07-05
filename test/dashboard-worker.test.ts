@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { createHmac, generateKeyPairSync } from "node:crypto";
 import test from "node:test";
+import { createContext, Script } from "node:vm";
 
 import worker, {
   automaticIssueWork,
@@ -778,6 +779,154 @@ test("dashboard HTML preserves UTF-8 emoji labels", async () => {
   assert.match(html, /Worker Health/);
   assert.match(html, /Recent Activity/);
   assert.doesNotMatch(html, /ðŸ|â|âš|âœ/);
+});
+
+test("dashboard hero treats apply health attention as needs attention", async () => {
+  const response = await worker.fetch(new Request("https://clawsweeper.openclaw.ai/"));
+  const html = await response.text();
+  const script = html.match(/<script>\n([\s\S]*)\n<\/script>/)?.[1];
+  assert.ok(script);
+
+  const elements = new Map();
+  const elementFor = (id) => {
+    if (!elements.has(id)) {
+      elements.set(id, {
+        addEventListener: () => undefined,
+        className: "",
+        close() {
+          this.open = false;
+        },
+        dataset: {},
+        id,
+        innerHTML: "",
+        open: false,
+        showModal() {
+          this.open = true;
+        },
+        style: {},
+        textContent: "",
+      });
+    }
+    return elements.get(id);
+  };
+  const status = {
+    generated_at: "2026-07-05T11:22:43.934Z",
+    source: { target_repositories: ["openclaw/openclaw"] },
+    health: {
+      attempts: 0,
+      error_rate_percent: 0,
+      failed_attempts: 0,
+      failures: [],
+      recovered_failures: 0,
+      recovery_rate_percent: 100,
+      unresolved_failures: 0,
+    },
+    fleet: {
+      active_codex_jobs: 0,
+      active_workflow_runs: 0,
+      budget_used_percent: 0,
+      queued_workflow_runs: 0,
+      support_queued_workflow_runs: 0,
+      support_workflow_runs: 0,
+      worker_budget: 128,
+      worker_detail_fallbacks: 0,
+    },
+    workers: [],
+    automatic_work: [],
+    pipeline: [],
+    diagnostics: { errors: [] },
+    recent: {
+      apply_health: {
+        attention_count: 1,
+        items: [
+          {
+            attention_reasons: ["cursor_required_but_missing_after_full_window"],
+            closed: 0,
+            comment_synced: 0,
+            cursor: null,
+            cursor_required: true,
+            cycle: null,
+            lanes: {
+              closure: {
+                closed: 0,
+                comment_synced: 0,
+                processed: 2,
+                skip_reasons: { skipped_changed_since_review: 2 },
+                skipped: 2,
+              },
+              comment_sync: {
+                closed: 0,
+                comment_synced: 0,
+                processed: 0,
+                skip_reasons: {},
+                skipped: 0,
+              },
+            },
+            mode: "close",
+            next_action_buckets: { review_refresh: 2 },
+            next_actions: [
+              {
+                bucket: "review_refresh",
+                count: 2,
+                label: "Refresh review",
+                next_step: "Queue a fresh ClawSweeper review before any close retry.",
+                owner: "clawsweeper",
+                reason: "skipped_changed_since_review",
+                retryable: true,
+                summary: "The item changed after review.",
+              },
+            ],
+            processed: 2,
+            run_url: "https://github.com/openclaw/clawsweeper/actions/runs/99",
+            skip_reasons: { skipped_changed_since_review: 2 },
+            skipped: 2,
+            status: "needs_attention",
+            target_repo: "openclaw/openclaw",
+            updated_at: "2026-07-05T11:22:03.748Z",
+          },
+        ],
+      },
+      automerge: [],
+      closed_items: [],
+      closed_stats: { issues: 0, prs: 0, total: 0, window_hours: 24 },
+      cluster_repair: null,
+      events: [],
+      operation_counts: {},
+    },
+  };
+
+  const context = createContext({
+    console,
+    document: {
+      addEventListener: () => undefined,
+      body: { classList: { add: () => undefined, remove: () => undefined } },
+      getElementById: elementFor,
+      querySelector: () => null,
+      querySelectorAll: () => [],
+    },
+    fetch: async () => ({
+      headers: { get: () => "fresh" },
+      json: async () => status,
+      ok: true,
+      status: 200,
+    }),
+    history: { replaceState: () => undefined },
+    localStorage: {
+      getItem: () => null,
+      setItem: () => undefined,
+    },
+    location: { hash: "", pathname: "/", search: "" },
+    navigator: { clipboard: { writeText: async () => undefined } },
+    setInterval: () => 1,
+    setTimeout: () => 1,
+    window: { addEventListener: () => undefined },
+  });
+  new Script(script).runInContext(context);
+  await new Promise((resolve) => setTimeout(resolve, 0));
+
+  assert.equal(elementFor("hero-dot").className, "hero-dot amber");
+  assert.match(elementFor("hero-headline").textContent, /^Needs attention/);
+  assert.match(elementFor("apply-health").innerHTML, /Pruning sweep blocked/);
 });
 
 test("dashboard groups automatic issue lifecycle events with active workers", () => {
