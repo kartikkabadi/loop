@@ -71,10 +71,17 @@ select_automatic_apply_runtime() {
 
 automatic_apply_runtime_reached() {
   local report_path="$1"
+  local runtime_cursor_advance_count="${2:-${cursor_advance_count:-}}"
+  local runtime_auto_selected_apply_batch="${3:-${auto_selected_apply_batch:-false}}"
   local runtime_budget_count
   runtime_budget_count="$(pnpm run --silent workflow -- count-actions --report "$report_path" --action skipped_runtime_budget)"
   if [ "$runtime_budget_count" -eq 0 ]; then
     return 1
+  fi
+  if [ "$runtime_auto_selected_apply_batch" = "true" ] &&
+    { [ -z "$runtime_cursor_advance_count" ] || [ "$runtime_cursor_advance_count" -eq 0 ]; }; then
+    echo "Automatic close checkpoint reached its 600000ms runtime budget before cursor progress; cursor is unchanged and scheduled apply will retry without queueing an immediate continuation."
+    return 0
   fi
   echo "Automatic close checkpoint reached its 600000ms runtime budget; cursor is persisted and a fresh-token continuation will resume the lane."
   continue_apply=true

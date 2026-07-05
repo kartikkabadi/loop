@@ -239,6 +239,7 @@ test("apply workflow bounds checkpoints and requeues with a fresh token", () => 
   assert.match(applyStep, /if \[ "\$result_count" -ge "\$close_processed_limit" \]; then/);
   assert.match(applyHelper, /--action skipped_runtime_budget/);
   assert.match(applyStep, /if automatic_apply_runtime_reached/);
+  assert.match(applyHelper, /runtime budget before cursor progress/);
   assert.match(applyHelper, /fresh-token continuation will resume the lane/);
   assert.doesNotMatch(
     applyStep,
@@ -273,6 +274,52 @@ test("apply workflow bounds checkpoints and requeues with a fresh token", () => 
   assert.match(continueStep, /already covered by \$/);
   assert.match(continueStep, /-f apply_item_numbers="\$APPLY_ITEM_NUMBERS"/);
   assert.doesNotMatch(continueStep, /APPLY_CLOSED_TOTAL:-0.*APPLY_LIMIT:-0/);
+});
+
+test("apply workflow does not queue runtime-yield continuation without cursor progress", () => {
+  const root = mkdtempSync(tmpPrefix);
+  const reportPath = join(root, "apply-report.json");
+  writeFileSync(reportPath, JSON.stringify([{ number: 0, action: "skipped_runtime_budget" }]));
+
+  try {
+    const output = execFileSync(
+      "bash",
+      [
+        "-lc",
+        [
+          "pnpm() { printf '1\\n'; }",
+          "source scripts/apply-workflow-helpers.sh",
+          "continue_apply=false",
+          "auto_selected_apply_batch=true",
+          "cursor_advance_count=0",
+          'if automatic_apply_runtime_reached "$REPORT_PATH"; then status=yielded; else status=no_yield; fi',
+          'printf \'%s|%s\\n\' "$status" "$continue_apply"',
+          "continue_apply=false",
+          "cursor_advance_count=1",
+          'if automatic_apply_runtime_reached "$REPORT_PATH"; then status=yielded; else status=no_yield; fi',
+          'printf \'%s|%s\\n\' "$status" "$continue_apply"',
+        ].join("\n"),
+      ],
+      {
+        cwd: process.cwd(),
+        encoding: "utf8",
+        env: {
+          ...process.env,
+          REPORT_PATH: reportPath,
+        },
+      },
+    );
+
+    assert.deepEqual(
+      output
+        .trim()
+        .split("\n")
+        .filter((line) => line.includes("|")),
+      ["yielded|false", "yielded|true"],
+    );
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
 });
 
 test("apply workflow drops a coverage-proof tail only after exact trace examination", () => {
