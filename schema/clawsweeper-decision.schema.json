@@ -12,6 +12,7 @@
     "likelyOwners",
     "risks",
     "bestSolution",
+    "maintainerDecision",
     "triagePriority",
     "impactLabels",
     "mergeRiskLabels",
@@ -171,6 +172,81 @@
     "bestSolution": {
       "type": "string",
       "description": "The best possible product/code/docs direction for this item, whether the item should close or stay open. Do not repeat the change summary, workReason, or risk list."
+    },
+    "maintainerDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required", "kind", "question", "rationale", "options", "likelyOwner"],
+      "properties": {
+        "required": {
+          "type": "boolean",
+          "description": "True only when automation should pause for a maintainer choice that Codex can state precisely."
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "none",
+            "product_direction",
+            "security_boundary",
+            "proof_sufficiency",
+            "release_inclusion",
+            "merge_risk",
+            "manual_review"
+          ],
+          "description": "The human decision category. Use none when required is false."
+        },
+        "question": {
+          "type": "string",
+          "description": "The exact item-specific question the maintainer should answer, or an empty string when required is false."
+        },
+        "rationale": {
+          "type": "string",
+          "description": "Why model judgment cannot safely resolve this choice without maintainer intent, or an empty string when required is false."
+        },
+        "options": {
+          "type": "array",
+          "maxItems": 3,
+          "description": "One to three item-specific choices when required is true; [] otherwise. Exactly one choice must be recommended when required is true.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["title", "body", "recommended"],
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Short decision option title."
+              },
+              "body": {
+                "type": "string",
+                "description": "One concrete sentence explaining the outcome or tradeoff."
+              },
+              "recommended": {
+                "type": "boolean",
+                "description": "True for exactly one option when a decision is required."
+              }
+            }
+          }
+        },
+        "likelyOwner": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["person", "reason", "confidence"],
+          "properties": {
+            "person": {
+              "type": "string",
+              "description": "The likely decision owner selected from likelyOwners, or an empty string when required is false."
+            },
+            "reason": {
+              "type": "string",
+              "description": "Why this person is the best available owner for this choice, or an empty string when required is false."
+            },
+            "confidence": {
+              "type": "string",
+              "enum": ["high", "medium", "low"]
+            }
+          }
+        }
+      }
     },
     "triagePriority": {
       "type": "string",

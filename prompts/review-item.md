@@ -85,6 +85,18 @@ one short sentence for `changeSummary`, `workReason`, `bestSolution`, and
 `changeSummary` or `workReason` into an automerge/autofix status update; merge
 automation is reported by the command/status comment and hidden markers.
 
+Put maintainer-intent reasoning in `maintainerDecision`; do not expect labels,
+report prose, or deterministic code to reconstruct it later. Set `required:
+true` only when automation should pause for a real human choice. State the
+exact item-specific question, why maintainer intent is required, one to three
+concrete options, exactly one recommended option, and the most likely decision
+owner. `likelyOwner.person` must exactly match a person in `likelyOwners`.
+Choose the recommendation from the evidence even when the final authority stays
+human. Use `kind: "none"`, empty question/rationale, `options: []`, and an empty
+owner with low confidence when no maintainer decision is required. Do not use a
+generic question such as “What should happen next?” and do not create a packet
+for routine contributor follow-up that the review already specifies.
+
 For PRs, do not let labels be the only place that merger risk is visible. If a
 merge can intentionally make an existing user's setup stop working, fail closed,
 lose a fallback path, require a migration, or require operator action, state that

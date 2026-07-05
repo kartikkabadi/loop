@@ -96,6 +96,14 @@ Durable records, dashboard output, labels, and comments are operational history.
 They should be reproducible, link back to source records, and never expose
 secrets, private artifacts, or unredacted security-sensitive details.
 
+### 7. Models propose maintainer decisions; deterministic code enforces them
+
+Models decide whether a maintainer choice exists and produce the question,
+rationale, options, recommendation, and likely owner. Deterministic code
+validates and persists that structured intent, refreshes live state, and blocks
+unsafe or stale mutations. It must fail closed when required intent is missing
+or malformed; it must not invent product judgment from hard-coded heuristics.
+
 ## Security
 
 ClawSweeper is a maintenance automation tool, not the security response owner.

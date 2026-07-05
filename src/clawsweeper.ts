@@ -108,6 +108,16 @@ import {
 } from "./clawsweeper-args.js";
 import { escapeRegExp, safeOutputTail, trimMiddle, truncateText } from "./clawsweeper-text.js";
 import {
+  emptyMaintainerDecision,
+  maintainerDecisionBlocksClose,
+  maintainerDecisionFromReport,
+  parseMaintainerDecision,
+  renderDecisionPacketPublicBlock,
+  syncDecisionPacketRecord,
+  type DecisionPacketSubjectState,
+  type MaintainerDecision,
+} from "./decision-packets.js";
+import {
   appendReviewHistoryCycle,
   neutralizeReviewControlMarkers,
   parseReviewHistory,
@@ -125,6 +135,10 @@ export {
 } from "./codex-env.js";
 export { parseGhJson, parseGhJsonLines } from "./github-json.js";
 export { itemNumbersArg } from "./clawsweeper-args.js";
+export {
+  buildDecisionPacketFromReport,
+  renderDecisionPacketPublicBlock,
+} from "./decision-packets.js";
 export { safeOutputTail } from "./clawsweeper-text.js";
 export {
   ghRetryKind,
@@ -508,6 +522,7 @@ interface Decision {
   likelyOwners: LikelyOwner[];
   risks: string[];
   bestSolution: string;
+  maintainerDecision: MaintainerDecision;
   triagePriority: TriagePriority;
   impactLabels: ImpactLabelName[];
   mergeRiskLabels: MergeRiskLabelName[];
@@ -1750,6 +1765,7 @@ const DECISION_SCHEMA_KEYS = new Set([
   "likelyOwners",
   "risks",
   "bestSolution",
+  "maintainerDecision",
   "triagePriority",
   "impactLabels",
   "mergeRiskLabels",
@@ -1871,6 +1887,7 @@ const REVIEW_SECTIONS = {
   summary: "Summary",
   changeSummary: "What This Changes",
   bestSolution: "Best Possible Solution",
+  maintainerDecision: "Maintainer Decision",
   reproductionAssessment: "Reproduction Assessment",
   solutionAssessment: "Solution Assessment",
   visionFit: "Vision Fit",
@@ -2030,6 +2047,47 @@ function defaultClosedDir(profile = targetProfile()): string {
 
 function defaultPlansDir(profile = targetProfile()): string {
   return join(repoRecordsDir(profile), "plans");
+}
+
+function defaultDecisionPacketsDir(profile = targetProfile()): string {
+  return join(repoRecordsDir(profile), "decision-packets");
+}
+
+function siblingDecisionPacketsDir(
+  recordDir: string,
+  recordDirName: "items" | "closed",
+): string | undefined {
+  return basename(recordDir) === recordDirName
+    ? join(dirname(recordDir), "decision-packets")
+    : undefined;
+}
+
+function defaultDecisionPacketsDirForRecordDirs(
+  itemsDir: string,
+  closedDir: string,
+  profile = targetProfile(),
+): string {
+  const itemsPacketsDir = siblingDecisionPacketsDir(itemsDir, "items");
+  const closedPacketsDir = siblingDecisionPacketsDir(closedDir, "closed");
+  if (itemsPacketsDir && (!closedPacketsDir || itemsPacketsDir === closedPacketsDir)) {
+    return itemsPacketsDir;
+  }
+  if (closedPacketsDir && !itemsPacketsDir) return closedPacketsDir;
+  return defaultDecisionPacketsDir(profile);
+}
+
+function decisionPacketsDirFromArgs(args: Args, itemsDir: string, closedDir: string): string {
+  const explicitDecisionPacketsDir = stringArg(args.decision_packets_dir, "");
+  if (explicitDecisionPacketsDir) return resolve(explicitDecisionPacketsDir);
+  if (typeof args.items_dir === "string") {
+    const itemsPacketsDir = siblingDecisionPacketsDir(itemsDir, "items");
+    if (itemsPacketsDir) return resolve(itemsPacketsDir);
+  }
+  if (typeof args.closed_dir === "string") {
+    const closedPacketsDir = siblingDecisionPacketsDir(closedDir, "closed");
+    if (closedPacketsDir) return resolve(closedPacketsDir);
+  }
+  return resolve(defaultDecisionPacketsDirForRecordDirs(itemsDir, closedDir));
 }
 
 function reportFileName(repo: string, number: number): string {
@@ -2614,6 +2672,18 @@ function validateMergeRiskOptions(
   }
 }
 
+function validateMaintainerDecisionOwner(
+  decision: Pick<Decision, "maintainerDecision" | "likelyOwners">,
+): void {
+  if (!decision.maintainerDecision.required) return;
+  const selected = decision.maintainerDecision.likelyOwner.person;
+  if (!decision.likelyOwners.some((owner) => owner.person === selected)) {
+    throw new Error(
+      "decision.maintainerDecision.likelyOwner.person must match decision.likelyOwners",
+    );
+  }
+}
+
 function parseLabelJustification(value: unknown, path: string): LabelJustification {
   const record = requireRecord(value, path);
   rejectUnexpectedKeys(record, LABEL_JUSTIFICATION_SCHEMA_KEYS, path);
@@ -3118,6 +3188,10 @@ export function parseDecision(value: unknown, item?: DecisionNormalizationItem):
       (risk) => !isEnvironmentAccessCaveat(risk),
     ),
     bestSolution: requireString(record.bestSolution, "decision.bestSolution"),
+    maintainerDecision: parseMaintainerDecision(
+      record.maintainerDecision,
+      "decision.maintainerDecision",
+    ),
     triagePriority: requireEnum(
       record.triagePriority,
       TRIAGE_PRIORITIES,
@@ -3215,6 +3289,7 @@ export function parseDecision(value: unknown, item?: DecisionNormalizationItem):
     workLikelyFiles: requireStringArray(record.workLikelyFiles, "decision.workLikelyFiles"),
   };
   validateMergeRiskOptions(decision);
+  validateMaintainerDecisionOwner(decision);
   validateLabelJustifications(decision);
   return normalizeDecisionForItem(decision, item);
 }
@@ -7460,6 +7535,7 @@ function codexFailureDecision(
     ],
     risks: ["No close action taken because the review did not complete."],
     bestSolution: "Retry the Codex review after fixing the execution failure.",
+    maintainerDecision: emptyMaintainerDecision(),
     triagePriority: "none",
     impactLabels: [],
     mergeRiskLabels: [],
@@ -12954,6 +13030,7 @@ function reportDecision(markdown: string, closeReason: CloseReason): Decision {
     likelyOwners: reportLikelyOwners(markdown),
     risks: [],
     bestSolution: reviewSectionValue(markdown, "bestSolution"),
+    maintainerDecision: maintainerDecisionFromReport(markdown) ?? emptyMaintainerDecision(),
     triagePriority,
     impactLabels,
     mergeRiskLabels,
@@ -15176,6 +15253,10 @@ function renderKeepOpenCommentFromReport(
     isPullRequest ? "Next step before merge" : "Next step",
     publicNextStepLine,
   );
+  const decisionPacketBlock = renderDecisionPacketPublicBlock(markdown);
+  if (decisionPacketBlock) {
+    appendPublicSection(lines, "Maintainer decision needed", decisionPacketBlock);
+  }
   const securityLine = publicSecurityReviewLine(securityReview);
   if (securityLine) appendPublicSection(lines, "Security", securityLine);
   if (isPullRequest && reviewFindings.length) {
@@ -15295,8 +15376,9 @@ export function renderReviewCommentFromReport(
   options: ReviewCommentRenderOptions = {},
 ): string {
   const decision = frontMatterValue(markdown, "decision");
+  const requiresMaintainerDecision = maintainerDecisionFromReport(markdown)?.required === true;
   const body =
-    decision === "close" && reason !== "none"
+    decision === "close" && reason !== "none" && !requiresMaintainerDecision
       ? renderCloseCommentFromReport(markdown, reason)
       : renderKeepOpenCommentFromReport(markdown, options);
   const markers = reviewAutomationMarkersFromReport(markdown);
@@ -15758,6 +15840,9 @@ export function reviewAutomationMarkersFromReport(markdown: string): string {
     return markers.join("\n");
   };
 
+  if (maintainerDecisionFromReport(markdown)?.required) {
+    return humanReviewMarkers();
+  }
   if (frontMatterValue(markdown, "review_status") === "failed") {
     return humanReviewMarkers();
   }
@@ -16390,6 +16475,36 @@ function renderRepairWorkPromptReportSection(decision: Decision): string {
   return workPrompt ? `\n\n## ${REVIEW_SECTIONS.repairWorkPrompt}\n\n${workPrompt}` : "";
 }
 
+function renderMaintainerDecisionReportSection(decision: Decision): string {
+  const maintainerDecision = decision.maintainerDecision;
+  if (!maintainerDecision.required) return "Required: false";
+  const options = maintainerDecision.options
+    .map(
+      (option) =>
+        `- **${option.title}${option.recommended ? " (recommended)" : ""}:** ${option.body}`,
+    )
+    .join("\n");
+  return [
+    "Required: true",
+    "",
+    `Kind: ${maintainerDecision.kind}`,
+    "",
+    `Question: ${maintainerDecision.question}`,
+    "",
+    `Rationale: ${maintainerDecision.rationale}`,
+    "",
+    `Likely owner: ${maintainerDecision.likelyOwner.person}`,
+    "",
+    `Owner reason: ${maintainerDecision.likelyOwner.reason}`,
+    "",
+    `Owner confidence: ${maintainerDecision.likelyOwner.confidence}`,
+    "",
+    "Options:",
+    "",
+    options,
+  ].join("\n");
+}
+
 function renderVisionFitReportSection(decision: Decision): string {
   return [
     `Status: ${decision.visionFit}`,
@@ -16633,6 +16748,7 @@ function markdownFor(options: {
         .join("\n")
     : "- none";
   const bestSolution = options.decision.bestSolution.trim() || "_Not provided._";
+  const maintainerDecision = renderMaintainerDecisionReportSection(options.decision);
   const reproductionAssessment =
     options.decision.reproductionAssessment.trim() || "_Not provided._";
   const solutionAssessment = options.decision.solutionAssessment.trim() || "_Not provided._";
@@ -16720,6 +16836,7 @@ work_cluster_refs: ${jsonFrontMatterValue(options.decision.workClusterRefs)}
 root_cause_cluster: ${JSON.stringify(options.decision.rootCauseCluster)}
 work_validation: ${jsonFrontMatterValue(options.decision.workValidation)}
 work_likely_files: ${jsonFrontMatterValue(options.decision.workLikelyFiles)}
+maintainer_decision: ${JSON.stringify(options.decision.maintainerDecision)}
 triage_priority: ${options.decision.triagePriority}
 impact_labels: ${jsonFrontMatterValue(options.decision.impactLabels)}
 merge_risk_labels: ${jsonFrontMatterValue(options.decision.mergeRiskLabels)}
@@ -16809,6 +16926,10 @@ ${options.decision.changeSummary}
 ## ${REVIEW_SECTIONS.bestSolution}
 
 ${bestSolution}
+
+## ${REVIEW_SECTIONS.maintainerDecision}
+
+${maintainerDecision}
 
 ## ${REVIEW_SECTIONS.reproductionAssessment}
 
@@ -17729,6 +17850,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
   const itemsDir = resolve(stringArg(args.items_dir, defaultItemsDir()));
   const closedDir = resolve(stringArg(args.closed_dir, defaultClosedDir()));
   const plansDir = resolve(stringArg(args.plans_dir, defaultPlansDir()));
+  const decisionPacketsDir = decisionPacketsDirFromArgs(args, itemsDir, closedDir);
   const limit = numberArg(args.limit, 20);
   const processedLimit = numberArg(args.processed_limit, Math.max(limit * 2, 50));
   const minAgeDays = numberArg(args.min_age_days, 0);
@@ -17810,6 +17932,29 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
         location,
         ...applyQueueSortFields(entry.markdown, syncCommentsOnly, applyKind),
       }));
+  const syncDecisionPacketMarkdown = (
+    reportPath: string,
+    nextMarkdown: string,
+    subjectState: DecisionPacketSubjectState = "open",
+  ): string =>
+    syncDecisionPacketRecord({
+      markdown: nextMarkdown,
+      reportPath,
+      packetsDir: decisionPacketsDir,
+      repoRoot: ROOT,
+      subjectState,
+    }).markdown;
+  const writeReportMarkdown = (
+    reportPath: string,
+    nextMarkdown: string,
+    subjectState: DecisionPacketSubjectState = "open",
+  ): void => {
+    writeFileSync(
+      reportPath,
+      syncDecisionPacketMarkdown(reportPath, nextMarkdown, subjectState),
+      "utf8",
+    );
+  };
   const fileEntries = applyReportEntriesForDir(itemsDir, "items").sort(
     (left, right) =>
       left.priority - right.priority ||
@@ -17850,6 +17995,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
     let storedHash = frontMatterValue(markdown, "item_snapshot_hash");
     let storedUpdatedAt = frontMatterValue(markdown, "item_updated_at");
     const storedAuthorAssociation = frontMatterValue(markdown, "author_association");
+    let requiredMaintainerDecision: MaintainerDecision | null;
     const shouldProbeClosedState = shouldProbeClosedStateReport(markdown);
     const isRetryableSkippedClose = isRetryableCloseSkipReport(markdown);
     const isUpgradedCloseCandidate =
@@ -17866,17 +18012,19 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
     const archiveClosed = (nextMarkdown: string): void => {
       if (dryRun) return;
       ensureDir(closedDir);
-      writeFileSync(path, nextMarkdown, "utf8");
+      const closedPath = join(closedDir, file);
+      const syncedMarkdown = syncDecisionPacketMarkdown(closedPath, nextMarkdown, "closed");
+      writeFileSync(path, syncedMarkdown, "utf8");
       syncWorkPlanFromReport({
-        markdown: nextMarkdown,
+        markdown: syncedMarkdown,
         reportPath: path,
         plansDir,
       });
-      renameSync(path, join(closedDir, file));
+      renameSync(path, closedPath);
     };
-    const markApplyChecked = (): void => {
+    const markApplyChecked = (subjectState: DecisionPacketSubjectState = "open"): void => {
       markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
-      if (!dryRun) writeFileSync(path, markdown, "utf8");
+      if (!dryRun) writeReportMarkdown(path, markdown, subjectState);
     };
     const recordApplySkipped = (actionTaken: ActionTaken, reason: string): boolean => {
       markApplyChecked();
@@ -17894,6 +18042,17 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
         "kept_open",
         `GitHub rejected ${labelKind} label sync with Requires authentication`,
       );
+    try {
+      requiredMaintainerDecision = maintainerDecisionFromReport(markdown);
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : String(error);
+      const reason = `invalid maintainer_decision: ${detail}`;
+      results.push({ number, action: "kept_open", reason });
+      processedCount += 1;
+      maybeLogProgress(`skipped #${number}: ${reason}`);
+      if (processedCount >= processedLimit) break;
+      continue;
+    }
     if (!verifiedLocalCheckout && !shouldProbeClosedState) {
       if (markApplySkipped("kept_open", "review lacks verified local checkout access")) break;
       continue;
@@ -17928,7 +18087,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       // inaccessible. Confirm repo access before treating this as an item miss.
       ghJson<unknown>(["api", `repos/${targetRepo()}`]);
       if (syncCommentsOnly) {
-        markApplyChecked();
+        markApplyChecked("closed");
         results.push({
           number,
           action: "skipped_already_closed",
@@ -17996,6 +18155,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
     };
     const sameAuthorPairStartCloseable = new Map<string, boolean>();
     const currentCloseGatesPassed = (): boolean => {
+      if (requiredMaintainerDecision?.required) return false;
       if (!closeReason || !closeReasonEnabled(closeReason, applyCloseReasons)) return false;
       if (needsReviewCommentSync) return false;
       if (
@@ -18074,12 +18234,15 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
         const counterpartEntry = openFileEntryByNumber.get(counterpartNumber);
         if (counterpartEntry) {
           const counterpartMarkdown = readFileSync(counterpartEntry.path, "utf8");
+          const counterpartMaintainerDecisionBlocked =
+            maintainerDecisionBlocksClose(counterpartMarkdown);
           const counterpartRepo = markdownRepository(counterpartMarkdown, counterpartEntry.path);
           const counterpartReason = reportCloseReason(counterpartMarkdown);
           if (
             counterpartRepo === repo &&
             reportItemKind(counterpartMarkdown) === counterpartKind &&
             counterpartReason &&
+            !counterpartMaintainerDecisionBlocked &&
             closeReasonEnabled(counterpartReason, applyCloseReasons) &&
             isApplyCloseCandidateReport(counterpartMarkdown) &&
             hasAutoCloseAllowedMetadata(counterpartMarkdown) &&
@@ -18206,7 +18369,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       return result;
     };
     if (syncCommentsOnly && state !== "open") {
-      markApplyChecked();
+      markApplyChecked("closed");
       results.push({ number, action: "skipped_already_closed", reason: `state is ${state}` });
       processedCount += 1;
       maybeLogProgress(`skipped comment sync #${number}: already ${state}`);
@@ -18513,7 +18676,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
         );
       }
       markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
-      if (!dryRun) writeFileSync(path, markdown, "utf8");
+      if (!dryRun) writeReportMarkdown(path, markdown);
       results.push({
         number,
         action: "skipped_changed_since_review",
@@ -18665,7 +18828,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       markdown = replaceFrontMatterValue(markdown, "action_taken", "skipped_changed_since_review");
       markdown = replaceFrontMatterValue(markdown, "current_item_updated_at", item.updatedAt);
       markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
-      if (!dryRun) writeFileSync(path, markdown, "utf8");
+      if (!dryRun) writeReportMarkdown(path, markdown);
       results.push({
         number,
         action: "skipped_changed_since_review",
@@ -18686,7 +18849,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
         );
         markdown = replaceFrontMatterValue(markdown, "current_item_snapshot_hash", currentHash);
         markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
-        if (!dryRun) writeFileSync(path, markdown, "utf8");
+        if (!dryRun) writeReportMarkdown(path, markdown);
         results.push({
           number,
           action: "skipped_changed_since_review",
@@ -18960,7 +19123,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
         : null;
       if (staleSyncReason) {
         markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
-        if (!dryRun) writeFileSync(path, markdown, "utf8");
+        if (!dryRun) writeReportMarkdown(path, markdown);
         results.push({
           number,
           action: "skipped_stale_review_comment_sync",
@@ -19011,7 +19174,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       }
       markdown = updateReviewCommentMetadata(markdown, syncedComment, markedReviewComment);
       markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
-      if (!dryRun) writeFileSync(path, markdown, "utf8");
+      if (!dryRun) writeReportMarkdown(path, markdown);
       results.push({
         number,
         action: proofBlockedForCommentSync?.actionTaken ?? "review_comment_synced",
@@ -19026,7 +19189,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
     if (proofBlockedForCommentSync) {
       if (!needsReviewCommentSync) {
         markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
-        if (!dryRun) writeFileSync(path, markdown, "utf8");
+        if (!dryRun) writeReportMarkdown(path, markdown);
         results.push({
           number,
           action: proofBlockedForCommentSync.actionTaken,
@@ -19044,7 +19207,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       (!isCloseProposal || syncCommentsOnly)
     ) {
       markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
-      if (!dryRun) writeFileSync(path, markdown, "utf8");
+      if (!dryRun) writeReportMarkdown(path, markdown);
       results.push({
         number,
         action: "kept_open",
@@ -19056,6 +19219,16 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
     }
     if (syncCommentsOnly) continue;
     if (!isCloseProposal || !closeReason) {
+      continue;
+    }
+    if (requiredMaintainerDecision?.required) {
+      if (
+        markApplySkipped(
+          "kept_open",
+          `maintainer decision required: ${requiredMaintainerDecision.question}`,
+        )
+      )
+        break;
       continue;
     }
     if (closedCount >= limit) break;
@@ -19880,6 +20053,7 @@ function applyArtifactsCommand(args: Args): void {
   const itemsDir = resolve(stringArg(args.items_dir, defaultItemsDir()));
   const closedDir = resolve(stringArg(args.closed_dir, defaultClosedDir()));
   const plansDir = resolve(stringArg(args.plans_dir, defaultPlansDir()));
+  const decisionPacketsDir = decisionPacketsDirFromArgs(args, itemsDir, closedDir);
   const skipReconcile = boolArg(args.skip_reconcile);
   const replayClosedArtifacts = boolArg(args.replay_closed_artifacts);
   const maxPages = numberArg(args.max_pages, 250);
@@ -19914,12 +20088,19 @@ function applyArtifactsCommand(args: Args): void {
       const stalePath = join(destinationDir === itemsDir ? closedDir : itemsDir, destinationFile);
       if (existsSync(stalePath)) unlinkSync(stalePath);
       const reportPath = join(destinationDir, destinationFile);
-      writeFileSync(reportPath, markdown, "utf8");
+      const syncedMarkdown = syncDecisionPacketRecord({
+        markdown,
+        reportPath,
+        packetsDir: decisionPacketsDir,
+        repoRoot: ROOT,
+        subjectState: destination === "closed" ? "closed" : "open",
+      }).markdown;
+      writeFileSync(reportPath, syncedMarkdown, "utf8");
       if (destination === "closed") {
         const planPath = workPlanPathForReport(reportPath, plansDir);
         if (existsSync(planPath)) unlinkSync(planPath);
       } else {
-        syncWorkPlanFromReport({ markdown, reportPath, plansDir });
+        syncWorkPlanFromReport({ markdown: syncedMarkdown, reportPath, plansDir });
       }
       appliedArtifacts += 1;
     }
@@ -19927,7 +20108,7 @@ function applyArtifactsCommand(args: Args): void {
   console.error(
     `[apply-artifacts] applied=${appliedArtifacts} skipped_closed=${skippedClosedArtifacts}`,
   );
-  if (!skipReconcile) reconcileFolders({ itemsDir, closedDir, plansDir });
+  if (!skipReconcile) reconcileFolders({ itemsDir, closedDir, plansDir, decisionPacketsDir });
 }
 
 function artifactTargetIsOpen(number: number, openNumbers: Set<number> | null): boolean {
@@ -20359,6 +20540,7 @@ function reconcileFolders(options: {
   itemsDir: string;
   closedDir: string;
   plansDir?: string;
+  decisionPacketsDir?: string;
   maxPages?: number;
   dryRun?: boolean;
   fetchClosedAt?: boolean;
@@ -20368,6 +20550,20 @@ function reconcileFolders(options: {
   const dryRun = options.dryRun ?? false;
   const fetchClosedAt = options.fetchClosedAt ?? true;
   const plansDir = options.plansDir ?? defaultPlansDir();
+  const syncReconciledDecisionPacket = (
+    markdown: string,
+    reportPath: string,
+    subjectState: DecisionPacketSubjectState,
+  ): string => {
+    if (dryRun || !options.decisionPacketsDir) return markdown;
+    return syncDecisionPacketRecord({
+      markdown,
+      reportPath,
+      packetsDir: options.decisionPacketsDir,
+      repoRoot: ROOT,
+      subjectState,
+    }).markdown;
+  };
   ensureDir(options.itemsDir);
   ensureDir(options.closedDir);
   const { numbers: openNumbers, pagesScanned } = fetchOpenItemNumbers(maxPages);
@@ -20401,7 +20597,11 @@ function reconcileFolders(options: {
         );
       }
     }
-    const markdown = markReconciledState(sourceMarkdown, "closed", { closedAt });
+    const markdown = syncReconciledDecisionPacket(
+      markReconciledState(sourceMarkdown, "closed", { closedAt }),
+      destinationPath,
+      "closed",
+    );
     moveMarkdownFile({ sourcePath, destinationPath, markdown, dryRun });
     if (!dryRun) {
       const planPath = workPlanPathForReport(sourcePath, plansDir);
@@ -20418,11 +20618,26 @@ function reconcileFolders(options: {
     if (!openNumbers.has(number)) continue;
     const destinationPath = join(options.itemsDir, file);
     if (existsSync(destinationPath)) {
-      if (!dryRun) unlinkSync(sourcePath);
+      if (!dryRun) {
+        const destinationMarkdown = readFileSync(destinationPath, "utf8");
+        const syncedDestinationMarkdown = syncReconciledDecisionPacket(
+          destinationMarkdown,
+          destinationPath,
+          "open",
+        );
+        if (syncedDestinationMarkdown !== destinationMarkdown) {
+          writeFileSync(destinationPath, syncedDestinationMarkdown, "utf8");
+        }
+        unlinkSync(sourcePath);
+      }
       removedStaleClosedCopies += 1;
       continue;
     }
-    const markdown = markReconciledState(sourceMarkdown, "open");
+    const markdown = syncReconciledDecisionPacket(
+      markReconciledState(sourceMarkdown, "open"),
+      destinationPath,
+      "open",
+    );
     moveMarkdownFile({ sourcePath, destinationPath, markdown, dryRun });
     syncWorkPlanFromReport({ markdown, reportPath: destinationPath, plansDir, dryRun });
     movedToItems += 1;
@@ -20443,6 +20658,7 @@ function reconcileCommand(args: Args): void {
   const itemsDir = resolve(stringArg(args.items_dir, defaultItemsDir()));
   const closedDir = resolve(stringArg(args.closed_dir, defaultClosedDir()));
   const plansDir = resolve(stringArg(args.plans_dir, defaultPlansDir()));
+  const decisionPacketsDir = decisionPacketsDirFromArgs(args, itemsDir, closedDir);
   const maxPages = numberArg(args.max_pages, 250);
   const dryRun = boolArg(args.dry_run);
   const fetchClosedAt = !boolArg(args.skip_closed_at);
@@ -20451,6 +20667,7 @@ function reconcileCommand(args: Args): void {
     itemsDir,
     closedDir,
     plansDir,
+    decisionPacketsDir,
     maxPages,
     dryRun,
     fetchClosedAt,

@@ -394,6 +394,49 @@ test("decision parser enforces required schema-shaped evidence", () => {
   assert.deepEqual(workCandidate.workClusterRefs, ["#123", "#456"]);
 });
 
+test("decision parser keeps maintainer intent model-authored and owner-consistent", () => {
+  const maintainerDecision = {
+    required: true,
+    kind: "product_direction",
+    question: "Should this configuration contract change?",
+    rationale: "Both behaviors are technically valid, so maintainer intent is authoritative.",
+    options: [
+      {
+        title: "Keep compatibility",
+        body: "Preserve the current contract and close the proposal.",
+        recommended: true,
+      },
+      {
+        title: "Adopt the proposal",
+        body: "Accept the new contract and document the migration.",
+        recommended: false,
+      },
+    ],
+    likelyOwner: {
+      person: "@alice",
+      reason: "Git history identifies @alice as the feature owner.",
+      confidence: "high",
+    },
+  };
+
+  assert.deepEqual(
+    parseDecision(closeDecision({ maintainerDecision })).maintainerDecision,
+    maintainerDecision,
+  );
+  assert.throws(
+    () =>
+      parseDecision(
+        closeDecision({
+          maintainerDecision: {
+            ...maintainerDecision,
+            likelyOwner: { ...maintainerDecision.likelyOwner, person: "@not-in-history" },
+          },
+        }),
+      ),
+    /likelyOwner\.person must match decision\.likelyOwners/,
+  );
+});
+
 test("decision parser validates typed root-cause clusters", () => {
   const canonicalRef = "https://github.com/openclaw/openclaw/pull/456";
   const canonicalIssueRef = "https://github.com/openclaw/openclaw/issues/456";
