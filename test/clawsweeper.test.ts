@@ -446,20 +446,53 @@ test("apply-decisions makes no GitHub mutation for malformed maintainer decision
       implementedCloseReport({ maintainer_decision: "{" }),
       "utf8",
     );
+    writeFileSync(
+      join(itemsDir, "322.md"),
+      implementedCloseReport({ number: 322, maintainer_decision: "{" }),
+      "utf8",
+    );
 
     const ghMock = `
 console.error("malformed maintainer decision reached GitHub");
 process.exit(1);
 `;
     withMockGh(root, ghMock, () => {
-      runApplyDecisionsForTest({ itemsDir, closedDir, plansDir, reportPath });
+      runApplyDecisionsForTest({
+        itemsDir,
+        closedDir,
+        plansDir,
+        reportPath,
+        extraArgs: ["--processed-limit", "1"],
+      });
     });
 
     assert.equal(existsSync(join(itemsDir, "321.md")), true);
     assert.equal(existsSync(join(closedDir, "321.md")), false);
+    const firstUpdatedReport = readFileSync(join(itemsDir, "321.md"), "utf8");
+    assert.match(firstUpdatedReport, /^apply_checked_at: /m);
+    assert.doesNotMatch(readFileSync(join(itemsDir, "322.md"), "utf8"), /^apply_checked_at: /m);
     assert.deepEqual(JSON.parse(readFileSync(reportPath, "utf8")), [
       {
         number: 321,
+        action: "kept_open",
+        reason: "invalid maintainer_decision: maintainer_decision must contain valid JSON",
+      },
+    ]);
+
+    withMockGh(root, ghMock, () => {
+      runApplyDecisionsForTest({
+        itemsDir,
+        closedDir,
+        plansDir,
+        reportPath,
+        extraArgs: ["--processed-limit", "1"],
+      });
+    });
+
+    assert.match(readFileSync(join(itemsDir, "322.md"), "utf8"), /^apply_checked_at: /m);
+    assert.deepEqual(JSON.parse(readFileSync(reportPath, "utf8")), [
+      {
+        number: 322,
         action: "kept_open",
         reason: "invalid maintainer_decision: maintainer_decision must contain valid JSON",
       },

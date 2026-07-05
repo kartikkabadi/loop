@@ -18047,6 +18047,8 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
     } catch (error) {
       const detail = error instanceof Error ? error.message : String(error);
       const reason = `invalid maintainer_decision: ${detail}`;
+      markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
+      if (!dryRun) writeFileSync(path, markdown, "utf8");
       results.push({ number, action: "kept_open", reason });
       processedCount += 1;
       maybeLogProgress(`skipped #${number}: ${reason}`);
