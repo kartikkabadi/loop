@@ -16058,9 +16058,10 @@ function commentBody(comment: Record<string, unknown> | undefined): string | und
   return typeof body === "string" ? body : undefined;
 }
 
-function newestReviewMarkerReviewedAt(
+function newestReviewMarkerAttribute(
   comment: Record<string, unknown> | undefined,
   number: number,
+  attribute: "reviewed_at" | "sha",
 ): string | undefined {
   if (!canPatchReviewComment(comment)) return undefined;
   const body = commentBody(comment);
@@ -16075,25 +16076,33 @@ function newestReviewMarkerReviewedAt(
     .match(/(?:<!--[\s\S]*?-->\s*)+$/)?.[0];
   if (!markerBlock) return undefined;
   const markerPattern = /<!--\s+clawsweeper-verdict:[^\s>]+\b([^>]*)-->/g;
-  let lastReviewedAt: string | undefined;
+  let lastValue: string | undefined;
   for (const match of markerBlock.matchAll(markerPattern)) {
     const attributes = match[1] ?? "";
     if (!new RegExp(`\\bitem=${number}\\b`).test(attributes)) continue;
-    const reviewedAt = attributes.match(/\breviewed_at=([^\s>]+)/)?.[1];
-    if (!reviewedAt || reviewedAt === "unknown") continue;
-    lastReviewedAt = reviewedAt;
+    const value = attributes.match(new RegExp(`\\b${attribute}=([^\\s>]+)`))?.[1];
+    if (!value || value === "unknown") continue;
+    lastValue = value;
   }
-  return lastReviewedAt;
+  return lastValue;
 }
 
 function staleReviewCommentSyncReason(
   markdown: string,
   existingReviewComment: Record<string, unknown> | undefined,
   number: number,
+  context: ItemContext,
 ): string | null {
   if (frontMatterValue(markdown, "type") !== "pull_request") return null;
   // Comment updated_at can move for command/status edits; only review markers prove verdict freshness.
-  const liveReviewedAt = newestReviewMarkerReviewedAt(existingReviewComment, number);
+  const liveReviewedAt = newestReviewMarkerAttribute(existingReviewComment, number, "reviewed_at");
+  const liveReviewedSha = newestReviewMarkerAttribute(existingReviewComment, number, "sha");
+  const currentHeadSha = pullHeadShaFromContext(context);
+  const reportHeadSha = pullHeadShaFromReport(markdown);
+  if (!liveReviewedSha || !currentHeadSha) return null;
+  // Trust a newer comment when it matches the live head, or when the live API still reports the
+  // report's head and may be lagging the comment. Otherwise the newer comment is stale too.
+  if (liveReviewedSha !== currentHeadSha && currentHeadSha !== reportHeadSha) return null;
   const reportReviewedAt = frontMatterValue(markdown, "reviewed_at");
   const liveReviewedAtMs = timestampMs(liveReviewedAt);
   const reportReviewedAtMs = timestampMs(reportReviewedAt);
@@ -18487,12 +18496,16 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
     if (existingReviewCommentUpdatedAt) {
       allowedSelfMutationUpdatedAts.add(existingReviewCommentUpdatedAt);
     }
-    const staleReviewCommentReason = staleReviewCommentSyncReason(
-      markdown,
-      existingReviewComment,
-      number,
-    );
-    if (state === "open" && isCloseProposal && staleReviewCommentReason) {
+    const staleReviewCommentReason =
+      item.kind === "pull_request"
+        ? staleReviewCommentSyncReason(
+            markdown,
+            existingReviewComment,
+            number,
+            currentItemContext(),
+          )
+        : null;
+    if (state === "open" && staleReviewCommentReason) {
       markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
       if (!dryRun) writeReportMarkdown(path, markdown);
       results.push({

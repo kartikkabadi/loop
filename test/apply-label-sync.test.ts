@@ -356,11 +356,15 @@ Full review comments:
 `;
     const synced = reportWithSyncedReviewComment(sourceReport, 74481);
     writeFileSync(itemPath, synced.report, "utf8");
+    const newerStaleHeadComment = synced.comment.replace(
+      /\breviewed_at=[^\s>]+/,
+      "reviewed_at=2026-05-20T00:00:00.000Z",
+    );
 
     const ghMock = `
 const { appendFileSync, readFileSync } = require("fs");
 const logPath = ${JSON.stringify(logPath)};
-const comment = ${JSON.stringify(synced.comment)};
+const comment = ${JSON.stringify(newerStaleHeadComment)};
 const rawArgs = process.argv.slice(2);
 const args = rawArgs[0] === "--repo" ? rawArgs.slice(2) : rawArgs;
 appendFileSync(logPath, JSON.stringify(args) + "\\n");
@@ -461,7 +465,7 @@ if (args[0] === "api" && /\\/issues\\/74481$/.test(path)) {
     assert.match(patchedBody, /clawsweeper-review-history v=1 total=1/);
     assert.match(
       patchedBody,
-      /- reviewed 2026-05-19T20:00:00Z sha old-head :: needs maintainer review before merge\./,
+      /- reviewed 2026-05-20T00:00:00\.000Z sha old-head :: needs maintainer review before merge\./,
     );
     assert.doesNotMatch(patchedBody, /clawsweeper-verdict:/);
     const updatedReport = readFileSync(itemPath, "utf8");
@@ -474,6 +478,188 @@ if (args[0] === "api" && /\\/issues\\/74481$/.test(path)) {
         reason: "updated durable Codex review comment",
       },
     ]);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("apply-decisions skips stale label cleanup when the durable review comment is newer", () => {
+  const root = mkdtempSync(tmpPrefix);
+  try {
+    const itemsDir = join(root, "items");
+    const closedDir = join(root, "closed");
+    const plansDir = join(root, "plans");
+    const reportPath = join(root, "apply-report.json");
+    const logPath = join(root, "gh.log");
+    const itemPath = join(itemsDir, "74483.md");
+    mkdirSync(itemsDir, { recursive: true });
+    mkdirSync(plansDir, { recursive: true });
+    const readyLabel = "status: \u{1F440} ready for maintainer look";
+    const mergeRiskLabel = "merge-risk: \u{1F6A8} message-delivery";
+    const staleLabels = [
+      "P1",
+      "rating: \u{1F99E} diamond lobster",
+      mergeRiskLabel,
+      readyLabel,
+      "proof: sufficient",
+    ];
+    writeFileSync(
+      itemPath,
+      `${reportFrontMatter({
+        repository: "openclaw/openclaw",
+        type: "pull_request",
+        number: "74483",
+        title: "Stale report with newer durable comment",
+        url: "https://github.com/openclaw/openclaw/pull/74483",
+        decision: "keep_open",
+        close_reason: "none",
+        confidence: "high",
+        action_taken: "kept_open",
+        review_status: "complete",
+        local_checkout_access: "verified",
+        author: "contributor",
+        author_association: "CONTRIBUTOR",
+        labels: JSON.stringify(staleLabels),
+        item_snapshot_hash: "snapshot-a",
+        item_updated_at: "2026-05-19T20:00:00Z",
+        reviewed_at: "2026-05-19T20:00:00.000Z",
+        pull_head_sha: "old-head",
+        merge_risk_labels: JSON.stringify([mergeRiskLabel]),
+      })}
+
+## Summary
+
+This stored report is stale because a later review already updated the durable comment.
+
+${realBehaviorProofReportSection()}
+
+${prRatingReportSection({ overallTier: "A", proofTier: "A", patchTier: "A" })}
+
+## Review Findings
+
+Overall correctness: patch is correct
+
+Overall confidence: 0.9
+
+Full review comments:
+
+- none
+`,
+      "utf8",
+    );
+
+    const newerComment = [
+      "Codex review: needs maintainer review before merge.",
+      "",
+      "<!-- clawsweeper-verdict:needs-human item=74483 sha=new-head confidence=high updated_at=2026-05-19T20:10:00Z reviewed_at=2026-05-20T00:00:00.000Z source_revision=new-source -->",
+      "<!-- clawsweeper-review item=74483 -->",
+    ].join("\n");
+    const ghMock = `
+const { appendFileSync, readFileSync } = require("fs");
+const logPath = ${JSON.stringify(logPath)};
+const newerComment = ${JSON.stringify(newerComment)};
+const staleLabels = ${JSON.stringify(staleLabels)};
+const rawArgs = process.argv.slice(2);
+const args = rawArgs[0] === "--repo" ? rawArgs.slice(2) : rawArgs;
+appendFileSync(logPath, JSON.stringify(args) + "\\n");
+const path = args[1] || "";
+if (args[0] === "api" && /\\/issues\\/74483$/.test(path)) {
+  console.log(JSON.stringify({
+    number: 74483,
+    title: "Stale report with newer durable comment",
+    html_url: "https://github.com/openclaw/openclaw/pull/74483",
+    created_at: "2026-05-19T19:00:00Z",
+    updated_at: "2026-05-19T20:10:00Z",
+    closed_at: null,
+    state: "open",
+    locked: false,
+    active_lock_reason: null,
+    author_association: "CONTRIBUTOR",
+    user: { login: "contributor" },
+    labels: staleLabels,
+    pull_request: {}
+  }));
+} else if (args[0] === "api" && args[1] === "-i" && /\\/issues\\/74483\\/timeline(?:\\?|$)/.test(args[2] || "")) {
+  console.log("HTTP/2 200\\n\\n[]");
+} else if (args[0] === "api" && /\\/issues\\/74483\\/timeline(?:\\?|$)/.test(path)) {
+  console.log(JSON.stringify([[]]));
+} else if (args[0] === "api" && /\\/pulls\\/74483$/.test(path)) {
+  console.log(JSON.stringify({
+    number: 74483,
+    html_url: "https://github.com/openclaw/openclaw/pull/74483",
+    state: "open",
+    changed_files: 1,
+    commits: 2,
+    review_comments: 0,
+    head: { sha: "new-head", ref: "branch", repo: { full_name: "fork/openclaw" } },
+    base: { sha: "base-sha", ref: "main", repo: { full_name: "openclaw/openclaw" } },
+    user: { login: "contributor" }
+  }));
+} else if (args[0] === "api" && /\\/pulls\\/74483\\/(files|commits|comments)(?:\\?|$)/.test(path)) {
+  console.log(JSON.stringify([[]]));
+} else if (args[0] === "api" && /\\/issues\\/74483\\/comments(?:\\?|$)/.test(path)) {
+  console.log(JSON.stringify([[
+    {
+      id: 987483,
+      html_url: "https://github.com/openclaw/openclaw/pull/74483#issuecomment-987483",
+      body: newerComment,
+      user: { login: "clawsweeper[bot]" },
+      created_at: "2026-05-20T00:00:00Z",
+      updated_at: "2026-05-20T00:00:00Z"
+    }
+  ]]));
+} else if (args[0] === "api" && /\\/issues\\/comments\\/987483$/.test(path)) {
+  const input = args[args.indexOf("--input") + 1];
+  appendFileSync(logPath, JSON.stringify(["patched-review-body", JSON.parse(readFileSync(input, "utf8")).body]) + "\\n");
+  console.log(JSON.stringify({
+    id: 987483,
+    html_url: "https://github.com/openclaw/openclaw/pull/74483#issuecomment-987483",
+    updated_at: "2026-05-20T00:01:00Z"
+  }));
+} else if (args[0] === "issue" && args[1] === "edit") {
+  console.log("");
+} else {
+  console.error("unexpected gh args", JSON.stringify(args));
+  process.exit(1);
+}
+`;
+    withMockGh(root, ghMock, () => {
+      runApplyDecisionsForTest({
+        targetRepo: "openclaw/openclaw",
+        itemsDir,
+        closedDir,
+        plansDir,
+        reportPath,
+        extraArgs: ["--sync-comments-only", "--item-numbers", "74483"],
+      });
+    });
+
+    const calls = readFileSync(logPath, "utf8")
+      .trim()
+      .split("\n")
+      .filter(Boolean)
+      .map((line) => JSON.parse(line) as string[]);
+    assert.deepEqual(
+      calls.filter((args) => args[0] === "issue" && args[1] === "edit"),
+      [],
+    );
+    assert.equal(
+      calls.some((args) => args[0] === "patched-review-body"),
+      false,
+    );
+    const updatedReport = readFileSync(itemPath, "utf8");
+    assert.ok(updatedReport.includes(`labels: ${JSON.stringify(staleLabels)}`));
+    const result = JSON.parse(readFileSync(reportPath, "utf8")) as Array<{
+      number: number;
+      action: string;
+      reason: string;
+    }>;
+    assert.equal(result[0]?.number, 74483);
+    assert.equal(result[0]?.action, "skipped_stale_review_comment_sync");
+    assert.match(
+      result[0]?.reason ?? "",
+      /live durable review comment is newer than the local report/,
+    );
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
