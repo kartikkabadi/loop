@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { spawnSync } from "node:child_process";
-import { createHash } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import {
   chmodSync,
   existsSync,
@@ -163,6 +163,7 @@ interface FailedReviewRetryRevision {
   kind: FailedReviewRetryRevisionKind;
   value: string;
 }
+type FailedReviewRetryStatus = "dispatching" | "dispatched" | "dispatch_failed" | "exhausted";
 type FailedReviewRetryAction =
   | "dispatched_failed_review_retry"
   | "planned_failed_review_retry"
@@ -181,7 +182,8 @@ type FailedReviewRetryAction =
   | "skipped_retry_cooldown"
   | "skipped_retry_exhausted"
   | "skipped_live_fetch_failed"
-  | "skipped_dispatch_failed";
+  | "skipped_dispatch_failed"
+  | "skipped_runtime_budget";
 type TriagePriority = "P0" | "P1" | "P2" | "P3" | "none";
 type ImpactLabelName =
   | "impact:data-loss"
@@ -900,6 +902,20 @@ interface FailedReviewRetryResult {
   attempts?: number | undefined;
   reportPath?: string | undefined;
   dispatchUrl?: string | undefined;
+}
+
+interface FailedReviewRetryState {
+  schema_version: 1;
+  repo: string;
+  number: number;
+  status: FailedReviewRetryStatus;
+  revision_kind: FailedReviewRetryRevisionKind;
+  revision: string;
+  attempts: number;
+  max_attempts: number;
+  last_at: string;
+  reason: string;
+  dispatch_url?: string | undefined;
 }
 
 type ProofNudgeAction =
@@ -2068,6 +2084,10 @@ function defaultPlansDir(profile = targetProfile()): string {
   return join(repoRecordsDir(profile), "plans");
 }
 
+function defaultFailedReviewRetryStateDir(profile = targetProfile()): string {
+  return join(ROOT, "results", "failed-review-retries", profile.slug);
+}
+
 function defaultDecisionPacketsDir(profile = targetProfile()): string {
   return join(repoRecordsDir(profile), "decision-packets");
 }
@@ -2156,35 +2176,130 @@ function evidenceEntry(options: Partial<Evidence> & Pick<Evidence, "label" | "de
 function run(
   command: string,
   args: string[],
-  options: { cwd?: string; env?: NodeJS.ProcessEnv } = {},
+  options: { cwd?: string; env?: NodeJS.ProcessEnv; timeoutMs?: number | undefined } = {},
 ): string {
   return runText(command, args, {
     cwd: options.cwd ?? ROOT,
     env: options.env,
     maxBuffer: 128 * 1024 * 1024,
     stdio: ["ignore", "pipe", "pipe"],
+    timeoutMs: options.timeoutMs,
     trim: "both",
   });
 }
 
+const GITHUB_RUNTIME_REPORT_FLUSH_RESERVE_MS = 1_000;
+
+interface GitHubRuntimeBudget {
+  startedAtMs: number;
+  maxRuntimeMs: number;
+  onYield?: (reason: string, resumeCurrent?: boolean) => void;
+  yieldReason?: string;
+}
+
+class GitHubRuntimeBudgetError extends Error {
+  constructor(readonly reason: string) {
+    super(reason);
+    this.name = "GitHubRuntimeBudgetError";
+  }
+}
+
+let activeGitHubRuntimeBudget: GitHubRuntimeBudget | null = null;
+
+function withGitHubRuntimeBudget<T>(runtimeBudget: GitHubRuntimeBudget, operation: () => T): T {
+  const previousRuntimeBudget = activeGitHubRuntimeBudget;
+  activeGitHubRuntimeBudget = runtimeBudget;
+  try {
+    return operation();
+  } finally {
+    activeGitHubRuntimeBudget = previousRuntimeBudget;
+  }
+}
+
+function githubRuntimeRemainingMs(nowMs = Date.now()): number | null {
+  const budget = activeGitHubRuntimeBudget;
+  if (!budget || budget.maxRuntimeMs <= 0) return null;
+  return (
+    budget.maxRuntimeMs - (nowMs - budget.startedAtMs) - GITHUB_RUNTIME_REPORT_FLUSH_RESERVE_MS
+  );
+}
+
+function githubRuntimeBudgetError(phase: string): GitHubRuntimeBudgetError {
+  const budget = activeGitHubRuntimeBudget;
+  const reason =
+    budget?.yieldReason ?? `max runtime ${budget?.maxRuntimeMs ?? 0}ms reached ${phase}`;
+  if (budget) budget.yieldReason = reason;
+  return new GitHubRuntimeBudgetError(reason);
+}
+
+function pendingGitHubRuntimeBudgetError(): GitHubRuntimeBudgetError | null {
+  const reason = activeGitHubRuntimeBudget?.yieldReason;
+  return reason ? new GitHubRuntimeBudgetError(reason) : null;
+}
+
+function githubCommandTimeoutMs(requestedTimeoutMs?: number): number | undefined {
+  const pendingError = pendingGitHubRuntimeBudgetError();
+  if (pendingError) throw pendingError;
+  const remainingMs = githubRuntimeRemainingMs();
+  if (remainingMs === null) return requestedTimeoutMs;
+  if (remainingMs <= 0) throw githubRuntimeBudgetError("before GitHub operation");
+  return Math.max(
+    1,
+    requestedTimeoutMs === undefined ? remainingMs : Math.min(requestedTimeoutMs, remainingMs),
+  );
+}
+
+function ensureGitHubRuntimeAvailable(phase: string): void {
+  const pendingError = pendingGitHubRuntimeBudgetError();
+  if (pendingError) throw pendingError;
+  const remainingMs = githubRuntimeRemainingMs();
+  if (remainingMs !== null && remainingMs <= 0) throw githubRuntimeBudgetError(phase);
+}
+
+function ensureRuntimeDelayFits(waitMs: number, phase: string): void {
+  const pendingError = pendingGitHubRuntimeBudgetError();
+  if (pendingError) throw pendingError;
+  const remainingMs = githubRuntimeRemainingMs();
+  if (remainingMs !== null && remainingMs <= waitMs) {
+    throw githubRuntimeBudgetError(phase);
+  }
+}
+
+function ensureGitHubRetryFits(waitMs: number): void {
+  ensureRuntimeDelayFits(waitMs, "before GitHub retry");
+}
+
+function sleepBeforeGitHubRetry(waitMs: number): void {
+  ensureGitHubRetryFits(waitMs);
+  sleepMs(waitMs);
+}
+
 function gh(args: string[]): string {
-  if (args[0] === "api") return run("gh", args);
-  return run("gh", ["--repo", targetRepo(), ...args]);
+  const timeoutMs = githubCommandTimeoutMs();
+  if (args[0] === "api") return run("gh", args, { timeoutMs });
+  return run("gh", ["--repo", targetRepo(), ...args], { timeoutMs });
 }
 
 function ghOnce(args: string[], timeoutMs: number): string {
   const resolvedArgs = args[0] === "api" ? args : ["--repo", targetRepo(), ...args];
   const env = { ...process.env, GIT_OPTIONAL_LOCKS: "0" };
   const command = resolveCommand("gh", resolvedArgs, env);
+  const commandTimeoutMs = githubCommandTimeoutMs(timeoutMs) ?? timeoutMs;
+  const runtimeLimitedTimeout = commandTimeoutMs < timeoutMs;
   const result = spawnSync(command.command, command.args, {
     cwd: ROOT,
     encoding: "utf8",
     env,
     maxBuffer: 8 * 1024 * 1024,
     stdio: ["ignore", "pipe", "pipe"],
-    timeout: timeoutMs,
+    timeout: commandTimeoutMs,
   });
-  if (result.error) throw result.error;
+  if (result.error) {
+    if (runtimeLimitedTimeout && (result.error as NodeJS.ErrnoException).code === "ETIMEDOUT") {
+      throw githubRuntimeBudgetError("during GitHub operation");
+    }
+    throw result.error;
+  }
   if (result.status !== 0) {
     const stderr = typeof result.stderr === "string" ? result.stderr.trim() : "";
     throw new Error(
@@ -2245,13 +2360,15 @@ function maybePublishThrottleHeartbeat(options: {
     if (diff.status === 0) return;
     run("git", ["commit", "-m", "chore: update sweep apply throttle status"]);
     try {
-      run("git", ["push"]);
+      run("git", ["push"], { timeoutMs: githubCommandTimeoutMs() });
     } catch (error) {
+      if (error instanceof GitHubRuntimeBudgetError) throw error;
       console.error(
         `Best-effort throttle status push failed: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   } catch (error) {
+    if (error instanceof GitHubRuntimeBudgetError) throw error;
     console.error(
       `Best-effort throttle status update failed: ${error instanceof Error ? error.message : String(error)}`,
     );
@@ -2264,10 +2381,13 @@ function ghWithRetry(args: string[], attempts = 12): string {
     try {
       return gh(args);
     } catch (error) {
+      if (error instanceof GitHubRuntimeBudgetError) throw error;
       lastError = error;
+      ensureGitHubRuntimeAvailable("after GitHub operation");
       const retryKind = ghRetryKind(error);
       if (retryKind === "none" || attempt === attempts - 1) throw error;
       const waitMs = ghRetryWaitMs(retryKind, attempt);
+      ensureGitHubRetryFits(waitMs);
       const retryLabel =
         retryKind === "throttle" ? "GitHub throttled" : "Transient GitHub API failure";
       console.error(
@@ -2276,29 +2396,36 @@ function ghWithRetry(args: string[], attempts = 12): string {
       if (retryKind === "throttle") {
         maybePublishThrottleHeartbeat({ args, attempt, attempts, waitMs });
       }
-      sleepMs(waitMs);
+      sleepBeforeGitHubRetry(waitMs);
     }
   }
   throw lastError;
 }
 
-function ghRawWithRetry(args: string[], attempts = 12): string {
-  let lastError: unknown;
-  for (let attempt = 0; attempt < attempts; attempt += 1) {
-    try {
-      return run("gh", args);
-    } catch (error) {
-      lastError = error;
-      const retryKind = ghRetryKind(error);
-      if (retryKind === "none" || attempt === attempts - 1) throw error;
-      const waitMs = ghRetryWaitMs(retryKind, attempt);
-      console.error(
-        `Transient GitHub workflow dispatch failure; retrying ${summarizeGhArgs(args)} in ${Math.round(waitMs / 1000)}s`,
-      );
-      sleepMs(waitMs);
+function ghRawOnceWithCheckpoint(args: string[], onBeforeRun: () => void): string {
+  const env = { ...process.env };
+  const command = resolveCommand("gh", args, env);
+  const timeoutMs = githubCommandTimeoutMs();
+  onBeforeRun();
+  const result = spawnSync(command.command, command.args, {
+    cwd: ROOT,
+    encoding: "utf8",
+    env,
+    maxBuffer: 128 * 1024 * 1024,
+    stdio: ["ignore", "pipe", "pipe"],
+    timeout: timeoutMs,
+  });
+  if (result.error) {
+    if (timeoutMs !== undefined && (result.error as NodeJS.ErrnoException).code === "ETIMEDOUT") {
+      throw githubRuntimeBudgetError("during GitHub dispatch");
     }
+    throw result.error;
   }
-  throw lastError;
+  if (result.status !== 0) {
+    const stderr = typeof result.stderr === "string" ? result.stderr.trim() : "";
+    throw new Error([`Command failed: gh ${args.join(" ")}`, stderr].filter(Boolean).join("\n"));
+  }
+  return (result.stdout ?? "").trim();
 }
 
 function ghJson<T>(args: string[]): T {
@@ -2308,7 +2435,7 @@ function ghJson<T>(args: string[]): T {
       console.error(
         `Malformed GitHub JSON response; retrying ${summarizeGhArgs(args)} in ${Math.round(waitMs / 1000)}s`,
       );
-      sleepMs(waitMs);
+      sleepBeforeGitHubRetry(waitMs);
     },
   });
 }
@@ -4566,6 +4693,7 @@ function referencingMergedPullRequestsForIssue(number: number): unknown[] {
     const items = Array.isArray(response.items) ? response.items : [];
     return referencingMergedPullRequestCandidates(items);
   } catch (error) {
+    if (error instanceof GitHubRuntimeBudgetError) throw error;
     console.error(
       `[referencingMergedPullRequestsForIssue] number=${number} status=failed reason=${
         error instanceof Error ? error.message : String(error)
@@ -4769,6 +4897,7 @@ function compactRelatedGitHubIssueSearchItems(item: Item, seen: ReadonlySet<numb
         commentCount: candidate.comments,
       }));
   } catch (error) {
+    if (error instanceof GitHubRuntimeBudgetError) throw error;
     console.error(
       `Best-effort related issue GitHub search failed for #${item.number}: ${
         error instanceof Error ? error.message : String(error)
@@ -6265,6 +6394,39 @@ function recordDashboardActivity(
       recordFailedReviewRetryStatus(failedReviewRetryStatus, bucket);
     }
   }
+}
+
+function dashboardMarkdownWithFailedReviewRetryState(
+  markdown: string,
+  number: number,
+  stateDir: string,
+): string {
+  const statePath = failedReviewRetryStatePath(stateDir, number);
+  let state: FailedReviewRetryState | null;
+  try {
+    state = readFailedReviewRetryState(statePath);
+  } catch (error) {
+    console.error(
+      `[dashboard] ignoring invalid failed-review retry state ${repoRelativePath(statePath)}: ${error instanceof Error ? error.message : String(error)}`,
+    );
+    state = null;
+  }
+  return failedReviewRetryMarkdownWithState(markdown, state);
+}
+
+export function dashboardFailedReviewRetryActivityForTest(options: {
+  markdown: string;
+  number: number;
+  stateDir: string;
+  now: number;
+}): DashboardActivityStats {
+  const activity = emptyDashboardActivityStats();
+  recordDashboardActivity(
+    dashboardMarkdownWithFailedReviewRetryState(options.markdown, options.number, options.stateDir),
+    activity,
+    options.now,
+  );
+  return activity;
 }
 
 function formatActivityRow(label: string, bucket: DashboardActivityBucket): string {
@@ -18131,7 +18293,7 @@ function failedReviewRetryPrompt(options: {
 }
 
 function failedReviewRetrySection(options: {
-  status: "dispatched" | "exhausted";
+  status: FailedReviewRetryStatus;
   at: string;
   revision: FailedReviewRetryRevision;
   attempts: number;
@@ -18151,13 +18313,17 @@ function failedReviewRetrySection(options: {
     lines.push(
       "- next step: needs human review; retry attempts for this exact revision are exhausted.",
     );
+  } else if (options.status === "dispatching") {
+    lines.push("- next step: dispatch attempt checkpointed; wait for the retry cooldown.");
+  } else if (options.status === "dispatch_failed") {
+    lines.push("- next step: dispatch command failed; retry after the cooldown if still eligible.");
   }
   return lines.join("\n");
 }
 
-function markFailedReviewRetry(options: {
+function checkpointFailedReviewRetry(options: {
   markdown: string;
-  status: "dispatched" | "exhausted";
+  status: FailedReviewRetryStatus;
   at: string;
   revision: FailedReviewRetryRevision;
   attempts: number;
@@ -18182,7 +18348,115 @@ function markFailedReviewRetry(options: {
   if (options.dispatchUrl) {
     next = replaceFrontMatterValue(next, "failed_review_retry_dispatch_url", options.dispatchUrl);
   }
+  return next;
+}
+
+function markFailedReviewRetry(options: {
+  markdown: string;
+  status: FailedReviewRetryStatus;
+  at: string;
+  revision: FailedReviewRetryRevision;
+  attempts: number;
+  maxAttempts: number;
+  reason: string;
+  dispatchUrl?: string;
+}): string {
+  const next = checkpointFailedReviewRetry(options);
   return appendSectionValue(next, "Failed Review Retry", failedReviewRetrySection(options));
+}
+
+function failedReviewRetryStatePath(stateDir: string, number: number): string {
+  return join(stateDir, `${number}.json`);
+}
+
+function readFailedReviewRetryState(path: string): FailedReviewRetryState | null {
+  if (!existsSync(path)) return null;
+  const parsed = JSON.parse(readFileSync(path, "utf8")) as Partial<FailedReviewRetryState>;
+  const validStatus =
+    parsed.status === "dispatching" ||
+    parsed.status === "dispatched" ||
+    parsed.status === "dispatch_failed" ||
+    parsed.status === "exhausted";
+  if (
+    parsed.schema_version !== 1 ||
+    typeof parsed.repo !== "string" ||
+    !Number.isInteger(parsed.number) ||
+    !validStatus ||
+    (parsed.revision_kind !== "pull_head_sha" && parsed.revision_kind !== "item_source_revision") ||
+    typeof parsed.revision !== "string" ||
+    !Number.isInteger(parsed.attempts) ||
+    !Number.isInteger(parsed.max_attempts) ||
+    typeof parsed.last_at !== "string" ||
+    typeof parsed.reason !== "string"
+  ) {
+    throw new Error(`Invalid failed-review retry state: ${path}`);
+  }
+  return parsed as FailedReviewRetryState;
+}
+
+function failedReviewRetryMarkdownWithState(
+  markdown: string,
+  state: FailedReviewRetryState | null,
+): string {
+  const reportNumber = Number(frontMatterValue(markdown, "number") ?? 0);
+  if (!state || state.repo !== targetRepo() || state.number !== reportNumber) return markdown;
+  const reportRevision = failedReviewRetryRevisionForReport(markdown);
+  const stateRevision: FailedReviewRetryRevision = {
+    kind: state.revision_kind,
+    value: state.revision,
+  };
+  if (!reportRevision || !sameFailedReviewRetryRevision(reportRevision, stateRevision)) {
+    return markdown;
+  }
+  return checkpointFailedReviewRetry({
+    markdown,
+    status: state.status,
+    at: state.last_at,
+    revision: stateRevision,
+    attempts: state.attempts,
+    maxAttempts: state.max_attempts,
+    reason: state.reason,
+    ...(state.dispatch_url ? { dispatchUrl: state.dispatch_url } : {}),
+  });
+}
+
+function writeFailedReviewRetryState(
+  path: string,
+  options: {
+    number: number;
+    status: FailedReviewRetryStatus;
+    at: string;
+    revision: FailedReviewRetryRevision;
+    attempts: number;
+    maxAttempts: number;
+    reason: string;
+    dispatchUrl?: string;
+  },
+): void {
+  const state: FailedReviewRetryState = {
+    schema_version: 1,
+    repo: targetRepo(),
+    number: options.number,
+    status: options.status,
+    revision_kind: options.revision.kind,
+    revision: options.revision.value,
+    attempts: options.attempts,
+    max_attempts: options.maxAttempts,
+    last_at: options.at,
+    reason: options.reason,
+    ...(options.dispatchUrl ? { dispatch_url: options.dispatchUrl } : {}),
+  };
+  ensureDir(dirname(path));
+  const temporaryPath = join(
+    dirname(path),
+    `.${basename(path)}.${process.pid}.${randomUUID()}.tmp`,
+  );
+  try {
+    writeFileSync(temporaryPath, `${JSON.stringify(state, null, 2)}\n`, "utf8");
+    renameSync(temporaryPath, path);
+  } finally {
+    if (existsSync(temporaryPath)) unlinkSync(temporaryPath);
+  }
 }
 
 const FAILED_REVIEW_RETRY_METADATA_KEYS = [
@@ -18238,6 +18512,7 @@ function dispatchFailedReviewRetry(options: {
   attempts: number;
   maxAttempts: number;
   codexTimeoutMs: number;
+  onBeforeDispatch?: (dispatchUrl: string) => void;
 }): string {
   const prompt = failedReviewRetryPrompt({
     number: options.number,
@@ -18263,69 +18538,88 @@ function dispatchFailedReviewRetry(options: {
         `Issue retry repository dispatch requires the workflow repository default branch (${workflowDefaultBranch}); got --workflow-ref ${options.workflowRef}.`,
       );
     }
-    ghRawWithRetry([
-      "api",
-      "--method",
-      "POST",
-      `repos/${options.workflowRepo}/dispatches`,
-      "-f",
-      "event_type=clawsweeper_target_sweep",
-      "-f",
-      `client_payload[target_repo]=${options.targetRepo}`,
-      "-f",
-      "client_payload[target_branch]=main",
-      "-f",
-      "client_payload[batch_size]=1",
-      "-f",
-      "client_payload[shard_count]=1",
-      "-f",
-      "client_payload[hot_intake]=false",
-      "-f",
-      `client_payload[codex_timeout_ms]=${options.codexTimeoutMs}`,
-      "-f",
-      `client_payload[item_number]=${options.number}`,
-      "-f",
-      `client_payload[additional_prompt]=${prompt}`,
-      "-f",
-      `client_payload[expected_source_revision]=${options.revision.value}`,
-      "-f",
-      "client_payload[source_revision_requeue_count]=0",
-    ]);
-    return `https://github.com/${options.workflowRepo}/actions/workflows/sweep.yml`;
+    const dispatchUrl = `https://github.com/${options.workflowRepo}/actions/workflows/sweep.yml`;
+    ghRawOnceWithCheckpoint(
+      [
+        "api",
+        "--method",
+        "POST",
+        `repos/${options.workflowRepo}/dispatches`,
+        "-f",
+        "event_type=clawsweeper_target_sweep",
+        "-f",
+        `client_payload[target_repo]=${options.targetRepo}`,
+        "-f",
+        "client_payload[target_branch]=main",
+        "-f",
+        "client_payload[batch_size]=1",
+        "-f",
+        "client_payload[shard_count]=1",
+        "-f",
+        "client_payload[hot_intake]=false",
+        "-f",
+        `client_payload[codex_timeout_ms]=${options.codexTimeoutMs}`,
+        "-f",
+        `client_payload[item_number]=${options.number}`,
+        "-f",
+        `client_payload[additional_prompt]=${prompt}`,
+        "-f",
+        `client_payload[expected_source_revision]=${options.revision.value}`,
+        "-f",
+        "client_payload[source_revision_requeue_count]=0",
+      ],
+      () => options.onBeforeDispatch?.(dispatchUrl),
+    );
+    return dispatchUrl;
   }
-  ghRawWithRetry([
-    "workflow",
-    "run",
-    "sweep.yml",
-    "--repo",
-    options.workflowRepo,
-    "--ref",
-    options.workflowRef,
-    "-f",
-    "apply_existing=false",
-    "-f",
-    "hot_intake=false",
-    "-f",
-    `target_repo=${options.targetRepo}`,
-    "-f",
-    "batch_size=1",
-    "-f",
-    "shard_count=1",
-    "-f",
-    `codex_timeout_ms=${options.codexTimeoutMs}`,
-    "-f",
-    `item_number=${options.number}`,
-    "-f",
-    `additional_prompt=${prompt}`,
-  ]);
-  return `https://github.com/${options.workflowRepo}/actions/workflows/sweep.yml`;
+  const dispatchUrl = `https://github.com/${options.workflowRepo}/actions/workflows/sweep.yml`;
+  ghRawOnceWithCheckpoint(
+    [
+      "workflow",
+      "run",
+      "sweep.yml",
+      "--repo",
+      options.workflowRepo,
+      "--ref",
+      options.workflowRef,
+      "-f",
+      "apply_existing=false",
+      "-f",
+      "hot_intake=false",
+      "-f",
+      `target_repo=${options.targetRepo}`,
+      "-f",
+      "batch_size=1",
+      "-f",
+      "shard_count=1",
+      "-f",
+      `codex_timeout_ms=${options.codexTimeoutMs}`,
+      "-f",
+      `item_number=${options.number}`,
+      "-f",
+      `additional_prompt=${prompt}`,
+    ],
+    () => options.onBeforeDispatch?.(dispatchUrl),
+  );
+  return dispatchUrl;
 }
 
 function retryFailedReviewsCommand(args: Args): void {
+  const runtimeBudget: GitHubRuntimeBudget = {
+    startedAtMs: Date.now(),
+    maxRuntimeMs: numberArg(args.max_runtime_ms, 0),
+  };
+  withGitHubRuntimeBudget(runtimeBudget, () => retryFailedReviewsCommandInner(args));
+}
+
+function retryFailedReviewsCommandInner(args: Args): void {
   repoFromArgs(args);
   const itemsDir = resolve(stringArg(args.items_dir, defaultItemsDir()));
   const reportPath = resolve(
     stringArg(args.report_path, join(ROOT, "artifacts", "failed-review-retry-report.json")),
+  );
+  const stateDir = resolve(
+    stringArg(args.state_dir, join(dirname(reportPath), "failed-review-retry-state")),
   );
   const limit = numberArg(args.limit, 5);
   const maxAttempts = Math.max(1, numberArg(args.max_attempts, 2));
@@ -18342,146 +18636,252 @@ function retryFailedReviewsCommand(args: Args): void {
   const now = Date.now();
   const nowIso = new Date(now).toISOString();
   const results: FailedReviewRetryResult[] = [];
+  let attempted = 0;
   let dispatched = 0;
   ensureDir(dirname(reportPath));
-  for (const file of markdownFiles(itemsDir)) {
-    const path = join(itemsDir, file);
-    let markdown = readFileSync(path, "utf8");
-    if (!isMarkdownForActiveRepo(markdown, path)) continue;
-    const number = numberForMarkdownFile(file);
-    if (requested.size > 0 && !requested.has(number)) continue;
-    if (results.some((result) => result.number === number)) continue;
-    if (effectiveReviewStatus(markdown) !== "failed") {
-      results.push({
-        repo: targetRepo(),
-        number,
-        action: "skipped_not_failed_review",
-        reason: "review is not failed",
-        reportPath: path,
-      });
-      continue;
-    }
-    let item: Item;
-    let state: string;
-    let liveHeadSha: string | null = null;
-    let liveSourceRevision: string | null = null;
-    try {
-      ({ item, state } = fetchItem(number));
-      if (item.kind === "pull_request") liveHeadSha = livePullHeadSha(number);
-      else liveSourceRevision = liveIssueSourceRevision(number);
-    } catch (error) {
-      results.push({
-        repo: targetRepo(),
-        number,
-        action: "skipped_live_fetch_failed",
-        reason: error instanceof Error ? error.message : String(error),
-        reportPath: path,
-      });
-      continue;
-    }
-    const eligibility = failedReviewRetryEligibility({
-      markdown,
-      liveState: state,
-      liveHeadSha,
-      liveSourceRevision,
-      now,
-      maxAttempts,
-      cooldownMs,
-    });
-    const retryRevision =
-      eligibility.revisionKind && eligibility.revision
-        ? { kind: eligibility.revisionKind, value: eligibility.revision }
-        : null;
-    if (eligibility.action === "skipped_retry_exhausted" && retryRevision) {
-      if (isFailedReviewRetryAlreadyExhausted(markdown, retryRevision)) {
+  try {
+    for (const file of markdownFiles(itemsDir)) {
+      ensureGitHubRuntimeAvailable("before failed-review retry item");
+      const path = join(itemsDir, file);
+      let markdown = readFileSync(path, "utf8");
+      if (!isMarkdownForActiveRepo(markdown, path)) continue;
+      const number = numberForMarkdownFile(file);
+      const statePath = failedReviewRetryStatePath(stateDir, number);
+      markdown = failedReviewRetryMarkdownWithState(
+        markdown,
+        readFailedReviewRetryState(statePath),
+      );
+      if (requested.size > 0 && !requested.has(number)) continue;
+      if (results.some((result) => result.number === number)) continue;
+      if (effectiveReviewStatus(markdown) !== "failed") {
         results.push({
-          ...eligibility,
-          action: "skipped_retry_already_exhausted",
+          repo: targetRepo(),
+          number,
+          action: "skipped_not_failed_review",
+          reason: "review is not failed",
           reportPath: path,
         });
         continue;
       }
-      const attempts = eligibility.attempts ?? maxAttempts;
-      markdown = markFailedReviewRetry({
+      let item: Item;
+      let state: string;
+      let liveHeadSha: string | null = null;
+      let liveSourceRevision: string | null = null;
+      try {
+        ({ item, state } = fetchItem(number));
+        if (item.kind === "pull_request") liveHeadSha = livePullHeadSha(number);
+        else liveSourceRevision = liveIssueSourceRevision(number);
+      } catch (error) {
+        if (error instanceof GitHubRuntimeBudgetError) throw error;
+        results.push({
+          repo: targetRepo(),
+          number,
+          action: "skipped_live_fetch_failed",
+          reason: error instanceof Error ? error.message : String(error),
+          reportPath: path,
+        });
+        continue;
+      }
+      const eligibility = failedReviewRetryEligibility({
         markdown,
-        status: "exhausted",
-        at: nowIso,
-        revision: retryRevision,
-        attempts,
+        liveState: state,
+        liveHeadSha,
+        liveSourceRevision,
+        now,
         maxAttempts,
-        reason: eligibility.reason,
+        cooldownMs,
       });
-      if (!dryRun) writeFileSync(path, markdown, "utf8");
-      results.push({
-        ...eligibility,
-        action: "marked_failed_review_retry_exhausted",
-        reportPath: path,
-      });
-      continue;
-    }
-    if (eligibility.action !== "planned_failed_review_retry" || !retryRevision) {
-      results.push({ ...eligibility, reportPath: path });
-      continue;
-    }
-    if (dispatched >= limit) break;
-    const retryReason = codexFailureReason(failedReviewFailureDetail(markdown));
-    if (dryRun) {
-      results.push({ ...eligibility, reason: retryReason, reportPath: path });
-      dispatched += 1;
-      continue;
-    }
-    try {
+      const retryRevision =
+        eligibility.revisionKind && eligibility.revision
+          ? { kind: eligibility.revisionKind, value: eligibility.revision }
+          : null;
+      if (eligibility.action === "skipped_retry_exhausted" && retryRevision) {
+        if (isFailedReviewRetryAlreadyExhausted(markdown, retryRevision)) {
+          results.push({
+            ...eligibility,
+            action: "skipped_retry_already_exhausted",
+            reportPath: path,
+          });
+          continue;
+        }
+        const attempts = eligibility.attempts ?? maxAttempts;
+        markdown = markFailedReviewRetry({
+          markdown,
+          status: "exhausted",
+          at: nowIso,
+          revision: retryRevision,
+          attempts,
+          maxAttempts,
+          reason: eligibility.reason,
+        });
+        if (!dryRun) {
+          writeFileSync(path, markdown, "utf8");
+          writeFailedReviewRetryState(statePath, {
+            number,
+            status: "exhausted",
+            at: nowIso,
+            revision: retryRevision,
+            attempts,
+            maxAttempts,
+            reason: eligibility.reason,
+          });
+        }
+        results.push({
+          ...eligibility,
+          action: "marked_failed_review_retry_exhausted",
+          reportPath: path,
+        });
+        continue;
+      }
+      if (eligibility.action !== "planned_failed_review_retry" || !retryRevision) {
+        results.push({ ...eligibility, reportPath: path });
+        continue;
+      }
+      if (attempted >= limit) break;
+      const retryReason = codexFailureReason(failedReviewFailureDetail(markdown));
+      if (dryRun) {
+        results.push({ ...eligibility, reason: retryReason, reportPath: path });
+        attempted += 1;
+        dispatched += 1;
+        continue;
+      }
       const attempts = (eligibility.attempts ?? 0) + 1;
-      const dispatchUrl = dispatchFailedReviewRetry({
-        workflowRepo,
-        workflowRef,
-        targetRepo: targetRepo(),
-        number,
-        revision: retryRevision,
-        reason: retryReason,
-        attempts: eligibility.attempts ?? 0,
-        maxAttempts,
-        codexTimeoutMs,
-      });
-      markdown = markFailedReviewRetry({
-        markdown,
-        status: "dispatched",
-        at: nowIso,
-        revision: retryRevision,
-        attempts,
-        maxAttempts,
-        reason: retryReason,
-        dispatchUrl,
-      });
-      writeFileSync(path, markdown, "utf8");
-      results.push({
-        repo: targetRepo(),
-        number,
-        action: "dispatched_failed_review_retry",
-        reason: retryReason,
-        ...failedReviewRetryResultRevision(retryRevision),
-        attempts,
-        reportPath: path,
-        dispatchUrl,
-      });
-      dispatched += 1;
-    } catch (error) {
-      results.push({
-        repo: targetRepo(),
-        number,
-        action: "skipped_dispatch_failed",
-        reason: error instanceof Error ? error.message : String(error),
-        ...failedReviewRetryResultRevision(retryRevision),
-        attempts: eligibility.attempts,
-        reportPath: path,
-      });
+      let dispatchCheckpointed = false;
+      let checkpointDispatchUrl: string | undefined;
+      try {
+        const dispatchUrl = dispatchFailedReviewRetry({
+          workflowRepo,
+          workflowRef,
+          targetRepo: targetRepo(),
+          number,
+          revision: retryRevision,
+          reason: retryReason,
+          attempts: eligibility.attempts ?? 0,
+          maxAttempts,
+          codexTimeoutMs,
+          onBeforeDispatch: (nextDispatchUrl) => {
+            dispatchCheckpointed = true;
+            checkpointDispatchUrl = nextDispatchUrl;
+            markdown = checkpointFailedReviewRetry({
+              markdown,
+              status: "dispatching",
+              at: nowIso,
+              revision: retryRevision,
+              attempts,
+              maxAttempts,
+              reason: retryReason,
+              dispatchUrl: nextDispatchUrl,
+            });
+            writeFileSync(path, markdown, "utf8");
+            writeFailedReviewRetryState(statePath, {
+              number,
+              status: "dispatching",
+              at: nowIso,
+              revision: retryRevision,
+              attempts,
+              maxAttempts,
+              reason: retryReason,
+              dispatchUrl: nextDispatchUrl,
+            });
+            attempted += 1;
+          },
+        });
+        markdown = markFailedReviewRetry({
+          markdown,
+          status: "dispatched",
+          at: nowIso,
+          revision: retryRevision,
+          attempts,
+          maxAttempts,
+          reason: retryReason,
+          dispatchUrl,
+        });
+        writeFileSync(path, markdown, "utf8");
+        writeFailedReviewRetryState(statePath, {
+          number,
+          status: "dispatched",
+          at: nowIso,
+          revision: retryRevision,
+          attempts,
+          maxAttempts,
+          reason: retryReason,
+          dispatchUrl,
+        });
+        results.push({
+          repo: targetRepo(),
+          number,
+          action: "dispatched_failed_review_retry",
+          reason: retryReason,
+          ...failedReviewRetryResultRevision(retryRevision),
+          attempts,
+          reportPath: path,
+          dispatchUrl,
+        });
+        dispatched += 1;
+      } catch (error) {
+        if (dispatchCheckpointed) {
+          markdown = markFailedReviewRetry({
+            markdown,
+            status: "dispatch_failed",
+            at: nowIso,
+            revision: retryRevision,
+            attempts,
+            maxAttempts,
+            reason: error instanceof Error ? error.message : String(error),
+            ...(checkpointDispatchUrl ? { dispatchUrl: checkpointDispatchUrl } : {}),
+          });
+          writeFileSync(path, markdown, "utf8");
+          writeFailedReviewRetryState(statePath, {
+            number,
+            status: "dispatch_failed",
+            at: nowIso,
+            revision: retryRevision,
+            attempts,
+            maxAttempts,
+            reason: error instanceof Error ? error.message : String(error),
+            ...(checkpointDispatchUrl ? { dispatchUrl: checkpointDispatchUrl } : {}),
+          });
+        }
+        if (error instanceof GitHubRuntimeBudgetError) throw error;
+        results.push({
+          repo: targetRepo(),
+          number,
+          action: "skipped_dispatch_failed",
+          reason: error instanceof Error ? error.message : String(error),
+          ...failedReviewRetryResultRevision(retryRevision),
+          attempts: dispatchCheckpointed ? attempts : eligibility.attempts,
+          reportPath: path,
+        });
+      }
     }
+  } catch (error) {
+    if (!(error instanceof GitHubRuntimeBudgetError)) throw error;
+    results.push({
+      number: 0,
+      action: "skipped_runtime_budget",
+      reason: error.reason,
+    });
   }
   writeFileSync(reportPath, `${JSON.stringify(results, null, 2)}\n`, "utf8");
-  console.log(JSON.stringify({ results, dryRun, dispatched }, null, 2));
+  console.log(JSON.stringify({ results, dryRun, attempted, dispatched }, null, 2));
 }
 
-async function applyDecisionsCommand(args: Args): Promise<void> {
+function applyDecisionsCommand(args: Args): void {
+  const runtimeBudget: GitHubRuntimeBudget = {
+    startedAtMs: Date.now(),
+    maxRuntimeMs: numberArg(args.max_runtime_ms, 0),
+  };
+  withGitHubRuntimeBudget(runtimeBudget, () => {
+    try {
+      applyDecisionsCommandInner(args, runtimeBudget);
+    } catch (error) {
+      if (!(error instanceof GitHubRuntimeBudgetError) || !runtimeBudget.onYield) throw error;
+      runtimeBudget.onYield(error.reason);
+    }
+  });
+}
+
+function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudget): void {
   repoFromArgs(args);
   const itemsDir = resolve(stringArg(args.items_dir, defaultItemsDir()));
   const closedDir = resolve(stringArg(args.closed_dir, defaultClosedDir()));
@@ -18625,6 +19025,22 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
       )}\n`,
       "utf8",
     );
+  };
+  const finishApply = (): void => {
+    ensureDir(dirname(reportPath));
+    writeFileSync(reportPath, JSON.stringify(results, null, 2), "utf8");
+    writeCursorTrace();
+    logProgress("finished apply");
+    console.log(JSON.stringify(results, null, 2));
+  };
+  runtimeBudget.onYield = (reason: string, resumeCurrent = true): void => {
+    const currentNumber = examinedItemNumbers.at(-1);
+    if (resumeCurrent && currentNumber !== undefined) {
+      removeCurrentCursorTraceItem(examinedItemNumbers, currentNumber);
+    }
+    results.push({ number: 0, action: "skipped_runtime_budget", reason });
+    logProgress(`stopping apply: ${reason}`);
+    finishApply();
   };
   if (fileEntries.length === 0 && !existsSync(itemsDir)) {
     console.log("No items directory.");
@@ -19521,6 +19937,7 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
           reason: `linked canonical PR #${covering.number} changed after coverage proof`,
         };
       } catch (error) {
+        if (error instanceof GitHubRuntimeBudgetError) throw error;
         return {
           actionTaken: "retry_pr_close_coverage_proof",
           reason: `PR close coverage proof could not recheck linked canonical PR #${covering.number}: ${
@@ -20133,8 +20550,16 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
             dryRun,
           })
         : null;
+    ensureRuntimeDelayFits(closeDelayMs, "before close");
     closeItem({ number, kind: item.kind, reason: closeReason });
-    sleepMs(closeDelayMs);
+    let postCloseRuntimeYieldReason: string | null = null;
+    try {
+      ensureRuntimeDelayFits(closeDelayMs, "before close delay");
+      sleepMs(closeDelayMs);
+    } catch (error) {
+      if (!(error instanceof GitHubRuntimeBudgetError)) throw error;
+      postCloseRuntimeYieldReason = error.reason;
+    }
     markdown = replaceSectionValue(markdown, REVIEW_SECTIONS.closeComment, reviewComment);
     markdown = replaceFrontMatterValue(markdown, "close_comment_sha256", sha256(reviewComment));
     markdown = replaceFrontMatterValue(markdown, "action_taken", "closed");
@@ -20150,13 +20575,17 @@ async function applyDecisionsCommand(args: Args): Promise<void> {
     });
     logProgress(`closed #${number}`);
     closedThisRun.add(pairCloseKey(repo, number));
+    if (postCloseRuntimeYieldReason) {
+      runtimeBudget.onYield?.(postCloseRuntimeYieldReason, false);
+      return;
+    }
     if (processedCount >= processedLimit) break;
   }
-  ensureDir(dirname(reportPath));
-  writeFileSync(reportPath, JSON.stringify(results, null, 2), "utf8");
-  writeCursorTrace();
-  logProgress("finished apply");
-  console.log(JSON.stringify(results, null, 2));
+  if (runtimeBudget.yieldReason) {
+    runtimeBudget.onYield?.(runtimeBudget.yieldReason);
+    return;
+  }
+  finishApply();
 }
 
 function orderedApplyItemNumbers(
@@ -21541,8 +21970,13 @@ function dashboardStats(
   const recent: DashboardItem[] = [];
   const workQueue: DashboardItem[] = [];
   const recentClosed: DashboardClosedItem[] = [];
+  const failedReviewRetryStateDir = defaultFailedReviewRetryStateDir(profile);
   for (const entry of entries) {
-    const markdown = entry.markdown;
+    const markdown = dashboardMarkdownWithFailedReviewRetryState(
+      entry.markdown,
+      entry.number,
+      failedReviewRetryStateDir,
+    );
     const repo = entry.repo;
     const number = entry.number;
     const reviewedAt = frontMatterValue(markdown, "reviewed_at");
@@ -21604,7 +22038,11 @@ function dashboardStats(
     }
   }
   for (const entry of closedEntries) {
-    const markdown = entry.markdown;
+    const markdown = dashboardMarkdownWithFailedReviewRetryState(
+      entry.markdown,
+      entry.number,
+      failedReviewRetryStateDir,
+    );
     const repo = entry.repo;
     const action = frontMatterValue(markdown, "action_taken") ?? "unknown";
     const closedAt = dashboardClosedAt(markdown);
@@ -22348,7 +22786,7 @@ export async function main(argv = process.argv.slice(2)): Promise<void> {
   else if (command === "review") reviewCommand(args);
   else if (command === "retry-failed-reviews") retryFailedReviewsCommand(args);
   else if (command === "apply-artifacts") applyArtifactsCommand(args);
-  else if (command === "apply-decisions") await applyDecisionsCommand(args);
+  else if (command === "apply-decisions") applyDecisionsCommand(args);
   else if (command === "proof-nudges") proofNudgesCommand(args);
   else if (command === "bot-proof") botProofCommand(args);
   else if (command === "audit") auditCommand(args);

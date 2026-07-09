@@ -437,10 +437,12 @@ export function promotionGhMock(options: {
   comment: string;
   commentWriteLogPath?: string;
   closeAppliedBodyLogPath?: string;
+  closeCommandDelayMs?: number;
   comments?: unknown[];
   timeline?: unknown[];
   linkedPulls?: Record<number, unknown>;
   linkedPullsAfterProof?: Record<number, unknown>;
+  linkedPullHangAfterProof?: boolean;
   linkedIssues?: Record<number, unknown>;
 }) {
   const title = options.title ?? "Stale F PR";
@@ -475,9 +477,11 @@ export function promotionGhMock(options: {
 	const timeline = ${JSON.stringify(timeline)};
 	const linkedPulls = ${JSON.stringify(linkedPulls)};
 	const linkedPullsAfterProof = ${JSON.stringify(options.linkedPullsAfterProof ?? {})};
+	const linkedPullHangAfterProof = ${JSON.stringify(options.linkedPullHangAfterProof ?? false)};
 	const linkedIssues = ${JSON.stringify(linkedIssues)};
 	const commentWriteLogPath = ${JSON.stringify(options.commentWriteLogPath ?? "")};
 	const closeAppliedBodyLogPath = ${JSON.stringify(options.closeAppliedBodyLogPath ?? "")};
+	const closeCommandDelayMs = ${JSON.stringify(options.closeCommandDelayMs ?? 0)};
 	const number = ${options.number};
 	const commentStatePath = join(__dirname, "..", "comment-state-" + number + ".json");
 	const mutationComment = (id, body) => ({
@@ -586,11 +590,15 @@ export function promotionGhMock(options: {
   }));
 	} else if (args[0] === "api" && /\\/pulls\\/(\\d+)$/.test(path)) {
 	  const linkedNumber = Number((path.match(/\\/pulls\\/(\\d+)$/) || [])[1]);
-	  if (!liveLinkedPulls[linkedNumber]) {
-	    console.error("unexpected linked pull", linkedNumber);
-	    process.exit(1);
+	  if (proofHasRun() && linkedPullHangAfterProof) {
+	    setTimeout(() => {}, 60_000);
+	  } else {
+	    if (!liveLinkedPulls[linkedNumber]) {
+	      console.error("unexpected linked pull", linkedNumber);
+	      process.exit(1);
+	    }
+	    console.log(JSON.stringify(liveLinkedPulls[linkedNumber]));
 	  }
-	  console.log(JSON.stringify(liveLinkedPulls[linkedNumber]));
 	} else if (args[0] === "api" && /\\/issues\\/(\\d+)\\/comments(?:\\?|$)/.test(path)) {
 	  const linkedNumber = Number((path.match(/\\/issues\\/(\\d+)\\/comments/) || [])[1]);
 	  const linkedIssue = liveLinkedPulls[linkedNumber] || linkedIssues[linkedNumber];
@@ -650,7 +658,8 @@ export function promotionGhMock(options: {
 } else if (args[0] === "api" && new RegExp("/pulls/" + number + "/(files|commits|comments)(?:\\\\?|$)").test(path)) {
   console.log(JSON.stringify([[]]));
 } else if (args[0] === "pr" && args[1] === "close" && args[2] === String(number)) {
-  console.log("");
+  if (closeCommandDelayMs > 0) setTimeout(() => console.log(""), closeCommandDelayMs);
+  else console.log("");
 	} else if (args[0] === "issue" && args[1] === "edit") {
 	  if (itemUpdatedAtAfterLabelSyncLogPath) appendFileSync(itemUpdatedAtAfterLabelSyncLogPath, args.join(" ") + "\\n");
 	  console.log("");
