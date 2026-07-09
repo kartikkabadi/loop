@@ -5,9 +5,9 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "build": "tsgo -p tsconfig.json",
-    "build:repair": "tsgo -p tsconfig.repair.json",
-    "build:dashboard": "tsgo -p tsconfig.dashboard.json",
+    "build": "tsc -p tsconfig.json",
+    "build:repair": "tsc -p tsconfig.repair.json",
+    "build:dashboard": "tsc -p tsconfig.dashboard.json",
     "build:all": "pnpm run build && pnpm run build:repair && pnpm run build:dashboard",
     "plan": "node dist/clawsweeper.js plan",
     "review": "node dist/clawsweeper.js review",
@@ -101,11 +101,11 @@
     "yaml": "^2.9.0"
   },
   "devDependencies": {
-    "@types/node": "^24.13.2",
-    "@typescript/native-preview": "7.0.0-dev.20260704.1",
-    "oxfmt": "^0.57.0",
-    "oxlint": "^1.72.0",
-    "oxlint-tsgolint": "0.24.0"
+    "@types/node": "^26.1.1",
+    "oxfmt": "^0.58.0",
+    "oxlint": "^1.73.0",
+    "oxlint-tsgolint": "0.24.0",
+    "typescript": "^7.0.2"
   },
   "engines": {
     "node": ">=24"
