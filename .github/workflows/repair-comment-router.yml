@@ -108,6 +108,7 @@ jobs:
             src/repository-profiles.ts
             package.json
             pnpm-lock.yaml
+            pnpm-workspace.yaml
             tsconfig.repair.json
           sparse-checkout-cone-mode: false
 
