@@ -5,8 +5,11 @@ import { join } from "node:path";
 import test from "node:test";
 
 import {
+  enforceExpectedIssueSourceRevisionForTest,
   failedReviewRetryEligibilityForTest,
+  itemSourceRevisionSha256ForTest,
   isInfrastructureFailedReviewForTest,
+  preserveFailedReviewRetryMetadataForTest,
 } from "../dist/clawsweeper.js";
 import { tmpPrefix, withMockGh, workPlanCandidateReport } from "./helpers.ts";
 
@@ -17,6 +20,7 @@ function failedReviewReport(overrides = {}) {
     type: "pull_request",
     review_status: "failed",
     pull_head_sha: "abc123def456",
+    item_source_revision: "issue-source-revision",
     decision: "keep_open",
     confidence: "low",
     action_taken: "kept_open",
@@ -55,6 +59,8 @@ test("failed review retry eligibility requires infrastructure failure and matchi
       action: "planned_failed_review_retry",
       reason: "eligible infrastructure failed review at head abc123def456",
       headSha: "abc123def456",
+      revisionKind: "pull_head_sha",
+      revision: "abc123def456",
       attempts: 0,
     },
   );
@@ -79,6 +85,80 @@ test("failed review retry eligibility requires infrastructure failure and matchi
       cooldownMs: 45 * 60 * 1000,
     }).action,
     "skipped_not_failed_review",
+  );
+});
+
+test("failed issue reviews retry at a matching live source revision", () => {
+  const markdown = failedReviewReport({
+    type: "issue",
+    pull_head_sha: "unknown",
+    item_source_revision: "issue-source-revision",
+  });
+  const options = {
+    markdown,
+    liveState: "open",
+    liveSourceRevision: "issue-source-revision",
+    now: Date.parse("2026-06-05T20:00:00Z"),
+    maxAttempts: 2,
+    cooldownMs: 45 * 60 * 1000,
+  };
+
+  assert.deepEqual(failedReviewRetryEligibilityForTest(options), {
+    repo: "openclaw/openclaw",
+    number: 4242,
+    action: "planned_failed_review_retry",
+    reason: "eligible infrastructure failed review at source revision issue-source-revision",
+    revisionKind: "item_source_revision",
+    revision: "issue-source-revision",
+    attempts: 0,
+  });
+  assert.equal(
+    failedReviewRetryEligibilityForTest({
+      ...options,
+      liveSourceRevision: "new-source-revision",
+    }).action,
+    "skipped_stale_revision",
+  );
+  assert.equal(
+    failedReviewRetryEligibilityForTest({
+      ...options,
+      markdown: failedReviewReport({
+        type: "issue",
+        pull_head_sha: "unknown",
+        item_source_revision: "unknown",
+      }),
+    }).action,
+    "skipped_missing_report_revision",
+  );
+  assert.equal(
+    failedReviewRetryEligibilityForTest({
+      ...options,
+      markdown: failedReviewReport({
+        type: "issue",
+        pull_head_sha: "unknown",
+        item_source_revision: "issue-source-revision",
+        failed_review_retry_revision_kind: "item_source_revision",
+        failed_review_retry_revision: "issue-source-revision",
+        failed_review_retry_count: 1,
+        failed_review_retry_last_at: "2026-06-05T19:30:00Z",
+      }),
+    }).action,
+    "skipped_retry_cooldown",
+  );
+  assert.equal(
+    failedReviewRetryEligibilityForTest({
+      ...options,
+      markdown: failedReviewReport({
+        type: "issue",
+        pull_head_sha: "unknown",
+        item_source_revision: "issue-source-revision",
+        failed_review_retry_revision_kind: "item_source_revision",
+        failed_review_retry_revision: "issue-source-revision",
+        failed_review_retry_count: 2,
+        failed_review_retry_last_at: "2026-06-05T18:00:00Z",
+      }),
+    }).action,
+    "skipped_retry_exhausted",
   );
 });
 
@@ -187,6 +267,230 @@ test("failed review retry eligibility enforces cooldown and max attempts per hea
   );
 });
 
+test("failed issue retry dispatch binds the expected source revision", () => {
+  const root = mkdtempSync(tmpPrefix);
+  try {
+    const itemsDir = join(root, "items");
+    const reportPath = join(root, "failed-review-retry-report.json");
+    const dispatchPath = join(root, "dispatch.json");
+    const issue = {
+      number: 4343,
+      title: "Failed issue review retry sample",
+      body: "Issue body",
+      html_url: "https://github.com/openclaw/openclaw/issues/4343",
+      created_at: "2026-06-01T00:00:00Z",
+      updated_at: "2026-06-01T01:00:00Z",
+      closed_at: null,
+      state: "open",
+      locked: false,
+      active_lock_reason: null,
+      author_association: "CONTRIBUTOR",
+      user: { login: "contributor" },
+      labels: [],
+      comments: 0,
+      pull_request: null,
+    };
+    const sourceRevision = itemSourceRevisionSha256ForTest(issue, []);
+    mkdirSync(itemsDir, { recursive: true });
+    writeFileSync(
+      join(itemsDir, "4343.md"),
+      failedReviewReport({
+        number: 4343,
+        type: "issue",
+        pull_head_sha: "unknown",
+        item_source_revision: sourceRevision,
+      }),
+      "utf8",
+    );
+
+    const ghMock = `#!/usr/bin/env node
+const args = process.argv.slice(2);
+const path = args.find((arg) => arg.startsWith("repos/")) || "";
+if (/\\/issues\\/4343\\/comments(?:\\?|$)/.test(path)) {
+  console.log(JSON.stringify(args.includes("--slurp") ? [[]] : []));
+  process.exit(0);
+}
+if (path.endsWith("/issues/4343")) {
+  console.log(${JSON.stringify(JSON.stringify(issue))});
+  process.exit(0);
+}
+if (path === "repos/openclaw/clawsweeper") {
+  console.log("main");
+  process.exit(0);
+}
+if (path.endsWith("/dispatches") && args.includes("POST")) {
+  require("node:fs").writeFileSync(${JSON.stringify(dispatchPath)}, JSON.stringify(args));
+  process.exit(0);
+}
+console.error("unexpected gh args: " + args.join(" "));
+process.exit(1);
+`;
+
+    withMockGh(root, ghMock, () => {
+      execFileSync(process.execPath, [
+        "dist/clawsweeper.js",
+        "retry-failed-reviews",
+        "--target-repo",
+        "openclaw/openclaw",
+        "--items-dir",
+        itemsDir,
+        "--item-number",
+        "4343",
+        "--workflow-ref",
+        "test-branch",
+        "--report-path",
+        reportPath,
+      ]);
+      const rejected = JSON.parse(readFileSync(reportPath, "utf8")) as Array<{
+        action: string;
+        reason: string;
+      }>;
+      assert.equal(rejected[0]?.action, "skipped_dispatch_failed");
+      assert.match(rejected[0]?.reason ?? "", /default branch \(main\).*test-branch/);
+
+      execFileSync(process.execPath, [
+        "dist/clawsweeper.js",
+        "retry-failed-reviews",
+        "--target-repo",
+        "openclaw/openclaw",
+        "--items-dir",
+        itemsDir,
+        "--item-number",
+        "4343",
+        "--workflow-ref",
+        "main",
+        "--report-path",
+        reportPath,
+      ]);
+    });
+
+    const report = JSON.parse(readFileSync(reportPath, "utf8")) as Array<{
+      action: string;
+      revisionKind?: string;
+      revision?: string;
+    }>;
+    assert.equal(report.length, 1);
+    assert.equal(report[0]?.action, "dispatched_failed_review_retry");
+    assert.equal(report[0]?.revisionKind, "item_source_revision");
+    assert.equal(report[0]?.revision, sourceRevision);
+    const dispatch = JSON.parse(readFileSync(dispatchPath, "utf8")) as string[];
+    assert.ok(dispatch.includes("repos/openclaw/clawsweeper/dispatches"));
+    assert.ok(dispatch.includes("event_type=clawsweeper_target_sweep"));
+    assert.ok(dispatch.includes(`client_payload[expected_source_revision]=${sourceRevision}`));
+    assert.ok(dispatch.includes("client_payload[source_revision_requeue_count]=0"));
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("expected issue source revision aborts drift and writes a requeue marker", () => {
+  const root = mkdtempSync(tmpPrefix);
+  const expectedSourceRevision = "a".repeat(64);
+  const actualSourceRevision = "b".repeat(64);
+  try {
+    assert.doesNotThrow(() =>
+      enforceExpectedIssueSourceRevisionForTest({
+        expectedSourceRevision,
+        itemKind: "issue",
+        repo: "openclaw/openclaw",
+        number: 4343,
+        sourceRevision: expectedSourceRevision,
+        artifactDir: root,
+      }),
+    );
+    assert.throws(
+      () =>
+        enforceExpectedIssueSourceRevisionForTest({
+          expectedSourceRevision,
+          itemKind: "issue",
+          repo: "openclaw/openclaw",
+          number: 4343,
+          sourceRevision: actualSourceRevision,
+          artifactDir: root,
+        }),
+      /changed before review/,
+    );
+    const marker = JSON.parse(
+      readFileSync(join(root, "source-revision-mismatch.json"), "utf8"),
+    ) as Record<string, unknown>;
+    assert.equal(marker.target_repo, "openclaw/openclaw");
+    assert.equal(marker.item_number, 4343);
+    assert.equal(marker.expected_source_revision, expectedSourceRevision);
+    assert.equal(marker.actual_source_revision, actualSourceRevision);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("sweep workflow forwards source revision and bounds drift requeue", () => {
+  const workflow = readFileSync(".github/workflows/sweep.yml", "utf8");
+
+  assert.match(workflow, /EXPECTED_SOURCE_REVISION:.*client_payload\.expected_source_revision/);
+  assert.match(workflow, /--expected-source-revision "\$EXPECTED_SOURCE_REVISION"/);
+  assert.match(workflow, /requeue-source-revision-drift:\n\s+name: Requeue source-revision drift/);
+  assert.match(workflow, /name: review-source-revision-mismatch-\$\{\{ matrix\.shard \}\}/);
+  assert.match(workflow, /requeue-source-revision-drift:[\s\S]*?contents: write/);
+  assert.match(workflow, /review:[\s\S]*?permissions:\n\s+contents: read/);
+  assert.match(workflow, /\[ "\$REQUEUE_COUNT" -ge 1 \]/);
+  assert.match(workflow, /expected_source_revision: \$expected_source_revision/);
+  assert.match(workflow, /source_revision_requeue_count: "1"/);
+});
+
+test("failed retry metadata survives a repeated failure at the same revision", () => {
+  const previous = `${failedReviewReport({
+    type: "issue",
+    pull_head_sha: "unknown",
+    item_source_revision: "issue-source-revision",
+    failed_review_retry_status: "dispatched",
+    failed_review_retry_count: 1,
+    failed_review_retry_last_at: "2026-06-05T19:30:00Z",
+    failed_review_retry_revision_kind: "item_source_revision",
+    failed_review_retry_revision: "issue-source-revision",
+    failed_review_retry_reason: JSON.stringify("timeout"),
+  })}
+
+## Failed Review Retry
+
+- status: dispatched
+- attempts: 1/2
+`;
+  const repeatedFailure = failedReviewReport({
+    type: "issue",
+    pull_head_sha: "unknown",
+    item_source_revision: "issue-source-revision",
+  });
+  const preserved = preserveFailedReviewRetryMetadataForTest(previous, repeatedFailure);
+
+  assert.match(preserved, /^failed_review_retry_status: dispatched$/m);
+  assert.match(preserved, /^failed_review_retry_count: 1$/m);
+  assert.match(preserved, /^failed_review_retry_revision_kind: item_source_revision$/m);
+  assert.match(preserved, /^failed_review_retry_revision: issue-source-revision$/m);
+  assert.match(preserved, /^## Failed Review Retry$/m);
+  assert.doesNotMatch(
+    preserveFailedReviewRetryMetadataForTest(
+      previous,
+      failedReviewReport({
+        type: "issue",
+        pull_head_sha: "unknown",
+        item_source_revision: "changed-source-revision",
+      }),
+    ),
+    /^failed_review_retry_status:/m,
+  );
+  assert.doesNotMatch(
+    preserveFailedReviewRetryMetadataForTest(
+      previous,
+      failedReviewReport({
+        type: "issue",
+        pull_head_sha: "unknown",
+        item_source_revision: "issue-source-revision",
+        review_status: "complete",
+      }),
+    ),
+    /^failed_review_retry_status:/m,
+  );
+});
+
 test("failed review retry exhaustion is idempotent for the same head", () => {
   const root = mkdtempSync(tmpPrefix);
   try {
@@ -274,6 +578,8 @@ process.exit(1);
         action: "skipped_retry_already_exhausted",
         reason: "retry attempts exhausted for head abc123def456: 2/2",
         headSha: "abc123def456",
+        revisionKind: "pull_head_sha",
+        revision: "abc123def456",
         attempts: 2,
         reportPath: itemPath,
       },
