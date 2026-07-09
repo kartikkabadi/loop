@@ -1039,6 +1039,7 @@ type ProposedItemOptions = {
   batchSize?: number | null;
   cursorPath?: string | null;
   coverageProofLimit?: number | null;
+  closeLimit?: number | null;
   itemNumbers?: ReadonlySet<number> | null;
 };
 
@@ -1100,6 +1101,32 @@ type ProposedItemQualitySummary = {
   summary: string;
   buckets: ProposedItemQualityBucketSummary[];
 };
+
+const FAST_CLOSE_BUCKET_ORDER: ProposedItemQualityBucket[] = [
+  "ready_implemented",
+  "duplicate_or_superseded",
+  "other",
+  "aging_or_low_signal",
+  "policy_sensitive",
+  "retry_after_guard_skip",
+  "needs_pr_close_coverage",
+  "promotion_probe",
+];
+
+function prioritizeFastCloseCandidates(
+  candidates: ProposedItemCandidate[],
+): ProposedItemCandidate[] {
+  const rank = new Map(FAST_CLOSE_BUCKET_ORDER.map((bucket, index) => [bucket, index]));
+  return candidates
+    .map((candidate, index) => ({ candidate, index }))
+    .sort(
+      (left, right) =>
+        (rank.get(left.candidate.qualityBucket) ?? Number.MAX_SAFE_INTEGER) -
+          (rank.get(right.candidate.qualityBucket) ?? Number.MAX_SAFE_INTEGER) ||
+        left.index - right.index,
+    )
+    .map(({ candidate }) => candidate);
+}
 
 function selectedProposedItemCandidates(
   options: ProposedItemOptions,
@@ -1234,24 +1261,44 @@ function selectedProposedItemCandidates(
   // hydration cannot consume an entire apply window ahead of real proposals.
   if (options.coverageProofLimit === null || options.coverageProofLimit === undefined) {
     return [
-      ...rotate("confirmed_close", null, cursor),
+      ...prioritizeFastCloseCandidates(rotate("confirmed_close", null, cursor)),
       ...rotate("promotion_probe", null, cursor),
     ].slice(0, batchSize);
   }
 
   const proofLimit = Math.max(0, Math.min(options.coverageProofLimit, batchSize));
-  const fastCandidates = [
-    ...rotate("confirmed_close", false, cursor),
-    ...rotate("promotion_probe", false, cursor),
-  ];
+  const fastConfirmedCandidates = prioritizeFastCloseCandidates(
+    rotate("confirmed_close", false, cursor),
+  );
   const proofCursor = cursor?.coverageProof ?? cursor;
   const proofCandidates = [
     ...rotate("confirmed_close", true, proofCursor),
     ...rotate("promotion_probe", true, proofCursor),
   ];
   const selectedProof = proofCandidates.slice(0, proofLimit);
-  const selectedFast = fastCandidates.slice(0, batchSize - selectedProof.length);
-  return [...selectedFast, ...selectedProof];
+  const selectedFast = fastConfirmedCandidates.slice(0, batchSize - selectedProof.length);
+  const closeLimit = Math.max(1, Math.min(options.closeLimit ?? batchSize, batchSize));
+  // Let ready closes run first, but place every reserved proof before those
+  // closes could hit the mutation limit and stop the checkpoint. A candidate
+  // can close both a PR and its same-author issue counterpart.
+  const maxClosesPerCandidate = 2;
+  const closesReservedBeforeLastProof = Math.max(0, selectedProof.length - 1) * 2;
+  const candidatesBeforeProof = Math.floor(
+    Math.max(0, closeLimit - 1 - closesReservedBeforeLastProof) / maxClosesPerCandidate,
+  );
+  const preProofFastCount = selectedProof.length
+    ? Math.min(selectedFast.length, candidatesBeforeProof)
+    : selectedFast.length;
+  const selectedPromotions = rotate("promotion_probe", false, cursor).slice(
+    0,
+    batchSize - selectedFast.length - selectedProof.length,
+  );
+  return [
+    ...selectedFast.slice(0, preProofFastCount),
+    ...selectedProof,
+    ...selectedFast.slice(preProofFastCount),
+    ...selectedPromotions,
+  ];
 }
 
 export function proposedItemQualitySummary(
@@ -1714,6 +1761,7 @@ function applyCheckedAtForItem(targetRepo: string, itemNumber: number): string {
 function proposedItemOptions(): ProposedItemOptions {
   const batchSizeText = optionalString("batch-size");
   const coverageProofLimitText = optionalString("coverage-proof-limit");
+  const closeLimitText = optionalString("close-limit");
   return {
     targetRepo: requiredString("target-repo"),
     applyKind: optionalString("apply-kind") || "all",
@@ -1724,6 +1772,7 @@ function proposedItemOptions(): ProposedItemOptions {
     batchSize: batchSizeText ? numberArg("batch-size", 0) : null,
     cursorPath: optionalString("cursor-path") || null,
     coverageProofLimit: coverageProofLimitText ? numberArg("coverage-proof-limit", 0) : null,
+    closeLimit: closeLimitText ? numberArg("close-limit", 1) : null,
     itemNumbers: itemNumberSet(optionalString("item-numbers")),
   };
 }
