@@ -82,6 +82,14 @@ import {
 import { AUTOMATION_LIMITS } from "./limits.js";
 import { freshExactHeadReviewStartLease } from "./repair/comment-router-core.js";
 import {
+  AUTOMERGE_LABEL,
+  AUTOFIX_LABEL,
+  CLOSE_PROTECTED_LABEL_NAMES,
+  HUMAN_REVIEW_LABEL,
+  MANUAL_ONLY_LABEL,
+  PR_AUTO_CLOSE_EXEMPT_LABEL_NAMES,
+} from "./repair/exact-review-guard-labels.js";
+import {
   buildOpenClawPrSurfaceStats,
   renderOpenClawPrSurfaceSummary,
   renderOpenClawPrSurfaceTable,
@@ -325,6 +333,7 @@ type ActionTaken =
   | "skipped_already_closed"
   | "skipped_maintainer_authored"
   | "skipped_protected_label"
+  | "skipped_close_exempt_label"
   | "skipped_pr_close_coverage_proof"
   | "retry_pr_close_coverage_proof"
   | "retry_stale_canonical_comment_sync"
@@ -914,7 +923,9 @@ interface ApplyResult {
   action: ActionTaken;
   reason: string;
   durableReviewSynced?: boolean;
+  terminalMissingVerified?: boolean;
   terminalStateVerified?: boolean;
+  guardedOpenStateVerified?: boolean;
 }
 
 interface FailedReviewRetryResult {
@@ -1223,17 +1234,8 @@ const PR_CLOSE_COVERAGE_PROOF_SCHEMA_PATH = join(
 );
 const REVIEW_COMMENT_MARKER_PREFIX = "<!-- clawsweeper-review";
 const REVIEW_START_STATUS_MARKER_PREFIX = "<!-- clawsweeper-review-status";
-const AUTOMERGE_LABEL = "clawsweeper:automerge";
-const AUTOFIX_LABEL = "clawsweeper:autofix";
-const HUMAN_REVIEW_LABEL = "clawsweeper:human-review";
 const MERGE_READY_LABEL = "clawsweeper:merge-ready";
-const MANUAL_ONLY_LABEL = "clawsweeper:manual-only";
-const PR_AUTO_CLOSE_EXEMPT_LABELS = new Set([
-  HUMAN_REVIEW_LABEL,
-  MANUAL_ONLY_LABEL,
-  AUTOMERGE_LABEL,
-  AUTOFIX_LABEL,
-]);
+const PR_AUTO_CLOSE_EXEMPT_LABELS = new Set<string>(PR_AUTO_CLOSE_EXEMPT_LABEL_NAMES);
 const WAITING_ON_AUTHOR_LABEL = "status: ⏳ waiting on author";
 const PROOF_OVERRIDE_LABEL = "proof: override";
 const PROOF_SUFFICIENT_LABEL = "proof: sufficient";
@@ -1652,7 +1654,7 @@ const ISSUE_STALE_PROTECTION_LABEL = {
   color: "6E7781",
   description: "Exempts this issue from stale automation.",
 } as const;
-const PROTECTED_LABELS = new Set(["security", "beta-blocker", "release-blocker", "maintainer"]);
+const PROTECTED_LABELS = new Set<string>(CLOSE_PROTECTED_LABEL_NAMES);
 const ALLOWED_REASONS = new Set<CloseReason>([
   "implemented_on_main",
   "mostly_implemented_on_main",
@@ -1714,6 +1716,7 @@ const CLOSED_STATE_PROBE_ACTIONS = new Set<string>([
   "skipped_changed_since_review",
   "skipped_maintainer_authored",
   "skipped_protected_label",
+  "skipped_close_exempt_label",
   "skipped_pr_close_coverage_proof",
   "skipped_invalid_decision",
   "skipped_open_closing_pr",
@@ -1721,6 +1724,25 @@ const CLOSED_STATE_PROBE_ACTIONS = new Set<string>([
   "skipped_locked_conversation",
   "retry_stale_canonical_comment_sync",
 ]);
+const EVENT_GUARDED_OPEN_ACTIONS = new Set<string>([
+  "skipped_locked_conversation",
+  "skipped_maintainer_authored",
+  "skipped_open_closing_pr",
+  "skipped_protected_label",
+  "skipped_close_exempt_label",
+  "skipped_same_author_pair",
+]);
+
+export function guardedOpenApplyProofFields(
+  actionTaken: string,
+  options: { emitEventApplyProof: boolean; liveGuardVerified: boolean },
+): { guardedOpenStateVerified?: true } {
+  return options.emitEventApplyProof &&
+    options.liveGuardVerified &&
+    EVENT_GUARDED_OPEN_ACTIONS.has(actionTaken)
+    ? { guardedOpenStateVerified: true }
+    : {};
+}
 const REPRODUCTION_STATUSES = new Set<ReproductionStatus>([
   "reproduced",
   "source_reproducible",
@@ -4040,6 +4062,25 @@ function pullRequestLiveActivity(number: number): PullRequestLiveActivity {
 
 function prAutoCloseExemptLabel(labels: readonly string[]): string | undefined {
   return labels.map(normalizeLabelName).find((label) => PR_AUTO_CLOSE_EXEMPT_LABELS.has(label));
+}
+
+function prAutoCloseExemptDecisionReason(
+  item: Pick<Item, "kind" | "labels">,
+  closeReason: CloseReason | undefined,
+): string | null {
+  if (item.kind !== "pull_request") return null;
+  const exemptLabel = prAutoCloseExemptLabel(item.labels);
+  if (!exemptLabel) return null;
+  if (closeReason === "unconfirmed_product_direction") {
+    return `${exemptLabel} exempts this PR from product-direction auto-close`;
+  }
+  if (closeReason === "stalled_unproven_pr") {
+    return `${exemptLabel} exempts this PR from stalled-unproven auto-close`;
+  }
+  if (closeReason === "abandoned_pr") {
+    return `${exemptLabel} exempts this PR from abandoned-PR auto-close`;
+  }
+  return null;
 }
 
 export function stalledUnprovenPrAgeSkipReason(
@@ -16604,6 +16645,14 @@ export function validateCloseDecision(
       reason: "low_signal_unmergeable_pr is allowed only for pull requests",
     };
   }
+  const closeExemptReason = prAutoCloseExemptDecisionReason(item, decision.closeReason);
+  if (closeExemptReason) {
+    return {
+      ok: false,
+      actionTaken: "skipped_close_exempt_label",
+      reason: closeExemptReason,
+    };
+  }
   if (decision.closeReason === "unconfirmed_product_direction") {
     const productDirectionBlock = unconfirmedProductDirectionDecisionBlockReason(item, decision);
     if (productDirectionBlock) {
@@ -20191,16 +20240,32 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
       markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
       if (!dryRun) writeReportMarkdown(path, markdown, subjectState);
     };
-    const recordApplySkipped = (actionTaken: ActionTaken, reason: string): boolean => {
+    const recordApplySkipped = (
+      actionTaken: ActionTaken,
+      reason: string,
+      liveGuardVerified = false,
+    ): boolean => {
       markApplyChecked();
-      results.push({ number, action: actionTaken, reason });
+      results.push({
+        number,
+        action: actionTaken,
+        reason,
+        ...guardedOpenApplyProofFields(actionTaken, {
+          emitEventApplyProof,
+          liveGuardVerified,
+        }),
+      });
       processedCount += 1;
       maybeLogProgress(`skipped #${number}: ${reason}`);
       return processedCount >= processedLimit;
     };
-    const markApplySkipped = (actionTaken: ActionTaken, reason: string): boolean => {
+    const markApplySkipped = (
+      actionTaken: ActionTaken,
+      reason: string,
+      liveGuardVerified = false,
+    ): boolean => {
       markdown = replaceFrontMatterValue(markdown, "action_taken", actionTaken);
-      return recordApplySkipped(actionTaken, reason);
+      return recordApplySkipped(actionTaken, reason, liveGuardVerified);
     };
     const markLabelSyncAuthSkipped = (labelKind: string): boolean => {
       const reason = `GitHub rejected ${labelKind} label sync with Requires authentication`;
@@ -20263,7 +20328,7 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
           number,
           action: "skipped_already_closed",
           reason: "item not found on GitHub",
-          ...(emitEventApplyProof ? { terminalStateVerified: true } : {}),
+          ...(emitEventApplyProof ? { terminalMissingVerified: true } : {}),
         });
         processedCount += 1;
         maybeLogProgress(`skipped comment sync #${number}: item not found on GitHub`);
@@ -20279,7 +20344,7 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
         number,
         action: "skipped_already_closed",
         reason: "item not found on GitHub",
-        ...(emitEventApplyProof ? { terminalStateVerified: true } : {}),
+        ...(emitEventApplyProof ? { terminalMissingVerified: true } : {}),
       });
       processedCount += 1;
       maybeLogProgress(`archived #${number}: item not found on GitHub`);
@@ -20957,6 +21022,42 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
       !syncCommentsOnly &&
       !staleCanonicalCommentSyncPending
     ) {
+      const protectedReason =
+        action === "skipped_protected_label" &&
+        applyBlockingProtectedLabels(item.labels, closeReason).length > 0
+          ? applyProtectedLabelReason(item.labels, closeReason)
+          : null;
+      const closeExemptReason =
+        action === "skipped_close_exempt_label"
+          ? prAutoCloseExemptDecisionReason(item, closeReason)
+          : null;
+      const currentAuthorAssociation = normalizeAuthorAssociation(item.authorAssociation);
+      const reviewedAuthorAssociation = normalizeAuthorAssociation(storedAuthorAssociation);
+      const maintainerReason =
+        action === "skipped_maintainer_authored" &&
+        !isVerifiedFixedCloseReason(closeReason) &&
+        (isMaintainerAuthorAssociation(currentAuthorAssociation) ||
+          isMaintainerAuthorAssociation(reviewedAuthorAssociation))
+          ? `author association is ${
+              isMaintainerAuthorAssociation(currentAuthorAssociation)
+                ? currentAuthorAssociation
+                : reviewedAuthorAssociation
+            }`
+          : null;
+      const lockedReason =
+        action === "skipped_locked_conversation" ? lockedConversationApplyReason(item) : null;
+      const guardedOpenProof: { action: ActionTaken; reason: string } | null = protectedReason
+        ? { action: "skipped_protected_label", reason: protectedReason }
+        : closeExemptReason
+          ? { action: "skipped_close_exempt_label", reason: closeExemptReason }
+          : maintainerReason
+            ? { action: "skipped_maintainer_authored", reason: maintainerReason }
+            : lockedReason
+              ? { action: "skipped_locked_conversation", reason: lockedReason }
+              : null;
+      if (emitEventApplyProof && guardedOpenProof) {
+        if (recordApplySkipped(guardedOpenProof.action, guardedOpenProof.reason, true)) break;
+      }
       continue;
     }
     const earlyLeaseState = refreshReviewStartLeaseState();
@@ -21322,7 +21423,7 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
     const protectedApplyReason = applyProtectedLabelReason(item.labels, closeReason);
     if (applyBlockingProtectedLabels(item.labels, closeReason).length > 0) {
       if (isCloseProposal) {
-        if (markApplySkipped("skipped_protected_label", protectedApplyReason)) break;
+        if (markApplySkipped("skipped_protected_label", protectedApplyReason, true)) break;
       }
       if (isCloseProposal) continue;
     }
@@ -21343,6 +21444,7 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
         recordApplySkipped(
           "skipped_maintainer_authored",
           `author association is ${authorAssociation}`,
+          true,
         )
       )
         break;
@@ -21681,7 +21783,7 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
         (pullNumber, pullRepo) => canClosePairCounterpartInThisRun(pullNumber, pullRepo),
       );
       if (openClosingPullRequestReason) {
-        if (markApplySkipped("skipped_open_closing_pr", openClosingPullRequestReason)) break;
+        if (markApplySkipped("skipped_open_closing_pr", openClosingPullRequestReason, true)) break;
         continue;
       }
     }
@@ -21816,7 +21918,7 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
           canStartSameAuthorPairCloseInThisRun(counterpartNumber, counterpartKind),
       );
       if (sameAuthorCounterpartReason) {
-        if (markApplySkipped("skipped_same_author_pair", sameAuthorCounterpartReason)) break;
+        if (markApplySkipped("skipped_same_author_pair", sameAuthorCounterpartReason, true)) break;
         continue;
       }
     }
@@ -21891,7 +21993,8 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
         const reason = staleCanonicalCommentSyncPending
           ? `${lockedReason}; stale canonical comment correction remains pending`
           : lockedReason;
-        if (markApplySkipped(actionTaken, reason)) break;
+        if (markApplySkipped(actionTaken, reason, actionTaken === "skipped_locked_conversation"))
+          break;
         continue;
       }
       let syncedComment = existingReviewComment;
@@ -21980,7 +22083,10 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
             const reason = staleCanonicalCommentSyncPending
               ? `${fallbackReason}; stale canonical comment correction remains pending`
               : fallbackReason;
-            if (markApplySkipped(actionTaken, reason)) break;
+            if (
+              markApplySkipped(actionTaken, reason, actionTaken === "skipped_locked_conversation")
+            )
+              break;
             continue;
           }
         }
@@ -22084,7 +22190,13 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
       { requireCloseComment: !isRetryableSkippedClose },
     );
     if (!currentReportValidation.ok && currentReportValidation.actionTaken !== "kept_open") {
-      if (markApplySkipped(currentReportValidation.actionTaken, currentReportValidation.reason))
+      if (
+        markApplySkipped(
+          currentReportValidation.actionTaken,
+          currentReportValidation.reason,
+          EVENT_GUARDED_OPEN_ACTIONS.has(currentReportValidation.actionTaken),
+        )
+      )
         break;
       continue;
     }

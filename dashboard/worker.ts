@@ -2,6 +2,7 @@ import {
   commandTextForClawSweeperFastAck,
   isClawSweeperReReviewCommandText,
 } from "../src/repair/comment-command-text.ts";
+import { isExactReviewCloseGuardLabel } from "../src/repair/exact-review-guard-labels.ts";
 import { TRIAGE_ROUTING_GROUPS, triageRoutingGroupsForLabels } from "./triage-routing-groups.ts";
 
 const ACTIVE_RUN_STATUSES = new Set(["queued", "in_progress", "waiting", "requested", "pending"]);
@@ -111,7 +112,13 @@ const CLAWSWEEPER_STATE_REF = "state";
 const DEFAULT_CRABFLEET_URL = "https://crabfleet.openclaw.ai";
 const CLUSTER_REPAIR_INTAKE_WORKFLOW = "repair-cluster-intake.yml";
 const CLAWSWEEPER_ALLOWED_ASSOCIATIONS = new Set(["OWNER", "MEMBER", "COLLABORATOR"]);
-const CLAWSWEEPER_ISSUE_ITEM_ACTIONS = new Set(["opened", "reopened", "edited"]);
+const CLAWSWEEPER_ISSUE_ITEM_ACTIONS = new Set([
+  "opened",
+  "reopened",
+  "edited",
+  "unlocked",
+  "unlabeled",
+]);
 const CLAWSWEEPER_PULL_ITEM_ACTIONS = new Set([
   "opened",
   "reopened",
@@ -119,6 +126,8 @@ const CLAWSWEEPER_PULL_ITEM_ACTIONS = new Set([
   "ready_for_review",
   "converted_to_draft",
   "edited",
+  "unlocked",
+  "unlabeled",
 ]);
 const DEFAULT_FAST_ACK_SETTLE_DELAYS_MS = [250, 1500, 10_000];
 const inFlightFastAcks = new Map();
@@ -1149,6 +1158,9 @@ function classifyGithubItemWebhook({ event, payload }) {
     if (!CLAWSWEEPER_ISSUE_ITEM_ACTIONS.has(action)) {
       return { accepted: false, reason: "unsupported action" };
     }
+    if (action === "unlabeled" && !isCloseGuardLabel(payload.label)) {
+      return { accepted: false, reason: "unsupported action" };
+    }
     const itemNumber = Number(objectValue(payload.issue).number);
     if (!Number.isInteger(itemNumber) || itemNumber <= 0) {
       return { accepted: false, reason: "missing issue number" };
@@ -1163,12 +1175,15 @@ function classifyGithubItemWebhook({ event, payload }) {
       installationId,
       sourceEvent: "issues",
       sourceAction: action,
-      supersedesInProgress: action === "edited",
+      supersedesInProgress: ["edited", "unlocked", "unlabeled"].includes(action),
     };
   }
 
   if (event === "pull_request") {
     if (!CLAWSWEEPER_PULL_ITEM_ACTIONS.has(action)) {
+      return { accepted: false, reason: "unsupported action" };
+    }
+    if (action === "unlabeled" && !isCloseGuardLabel(payload.label)) {
       return { accepted: false, reason: "unsupported action" };
     }
     const itemNumber = Number(objectValue(payload.pull_request).number);
@@ -1185,11 +1200,24 @@ function classifyGithubItemWebhook({ event, payload }) {
       installationId,
       sourceEvent: "pull_request",
       sourceAction: action,
-      supersedesInProgress: ["edited", "synchronize", "ready_for_review"].includes(action),
+      supersedesInProgress: [
+        "edited",
+        "synchronize",
+        "ready_for_review",
+        "unlocked",
+        "unlabeled",
+      ].includes(action),
     };
   }
 
   return { accepted: false, reason: "unsupported event" };
+}
+
+function isCloseGuardLabel(value) {
+  const label = String(objectValue(value).name || "")
+    .trim()
+    .toLowerCase();
+  return isExactReviewCloseGuardLabel(label);
 }
 
 function isEligibleGithubWebhookRepository(repo) {

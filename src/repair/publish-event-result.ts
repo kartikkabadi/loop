@@ -6,12 +6,15 @@ import {
   applyEventSnapshotIfCurrent,
   captureEventBaseSnapshot,
   captureEventSnapshot,
+  eventSnapshotMatchesCurrent,
   type EventRecordPaths,
   resetEventSnapshot,
 } from "./event-record-store.js";
 import {
+  eventRecordActionTaken,
   eventApplyAction,
   exactEventApplyProof,
+  exactEventPublishDisposition,
   type EventApplyAction,
 } from "./event-apply-proof.js";
 import {
@@ -39,6 +42,20 @@ type EventOptions = {
   reportPath: string;
   snapshotDir: string;
 };
+
+type PublishedEventSnapshot = {
+  guardedOpenAction: string | null;
+  remoteTupleVerified: boolean;
+  routableSyncVerified: boolean;
+  routingDeferred: boolean;
+  terminalClosed: boolean;
+  terminalMissing: boolean;
+};
+
+class GuardedOpenPublishRaceError extends Error {}
+class RoutableSyncPublishRaceError extends Error {}
+class TerminalClosedPublishRaceError extends Error {}
+class TerminalMissingPublishRaceError extends Error {}
 
 const options = eventOptionsFromEnv();
 await publishEventResult(options);
@@ -114,50 +131,89 @@ async function publishEventResult(options: EventOptions): Promise<void> {
       itemNumber: options.itemNumber,
       syncedCount: 0,
       closedCount: 0,
+      missingCount: 0,
       closeReasons: options.closeReasons,
     });
-    return;
+    throw new Error(
+      `Event state for ${options.targetRepo}#${options.itemNumber} was not applied because ${detail}; requeue against the latest item revision`,
+    );
   }
 
   const actions = readApplyActions(options.reportPath);
+  captureEventSnapshot(recordStore);
+  const snapshotActionTaken = eventRecordActionTaken(
+    fs.existsSync(recordPaths.snapshotItem)
+      ? fs.readFileSync(recordPaths.snapshotItem, "utf8")
+      : null,
+  );
   const {
     exactActions,
     syncedCount,
+    terminalMissingCount: missingCount,
     terminalCount: closedCount,
-  } = exactEventApplyProof(actions, Number(options.itemNumber));
-  if (syncedCount + closedCount === 0) {
+    guardedOpenAction,
+    latestRevisionRequeueRequired,
+  } = exactEventApplyProof(actions, Number(options.itemNumber), snapshotActionTaken);
+  if (syncedCount + closedCount + missingCount === 0 && guardedOpenAction === null) {
     const observed =
       exactActions
         .map((entry) => entry.action)
         .filter(Boolean)
         .join(", ") || "none";
     throw new Error(
-      `Event review for ${options.targetRepo}#${options.itemNumber} was not applied; actions: ${observed}`,
+      latestRevisionRequeueRequired
+        ? `Event review for ${options.targetRepo}#${options.itemNumber} changed since review; requeue against the latest item revision`
+        : `Event review for ${options.targetRepo}#${options.itemNumber} was not applied; actions: ${observed}`,
     );
   }
-  captureEventSnapshot(recordStore);
-
   const summary = () =>
     writeSummary({
       targetRepo: options.targetRepo,
       itemNumber: options.itemNumber,
       syncedCount,
       closedCount,
+      missingCount,
       closeReasons: options.closeReasons,
     });
+  const routableSyncExpected =
+    syncedCount > 0 && closedCount === 0 && missingCount === 0 && guardedOpenAction === null;
   for (let attempt = 1; attempt <= 20; attempt += 1) {
-    if (publishSnapshot({ paths: recordPaths, options, summary, stateBaseCommit })) return;
+    const published = publishSnapshot({
+      paths: recordPaths,
+      options,
+      summary,
+      stateBaseCommit,
+      guardedOpenAction,
+      routableSyncExpected,
+      terminalClosedExpected: closedCount > 0,
+      terminalMissingExpected: missingCount > 0,
+    });
+    if (published) {
+      writeEventDispositionOutputs(published);
+      return;
+    }
     const delaySeconds = attempt * 3 + Math.floor(Math.random() * 11);
     console.log(
       `Event publish attempt ${attempt} failed; retrying from origin/main in ${delaySeconds}s`,
     );
     await sleep(delaySeconds * 1000);
   }
-  if (!publishSnapshot({ paths: recordPaths, options, summary, stateBaseCommit })) {
+  const published = publishSnapshot({
+    paths: recordPaths,
+    options,
+    summary,
+    stateBaseCommit,
+    guardedOpenAction,
+    routableSyncExpected,
+    terminalClosedExpected: closedCount > 0,
+    terminalMissingExpected: missingCount > 0,
+  });
+  if (!published) {
     throw new Error(
       `Failed to publish event result for ${options.targetRepo}#${options.itemNumber}`,
     );
   }
+  writeEventDispositionOutputs(published);
 }
 
 function runApplyDecisions(options: EventOptions): void {
@@ -199,12 +255,20 @@ function publishSnapshot({
   options,
   summary,
   stateBaseCommit,
+  guardedOpenAction,
+  routableSyncExpected,
+  terminalClosedExpected,
+  terminalMissingExpected,
 }: {
   paths: EventRecordPaths;
   options: EventOptions;
   summary: () => void;
   stateBaseCommit: string | null;
-}): boolean {
+  guardedOpenAction: string | null;
+  routableSyncExpected: boolean;
+  terminalClosedExpected: boolean;
+  terminalMissingExpected: boolean;
+}): PublishedEventSnapshot | null {
   const commitPaths = [
     paths.itemRecord,
     paths.closedRecord,
@@ -212,10 +276,54 @@ function publishSnapshot({
     paths.decisionPacket,
   ];
   try {
-    const complete = (): true => {
+    const complete = (candidateApplied: boolean): PublishedEventSnapshot => {
+      // The reconciliation push can succeed just before another publisher
+      // advances the same tuple. Refresh from the authoritative remote before
+      // emitting any completion output; the workflow never routes an ordinary
+      // synced verdict inline, so no read-then-route atomicity is implied here.
+      hardResetToRemoteMain();
       refreshSourceAfterStatePublish(commitPaths, stateBaseCommit);
+      const candidateMatchesCurrentTuple = candidateApplied && eventSnapshotMatchesCurrent(paths);
+      const disposition = exactEventPublishDisposition({
+        candidateMatchesCurrentTuple,
+        candidateTupleState: candidateEventTupleState(paths),
+        terminalClosedExpected,
+        terminalMissingExpected,
+        guardedOpenAction,
+        routableSyncExpected,
+      });
+      const published = {
+        ...disposition,
+        remoteTupleVerified: candidateMatchesCurrentTuple,
+        routingDeferred: disposition.routableSyncVerified,
+      };
+      if (routableSyncExpected && !published.routableSyncVerified) {
+        throw new RoutableSyncPublishRaceError(
+          `Durable review sync for ${paths.targetSlug}#${options.itemNumber} lost the publish race; requeue against the latest item revision`,
+        );
+      }
+      if (terminalMissingExpected && !published.terminalMissing) {
+        throw new TerminalMissingPublishRaceError(
+          `Verified missing item ${paths.targetSlug}#${options.itemNumber} lost the publish race; requeue against the latest item revision`,
+        );
+      }
+      if (terminalClosedExpected && !published.terminalClosed) {
+        throw new TerminalClosedPublishRaceError(
+          `Verified terminal close for ${paths.targetSlug}#${options.itemNumber} lost the publish race; requeue against the latest item revision`,
+        );
+      }
+      if (
+        guardedOpenAction !== null &&
+        !published.terminalClosed &&
+        !published.terminalMissing &&
+        published.guardedOpenAction === null
+      ) {
+        throw new GuardedOpenPublishRaceError(
+          `Deterministic remain-open guard for ${paths.targetSlug}#${options.itemNumber} lost the publish race; requeue against the latest item revision`,
+        );
+      }
       summary();
-      return true;
+      return published;
     };
     hardResetToRemoteMain();
     const stateRoot = publishRoot();
@@ -224,24 +332,24 @@ function publishSnapshot({
       console.log(
         `Remote already has closed record for ${paths.targetSlug}#${options.itemNumber}; skipping open-record publish`,
       );
-      return complete();
+      return complete(false);
     }
     if (snapshotResult === "remote-newer") {
       console.log(
         `Remote has newer record tuple for ${paths.targetSlug}#${options.itemNumber}; skipping stale event publish`,
       );
-      return complete();
+      return complete(false);
     }
     if (snapshotResult === "missing") {
       console.log(`No event record snapshot for ${paths.targetSlug}#${options.itemNumber}`);
-      return complete();
+      return complete(false);
     }
 
     syncPublishPaths(commitPaths);
     stagePaths(commitPaths);
     if (!hasStagedChanges()) {
       console.log("No event result changes");
-      return complete();
+      return complete(true);
     }
 
     runGit([
@@ -252,13 +360,28 @@ function publishSnapshot({
         commitPaths,
       ),
     ]);
-    if (!pushCommit({ pushAttempts: 3, rebaseStrategy: "reconcile-records" })) return false;
-    return complete();
+    if (!pushCommit({ pushAttempts: 3, rebaseStrategy: "reconcile-records" })) return null;
+    return complete(true);
   } catch (error) {
-    if (error instanceof RecordTupleError) throw error;
+    if (
+      error instanceof RecordTupleError ||
+      error instanceof GuardedOpenPublishRaceError ||
+      error instanceof RoutableSyncPublishRaceError ||
+      error instanceof TerminalClosedPublishRaceError ||
+      error instanceof TerminalMissingPublishRaceError
+    )
+      throw error;
     console.error(error instanceof Error ? error.message : String(error));
-    return false;
+    return null;
   }
+}
+
+function candidateEventTupleState(paths: EventRecordPaths): "closed" | "open" | "invalid" {
+  const hasOpenRecord = fs.existsSync(paths.snapshotItem);
+  const hasClosedRecord = fs.existsSync(paths.snapshotClosed);
+  if (hasClosedRecord && !hasOpenRecord) return "closed";
+  if (hasOpenRecord && !hasClosedRecord) return "open";
+  return "invalid";
 }
 
 function eventOptionsFromEnv(): EventOptions {
@@ -287,12 +410,14 @@ function writeSummary({
   itemNumber,
   syncedCount,
   closedCount,
+  missingCount,
   closeReasons,
 }: {
   targetRepo: string;
   itemNumber: string;
   syncedCount: number;
   closedCount: number;
+  missingCount: number;
   closeReasons: string;
 }): void {
   const summaryPath = process.env.GITHUB_STEP_SUMMARY;
@@ -304,7 +429,26 @@ function writeSummary({
       `- Item: ${targetRepo}#${itemNumber}`,
       `- Synced durable comments: ${syncedCount}`,
       `- Closed safe proposals: ${closedCount}`,
+      `- Confirmed missing items: ${missingCount}`,
       `- Close reasons enabled: ${closeReasons}`,
+      "",
+    ].join("\n"),
+    "utf8",
+  );
+}
+
+function writeEventDispositionOutputs(published: PublishedEventSnapshot): void {
+  const outputPath = process.env.GITHUB_OUTPUT;
+  if (!outputPath) return;
+  fs.appendFileSync(
+    outputPath,
+    [
+      `remote_tuple_verified=${published.remoteTupleVerified ? "true" : "false"}`,
+      `terminal_missing=${published.terminalMissing ? "true" : "false"}`,
+      `terminal_closed=${published.terminalClosed ? "true" : "false"}`,
+      `guarded_open=${published.guardedOpenAction === null ? "false" : "true"}`,
+      `guarded_open_action=${published.guardedOpenAction ?? ""}`,
+      `routing_deferred=${published.routingDeferred ? "true" : "false"}`,
       "",
     ].join("\n"),
     "utf8",

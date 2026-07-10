@@ -11,8 +11,133 @@ import {
   captureEventBaseSnapshot,
   captureEventSnapshot,
   eventRecordPaths,
+  eventSnapshotMatchesCurrent,
   resetEventSnapshot,
 } from "../../dist/repair/event-record-store.js";
+import { refreshSourceAfterStatePublish } from "../../dist/repair/git-publish.js";
+
+test("event snapshot match follows the final tuple winner, not only its action", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-event-records-"));
+  const store = {
+    targetRepo: "openclaw/openclaw",
+    itemNumber: "91668",
+    snapshotDir: path.join(root, "snapshot"),
+  };
+
+  withCwd(root, () => {
+    const paths = eventRecordPaths(store);
+    resetEventSnapshot(store);
+    writeEventTuple(paths, {
+      marker: "base open",
+      reviewedAt: "2026-07-09T23:00:00.000Z",
+      itemUpdatedAt: "2026-07-09T22:59:00Z",
+      extraFrontMatter: ["action_taken: proposed_close"],
+    });
+    captureEventBaseSnapshot(store);
+    writeEventTuple(paths, {
+      marker: "candidate guarded open",
+      reviewedAt: "2026-07-09T23:10:00.000Z",
+      itemUpdatedAt: "2026-07-09T22:59:00Z",
+      extraFrontMatter: [
+        "action_taken: skipped_same_author_pair",
+        "apply_checked_at: 2026-07-09T23:11:00.000Z",
+      ],
+    });
+    captureEventSnapshot(store);
+    assert.equal(eventSnapshotMatchesCurrent(paths), true);
+
+    writeEventTuple(paths, {
+      marker: "newer remote guarded open",
+      reviewedAt: "2026-07-09T23:20:00.000Z",
+      itemUpdatedAt: "2026-07-09T22:59:00Z",
+      extraFrontMatter: [
+        "action_taken: skipped_same_author_pair",
+        "apply_checked_at: 2026-07-09T23:21:00.000Z",
+      ],
+    });
+    assert.equal(eventSnapshotMatchesCurrent(paths), false);
+  });
+});
+
+test("event snapshot match rejects live close-guard label drift after kept-open sync", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-event-records-"));
+  const store = {
+    targetRepo: "openclaw/openclaw",
+    itemNumber: "91271",
+    snapshotDir: path.join(root, "snapshot"),
+  };
+
+  withCwd(root, () => {
+    const paths = eventRecordPaths(store);
+    resetEventSnapshot(store);
+    writeEventTuple(paths, {
+      marker: "kept-open sync",
+      reviewedAt: "2026-07-10T13:29:00.000Z",
+      itemUpdatedAt: "2026-07-10T13:28:00Z",
+      extraFrontMatter: ["action_taken: kept_open", 'labels: ["clawsweeper:human-review"]'],
+    });
+    captureEventSnapshot(store);
+    assert.equal(eventSnapshotMatchesCurrent(paths), true);
+
+    writeEventTuple(paths, {
+      marker: "kept-open sync",
+      reviewedAt: "2026-07-10T13:29:00.000Z",
+      itemUpdatedAt: "2026-07-10T13:28:00Z",
+      extraFrontMatter: ["action_taken: kept_open", "labels: []"],
+    });
+    assert.equal(eventSnapshotMatchesCurrent(paths), false);
+  });
+});
+
+test("authoritative state refresh exposes a remote winner hidden by a stale local checkout", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-event-records-"));
+  const store = {
+    targetRepo: "openclaw/openclaw",
+    itemNumber: "91272",
+    snapshotDir: path.join(root, "snapshot"),
+  };
+
+  withCwd(root, () => {
+    const paths = eventRecordPaths(store);
+    resetEventSnapshot(store);
+    writeEventTuple(paths, {
+      marker: "candidate kept-open sync",
+      reviewedAt: "2026-07-10T13:29:00.000Z",
+      itemUpdatedAt: "2026-07-10T13:28:00Z",
+      extraFrontMatter: ["action_taken: kept_open"],
+    });
+    captureEventSnapshot(store);
+    const stateRoot = path.join(root, "state");
+    copyTupleToRoot(paths, stateRoot);
+    const statePaths = {
+      ...paths,
+      itemRecord: path.join(stateRoot, paths.itemRecord),
+      closedRecord: path.join(stateRoot, paths.closedRecord),
+      planRecord: path.join(stateRoot, paths.planRecord),
+      decisionPacket: path.join(stateRoot, paths.decisionPacket),
+    };
+    writeEventTuple(statePaths, {
+      marker: "competing newer winner",
+      reviewedAt: "2026-07-10T13:30:00.000Z",
+      itemUpdatedAt: "2026-07-10T13:28:00Z",
+      extraFrontMatter: ["action_taken: kept_open"],
+    });
+
+    assert.equal(eventSnapshotMatchesCurrent(paths), true, "local checkout is still stale");
+    const previousStateDir = process.env.CLAWSWEEPER_STATE_DIR;
+    process.env.CLAWSWEEPER_STATE_DIR = stateRoot;
+    try {
+      refreshSourceAfterStatePublish(
+        [paths.itemRecord, paths.closedRecord, paths.planRecord, paths.decisionPacket],
+        null,
+      );
+    } finally {
+      if (previousStateDir === undefined) delete process.env.CLAWSWEEPER_STATE_DIR;
+      else process.env.CLAWSWEEPER_STATE_DIR = previousStateDir;
+    }
+    assert.equal(eventSnapshotMatchesCurrent(paths), false);
+  });
+});
 
 test("event record snapshots prefer closed records and remove open records", () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-event-records-"));

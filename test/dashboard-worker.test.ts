@@ -4362,7 +4362,7 @@ test("hosted webhook returns invalid_json for signed malformed bodies", async ()
   assert.deepEqual(await response.json(), { error: "invalid_json" });
 });
 
-test("hosted webhook rejects all label mutations before exact-review intake", async () => {
+test("hosted webhook rejects label additions before exact-review intake", async () => {
   for (const sender of ["openclaw-clawsweeper[bot]", "openclaw-barnacle[bot]", "steipete"]) {
     const response = await worker.fetch(
       signedGithubWebhookRequest({
@@ -4425,6 +4425,99 @@ test("hosted webhook enqueues item events with the repository default branch", a
     ok: true,
     queued: true,
     item_key: "openclaw/gogcli#597",
+  });
+});
+
+test("hosted webhook requeues unlocked and close-guard removal events", async () => {
+  const closeGuardLabels = [
+    "security",
+    "beta-blocker",
+    "release-blocker",
+    "maintainer",
+    "clawsweeper:human-review",
+    "clawsweeper:manual-only",
+    "clawsweeper:automerge",
+    "clawsweeper:autofix",
+  ];
+  const cases = [
+    { event: "issues", action: "unlocked" },
+    { event: "pull_request", action: "unlocked" },
+    ...closeGuardLabels.flatMap((name) => [
+      { event: "issues", action: "unlabeled", label: { name } },
+      { event: "pull_request", action: "unlabeled", label: { name } },
+    ]),
+  ];
+  for (const [index, { event, action, label }] of cases.entries()) {
+    const number = 598 + index;
+    const storage = new MemoryDurableStorage();
+    const queue = new ExactReviewQueue({ storage }, {});
+    const response = await worker.fetch(
+      signedGithubWebhookRequest({
+        event,
+        secret: "test-secret",
+        payload: {
+          action,
+          repository: {
+            full_name: "openclaw/gogcli",
+            default_branch: "trunk",
+            private: false,
+            archived: false,
+            fork: false,
+            has_issues: true,
+          },
+          ...(event === "issues" ? { issue: { number } } : { pull_request: { number } }),
+          ...(label ? { label } : {}),
+          installation: { id: 123 },
+        },
+      }),
+      {
+        CLAWSWEEPER_WEBHOOK_SECRET: "test-secret",
+        EXACT_REVIEW_QUEUE: new MemoryDurableNamespace(queue),
+      },
+    );
+
+    assert.equal(response.status, 202);
+    assert.deepEqual(await response.json(), {
+      ok: true,
+      queued: true,
+      item_key: `openclaw/gogcli#${number}`,
+    });
+    const stored = (await storage.get("exact-review-queue")) as {
+      items: Record<string, { decision: { sourceAction: string; supersedesInProgress: boolean } }>;
+    };
+    assert.equal(stored.items[`openclaw/gogcli#${number}`].decision.sourceAction, action);
+    assert.equal(stored.items[`openclaw/gogcli#${number}`].decision.supersedesInProgress, true);
+  }
+});
+
+test("hosted webhook ignores removal of non-close-guard labels", async () => {
+  const response = await worker.fetch(
+    signedGithubWebhookRequest({
+      event: "issues",
+      secret: "test-secret",
+      payload: {
+        action: "unlabeled",
+        repository: {
+          full_name: "openclaw/gogcli",
+          default_branch: "trunk",
+          private: false,
+          archived: false,
+          fork: false,
+          has_issues: true,
+        },
+        issue: { number: 602 },
+        label: { name: "clawsweeper:queueable-fix" },
+        installation: { id: 123 },
+      },
+    }),
+    { CLAWSWEEPER_WEBHOOK_SECRET: "test-secret" },
+  );
+
+  assert.equal(response.status, 202);
+  assert.deepEqual(await response.json(), {
+    ok: true,
+    accepted: false,
+    reason: "unsupported action",
   });
 });
 
