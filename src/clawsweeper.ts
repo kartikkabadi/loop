@@ -309,6 +309,7 @@ type ActionTaken =
   | "kept_open"
   | "proposed_close"
   | "review_comment_synced"
+  | "corrected_stale_canonical_comment"
   | "skipped_comment_auth"
   | "skipped_locked_conversation"
   | "skipped_changed_since_review"
@@ -320,6 +321,7 @@ type ActionTaken =
   | "skipped_protected_label"
   | "skipped_pr_close_coverage_proof"
   | "retry_pr_close_coverage_proof"
+  | "retry_stale_canonical_comment_sync"
   | "skipped_invalid_decision"
   | "skipped_missing_record"
   | "skipped_runtime_budget";
@@ -1710,6 +1712,7 @@ const CLOSED_STATE_PROBE_ACTIONS = new Set<string>([
   "skipped_open_closing_pr",
   "skipped_same_author_pair",
   "skipped_locked_conversation",
+  "retry_stale_canonical_comment_sync",
 ]);
 const REPRODUCTION_STATUSES = new Set<ReproductionStatus>([
   "reproduced",
@@ -14257,6 +14260,68 @@ function prCloseCoverageProofCandidateRefs(markdown: string, item: Item): PullRe
   return possiblePullRequestRefs.length === 1 ? possiblePullRequestRefs : [];
 }
 
+function possibleCanonicalPullRequestRefsFromReport(
+  markdown: string,
+  item: Item,
+): PullRequestRef[] {
+  if (item.kind !== "pull_request") return [];
+  const pendingCanonicalNumber = staleCanonicalPullRequestNumber(markdown);
+  if (pendingCanonicalNumber) {
+    return [{ number: pendingCanonicalNumber, kind: "pull_url" }];
+  }
+  const structuredCanonicalRef = reportRootCauseCluster(markdown).canonicalRef;
+  if (structuredCanonicalRef) {
+    const parsed = parseGitHubItemRef(structuredCanonicalRef, "root_cause_cluster.canonicalRef");
+    if (parsed.kind === "pull_request" && parsed.number !== item.number) {
+      return [{ number: parsed.number, kind: "pull_url" }];
+    }
+  }
+  const linkedRefs = linkedPullRequestRefsFromReport(markdown, item.number);
+  const canonicalRefs = linkedRefs
+    .filter((ref) => linkedPullRequestHasSupersessionSignal(markdown, item.number, ref.number))
+    .filter(linkedRefCanBePullRequest);
+  if (canonicalRefs.length > 0) return canonicalRefs;
+  if (frontMatterValue(markdown, "pr_close_coverage_proof_fallback_refs") === "false") return [];
+  const possiblePullRequestRefs = linkedRefs.filter(linkedRefCanBePullRequest);
+  return possiblePullRequestRefs.length === 1 ? possiblePullRequestRefs : [];
+}
+
+interface CanonicalPullRequestCommentSyncBlock {
+  kind: "closed_unmerged" | "unreadable";
+  number: number;
+  reason: string;
+}
+
+function canonicalPullRequestCommentSyncBlock(
+  markdown: string,
+  item: Item,
+): CanonicalPullRequestCommentSyncBlock | null {
+  for (const ref of possibleCanonicalPullRequestRefsFromReport(markdown, item)) {
+    const { number } = ref;
+    try {
+      const pull = asRecord(ghJson<unknown>(["api", `repos/${targetRepo()}/pulls/${number}`]));
+      const state = stringOrUndefined(pull.state)?.toLowerCase() ?? "";
+      const mergedAt = stringOrUndefined(pull.merged_at) ?? null;
+      if (state === "closed" && !mergedAt) {
+        return {
+          kind: "closed_unmerged",
+          number,
+          reason: `linked canonical PR #${number} is closed and unmerged; refusing duplicate/superseded auto-close`,
+        };
+      }
+    } catch (error) {
+      if (error instanceof GitHubRuntimeBudgetError) throw error;
+      if (ref.kind !== "pull_url" && shorthandRefIsIssue(number)) continue;
+      return {
+        kind: "unreadable",
+        number,
+        reason: `linked canonical PR #${number} could not be read; refusing duplicate/superseded comment sync`,
+      };
+    }
+  }
+  return null;
+}
+
 interface PrCloseCoverageProofGateBlock {
   actionTaken: ActionTaken;
   reason: string;
@@ -14579,6 +14644,135 @@ function applyPrCloseCoverageProofBlockedReport(
     next,
     PR_CLOSE_COVERAGE_PROOF_SECTION,
     ["Decision: keep_open", `Reason: ${block.reason}`].join("\n"),
+  );
+}
+
+function applyClosedUnmergedCanonicalBlockedReport(
+  markdown: string,
+  block: PrCloseCoverageProofGateBlock,
+  canonicalNumber: number,
+): string {
+  const rootCauseCluster = defaultRootCauseCluster();
+  const nextStep =
+    "Run a fresh review against current main and the current related PR state before choosing a landing or close path.";
+  const rating: PrRating = {
+    ...reportPrRating(markdown),
+    summary:
+      "The prior duplicate or superseded close path is no longer valid; retain the existing readiness tiers until a fresh review.",
+    nextSteps: [nextStep],
+  };
+  let next = replaceFrontMatterValue(markdown, "decision", "keep_open");
+  next = replaceFrontMatterValue(next, "close_reason", "none");
+  next = replaceFrontMatterValue(next, "confidence", "low");
+  next = replaceFrontMatterValue(next, "action_taken", "retry_stale_canonical_comment_sync");
+  next = replaceFrontMatterValue(
+    next,
+    "stale_canonical_pull_request_number",
+    String(canonicalNumber),
+  );
+  next = replaceFrontMatterValue(next, "close_comment_sha256", "none");
+  next = replaceFrontMatterValue(next, "work_candidate", "none");
+  next = replaceFrontMatterValue(next, "work_confidence", "low");
+  next = replaceFrontMatterValue(next, "work_priority", "low");
+  next = replaceFrontMatterValue(next, "work_status", "none");
+  next = replaceFrontMatterValue(next, "work_reason_sha256", sha256(nextStep));
+  next = replaceFrontMatterValue(next, "work_cluster_refs", "[]");
+  next = replaceFrontMatterValue(next, "work_validation", "[]");
+  next = replaceFrontMatterValue(next, "work_likely_files", "[]");
+  next = replaceFrontMatterValue(next, "merge_risk_options", "[]");
+  next = replaceFrontMatterValue(next, "label_justifications", "[]");
+  next = replaceFrontMatterValue(next, "review_metrics", "[]");
+  next = replaceFrontMatterValue(next, "root_cause_cluster", JSON.stringify(rootCauseCluster));
+  next = replaceSectionValue(
+    next,
+    "Decision",
+    [
+      "Keep open: none",
+      "",
+      "Confidence: low",
+      "",
+      "Action taken: retry_stale_canonical_comment_sync",
+    ].join("\n"),
+  );
+  next = replaceSectionValue(
+    next,
+    REVIEW_SECTIONS.summary,
+    `Keep this PR open. ${sentence(block.reason)}`,
+  );
+  next = replaceSectionValue(next, REVIEW_SECTIONS.bestSolution, nextStep);
+  next = replaceSectionValue(
+    next,
+    REVIEW_SECTIONS.solutionAssessment,
+    "Needs a fresh assessment because the prior canonical PR is closed without merge.",
+  );
+  next = replaceSectionValue(
+    next,
+    REVIEW_SECTIONS.rootCauseCluster,
+    renderRootCauseClusterAssessmentReportSection(rootCauseCluster),
+  );
+  next = replaceSectionValue(
+    next,
+    REVIEW_SECTIONS.prRating,
+    renderPrRatingAssessmentReportSection(rating, reportRealBehaviorProof(markdown)),
+  );
+  next = replaceSectionValue(
+    next,
+    REVIEW_SECTIONS.workCandidate,
+    [
+      "Candidate: none",
+      "",
+      "Confidence: low",
+      "",
+      "Priority: low",
+      "",
+      "Status: none",
+      "",
+      `Reason: ${nextStep}`,
+    ].join("\n"),
+  );
+  next = replaceSectionValue(
+    next,
+    REVIEW_SECTIONS.evidence,
+    `- **live canonical state:** ${block.reason}`,
+  );
+  next = replaceSectionValue(next, REVIEW_SECTIONS.likelyOwners, "- none");
+  next = replaceSectionValue(
+    next,
+    REVIEW_SECTIONS.risks,
+    "- The current branch and related work need a fresh review before merge or closure.",
+  );
+  next = replaceSectionValue(next, REVIEW_SECTIONS.closeComment, "_No close comment posted._");
+  return replaceSectionValue(
+    next,
+    PR_CLOSE_COVERAGE_PROOF_SECTION,
+    ["Decision: keep_open", `Reason: ${block.reason}`].join("\n"),
+  );
+}
+
+function staleCanonicalCommentSyncPendingReason(markdown: string): string | null {
+  if (frontMatterValue(markdown, "action_taken") !== "retry_stale_canonical_comment_sync") {
+    return null;
+  }
+  return (
+    sectionLineValue(sectionValue(markdown, PR_CLOSE_COVERAGE_PROOF_SECTION), "Reason") ??
+    "stale canonical close comment correction remains pending"
+  );
+}
+
+function staleCanonicalPullRequestNumber(markdown: string): number | null {
+  const number = Number(frontMatterValue(markdown, "stale_canonical_pull_request_number"));
+  return Number.isInteger(number) && number > 0 ? number : null;
+}
+
+function completeStaleCanonicalCommentSyncReport(markdown: string): string {
+  let next = replaceFrontMatterValue(markdown, "action_taken", "corrected_stale_canonical_comment");
+  next = replaceFrontMatterValue(next, "stale_canonical_pull_request_number", "none");
+  const decision = sectionValue(next, "Decision");
+  if (!decision) return next;
+  return replaceSectionValue(
+    next,
+    "Decision",
+    decision.replace(/^Action taken: .*$/m, "Action taken: corrected_stale_canonical_comment"),
   );
 }
 
@@ -16893,6 +17087,72 @@ function durableReviewVersion(
   return null;
 }
 
+function reviewCommentHasCloseVerdictForCanonical(
+  comment: Record<string, unknown> | undefined,
+  number: number,
+  reason: CloseReason,
+  canonicalNumber: number,
+): boolean {
+  if (!canPatchReviewComment(comment)) return false;
+  const body = commentBody(comment);
+  if (!body) return false;
+  const reviewMarker = reviewCommentMarker(number);
+  const reviewMarkerIndex = body.lastIndexOf(reviewMarker);
+  if (reviewMarkerIndex < 0) return false;
+  if (body.slice(reviewMarkerIndex + reviewMarker.length).trim() !== "") return false;
+  const markerComments = trailingHtmlComments(body.slice(0, reviewMarkerIndex));
+  const verdictPattern = /^<!--\s+clawsweeper-verdict:([^\s>]+)\b([^>]*)-->$/;
+  let latestVerdict: { verdict: string; reason: string | undefined } | undefined;
+  for (const markerComment of markerComments) {
+    const match = markerComment.match(verdictPattern);
+    if (!match) continue;
+    const attributes = match[2] ?? "";
+    if (!new RegExp(`\\bitem=${number}\\b`).test(attributes)) continue;
+    latestVerdict = {
+      verdict: match[1] ?? "",
+      reason: attributes.match(/\breason=([^\s>]+)/)?.[1],
+    };
+  }
+  const supersessionSignal =
+    /\b(supersed(?:e|ed|es|ing)|replace(?:s|d|ment)?|duplicate|duplicated|canonical|covered by|landed in)\b/i;
+  const signaledRefs = linkedPullRequestRefsFromText(body, number).filter((ref) =>
+    linkedPullRequestSignalContextsFromText(body, number, ref.number).some((context) =>
+      supersessionSignal.test(context),
+    ),
+  );
+  const explicitCanonicalRefs = [...body.matchAll(/^Canonical:\s+(\S+)\s*$/gm)];
+  let commentCanonicalNumber: number | undefined;
+  if (explicitCanonicalRefs.length > 0) {
+    const canonicalNumbers = new Set<number>();
+    for (const match of explicitCanonicalRefs) {
+      try {
+        const parsed = parseGitHubItemRef(
+          match[1] ?? "",
+          "durable review comment root-cause canonical",
+        );
+        // The explicit public canonical is authoritative; never reinterpret a member PR as it.
+        if (parsed.kind !== "pull_request") return false;
+        if (normalizeRepo(parsed.repo) !== normalizeRepo(targetRepo())) return false;
+        canonicalNumbers.add(parsed.number);
+      } catch {
+        return false;
+      }
+    }
+    if (canonicalNumbers.size !== 1) return false;
+    commentCanonicalNumber = [...canonicalNumbers][0];
+  }
+  if (explicitCanonicalRefs.length === 0) {
+    const signaledCanonicalNumbers = new Set(signaledRefs.map((ref) => ref.number));
+    if (signaledCanonicalNumbers.size !== 1) return false;
+    commentCanonicalNumber = [...signaledCanonicalNumbers][0];
+  }
+  return (
+    latestVerdict?.verdict === "close" &&
+    latestVerdict.reason === reason &&
+    commentCanonicalNumber === canonicalNumber
+  );
+}
+
 function staleReviewCommentSyncReason(
   markdown: string,
   existingReviewComment: Record<string, unknown> | undefined,
@@ -17679,30 +17939,37 @@ function renderRealBehaviorProofReportSection(decision: Decision): string {
   ].join("\n");
 }
 
-function renderPrRatingReportSection(decision: Decision): string {
-  const nextSteps = decision.prRating.nextSteps.length
-    ? decision.prRating.nextSteps.map((step) => `- ${step}`).join("\n")
+function renderPrRatingAssessmentReportSection(
+  rating: PrRating,
+  realBehaviorProof: RealBehaviorProof,
+): string {
+  const nextSteps = rating.nextSteps.length
+    ? rating.nextSteps.map((step) => `- ${step}`).join("\n")
     : "- none";
-  const shiny = hasShinyProof(decision.realBehaviorProof) ? " ✨" : "";
+  const shiny = hasShinyProof(realBehaviorProof) ? " ✨" : "";
   return [
-    `Overall tier: ${decision.prRating.overallTier}`,
+    `Overall tier: ${rating.overallTier}`,
     "",
-    `Proof tier: ${decision.prRating.proofTier}`,
+    `Proof tier: ${rating.proofTier}`,
     "",
-    `Patch tier: ${decision.prRating.patchTier}`,
+    `Patch tier: ${rating.patchTier}`,
     "",
-    `Overall label: ${themedRatingName(decision.prRating.overallTier)}`,
+    `Overall label: ${themedRatingName(rating.overallTier)}`,
     "",
-    `Proof label: ${themedRatingName(decision.prRating.proofTier)}${shiny}`,
+    `Proof label: ${themedRatingName(rating.proofTier)}${shiny}`,
     "",
-    `Patch label: ${themedRatingName(decision.prRating.patchTier)}`,
+    `Patch label: ${themedRatingName(rating.patchTier)}`,
     "",
-    `Summary: ${sentence(decision.prRating.summary)}`,
+    `Summary: ${sentence(rating.summary)}`,
     "",
     "Next rank-up steps:",
     "",
     nextSteps,
   ].join("\n");
+}
+
+function renderPrRatingReportSection(decision: Decision): string {
+  return renderPrRatingAssessmentReportSection(decision.prRating, decision.realBehaviorProof);
 }
 
 function renderTelegramVisibleProofReportSection(decision: Decision): string {
@@ -17733,26 +18000,32 @@ function renderFeatureShowcaseReportSection(decision: Decision): string {
   ].join("\n");
 }
 
-function renderRootCauseClusterReportSection(decision: Decision): string {
-  const members = decision.rootCauseCluster.members.length
-    ? decision.rootCauseCluster.members
+function renderRootCauseClusterAssessmentReportSection(
+  rootCauseCluster: RootCauseClusterAssessment,
+): string {
+  const members = rootCauseCluster.members.length
+    ? rootCauseCluster.members
         .map(
           (member) => `- **${member.relationship}:** ${member.ref}\n  - reason: ${member.reason}`,
         )
         .join("\n")
     : "- none";
   return [
-    `Current item relationship: ${decision.rootCauseCluster.currentItemRelationship}`,
+    `Current item relationship: ${rootCauseCluster.currentItemRelationship}`,
     "",
-    `Confidence: ${decision.rootCauseCluster.confidence}`,
+    `Confidence: ${rootCauseCluster.confidence}`,
     "",
-    `Canonical ref: ${decision.rootCauseCluster.canonicalRef ?? "none"}`,
+    `Canonical ref: ${rootCauseCluster.canonicalRef ?? "none"}`,
     "",
-    `Summary: ${sentence(decision.rootCauseCluster.summary)}`,
+    `Summary: ${sentence(rootCauseCluster.summary)}`,
     "",
     "Members:",
     members,
   ].join("\n");
+}
+
+function renderRootCauseClusterReportSection(decision: Decision): string {
+  return renderRootCauseClusterAssessmentReportSection(decision.rootCauseCluster);
 }
 
 function renderAgentsPolicyStatusReportSection(decision: Decision): string {
@@ -19649,6 +19922,11 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
     const decision = frontMatterValue(markdown, "decision");
     let closeReason = frontMatterValue(markdown, "close_reason") as CloseReason | undefined;
     const action = frontMatterValue(markdown, "action_taken");
+    const changedSinceReviewDuplicateCommentRepair =
+      action === "skipped_changed_since_review" &&
+      decision === "close" &&
+      closeReason === "duplicate_or_superseded";
+    let staleCanonicalCommentSyncPending = action === "retry_stale_canonical_comment_sync";
     let storedHash = frontMatterValue(markdown, "item_snapshot_hash");
     let storedUpdatedAt = frontMatterValue(markdown, "item_updated_at");
     const storedAuthorAssociation = frontMatterValue(markdown, "author_association");
@@ -19694,11 +19972,15 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
       markdown = replaceFrontMatterValue(markdown, "action_taken", actionTaken);
       return recordApplySkipped(actionTaken, reason);
     };
-    const markLabelSyncAuthSkipped = (labelKind: string): boolean =>
-      markApplySkipped(
-        "kept_open",
-        `GitHub rejected ${labelKind} label sync with Requires authentication`,
-      );
+    const markLabelSyncAuthSkipped = (labelKind: string): boolean => {
+      const reason = `GitHub rejected ${labelKind} label sync with Requires authentication`;
+      return staleCanonicalCommentSyncPending
+        ? markApplySkipped(
+            "retry_stale_canonical_comment_sync",
+            `${reason}; stale canonical comment correction remains pending`,
+          )
+        : markApplySkipped("kept_open", reason);
+    };
     try {
       requiredMaintainerDecision = maintainerDecisionFromReport(markdown);
     } catch (error) {
@@ -19782,6 +20064,7 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
     let clawSweeperLabelsChanged = false;
     let issueAdvisoryLabelsChanged = false;
     const allowedSelfMutationUpdatedAts = new Set<string>();
+    let staleCanonicalClosedUnmergedValidated = false;
     const currentItemContext = (): ItemContext => {
       currentContext ??= collectItemContext(item, { fullTimelineForRelations: true });
       return currentContext;
@@ -19932,11 +20215,9 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
         ) {
           return `apply mutation lease ${lease.commentId} is no longer the elected ${item.kind === "pull_request" ? "same-head" : "same-revision"} lease`;
         }
-        return staleReviewCommentSyncReason(
+        return canonicalBoundStaleReviewReason(
           markdownBeforeApplyDecisionMutations,
           refreshed.reviewComment,
-          number,
-          item.kind === "pull_request" ? currentItemContext() : undefined,
         );
       } catch (error) {
         if (error instanceof GitHubRuntimeBudgetError) throw error;
@@ -20003,19 +20284,128 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
       return processedCount >= processedLimit;
     };
     const recordReviewLeaseSkip = (reason: string, restoreOriginal = true): boolean =>
-      recordReviewGuardSkip("kept_open", reason, restoreOriginal);
+      staleCanonicalCommentSyncPending
+        ? markApplySkipped(
+            "retry_stale_canonical_comment_sync",
+            `${reason}; stale canonical comment correction remains pending`,
+          )
+        : recordReviewGuardSkip("kept_open", reason, restoreOriginal);
     const recordActiveReviewLeaseSkip = (expiresAt: string): boolean =>
       recordReviewLeaseSkip(
         `${item.kind === "pull_request" ? "same-head" : "same-revision"} ClawSweeper review is active until ${expiresAt}`,
       );
-    const refreshedReviewStaleReason = (comment: Record<string, unknown> | undefined) =>
-      staleReviewCommentSyncReason(
-        markdownBeforeApplyDecisionMutations,
+    let existingReviewComment: Record<string, unknown> | undefined;
+    const pendingStaleCanonicalCommentReason = staleCanonicalCommentSyncPending
+      ? staleCanonicalCommentSyncPendingReason(markdown)
+      : null;
+    let closeBlockedForCommentSync: PrCloseCoverageProofGateBlock | null =
+      pendingStaleCanonicalCommentReason
+        ? { actionTaken: "kept_open", reason: pendingStaleCanonicalCommentReason }
+        : null;
+    let canonicalCommentSyncChecked = false;
+    const shouldCheckCanonicalCommentSync = (): boolean =>
+      state === "open" &&
+      (staleCanonicalCommentSyncPending ||
+        (closeReason === "duplicate_or_superseded" &&
+          (isCloseProposal || (decision === "close" && shouldProbeClosedState))));
+    const applyCanonicalCommentSyncGuard = (
+      forceRecheck = false,
+    ): {
+      skipCurrentItem: boolean;
+      stopApply: boolean;
+    } => {
+      if ((canonicalCommentSyncChecked && !forceRecheck) || !shouldCheckCanonicalCommentSync()) {
+        return { skipCurrentItem: false, stopApply: false };
+      }
+      canonicalCommentSyncChecked = true;
+      staleCanonicalClosedUnmergedValidated = false;
+      const pendingCanonicalNumber = staleCanonicalCommentSyncPending
+        ? staleCanonicalPullRequestNumber(markdown)
+        : null;
+      if (staleCanonicalCommentSyncPending && pendingCanonicalNumber === null) {
+        const reason =
+          "pending stale canonical comment correction lacks its canonical PR identity; fresh review required";
+        return {
+          skipCurrentItem: true,
+          stopApply: markApplySkipped("retry_stale_canonical_comment_sync", reason),
+        };
+      }
+      const block = canonicalPullRequestCommentSyncBlock(markdown, item);
+      if (block?.kind === "unreadable") {
+        const actionTaken: ActionTaken = staleCanonicalCommentSyncPending
+          ? "retry_stale_canonical_comment_sync"
+          : "retry_pr_close_coverage_proof";
+        return {
+          skipCurrentItem: true,
+          stopApply: staleCanonicalCommentSyncPending
+            ? markApplySkipped(actionTaken, block.reason)
+            : recordApplySkipped(actionTaken, block.reason),
+        };
+      }
+      if (block?.kind === "closed_unmerged") {
+        staleCanonicalClosedUnmergedValidated = true;
+        closeBlockedForCommentSync = {
+          actionTaken: "kept_open",
+          reason: block.reason,
+        };
+        markdown = applyClosedUnmergedCanonicalBlockedReport(
+          markdown,
+          closeBlockedForCommentSync,
+          block.number,
+        );
+        staleCanonicalCommentSyncPending = true;
+        closeReason = "none";
+        isCloseProposal = false;
+      } else if (staleCanonicalCommentSyncPending && pendingCanonicalNumber !== null) {
+        const reason = `linked canonical PR #${pendingCanonicalNumber} is no longer closed and unmerged; fresh review required before stale comment correction`;
+        return {
+          skipCurrentItem: true,
+          stopApply: markApplySkipped("retry_stale_canonical_comment_sync", reason),
+        };
+      }
+      return { skipCurrentItem: false, stopApply: false };
+    };
+    const initialCanonicalCommentSyncGuard = applyCanonicalCommentSyncGuard();
+    if (initialCanonicalCommentSyncGuard.stopApply) break;
+    if (initialCanonicalCommentSyncGuard.skipCurrentItem) continue;
+    const canonicalBoundStaleReviewReason = (
+      sourceMarkdown: string,
+      comment: Record<string, unknown> | undefined,
+    ): string | null => {
+      const staleReason = staleReviewCommentSyncReason(
+        sourceMarkdown,
         comment,
         number,
         item.kind === "pull_request" ? currentItemContext() : undefined,
       );
-    let existingReviewComment: Record<string, unknown> | undefined;
+      const pendingCanonicalNumber = staleCanonicalPullRequestNumber(markdown);
+      if (staleCanonicalClosedUnmergedValidated && pendingCanonicalNumber !== null) {
+        if (
+          reviewCommentHasCloseVerdictForCanonical(
+            comment,
+            number,
+            "duplicate_or_superseded",
+            pendingCanonicalNumber,
+          )
+        ) {
+          return null;
+        }
+        return (
+          staleReason ??
+          `live durable review comment is not bound to stored canonical PR #${pendingCanonicalNumber}; fresh review required before stale comment correction`
+        );
+      }
+      return staleReason;
+    };
+    const refreshedReviewStaleReason = (comment: Record<string, unknown> | undefined) =>
+      canonicalBoundStaleReviewReason(markdownBeforeApplyDecisionMutations, comment);
+    const recordRefreshedReviewStaleReason = (reason: string): boolean =>
+      staleCanonicalCommentSyncPending
+        ? markApplySkipped(
+            "retry_stale_canonical_comment_sync",
+            `${reason}; stale canonical comment correction remains pending`,
+          )
+        : recordReviewGuardSkip("skipped_stale_review_comment_sync", reason);
     const rememberSelfMutationUpdatedAt = (): void => {
       if (!dryRun) allowedSelfMutationUpdatedAts.add(fetchItem(number).item.updatedAt);
     };
@@ -20320,13 +20710,19 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
       if (processedCount >= processedLimit) break;
       continue;
     }
-    if (state === "open" && !verifiedLocalCheckout) {
+    if (state === "open" && !verifiedLocalCheckout && !staleCanonicalCommentSyncPending) {
       if (isCloseProposal) {
         if (markApplySkipped("kept_open", "review lacks verified local checkout access")) break;
       }
       continue;
     }
-    if (state === "open" && shouldProbeClosedState && !isCloseProposal && !syncCommentsOnly) {
+    if (
+      state === "open" &&
+      shouldProbeClosedState &&
+      !isCloseProposal &&
+      !syncCommentsOnly &&
+      !staleCanonicalCommentSyncPending
+    ) {
       continue;
     }
     const earlyLeaseState = refreshReviewStartLeaseState();
@@ -20341,7 +20737,7 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
     }
     const earlyStaleReason = refreshedReviewStaleReason(existingReviewComment);
     if (state === "open" && earlyStaleReason) {
-      if (recordReviewGuardSkip("skipped_stale_review_comment_sync", earlyStaleReason)) break;
+      if (recordRefreshedReviewStaleReason(earlyStaleReason)) break;
       continue;
     }
     if (isUpgradedCloseCandidate) {
@@ -20398,6 +20794,9 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
         cachedPrCloseCoverageProofGateResult = undefined;
       }
     }
+    const promotedCanonicalCommentSyncGuard = applyCanonicalCommentSyncGuard();
+    if (promotedCanonicalCommentSyncGuard.stopApply) break;
+    if (promotedCanonicalCommentSyncGuard.skipCurrentItem) continue;
     if (
       state === "open" &&
       isCloseProposal &&
@@ -20467,13 +20866,22 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
       .filter((updatedAt): updatedAt is string => timestampMs(updatedAt) !== null)
       .sort((left, right) => (timestampMs(left) ?? 0) - (timestampMs(right) ?? 0))
       .at(-1);
-    const staleReviewCommentReason = staleReviewCommentSyncReason(
+    const staleReviewCommentReason = canonicalBoundStaleReviewReason(
       markdown,
       existingReviewComment,
-      number,
-      item.kind === "pull_request" ? currentItemContext() : undefined,
     );
     if (state === "open" && staleReviewCommentReason) {
+      if (staleCanonicalCommentSyncPending) {
+        if (
+          markApplySkipped(
+            "retry_stale_canonical_comment_sync",
+            `${staleReviewCommentReason}; stale canonical comment correction remains pending`,
+          )
+        ) {
+          break;
+        }
+        continue;
+      }
       markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
       if (!dryRun) writeReportMarkdown(path, markdown);
       results.push({
@@ -20546,7 +20954,7 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
       }
       const lateStaleReason = refreshedReviewStaleReason(lateLeaseState.comment);
       if (lateStaleReason) {
-        if (recordReviewGuardSkip("skipped_stale_review_comment_sync", lateStaleReason)) break;
+        if (recordRefreshedReviewStaleReason(lateStaleReason)) break;
         continue;
       }
       if (lateLeaseState.preserve && lateLeaseState.lease) {
@@ -20665,7 +21073,6 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
       reviewComment = renderCurrentReviewComment();
     }
     let markedReviewComment = markedReviewCommentForApply(reviewComment);
-    let proofBlockedForCommentSync: PrCloseCoverageProofGateBlock | null = null;
     const protectedApplyReason = applyProtectedLabelReason(item.labels, closeReason);
     if (applyBlockingProtectedLabels(item.labels, closeReason).length > 0) {
       if (isCloseProposal) {
@@ -21059,7 +21466,7 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
       needsReviewCommentBodySync,
       needsReviewCommentHashSync,
       needsReviewCommentReferenceSync,
-      forceReviewCommentBodySync: clawSweeperLabelsChanged,
+      forceReviewCommentBodySync: clawSweeperLabelsChanged || Boolean(closeBlockedForCommentSync),
     });
     if (
       isCloseProposal &&
@@ -21102,7 +21509,7 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
               break;
             continue;
           }
-          proofBlockedForCommentSync = prCloseCoverageBlock;
+          closeBlockedForCommentSync = prCloseCoverageBlock;
           markdown = applyPrCloseCoverageProofBlockedReport(markdown, prCloseCoverageBlock);
           markdown = replaceFrontMatterValue(
             markdown,
@@ -21180,6 +21587,41 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
     const labelSyncProgressMessage = issueAdvisoryLabelsChanged
       ? `synced advisory issue labels #${number}`
       : `synced ClawSweeper labels #${number}`;
+    if (needsReviewCommentSync && needsReviewCommentBodySync && shouldCheckCanonicalCommentSync()) {
+      const wasStaleCanonicalCommentSyncPending = staleCanonicalCommentSyncPending;
+      const mutationBoundaryGuard = applyCanonicalCommentSyncGuard(true);
+      if (mutationBoundaryGuard.stopApply) break;
+      if (mutationBoundaryGuard.skipCurrentItem) continue;
+      if (changedSinceReviewDuplicateCommentRepair && !staleCanonicalCommentSyncPending) {
+        needsReviewCommentSync = false;
+      }
+      if (!wasStaleCanonicalCommentSyncPending && staleCanonicalCommentSyncPending) {
+        reviewComment = renderCurrentReviewComment();
+        markedReviewComment = markedReviewCommentForApply(reviewComment);
+        reviewCommentHash = sha256(markedReviewComment);
+        existingReviewCommentMatches = commentBodyMatches(
+          existingReviewComment,
+          markedReviewComment,
+        );
+        needsReviewCommentBodySync = !existingReviewComment || !existingReviewCommentMatches;
+        needsReviewCommentHashSync =
+          frontMatterValue(markdown, "review_comment_sha256") !== reviewCommentHash;
+        needsReviewCommentReferenceSync =
+          frontMatterValue(markdown, "review_comment_id") === "unknown" ||
+          frontMatterValue(markdown, "review_comment_url") === "unknown";
+        needsReviewCommentSync = shouldSyncReviewComment({
+          syncCommentsOnly,
+          isCloseProposal,
+          commentSyncMinAgeDays,
+          reviewCommentSyncedAt: frontMatterValue(markdown, "review_comment_synced_at"),
+          hasExistingReviewComment: Boolean(existingReviewComment),
+          needsReviewCommentBodySync,
+          needsReviewCommentHashSync,
+          needsReviewCommentReferenceSync,
+          forceReviewCommentBodySync: true,
+        });
+      }
+    }
     if (needsReviewCommentSync) {
       const staleSyncReason = needsReviewCommentBodySync ? staleReviewCommentReason : null;
       if (staleSyncReason) {
@@ -21197,7 +21639,13 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
       }
       const lockedReason = needsReviewCommentBodySync ? lockedConversationApplyReason(item) : null;
       if (lockedReason) {
-        if (markApplySkipped("skipped_locked_conversation", lockedReason)) break;
+        const actionTaken: ActionTaken = staleCanonicalCommentSyncPending
+          ? "retry_stale_canonical_comment_sync"
+          : "skipped_locked_conversation";
+        const reason = staleCanonicalCommentSyncPending
+          ? `${lockedReason}; stale canonical comment correction remains pending`
+          : lockedReason;
+        if (markApplySkipped(actionTaken, reason)) break;
         continue;
       }
       let syncedComment = existingReviewComment;
@@ -21210,6 +21658,9 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
               : "would create durable Codex review comment",
           );
         } else {
+          const preLeaseCanonicalGuard = applyCanonicalCommentSyncGuard(true);
+          if (preLeaseCanonicalGuard.stopApply) break;
+          if (preLeaseCanonicalGuard.skipCurrentItem) continue;
           const mutationLeaseBlockReason = currentApplyMutationLeaseBlockReason();
           if (mutationLeaseBlockReason) {
             if (recordReviewLeaseSkip(mutationLeaseBlockReason, false)) break;
@@ -21220,11 +21671,21 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
             if (recordReviewLeaseSkip(latestLeaseState.blockReason, false)) break;
             continue;
           }
-          const latestStaleSyncReason = staleReviewCommentSyncReason(
+          const finalCanonicalGuard = applyCanonicalCommentSyncGuard(true);
+          if (finalCanonicalGuard.stopApply) break;
+          if (finalCanonicalGuard.skipCurrentItem) continue;
+          existingReviewComment = latestLeaseState.comment;
+          if (staleCanonicalCommentSyncPending) {
+            const latestReviewCommentBody = rawCommentBody(existingReviewComment);
+            if (latestReviewCommentBody.trim()) {
+              renderOptions.previousReviewCommentBody = latestReviewCommentBody;
+            }
+            reviewComment = renderCurrentReviewComment();
+            markedReviewComment = markedReviewCommentForApply(reviewComment);
+          }
+          const latestStaleSyncReason = canonicalBoundStaleReviewReason(
             markdown,
-            latestLeaseState.comment,
-            number,
-            item.kind === "pull_request" ? currentItemContext() : undefined,
+            existingReviewComment,
           );
           if (latestStaleSyncReason) {
             markdown = replaceFrontMatterValue(
@@ -21243,8 +21704,6 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
             if (processedCount >= processedLimit) break;
             continue;
           }
-          existingReviewComment = latestLeaseState.comment;
-          markedReviewComment = markedReviewCommentBody(number, reviewComment);
           try {
             syncedComment = upsertReviewComment(number, markedReviewComment, existingReviewComment);
             const syncedCommentUpdatedAt = commentUpdatedAt(syncedComment);
@@ -21255,12 +21714,18 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
           } catch (error) {
             const commentAuthError = isGitHubRequiresAuthenticationError(error);
             if (!commentAuthError && !isLockedConversationCommentError(error)) throw error;
-            const actionTaken = commentAuthError
+            const fallbackActionTaken: ActionTaken = commentAuthError
               ? "skipped_comment_auth"
               : "skipped_locked_conversation";
-            const reason = commentAuthError
+            const fallbackReason = commentAuthError
               ? "GitHub rejected durable review comment write with Requires authentication"
               : "conversation was locked while syncing review comment";
+            const actionTaken: ActionTaken = staleCanonicalCommentSyncPending
+              ? "retry_stale_canonical_comment_sync"
+              : fallbackActionTaken;
+            const reason = staleCanonicalCommentSyncPending
+              ? `${fallbackReason}; stale canonical comment correction remains pending`
+              : fallbackReason;
             if (markApplySkipped(actionTaken, reason)) break;
             continue;
           }
@@ -21269,13 +21734,16 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
         syncReasons.push("recorded existing durable comment metadata");
       }
       markdown = updateReviewCommentMetadata(markdown, syncedComment, markedReviewComment);
+      if (staleCanonicalCommentSyncPending) {
+        markdown = completeStaleCanonicalCommentSyncReport(markdown);
+      }
       markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
       if (!dryRun) writeReportMarkdown(path, markdown);
       results.push({
         number,
-        action: proofBlockedForCommentSync?.actionTaken ?? "review_comment_synced",
-        reason: proofBlockedForCommentSync
-          ? [proofBlockedForCommentSync.reason, ...syncReasons].join("; ")
+        action: closeBlockedForCommentSync?.actionTaken ?? "review_comment_synced",
+        reason: closeBlockedForCommentSync
+          ? [closeBlockedForCommentSync.reason, ...syncReasons].join("; ")
           : syncReasons.join("; "),
         ...(emitEventApplyProof ? { durableReviewSynced: true } : {}),
       });
@@ -21283,17 +21751,20 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
       maybeLogProgress(`synced review comment #${number}`);
       if (processedCount >= processedLimit) break;
     }
-    if (proofBlockedForCommentSync) {
+    if (closeBlockedForCommentSync) {
       if (!needsReviewCommentSync) {
+        if (staleCanonicalCommentSyncPending) {
+          markdown = completeStaleCanonicalCommentSyncReport(markdown);
+        }
         markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
         if (!dryRun) writeReportMarkdown(path, markdown);
         results.push({
           number,
-          action: proofBlockedForCommentSync.actionTaken,
-          reason: proofBlockedForCommentSync.reason,
+          action: closeBlockedForCommentSync.actionTaken,
+          reason: closeBlockedForCommentSync.reason,
         });
         processedCount += 1;
-        maybeLogProgress(`skipped #${number}: ${proofBlockedForCommentSync.reason}`);
+        maybeLogProgress(`skipped #${number}: ${closeBlockedForCommentSync.reason}`);
         if (processedCount >= processedLimit) break;
       }
       continue;
