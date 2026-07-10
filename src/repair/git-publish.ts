@@ -260,7 +260,12 @@ function publishMainCommitInternal(options: GitPublishOptions): PublishResult {
   stagePaths(options.paths);
   if (!hasStagedChanges()) {
     console.log("No publish changes");
-    if (stateBaseCommit && !pushCommit({ remote, branch, pushAttempts, rebaseStrategy })) {
+    const synchronized =
+      !stateBaseCommit ||
+      (rebaseStrategy === "reconcile-records"
+        ? pushReconciliationCommit({ remote, branch, pushAttempts, maxAttempts })
+        : pushCommit({ remote, branch, pushAttempts, rebaseStrategy }));
+    if (!synchronized) {
       throw new Error(`Failed to synchronize unchanged publish with ${remote}/${branch}`);
     }
     return completeStatePublish("unchanged", options.paths, stateBaseCommit);
@@ -279,11 +284,11 @@ function publishMainCommitInternal(options: GitPublishOptions): PublishResult {
     if (!normalized.changed) {
       restoreWorktree(options.restorePaths ?? []);
       if (
-        !pushCommit({
+        !pushReconciliationCommit({
           remote,
           branch,
           pushAttempts,
-          rebaseStrategy,
+          maxAttempts,
           ...(reconciliationSourceCommit ? { reconciliationSourceCommit } : {}),
         })
       ) {
@@ -299,6 +304,7 @@ function publishMainCommitInternal(options: GitPublishOptions): PublishResult {
         remote,
         branch,
         pushAttempts,
+        maxAttempts,
         sourceCommit: reconciliationSourceCommit ?? sourceCommit,
         tupleKeys,
       });
@@ -308,6 +314,24 @@ function publishMainCommitInternal(options: GitPublishOptions): PublishResult {
   restoreWorktree(options.restorePaths ?? []);
 
   gitPublishPhase("push");
+  if (rebaseStrategy === "reconcile-records") {
+    if (
+      !pushReconciliationCommit({
+        remote,
+        branch,
+        pushAttempts,
+        maxAttempts,
+        ...(reconciliationSourceCommit ? { reconciliationSourceCommit } : {}),
+        ...(reconciliationTupleKeys ? { reconciliationTupleKeys } : {}),
+      })
+    ) {
+      throw new Error(
+        "Failed to publish reconciliation without overwriting concurrent record tuples",
+      );
+    }
+    return completeStatePublish("committed", options.paths, stateBaseCommit);
+  }
+
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
     if (
       pushCommit({
@@ -315,16 +339,9 @@ function publishMainCommitInternal(options: GitPublishOptions): PublishResult {
         branch,
         pushAttempts,
         rebaseStrategy,
-        ...(reconciliationSourceCommit ? { reconciliationSourceCommit } : {}),
-        ...(reconciliationTupleKeys ? { reconciliationTupleKeys } : {}),
       })
     ) {
       return completeStatePublish("committed", options.paths, stateBaseCommit);
-    }
-    if (rebaseStrategy === "reconcile-records") {
-      throw new Error(
-        "Failed to publish reconciliation without overwriting concurrent record tuples",
-      );
     }
     const rebuildResult = rebuildPublishCommit({
       remote,
@@ -350,13 +367,57 @@ function publishMainCommitInternal(options: GitPublishOptions): PublishResult {
       branch,
       pushAttempts,
       rebaseStrategy,
-      ...(reconciliationSourceCommit ? { reconciliationSourceCommit } : {}),
-      ...(reconciliationTupleKeys ? { reconciliationTupleKeys } : {}),
     })
   ) {
     return completeStatePublish("committed", options.paths, stateBaseCommit);
   }
   throw new Error(`Failed to publish commit after ${maxAttempts} attempts`);
+}
+
+function pushReconciliationCommit(options: {
+  remote: string;
+  branch: string;
+  pushAttempts: number;
+  maxAttempts: number;
+  reconciliationSourceCommit?: string;
+  reconciliationTupleKeys?: ReadonlySet<string>;
+}): boolean {
+  for (let attempt = 1; attempt <= options.maxAttempts; attempt += 1) {
+    if (
+      pushCommit({
+        remote: options.remote,
+        branch: options.branch,
+        pushAttempts: options.pushAttempts,
+        rebaseStrategy: "reconcile-records",
+        ...(options.reconciliationSourceCommit
+          ? { reconciliationSourceCommit: options.reconciliationSourceCommit }
+          : {}),
+        ...(options.reconciliationTupleKeys
+          ? { reconciliationTupleKeys: options.reconciliationTupleKeys }
+          : {}),
+      })
+    ) {
+      return true;
+    }
+    if (attempt === options.maxAttempts) break;
+    const delaySeconds = attempt * 3 + Math.floor(Math.random() * 11);
+    console.log(
+      `Reconciliation publish attempt ${attempt} lost continuous ${options.branch} races; retrying in ${delaySeconds}s`,
+    );
+    sleep(delaySeconds * 1000);
+  }
+  return pushCommit({
+    remote: options.remote,
+    branch: options.branch,
+    pushAttempts: options.pushAttempts,
+    rebaseStrategy: "reconcile-records",
+    ...(options.reconciliationSourceCommit
+      ? { reconciliationSourceCommit: options.reconciliationSourceCommit }
+      : {}),
+    ...(options.reconciliationTupleKeys
+      ? { reconciliationTupleKeys: options.reconciliationTupleKeys }
+      : {}),
+  });
 }
 
 function completeStatePublish(
@@ -418,6 +479,7 @@ function publishReconciliationChunks(options: {
   remote: string;
   branch: string;
   pushAttempts: number;
+  maxAttempts: number;
   sourceCommit: string;
   tupleKeys: readonly string[];
 }): PublishResult {
@@ -442,11 +504,11 @@ function publishReconciliationChunks(options: {
     }
     committed = true;
     if (
-      !pushCommit({
+      !pushReconciliationCommit({
         remote: options.remote,
         branch: options.branch,
         pushAttempts: options.pushAttempts,
-        rebaseStrategy: "reconcile-records",
+        maxAttempts: options.maxAttempts,
         reconciliationSourceCommit: options.sourceCommit,
         reconciliationTupleKeys: allowedTupleKeys,
       })
