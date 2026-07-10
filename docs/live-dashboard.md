@@ -187,3 +187,26 @@ default). `/api/exact-review-queue` exposes the bounded dispatcher state, reason
 workflow state, check time, and retry time so an intentional pause cannot look
 like occupied executor capacity. Re-enabling the workflow does not require a
 queue mutation; the next status check resumes normal admission.
+
+Executors report the GitHub job outcome from their finalizer. Failure or
+cancellation clears the lease and requeues the item. Finalizer success remains
+provisional because GitHub can still cancel the run or fail a post-action; only
+the signed terminal-run backstop removes the item after GitHub confirms the
+exact attempt succeeded. A newer revision can requeue immediately. A signed
+`POST /internal/exact-review/reconcile` backstop accepts at most 32 exact run IDs
+and intersects them with currently claimed leases. The Worker checks those IDs
+and attempts with an Actions-read GitHub App token and reconciles only runs
+whose immutable GitHub attempt status is `completed`; queued and in-progress
+runs remain leased. A per-claim generation check prevents a terminal decision
+sampled before a rerun claim from releasing that newer attempt. The request body
+is `{ "runs": [{ "run_id": "<run-id>", "run_attempt": 1 }] }`, signed over the
+exact bytes with `CLAWSWEEPER_WEBHOOK_SECRET` in
+`x-clawsweeper-exact-review-signature: sha256=<hmac>`.
+
+Keep the sweep workflow disabled and wait for `/api/exact-review-queue` to show
+both `dispatching: 0` and `leased: 0` before deploying this Worker revision.
+Deploy the Worker route from the reviewed revision before merging or enabling
+any workflow that calls the reconciliation endpoint. The dashboard deployment
+smoke test must observe HTTP 401 from an unsigned reconciliation request; HTTP
+404 means the old Worker is still serving. This order keeps legacy finalizers
+from creating provisional successes before the terminal-run backstop exists.

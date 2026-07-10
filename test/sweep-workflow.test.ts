@@ -73,6 +73,7 @@ test("exact event publish and routing require a successful fresh review artifact
 
 test("dashboard syncs Worker secrets with durable lifecycle storage", () => {
   const workflow = readText(".github/workflows/dashboard.yml");
+  const smoke = readText("scripts/dashboard-smoke.mjs");
   const config = readText("dashboard/wrangler.toml");
 
   assert.doesNotMatch(workflow, /storage\/kv\/namespaces/);
@@ -84,6 +85,9 @@ test("dashboard syncs Worker secrets with durable lifecycle storage", () => {
   assert.match(workflow, /Content-Type: application\/merge-patch\+json/);
   assert.match(workflow, /jq -e '\.success == true'/);
   assert.doesNotMatch(workflow, /wrangler@[^\s]+ secret bulk/);
+  assert.match(smoke, /\/internal\/exact-review\/reconcile/);
+  assert.match(smoke, /method: "POST"/);
+  assert.match(smoke, /reconcileResponse\.status !== 401/);
 });
 
 test("dashboard CI refreshes on cadence without completion-trigger storms", () => {
@@ -96,6 +100,37 @@ test("dashboard CI refreshes on cadence without completion-trigger storms", () =
   assert.doesNotMatch(triggers, /workflow_run:/);
   assert.match(concurrency, /group: clawsweeper-live-dashboard-ci/);
   assert.match(concurrency, /cancel-in-progress: true/);
+});
+
+test("terminal exact-review runs reconcile through a signed isolated backstop", () => {
+  const workflow = readText(".github/workflows/exact-review-reconcile.yml");
+
+  assert.match(workflow, /name: Reconcile exact-review leases/);
+  assert.match(workflow, /workflow_run:\s+workflows: \[ClawSweeper\]\s+types: \[completed\]/);
+  assert.match(workflow, /permissions: \{\}/);
+  assert.match(
+    workflow,
+    /group: exact-review-reconcile-\$\{\{ github\.event\.workflow_run\.id \}\}/,
+  );
+  assert.match(workflow, /cancel-in-progress: false/);
+  assert.match(workflow, /github\.event\.workflow_run\.event == 'repository_dispatch'/);
+  assert.match(
+    workflow,
+    /startsWith\(github\.event\.workflow_run\.display_title, 'Review event item '\)/,
+  );
+  assert.match(
+    workflow,
+    /SOURCE_RUN_ATTEMPT: \$\{\{ github\.event\.workflow_run\.run_attempt \}\}/,
+  );
+  assert.match(workflow, /SOURCE_RUN_ID: \$\{\{ github\.event\.workflow_run\.id \}\}/);
+  assert.match(workflow, /run_id: process\.env\.SOURCE_RUN_ID/);
+  assert.match(workflow, /run_attempt: runAttempt/);
+  assert.match(workflow, /CLAWSWEEPER_WEBHOOK_SECRET/);
+  assert.match(workflow, /x-clawsweeper-exact-review-signature: \$signature/);
+  assert.match(workflow, /--data-binary "\$payload"/);
+  assert.match(workflow, /\/internal\/exact-review\/reconcile/);
+  assert.doesNotMatch(workflow, /actions\/checkout/);
+  assert.doesNotMatch(workflow, /(?:GH_TOKEN|GITHUB_TOKEN|github\.token)/);
 });
 
 test("publish workflow installs Codex from the root checkout path", () => {
