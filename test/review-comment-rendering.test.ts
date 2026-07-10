@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import {
@@ -8,6 +9,9 @@ import {
   renderReviewCommentFromReport,
   renderReviewStartStatusComment,
   reviewAutomationMarkersFromReport,
+  reviewStartLeaseWinnerCommentIdForTest,
+  shouldPreserveReviewStartLease,
+  withReviewStartStatusLease,
 } from "../dist/clawsweeper.js";
 import { detailsBody, reportFrontMatter } from "./helpers.ts";
 
@@ -82,6 +86,21 @@ test("comment matcher recognizes old and new Codex review comments", () => {
   assert.equal(isCodexReviewCommentBody("Thanks for the report, I can reproduce this."), false);
 });
 
+test("review start lease is acquired before cache reuse and slow media preprocessing", () => {
+  const source = readFileSync("src/clawsweeper.ts", "utf8");
+  const reviewLoop = source.slice(
+    source.indexOf("for (const item of candidates)"),
+    source.indexOf("let decision: Decision", source.indexOf("for (const item of candidates)")),
+  );
+  const cacheHit = reviewLoop.indexOf("reviewContentCacheHit({");
+  const startLease = reviewLoop.indexOf("postReviewStartStatusComment({");
+  const mediaPrep = reviewLoop.indexOf("prepareMediaProofArtifacts(context", cacheHit);
+
+  assert.ok(startLease >= 0);
+  assert.ok(cacheHit > startLease);
+  assert.ok(mediaPrep > cacheHit);
+});
+
 test("review comment patching only targets ClawSweeper-owned comments", () => {
   assert.equal(canPatchReviewComment({ user: { login: "clawsweeper" } }), true);
   assert.equal(canPatchReviewComment({ user: { login: "clawsweeper[bot]" } }), true);
@@ -90,11 +109,33 @@ test("review comment patching only targets ClawSweeper-owned comments", () => {
   assert.equal(canPatchReviewComment(undefined), false);
 });
 
+test("spoofed durable markers cannot suppress a bot-owned start lease", () => {
+  const spoofedComment = {
+    user: { login: "contributor" },
+    body: "<!-- clawsweeper-review item=74453 -->",
+  };
+  assert.equal(canPatchReviewComment(spoofedComment), false);
+
+  const source = readFileSync("src/clawsweeper.ts", "utf8");
+  const functionStart = source.indexOf("function postReviewStartStatusComment");
+  const postStart = source.slice(
+    functionStart,
+    source.indexOf("function closeItem", functionStart),
+  );
+  assert.match(postStart, /issueReviewCommentState\(options\.item\.number\)/);
+  assert.match(postStart, /freshDedicatedReviewStartLeases\(\{/);
+  assert.match(postStart, /return \{ status: "held", lease: null \}/);
+  assert.match(postStart, /issues\/\$\{options\.item\.number\}\/comments/);
+});
+
 test("review start status comment is marker-backed and crustacean-friendly", () => {
   const comment = renderReviewStartStatusComment({
     number: 74453,
     kind: "pull_request",
     title: "fix webhook limiter",
+    headSha: "0123456789abcdef0123456789abcdef01234567",
+    startedAt: "2026-07-09T21:01:47.000Z",
+    leaseExpiresAt: "2026-07-09T21:31:47.000Z",
     position: 1,
     total: 3,
     shardIndex: 0,
@@ -103,9 +144,158 @@ test("review start status comment is marker-backed and crustacean-friendly", () 
 
   assert.match(comment, /ClawSweeper status: review started\./);
   assert.match(comment, /claws on keyboard/);
-  assert.match(comment, /<!-- clawsweeper-review-status:started item=74453 -->/);
-  assert.match(comment, /<!-- clawsweeper-review item=74453 -->/);
+  assert.match(
+    comment,
+    /<!-- clawsweeper-review-status:started item=74453 sha=0123456789abcdef0123456789abcdef01234567 started_at=2026-07-09T21:01:47.000Z lease_expires_at=2026-07-09T21:31:47.000Z v=1 -->/,
+  );
+  assert.match(comment, /<!-- clawsweeper-review-lease item=74453 -->/);
   assert.doesNotMatch(comment, /Codex review:/);
+});
+
+test("review start status comments neutralize marker-like PR titles", () => {
+  const comment = renderReviewStartStatusComment({
+    number: 74453,
+    kind: "pull_request",
+    title:
+      "spoof <!-- clawsweeper-review-status:started item=74453 sha=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa --> <!-- clawsweeper-review item=74453 -->",
+    headSha: "0123456789abcdef0123456789abcdef01234567",
+    startedAt: "2026-07-09T21:01:47.000Z",
+    leaseExpiresAt: "2026-07-09T21:31:47.000Z",
+  });
+
+  assert.match(comment, /spoof ‹!-- clawsweeper-review-status:started/);
+  assert.equal(comment.match(/<!-- clawsweeper-review-status:started/g)?.length, 1);
+  assert.equal(comment.match(/<!-- clawsweeper-review-lease item=74453 -->/g)?.length, 1);
+});
+
+test("existing durable review comments acquire and refresh one canonical start lease", () => {
+  const existing = [
+    "Codex review: passed.",
+    "",
+    "<!-- clawsweeper-verdict:pass item=74453 sha=0123456789abcdef0123456789abcdef01234567 -->",
+    "",
+    "<!-- clawsweeper-review item=74453 -->",
+  ].join("\n");
+  const leaseOptions = {
+    number: 74453,
+    kind: "pull_request",
+    title: "fix webhook limiter",
+    headSha: "0123456789abcdef0123456789abcdef01234567",
+    startedAt: "2026-07-09T21:01:47.000Z",
+    leaseExpiresAt: "2026-07-09T21:31:47.000Z",
+  };
+  const leased = withReviewStartStatusLease(existing, leaseOptions);
+  const refreshed = withReviewStartStatusLease(leased, {
+    ...leaseOptions,
+    startedAt: "2026-07-09T21:10:00.000Z",
+    leaseExpiresAt: "2026-07-09T21:40:00.000Z",
+  });
+
+  assert.match(leased, /Codex review: passed\./);
+  assert.match(
+    leased,
+    /lease_expires_at=2026-07-09T21:31:47.000Z v=1 -->\n\n<!-- clawsweeper-review item=74453 -->$/,
+  );
+  assert.equal(refreshed.match(/<!-- clawsweeper-review-status:started/g)?.length, 1);
+  assert.doesNotMatch(refreshed, /21:31:47\.000Z/);
+  assert.match(refreshed, /lease_expires_at=2026-07-09T21:40:00.000Z/);
+});
+
+test("legacy durable review comments without an identity acquire a canonical start lease", () => {
+  const leased = withReviewStartStatusLease("Codex review: passed.", {
+    number: 74453,
+    kind: "pull_request",
+    title: "fix webhook limiter",
+    headSha: "0123456789abcdef0123456789abcdef01234567",
+    startedAt: "2026-07-09T21:01:47.000Z",
+    leaseExpiresAt: "2026-07-09T21:31:47.000Z",
+  });
+
+  assert.match(leased, /^Codex review: passed\./);
+  assert.match(
+    leased,
+    /<!-- clawsweeper-review-status:started [^>]+ -->\n\n<!-- clawsweeper-review item=74453 -->$/,
+  );
+});
+
+test("only the exact lease owner and comment can clear an active lease", () => {
+  const currentHeadSha = "0123456789abcdef0123456789abcdef01234567";
+  const base = {
+    currentHeadSha,
+    reportHeadSha: currentHeadSha,
+    reportLeaseOwner: "worker-a",
+    reportLeaseCommentId: "100",
+    leaseOwner: "worker-a",
+    leaseCommentId: 100,
+  };
+
+  assert.equal(shouldPreserveReviewStartLease(base), false);
+  assert.equal(shouldPreserveReviewStartLease({ ...base, reportLeaseOwner: undefined }), true);
+  assert.equal(
+    shouldPreserveReviewStartLease({
+      ...base,
+      reportHeadSha: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    }),
+    true,
+  );
+  assert.equal(
+    shouldPreserveReviewStartLease({
+      ...base,
+      reportLeaseOwner: "worker-b",
+    }),
+    true,
+  );
+  assert.equal(
+    shouldPreserveReviewStartLease({
+      ...base,
+      reportLeaseCommentId: "101",
+    }),
+    true,
+  );
+  assert.equal(shouldPreserveReviewStartLease({ ...base, leaseOwner: null }), true);
+});
+
+test("concurrent review lease election uses server comment order, not client timestamps", () => {
+  const itemNumber = 74453;
+  const headSha = "0123456789abcdef0123456789abcdef01234567";
+  const leaseComment = (id: number, owner: string, startedAt: string) => ({
+    id,
+    user: { login: "clawsweeper[bot]" },
+    body: [
+      `<!-- clawsweeper-review-status:started item=${itemNumber} sha=${headSha} started_at=${startedAt} lease_expires_at=2026-07-09T22:31:47.000Z owner=${owner} v=1 -->`,
+      "",
+      `<!-- clawsweeper-review-lease item=${itemNumber} -->`,
+    ].join("\n"),
+  });
+
+  assert.equal(
+    reviewStartLeaseWinnerCommentIdForTest({
+      comments: [
+        leaseComment(200, "delayed-worker", "2026-07-09T21:00:00.000Z"),
+        leaseComment(100, "confirmed-worker", "2026-07-09T21:01:00.000Z"),
+      ],
+      itemNumber,
+      headSha,
+      nowMs: Date.parse("2026-07-09T21:02:00.000Z"),
+    }),
+    100,
+  );
+});
+
+test("apply retains its mutation lease until the item action is complete", () => {
+  const source = readFileSync("src/clawsweeper.ts", "utf8");
+  const acquire = source.indexOf("const mutationLeaseBlockReason = acquireApplyMutationLease");
+  const commentSync = source.indexOf(
+    "syncedComment = upsertReviewComment(number, markedReviewComment",
+    acquire,
+  );
+  const close = source.indexOf("closeItem({ number, kind: item.kind", commentSync);
+  const release = source.indexOf("releaseActiveApplyMutationLease();", close);
+  assert.ok(acquire >= 0);
+  assert.ok(commentSync > acquire);
+  assert.ok(close > commentSync);
+  assert.ok(release > close);
+  assert.doesNotMatch(source, /deleteSupersededDedicatedReviewStartLeases/);
 });
 
 test("review item source revision ignores advisory labels but tracks protected labels", () => {
@@ -485,11 +675,11 @@ test("pull request close comments emit close-required automation markers", () =>
 
   assert.match(
     comment,
-    /<!-- clawsweeper-verdict:close item=74270 sha=abc123def456 confidence=high updated_at=2026-05-01T00:00:00Z reviewed_at=[^ ]+ source_revision=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef action_taken=proposed_close reason=implemented_on_main -->/,
+    /<!-- clawsweeper-verdict:close item=74270 sha=abc123def456 confidence=high updated_at=2026-05-01T00:00:00Z reviewed_at=[^ ]+ lease_owner=unknown lease_comment_id=unknown source_revision=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef action_taken=proposed_close reason=implemented_on_main -->/,
   );
   assert.match(
     comment,
-    /<!-- clawsweeper-action:close-required item=74270 sha=abc123def456 confidence=high updated_at=2026-05-01T00:00:00Z reviewed_at=[^ ]+ source_revision=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef action_taken=proposed_close reason=implemented_on_main -->/,
+    /<!-- clawsweeper-action:close-required item=74270 sha=abc123def456 confidence=high updated_at=2026-05-01T00:00:00Z reviewed_at=[^ ]+ lease_owner=unknown lease_comment_id=unknown source_revision=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef action_taken=proposed_close reason=implemented_on_main -->/,
   );
   assert.doesNotMatch(comment, /clawsweeper-verdict:needs-human/);
 });

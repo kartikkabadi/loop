@@ -44,6 +44,33 @@ test("review workflow gives Codex a read-only inspection token", () => {
   assert.doesNotMatch(reviewJob, /uses: \.\/\.github\/actions\/setup-codex/);
 });
 
+test("exact event publish and routing require a successful fresh review artifact", () => {
+  const workflow = readText(".github/workflows/sweep.yml");
+  const publisher = readText("src/repair/publish-event-result.ts");
+  const eventReviewJobStart = workflow.indexOf("\n  event-review-apply:");
+  const planJobStart = workflow.indexOf("\n  plan:", eventReviewJobStart);
+  const eventReviewJob = workflow.slice(eventReviewJobStart, planJobStart);
+  const publishStart = eventReviewJob.indexOf("- name: Publish event result and apply safe close");
+  const implementationStart = eventReviewJob.indexOf(
+    "- name: Dispatch viable issue implementation",
+    publishStart,
+  );
+  const routeStart = eventReviewJob.indexOf("- name: Route synced ClawSweeper verdict");
+  const completeStart = eventReviewJob.indexOf("- name: Mark re-review complete", routeStart);
+  const publishStep = eventReviewJob.slice(publishStart, implementationStart);
+  const routeStep = eventReviewJob.slice(routeStart, completeStart);
+
+  assert.match(publishStep, /if: \$\{\{ steps\.review-exact-event-item\.outcome == 'success' \}\}/);
+  assert.match(publishStep, /test -f "artifacts\/event\/\$ITEM_NUMBER\.md"/);
+  assert.match(publisher, /"--event-apply-proof"/);
+  assert.match(publisher, /exactEventApplyProof\(/);
+  assert.doesNotMatch(publisher, /entry\.action === "review_comment_synced"/);
+  assert.match(
+    routeStep,
+    /if: \$\{\{ steps\.review-exact-event-item\.outcome == 'success' && steps\.publish-event-result\.outcome == 'success' \}\}/,
+  );
+});
+
 test("dashboard syncs Worker secrets with durable lifecycle storage", () => {
   const workflow = readText(".github/workflows/dashboard.yml");
   const config = readText("dashboard/wrangler.toml");
@@ -1117,7 +1144,7 @@ test("scheduled background reviews serialize planners and refill released capaci
   assert.match(planHeader, /cancel-in-progress: false/);
 });
 
-test("scheduled normal review keeps workers warm with multi-item shards", () => {
+test("scheduled normal review uses one item per shard for lease coverage", () => {
   const workflow = readText(".github/workflows/sweep.yml");
   const modeBlock = workflow.slice(
     workflow.indexOf("- id: mode"),
@@ -1126,7 +1153,7 @@ test("scheduled normal review keeps workers warm with multi-item shards", () => 
 
   assert.match(
     modeBlock,
-    /if \[ "\$\{\{ github\.event_name \}\}" = "schedule" \]; then\s+batch_size="3"/,
+    /if \[ "\$\{\{ github\.event_name \}\}" = "schedule" \]; then\s+batch_size="1"/,
   );
 });
 
