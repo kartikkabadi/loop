@@ -393,6 +393,30 @@ test("apply workflow target token can inspect source workflow runs", () => {
   assert.match(applyJob.slice(tokenStart, stateTokenStart), /permission-actions: read/);
 });
 
+test("targeted apply dispatches keep apply names ahead of exact-review names", () => {
+  const workflow = readText(".github/workflows/sweep.yml");
+  const runName = workflow.slice(workflow.indexOf("run-name:"), workflow.indexOf("\non:"));
+  const firstExactDispatchName = runName.indexOf(
+    "(github.event_name == 'workflow_dispatch' && startsWith(github.event.inputs.item_numbers, 'router-'))",
+  );
+
+  assert.ok(firstExactDispatchName > -1);
+  for (const applyName of [
+    "format('Sync Codex review comments for {0}'",
+    "format('Apply custom ClawSweeper closures for {0}'",
+    "format('Apply default ClawSweeper closures for {0}'",
+  ]) {
+    assert.ok(
+      runName.indexOf(applyName) < firstExactDispatchName,
+      `${applyName} must win when apply_existing also carries item_number or item_numbers`,
+    );
+  }
+  assert.match(
+    workflow,
+    /item_numbers="\$\{\{ github\.event_name == 'repository_dispatch' && github\.event\.client_payload\.item_number \|\| github\.event\.inputs\.apply_item_numbers \|\| '' \}\}"/,
+  );
+});
+
 test("apply workflow bounds checkpoints and requeues with a fresh token", () => {
   const workflow = readText(".github/workflows/sweep.yml");
   const applyHelper = readText("scripts/apply-workflow-helpers.sh");
@@ -554,6 +578,7 @@ test("apply workflow bounds checkpoints and requeues with a fresh token", () => 
   assert.match(continueStep, /existing default cursor run will continue the lane/);
   assert.match(continueStep, /already covered by \$/);
   assert.match(continueStep, /-f apply_item_numbers="\$APPLY_ITEM_NUMBERS"/);
+  assert.doesNotMatch(continueStep, /-f item_numbers=/);
   assert.doesNotMatch(continueStep, /APPLY_CLOSED_TOTAL:-0.*APPLY_LIMIT:-0/);
 });
 
@@ -975,8 +1000,17 @@ test("comment router prunes bare ack comments after updating shared automerge st
   assert.match(postComment, /pruned_ack_comment_id: String\(precreatedId\)/);
 });
 
-test("manual exact-item review dispatches avoid broad review concurrency", () => {
+test("manual exact-item review dispatches reserve their live shard capacity", () => {
   const workflow = readText(".github/workflows/sweep.yml");
+  const runName = workflow.slice(workflow.indexOf("run-name:"), workflow.indexOf("\non:"));
+  const exactCapacityBlock = workflow.slice(
+    workflow.indexOf("active_sweep_exact_workers()"),
+    workflow.indexOf("active_sweep_background_workers()"),
+  );
+  const modeBlock = workflow.slice(
+    workflow.indexOf("- id: mode"),
+    workflow.indexOf("- id: select"),
+  );
 
   assert.match(
     workflow,
@@ -986,6 +1020,36 @@ test("manual exact-item review dispatches avoid broad review concurrency", () =>
     workflow,
     /github\.event_name == 'workflow_dispatch' && github\.event\.inputs\.hot_intake == 'true' && \(github\.event\.inputs\.item_number != '' \|\| github\.event\.inputs\.item_numbers != ''\)\) && format\('clawsweeper-intake-exact-\{0\}'/,
   );
+  assert.match(
+    runName,
+    /format\('Review event items \{0\}#\{1\},\{2\} \[shards=\{3\}\]', github\.event\.inputs\.target_repo \|\| 'openclaw\/openclaw', github\.event\.inputs\.item_number, github\.event\.inputs\.item_numbers, \(github\.event\.inputs\.hot_intake == 'true' && '1' \|\| github\.event\.inputs\.shard_count \|\| '89'\)\)/,
+  );
+  assert.match(
+    runName,
+    /github\.event_name == 'workflow_dispatch' &&\s+github\.event\.inputs\.item_number != '' &&\s+github\.event\.inputs\.item_numbers == ''\) &&\s+format\('Review event item \{0\}#\{1\}', github\.event\.inputs\.target_repo \|\| 'openclaw\/openclaw', github\.event\.inputs\.item_number\)/,
+  );
+  assert.match(
+    runName,
+    /format\('Review event items \{0\}#\{1\} \[shards=\{2\}\]', github\.event\.inputs\.target_repo \|\| 'openclaw\/openclaw', github\.event\.inputs\.item_numbers, \(github\.event\.inputs\.hot_intake == 'true' && '1' \|\| github\.event\.inputs\.shard_count \|\| '89'\)\)/,
+  );
+  assert.ok(
+    runName.indexOf("format('Review event item {0}#{1}'") <
+      runName.lastIndexOf("'Review ClawSweeper items'"),
+  );
+  assert.match(exactCapacityBlock, /\.displayTitle \| startswith\("Review event item "\)/);
+  assert.match(exactCapacityBlock, /\.displayTitle \| startswith\("Review event items "\)/);
+  const singularFastPath = exactCapacityBlock.slice(
+    exactCapacityBlock.indexOf('if [[ "$title" == Review\\ event\\ item\\ * ]]'),
+    exactCapacityBlock.indexOf('if [ "$status" = "in_progress" ]'),
+  );
+  assert.match(singularFastPath, /active_shards=1/);
+  assert.match(singularFastPath, /continue/);
+  assert.doesNotMatch(singularFastPath, /gh run view/);
+  assert.match(exactCapacityBlock, /gh run view "\$id".*--json jobs/);
+  assert.match(exactCapacityBlock, /limit review_shards\.hard_cap/);
+  assert.match(exactCapacityBlock, /reserved_shards="\$requested_shards"/);
+  assert.match(exactCapacityBlock, /reserved_shards="\$item_count"/);
+  assert.match(modeBlock, /active_run_count .* \+ \$\(active_sweep_exact_workers\)/);
 });
 
 test("sweep workflow publishes target-scoped state paths", () => {
@@ -1183,9 +1247,14 @@ test("background review capacity reserves expanding matrices and caps broad manu
   assert.match(commitBlock, /STALE_QUEUED_CUTOFF/);
   assert.match(commitBlock, /updatedAt:\.updated_at/);
   assert.match(commitBlock, /workflowPath == "\.github\/workflows\/sweep\.yml"/);
+  assert.match(commitBlock, /\.displayTitle \| startswith\("Review event items "\)/);
   assert.match(commitBlock, /WORKFLOW_PATH="\$1"/);
   assert.doesNotMatch(commitBlock, /workflowName == "ClawSweeper"/);
   assert.doesNotMatch(commitBlock, /WORKFLOW_NAME="\$1"/);
+  assert.match(commitBlock, /total_shards/);
+  assert.match(commitBlock, /limit review_shards\.hard_cap/);
+  assert.match(commitBlock, /reserved_shards="\$requested_shards"/);
+  assert.match(commitBlock, /reserved_shards="\$item_count"/);
 });
 
 test("review backstops identify sweep runs by stable workflow path", () => {
@@ -1199,7 +1268,7 @@ test("review backstops identify sweep runs by stable workflow path", () => {
   assert.doesNotMatch(block, /run\.workflowName/);
 });
 
-test("scheduled background reviews serialize planners and refill released capacity", () => {
+test("target review planners serialize exact and broad workflow dispatches", () => {
   const workflow = readText(".github/workflows/sweep.yml");
   const concurrencyBlock = workflow.slice(
     workflow.indexOf("concurrency:"),
@@ -1213,7 +1282,14 @@ test("scheduled background reviews serialize planners and refill released capaci
   assert.match(concurrencyBlock, /format\('clawsweeper-intake-v2-\{0\}', github\.run_id\)/);
   assert.match(concurrencyBlock, /format\('clawsweeper-review-\{0\}', github\.run_id\)/);
   assert.match(planHeader, /group: \$\{\{ format\('clawsweeper-planner-\{0\}'/);
+  assert.match(
+    planHeader,
+    /github\.event_name == 'schedule' \|\| github\.event_name == 'workflow_dispatch'/,
+  );
+  assert.doesNotMatch(planHeader, /github\.event\.inputs\.item_number == ''/);
+  assert.doesNotMatch(planHeader, /github\.event\.inputs\.item_numbers == ''/);
   assert.match(planHeader, /\|\| github\.run_id/);
+  assert.match(planHeader, /queue: max/);
   assert.match(planHeader, /cancel-in-progress: false/);
 });
 
