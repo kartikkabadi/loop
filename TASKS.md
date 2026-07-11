@@ -1,299 +1,298 @@
 # Loop / ClawSweeper → Devin Port — Implementation Tasks
 
-Derived from `DEVIN_PORT_MAP.md` on canonical repo `<checkout>` (`kartikkabadi/loop`).
+Derived from `DEVIN_PORT_MAP.md` on `<checkout>` (`kartikkabadi/loop`).
 
-**Status:** Planning document only. **Do not begin implementation** until explicitly authorized. This file revises the temporary `/private/tmp` `TASKS.md`, which is **not** approved as-written.
+**Status:** Planning document only. **Not an approved implementation start.**
+**PR:** https://github.com/kartikkabadi/loop/pull/1 — documentation correction; **do not merge until architecture review passes.**
+
+This revision supersedes earlier drafts that:
+
+- treated a process-shaped `run()` as the permanent runtime;
+- extracted the interface before ACP-on-Box proof;
+- planned production Devin on GitHub Actions / `setup-devin`;
+- assumed `crabbox run` was a duplex ACP transport;
+- treated `devin -p` or `--agent-type review` as settled production mechanisms.
 
 ---
 
 ## Fixed architectural requirements
 
-- **Loop** is the product repository (`kartikkabadi/loop`).
-- **ClawSweeper** is the retained autonomous foundation (intake, jobs, validators, GitHub mutations, ledgers, automerge).
-- **Crabbox** is the remote execution layer; **ASCII Box** is the execution provider.
+- **Loop** is the product (`kartikkabadi/loop`).
+- **ClawSweeper** is the retained autonomous foundation.
+- **Crabbox** is the remote execution layer; **ASCII Box** is the provider.
 - **Devin** is the only intelligent runtime in the final deployed system.
 - **No OpenAI API and no Codex runtime** in the final deployed system.
-- Full autonomy after human planning is the goal.
-- **Devin ACP** is the intended durable programmatic runtime (`devin acp` over stdio).
-- Non-interactive Devin CLI (`devin -p` / `--prompt-file`) may be retained **only** as:
-  - diagnostic fallback;
-  - bootstrap smoke test;
-  - or an explicitly temporary spike.
-- Do **not** make `devin -p` the permanent runtime architecture.
-- Do **not** invent a greenfield Loop control plane / MCP product / Cloudflare replacement for ClawSweeper orchestration.
-- Preserve ClawSweeper deterministic orchestration and validators.
-- Preserve #494 pinned-base + post-sync independent review gates (`execution-finalization.ts`, `execute-fix-artifact.ts`).
+- **Devin ACP** (`devin acp` local stdio JSON-RPC) is the durable programmatic runtime.
+- ACP client and `devin acp` are **colocated inside Box** by default.
+- GitHub Actions coordinate Crabbox and deterministic CI/mutations; they **do not host production Devin**.
+- Devin credentials live **on Box**, not in Actions for production execution.
+- `devin -p` is diagnostic/smoke/temporary spike only.
+- Independent review = **fresh session + isolated exact-head checkout** (preferred: separate verifier Box).
+- Do not invent a greenfield Loop control plane.
+- Preserve deterministic validators and #494 pinned-base post-sync review.
+- Permanent TypeScript API is **frozen only after Phase 0**.
 
 ---
 
-## Global invariants (all future implementation PRs)
+## Global invariants
 
-- Models never receive GitHub write credentials.
-- Host validators remain authoritative (`review-results`, `execute-fix-validation`, `apply-result`, `post-flight`, decision parser).
-- Do not delete Codex code until `DEVIN_PORT_MAP.md` §14 criteria are met.
+- Models never receive GitHub write credentials, App private keys, Box API keys, or Cloudflare admin tokens.
+- Host validators remain authoritative.
+- Optional ACP operations are capability-gated from `initialize`.
 - Never push to `openclaw/clawsweeper`.
+- Do not delete Codex until `DEVIN_PORT_MAP.md` §12 criteria pass.
 
 ---
 
 ## Phase overview (required order)
 
-| Phase | Goal | Permanent runtime? |
-|---|---|---|
-| **1** | Runtime-boundary extraction | Codex still production |
-| **2** | Host-owned structured-result validation | Codex still production |
-| **3** | Empirical Devin ACP proof on ASCII Box | Spike only |
-| **4** | Production `DevinAcpRuntime` | ACP behind flag → then default |
-| **5** | Crabbox / ASCII execution wiring | Remote host for ACP workers |
-| **6** | Builder / reviewer / repair role cutover | ACP |
-| **7** | Workflow + credential cutover | ACP |
-| **8** | Remove Codex / OpenAI after soak | Devin-only |
-
-`devin -p` may appear inside Phase 3 smoke or as an emergency fallback helper — never as Phases 4–8 architecture.
+| Phase | Goal |
+|---|---|
+| **0** | Empirical ACP + Box + Crabbox topology proof |
+| **1** | Host-owned result-contract harness |
+| **2** | Session runtime + Crabbox host seams (informed by Phase 0); Codex adapter transitional |
+| **3** | Box-hosted Devin ACP worker |
+| **4** | Crabbox execution integration |
+| **5** | Role cutover (plan → build → review → repairs) |
+| **6** | Workflow + credential cutover (no GHA-hosted Devin) |
+| **7** | Autonomous convergence + soak |
+| **8** | Remove Codex / OpenAI |
 
 ---
 
-## Phase 1 — Runtime-boundary extraction
+## Phase 0 — Empirical ACP + Box + Crabbox topology proof
 
 ### Goal
-Introduce `AgentRuntime` with `CodexAgentRuntime` wrapping today’s `runCodexProcess` — **zero** observable behavior change.
+Prove the production topology on a real ASCII Box **before** freezing `AgentSessionRuntime`.
+
+### Topology under test
+
+```text
+coordinator → Crabbox → ASCII Box → (ACP client + devin acp) → artifacts → validators
+```
 
 ### In-scope
-- `src/agent-runtime.ts` (interface)
-- `src/codex-agent-runtime.ts` (adapter)
-- Call sites: `clawsweeper.ts`, `commit-sweeper.ts`, `pr-close-coverage-proof.ts`, `repair/run-worker.ts`, `repair/execute-fix-artifact.ts`
-- Tests: existing Codex process tests + `test/agent-runtime.test.ts`
+- Spike notes (e.g. `docs/repair/devin-acp-box-spike.md`) with redacted transcripts
+- Minimal ACP client harness executed **inside** Box
+- Pass/fail matrix covering items 1–20 in `DEVIN_PORT_MAP.md` §11 Phase 0
+- Exact capture of Devin `initialize` capabilities
+- Env audit proving control credentials absent from Devin
+- Optional labeled `devin -p` install/auth smoke only (non-architecture)
 
 ### Non-goals
-- No Devin code, workflows, prompts, schemas, Crabbox, or deletions
-
-### Must remain unchanged
-- Codex argv, `codexEnv` scrub, steerable app-server path, timeouts, pinned-base review loops
-
-### Tests / acceptance
-- Fake `CODEX_BIN` parity with `runCodexProcess`
-- `pnpm run build:all && pnpm run test:repair` green
-- No `.github/workflows` diff
-
-### Dependencies / rollback / risks
-- None / revert PR / missed call sites; async mismatch
-
----
-
-## Phase 2 — Host-owned structured-result validation
-
-### Goal
-Prove decision + repair JSON contracts are enforced by **host** validators independent of Codex `--output-schema`.
-
-### In-scope
-- `schema/clawsweeper-decision.schema.json`
-- `schema/repair/codex-result.schema.json`
-- `src/repair/review-results.ts` (+ decision parser path)
-- New contract tests with fixtures (valid/invalid/`codex_review` failures)
-
-### Non-goals
-- No Devin runtime; no rename of `codex_review` yet
+- No production source cutover
+- No permanent API freeze before matrix review
+- No assumption that `crabbox run` is a live ACP pipe
+- No claim that `--agent-type review` is adequate until measured
 
 ### Acceptance
-- Contract tests pass without invoking Codex
-- Documents that Devin ACP must emit files meeting these contracts
-
-### Risks
-- Evidence regex currently expects `/review|codex review` (`review-results.ts`)
-
----
-
-## Phase 3 — Empirical Devin ACP protocol proof on ASCII Box
-
-### Goal
-Prove, on a real ASCII Box (via Crabbox `ascii-box` or `box` CLI), that Devin ACP can support Loop’s durable session needs **before** production wiring.
-
-### In-scope (spike artifacts only — no production cutover)
-- Spike notes under `docs/repair/devin-acp-box-spike.md` (redacted transcripts)
-- Minimal throwaway ACP client harness (may live under `scripts/` spike path or docs-only until promoted)
-- Exercises on Box:
-  - `initialize` / `session/new` / `session/prompt` / `session/cancel`
-  - multi-turn continue
-  - resume after process restart
-  - resume after `box stop` / `box resume` if feasible
-  - independent `devin acp --agent-type review` session
-  - JSON artifact write for host schema validation
-  - credential injection mode `600`
-- Optional: one `devin -p` smoke for install/auth only (explicitly labeled non-architecture)
-
-### Non-goals
-- No workflow default changes
-- No deleting Codex
-- No claiming steer parity without proof
-- No long GitHub-Actions-only shadow series as a substitute for this spike
-
-### Acceptance
-- Written pass/fail matrix for each capability in `DEVIN_PORT_MAP.md` §7
-- Explicit decision: proceed to Phase 4, or block with listed gaps
-- Steer: native ACP mechanism **or** documented interrupt+resume emulation
+- Written pass/fail matrix checked into docs
+- Explicit go/no-go for Phase 2 API shape
+- Steer strategy chosen only from measured capabilities (native vs cancel+reprompt)
 
 ### Dependencies
-- Phase 1 preferred (interface clarity); Box + Devin Pro available
-- Sibling Crabbox ASCII provider docs (`ascii-box`)
+- Devin Pro auth; ASCII Box; Crabbox ascii-box provider and/or `box` CLI
 
 ### Risks
 - Editor-oriented ACP docs ≠ headless worker
-- Sandbox flag failures on Box
-- Session persistence across snapshots
+- Missing load/resume/close capabilities
+- Sandbox / permission surprises
 
 ---
 
-## Phase 4 — Production `DevinAcpRuntime`
+## Phase 1 — Host-owned result-contract harness
 
 ### Goal
-Implement `DevinAcpRuntime` behind `CLAWSWEEPER_AGENT_RUNTIME=devin-acp` (name TBD), default remains Codex until later cutover.
+Prove decision and repair outputs are enforceable by host validators without Codex `--output-schema`.
 
 ### In-scope
-- `src/devin-acp-runtime.ts` (+ env scrub helper)
-- Factory in `agent-runtime.ts`
-- Optional `DevinPrintRuntime` **clearly marked diagnostic-only**
-- Unit tests with fake ACP server fixtures
-- Local check script for ACP smoke (not Codex)
+- Fixture tests against `schema/clawsweeper-decision.schema.json` and `schema/repair/codex-result.schema.json`
+- `review-results.ts` / decision-parser contract coverage
+- Prefer **tests only**
 
 ### Non-goals
-- No wholesale workflow cutover yet
-- No spam-scanner change yet
-- Print mode must not be selectable as the autonomous production default
+- Do not change schema semantics merely to ease Devin
+- No Devin production wiring
 
 ### Acceptance
-- Flagged local/job can complete one plan `result.json` that passes `review-results`
-- GitHub write tokens absent from child env
-- Codex path unchanged when flag off
-
-### Dependencies
-- Phases 1–3 (Phase 3 must not be “failed/unknown” on session+prompt+cancel+JSON artifact)
-
-### Risks
-- Structured output reliability
-- ACP stream parsing edge cases
+- Invalid fixtures fail deterministically without invoking any model binary
 
 ---
 
-## Phase 5 — Crabbox / ASCII execution
+## Phase 2 — Runtime and host seams (informed by Phase 0)
 
 ### Goal
-Run ACP workers on ASCII Box through Crabbox as an **opt-in** execution path, without abandoning Blacksmith rollback.
+Implement seams matching **measured** capabilities while preserving Codex production behavior.
 
 ### In-scope
-- Operator/profile docs for `provider: ascii-box`
-- Opt-in workflow or dispatch path for Box-hosted plan/execute
-- Secrets: `ASCII_BOX_API_KEY` / `CRABBOX_ASCII_BOX_API_KEY`
-- Bootstrap: Devin install + credential injection
-- Artifact return into existing publish path
+- `AgentSessionRuntime` (session/capability-oriented; optional methods capability-gated)
+- Temporary `CodexProcessAdapter` wrapping `runCodexProcess` / app-server path — **not** the final contract
+- `CrabboxWorkspaceHost` boundary where needed (acquire/sync/launch/observe/collect/stop)
+- Sanitized child-env construction inside implementations (no public raw `ProcessEnv` contract)
 
 ### Non-goals
-- Replacing all Blacksmith defaults in the same PR
-- Rewriting Crabbox providers unless a blocker bug is proven
-- Multi-tenant Box fleet product
+- Do not ship a permanent single `run()` agent interface
+- Do not add production Devin execution in the same PR unless narrowly isolated and flagged off
+- No `setup-devin` on GHA
 
 ### Acceptance
-- Recorded smoke: Box up → ACP session → artifact back → Box stop
-- Default `runs-on` unchanged unless explicitly flagged
+- Codex lane behavior unchanged by default
+- Unit tests with fake ACP server reflecting Phase 0 capability set
+- Document mapping from Phase 0 matrix → implemented methods
 
-### Dependencies
-- Phase 4; Crabbox ascii-box provider
-
-### Risks
-- Quota/TTL; secret leakage; hydrate ≠ production worker
+### Rollback
+- Revert; Codex path remains sole production agent
 
 ---
 
-## Phase 6 — Builder / reviewer / repair role cutover
+## Phase 3 — Box-hosted Devin ACP worker
 
 ### Goal
-Point builder, independent reviewer, and repair loops at `DevinAcpRuntime` while preserving host gates — especially #494 pinned-base post-sync review.
+Ship the worker that runs inside ASCII Box, spawns `devin acp`, drives ACP locally, writes results/evidence/heartbeats.
 
 ### In-scope
-- Review lane (`clawsweeper.ts`)
-- Plan worker (`run-worker.ts`)
-- Execute loops (`execute-fix-artifact.ts` `runCodexReview*` → runtime review)
-- Independent reviewer session separation (`acp --agent-type review` or equivalent proven in Phase 3)
-- Dual-accept evidence strings only with tests (`/review|codex review|devin review` interim)
+- Box worker package/entry (location TBD after Phase 0)
+- Local stdio ACP client
+- Host permission policy
+- Structured artifact writer + host validation hook
+- Fake ACP fixtures + real Box canary
 
 ### Non-goals
-- Automerge policy changes
-- Broad prompt marketing rewrite
+- Full lane cutover
+- Tunneling ACP through Crabbox stdin
 
 ### Acceptance
-- Flagged execute preserves pinned-base + `reviewAfterFinalBaseSync` semantics
-- Security-boundary + target-validation tests pass
-- Codex remains rollback default until Phase 7
-
-### Dependencies
-- Phases 4–5 (Box path optional but preferred for parity proof)
+- Canary: Box up → ACP session → validated JSON artifact → collect → Box stop
+- Credential scrub verified in canary logs/env dump (redacted)
 
 ---
 
-## Phase 7 — Workflow and credential cutover
+## Phase 4 — Crabbox execution integration
 
 ### Goal
-Add `setup-devin` (ACP-capable install/auth), wire workflows to prefer Devin ACP, keep `setup-codex` as rollback for one release.
+Wire ClawSweeper orchestration to Crabbox workspace lifecycle for Devin jobs.
 
 ### In-scope
-- `.github/actions/setup-devin/action.yml`
-- Conditional steps in `sweep.yml`, `repair-cluster-worker.yml`, `assist.yml`, `commit-review.yml`
-- Dashboard detection updates (`dashboard/worker.ts` currently keys off Codex setup)
-- Secret plan: Devin credentials; stop requiring OpenAI for agent lanes (spam may still block full secret removal until Phase 8)
+- Acquire / sync / launch worker / observe / collect / stop-release
+- Opt-in flag beside existing Codex GHA lane (Codex = rollback)
+- Secrets: Box/Crabbox controller credentials in Actions; Devin creds only on Box
 
 ### Non-goals
-- Immediate Codex source deletion
-- Upstream pushes
+- Hosting Devin on Blacksmith
+- Replacing all runners in one PR
 
 ### Acceptance
-- Default or flagged production jobs run ACP path successfully
-- Rollback: runtime=codex + setup-codex
-
-### Risks
-- Headless auth; pin drift; logging secrets
+- Flagged job completes through Crabbox path
+- Default remains Codex until Phase 5–6
 
 ---
 
-## Phase 8 — Remove Codex / OpenAI after proof and soak
+## Phase 5 — Role cutover
 
 ### Goal
-Eliminate Codex CLI, Responses proxy, OpenAI spam path, and related secrets after soak.
+Move agent roles to Box-hosted Devin ACP in controlled order.
 
-### In-scope
-- Spam scanner replacement (deterministic and/or Devin classify)
-- Delete `src/codex-*.ts`, `setup-codex`, `check-local-codex.mjs` when §14 met
-- Rename `codex_review` → `agent_review` with dual-read then single-read
-- Remove `OPENAI_API_KEY` from workflows after no consumers remain
-- Docs/prompts factual cleanup
+### Order
+1. Planning (`run-worker` plan path)
+2. Builder/write (`execute-fix-artifact` edit loops)
+3. Independent reviewer (fresh session + clean exact-head checkout; preferred separate Box)
+4. Structured-result repair
+5. CI / review-feedback repair
+
+### Must preserve
+- Deterministic validators and GitHub mutation isolation
+- #494 pinned-base + `reviewAfterFinalBaseSync` semantics
+- Exact-head invalidation on material head changes
 
 ### Non-goals
-- Rewriting validators’ semantic rules
-- Product rename churn unrelated to runtime
+- Automerge policy redesign
+- Treating session-ID-only as reviewer isolation
 
 ### Acceptance
-- CI grep guard against `@openai/codex` / `codex exec` / agent `OPENAI_API_KEY`
-- Soak period completed; rollback tag retained
+- Each role has explicit flag + rollback to Codex
+- Reviewer isolation checklist from `DEVIN_PORT_MAP.md` §8 satisfied in canaries
+
+---
+
+## Phase 6 — Workflow and credential cutover
+
+### Goal
+Production workflows invoke Crabbox/Box-backed Devin; remove OpenAI requirements per completed lane.
+
+### In-scope
+- Workflow steps that call Crabbox (not `setup-devin` for production model hosting)
+- Per-lane removal of `OPENAI_API_KEY` when that lane no longer needs Codex/OpenAI
+- Dashboard/status text updates away from Codex-only assumptions as lanes cut over
+
+### Explicitly rejected
+- Final design centered on GitHub Actions `setup-devin`
+- Production Devin auth on `ubuntu-latest` / Blacksmith
+
+### Acceptance
+- Cut-over lanes run without Actions-hosted Devin
+- Codex/`setup-codex` retained only as rollback where still needed
+
+---
+
+## Phase 7 — Autonomous convergence and soak
+
+### Goal
+Prove end-to-end autonomy on eligible owned repositories with bounded retries and cleanup.
+
+### Prove
+- Issue → PR
+- CI repair
+- Reviewer repair
+- Upstream feedback handling
+- Exact-head invalidation
+- Bounded retries
+- Box cleanup
+- Eligible merge
+
+Retain bounded rollback through soak.
+
+---
+
+## Phase 8 — Remove Codex and OpenAI
+
+### Goal
+Delete Codex CLI integration, Responses proxy usage, OpenAI spam path, and related secrets after soak.
+
+### Gate
+All `DEVIN_PORT_MAP.md` §12 criteria.
+
+### In-scope
+- Remove `src/codex-*.ts`, `setup-codex`, Codex-only tests when safe
+- Spam replacement (deterministic and/or Devin classify — product choice)
+- Rename `codex_review` → `agent_review` after dual-read soak
+- CI grep guards against reintroduction
 
 ---
 
 ## Explicitly rejected task shapes
 
-- “Add Devin support” as one PR
-- “Make it generic” / “clean up code”
+- Permanent `AgentRuntime.run()` as the product contract
+- Interface extraction before Phase 0
+- Production Devin on GitHub-hosted runners / final `setup-devin`
+- Assuming `crabbox run` is a live ACP transport
 - Making `devin -p` the autonomous worker
-- Long GitHub-only shadow phases that postpone Box ACP proof without cause
+- Declaring `--agent-type review` proven without Phase 0
+- Fresh session without clean exact-head checkout as “independent review”
 - Greenfield Loop control plane replacing ClawSweeper orchestration
-- Deleting Codex before Phases 3–7 proof
+- “Add Devin support” as a single PR
 
 ---
 
 ## Suggested merge order
 
 ```text
-Phase1 → Phase2 → Phase3(Box ACP spike)
-                 ↘ Phase4(DevinAcpRuntime)
-                      → Phase5(Crabbox/ASCII)
-                      → Phase6(role cutover)
-                      → Phase7(workflow/creds)
-                      → Phase8(remove Codex/OpenAI)
+Phase0 (Box ACP proof)
+  → Phase1 (host contracts)
+  → Phase2 (session runtime + Codex adapter + Crabbox host seam)
+  → Phase3 (Box worker)
+  → Phase4 (Crabbox integration)
+  → Phase5 (role cutover)
+  → Phase6 (workflow/creds)
+  → Phase7 (soak)
+  → Phase8 (delete Codex/OpenAI)
 ```
-
-Diagnostic `devin -p` smoke may appear inside Phase 3 or as a tiny helper beside Phase 4 — never ahead of ACP as the design center.
