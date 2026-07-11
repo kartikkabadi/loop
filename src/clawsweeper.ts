@@ -186,6 +186,7 @@ type FailedReviewRetryAction =
   | "skipped_retry_already_exhausted"
   | "skipped_not_failed_review"
   | "skipped_not_open"
+  | "skipped_locked_conversation"
   | "skipped_not_pull_request"
   | "skipped_missing_report_head"
   | "skipped_missing_live_head"
@@ -399,7 +400,7 @@ type AcquiredReviewStartLease = {
 
 type ReviewStartStatusCommentResult =
   | { status: "posted"; lease: AcquiredReviewStartLease }
-  | { status: "held"; lease: null };
+  | { status: "held"; lease: null; retryAt: string };
 
 interface ExistingReview {
   path: string;
@@ -926,6 +927,8 @@ interface ApplyResult {
   terminalMissingVerified?: boolean;
   terminalStateVerified?: boolean;
   guardedOpenStateVerified?: boolean;
+  terminalPolicyNoopVerified?: boolean;
+  sourceDriftVerified?: boolean;
 }
 
 interface FailedReviewRetryResult {
@@ -6193,6 +6196,8 @@ function isInfrastructureFailedReview(markdown: string): boolean {
 export function failedReviewRetryEligibilityForTest(options: {
   markdown: string;
   liveState: string;
+  liveLocked?: boolean;
+  liveActiveLockReason?: string | null;
   liveHeadSha?: string | null;
   liveSourceRevision?: string | null;
   now: number;
@@ -6205,6 +6210,8 @@ export function failedReviewRetryEligibilityForTest(options: {
 function failedReviewRetryEligibility(options: {
   markdown: string;
   liveState: string;
+  liveLocked?: boolean;
+  liveActiveLockReason?: string | null;
   liveHeadSha?: string | null;
   liveSourceRevision?: string | null;
   now: number;
@@ -6218,6 +6225,13 @@ function failedReviewRetryEligibility(options: {
   }
   if (options.liveState !== "open") {
     return { repo, number, action: "skipped_not_open", reason: `state is ${options.liveState}` };
+  }
+  const lockedReason = lockedConversationApplyReason({
+    locked: options.liveLocked === true,
+    activeLockReason: options.liveActiveLockReason ?? null,
+  });
+  if (lockedReason) {
+    return { repo, number, action: "skipped_locked_conversation", reason: lockedReason };
   }
   const itemKind = frontMatterValue(options.markdown, "type");
   if (itemKind !== "pull_request" && itemKind !== "issue") {
@@ -17860,6 +17874,25 @@ function reviewStartLeaseOwner(comment: Record<string, unknown> | undefined): st
   return match?.[1]?.match(/\bowner=([^\s>]+)/i)?.[1] ?? null;
 }
 
+function newReviewStartLeaseOwner(
+  env: NodeJS.ProcessEnv = process.env,
+  fallback: () => string = randomUUID,
+): string {
+  const runId = String(env.GITHUB_RUN_ID ?? "").trim();
+  const runAttempt = String(env.GITHUB_RUN_ATTEMPT ?? "").trim();
+  if (/^[1-9]\d*$/.test(runId) && /^[1-9]\d*$/.test(runAttempt)) {
+    return `github-run-${runId}-${runAttempt}`;
+  }
+  return fallback();
+}
+
+export function newReviewStartLeaseOwnerForTest(
+  env: NodeJS.ProcessEnv,
+  fallback: () => string,
+): string {
+  return newReviewStartLeaseOwner(env, fallback);
+}
+
 function freshDedicatedReviewStartLeases(options: {
   comments: Record<string, unknown>[];
   itemNumber: number;
@@ -17919,7 +17952,7 @@ function postReviewStartStatusComment(options: {
   purpose?: "review" | "apply";
 }): ReviewStartStatusCommentResult {
   const startedAtMs = Date.now();
-  const leaseOwner = randomUUID();
+  const leaseOwner = newReviewStartLeaseOwner();
   const leaseOptions: ReviewStartStatusCommentOptions = {
     number: options.item.number,
     kind: options.item.kind,
@@ -17943,15 +17976,14 @@ function postReviewStartStatusComment(options: {
       `cannot acquire a review lease without the current item revision for #${options.item.number}`,
     );
   }
-  if (
-    freshDedicatedReviewStartLeases({
-      comments: initialState.leaseComments,
-      itemNumber: options.item.number,
-      headSha: normalizedHead,
-      nowMs: startedAtMs,
-    }).length > 0
-  ) {
-    return { status: "held", lease: null };
+  const initialLease = freshDedicatedReviewStartLeases({
+    comments: initialState.leaseComments,
+    itemNumber: options.item.number,
+    headSha: normalizedHead,
+    nowMs: startedAtMs,
+  })[0];
+  if (initialLease) {
+    return { status: "held", lease: null, retryAt: initialLease.expiresAt };
   }
   const body = renderReviewStartStatusComment(leaseOptions);
   const payload = writeCommentPayload(options.item.number, body);
@@ -17989,7 +18021,12 @@ function postReviewStartStatusComment(options: {
     reviewStartLeaseOwner(winner?.comment) !== leaseOwner
   ) {
     deleteOwnedDedicatedReviewStartLease(options.item.number, acquired);
-    return { status: "held", lease: null };
+    if (!winner) {
+      throw new Error(
+        `could not identify the winning review lease for #${options.item.number}; retry required`,
+      );
+    }
+    return { status: "held", lease: null, retryAt: winner.expiresAt };
   }
   return { status: "posted", lease: acquired };
 }
@@ -18934,6 +18971,8 @@ function reviewCommand(args: Args): void {
     ? buildLocalRangeReview(openclawDir, targetRepo(), stringArg(args.base, ""))
     : undefined;
   ensureDir(artifactDir);
+  const coordinationHeldPath = join(artifactDir, "coordination-held.json");
+  if (existsSync(coordinationHeldPath)) unlinkSync(coordinationHeldPath);
   if (localRangeData) {
     // Reuse #298's FULL offline envelope (not just token-scrub): withhold every GitHub
     // credential AND point gh at an empty config dir — token deletion alone can't stop
@@ -19013,6 +19052,7 @@ function reviewCommand(args: Args): void {
       JSON.stringify({ shardIndex, shardCount, scannedPages, candidates, reviewPolicy }, null, 2),
     );
     let completed = 0;
+    let coordinationHeldRetryAt: string | null = null;
     let codexFailures = 0;
     let leaseAcquisitionFailures = 0;
     let cacheHits = 0;
@@ -19042,7 +19082,10 @@ function reviewCommand(args: Args): void {
           console.error(
             `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} start-comment=${startComment.status} #${item.number}`,
           );
-          if (startComment.status === "held") continue;
+          if (startComment.status === "held") {
+            coordinationHeldRetryAt = startComment.retryAt;
+            continue;
+          }
           acquiredReviewLease = startComment.lease;
           if (!acquiredReviewLease) {
             throw new Error(`review lease acquisition returned no identity for PR #${item.number}`);
@@ -19114,7 +19157,10 @@ function reviewCommand(args: Args): void {
           console.error(
             `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} start-comment=${startComment.status} #${item.number}`,
           );
-          if (startComment.status === "held") continue;
+          if (startComment.status === "held") {
+            coordinationHeldRetryAt = startComment.retryAt;
+            continue;
+          }
           acquiredReviewLease = startComment.lease;
           if (!acquiredReviewLease) {
             throw new Error(
@@ -19302,6 +19348,13 @@ function reviewCommand(args: Args): void {
           `[review] ${new Date().toISOString()} shard=${shardIndex}/${shardCount} done #${item.number} (${completed}/${candidates.length}) decision=${decision.decision} confidence=${decision.confidence} action=${action.actionTaken}`,
         );
       }
+    }
+    if (coordinationHeldRetryAt) {
+      writeFileSync(
+        coordinationHeldPath,
+        JSON.stringify({ retry_at: coordinationHeldRetryAt }, null, 2) + "\n",
+        "utf8",
+      );
     }
     if (!humanLocalReview) {
       console.error(
@@ -19809,8 +19862,10 @@ function retryFailedReviewsCommandInner(args: Args): void {
       let liveSourceRevision: string | null = null;
       try {
         ({ item, state } = fetchItem(number));
-        if (item.kind === "pull_request") liveHeadSha = livePullHeadSha(number);
-        else liveSourceRevision = liveIssueSourceRevision(number);
+        if (state === "open" && !lockedConversationApplyReason(item)) {
+          if (item.kind === "pull_request") liveHeadSha = livePullHeadSha(number);
+          else liveSourceRevision = liveIssueSourceRevision(number);
+        }
       } catch (error) {
         if (error instanceof GitHubRuntimeBudgetError) throw error;
         results.push({
@@ -19825,6 +19880,8 @@ function retryFailedReviewsCommandInner(args: Args): void {
       const eligibility = failedReviewRetryEligibility({
         markdown,
         liveState: state,
+        liveLocked: item.locked === true,
+        liveActiveLockReason: item.activeLockReason ?? null,
         liveHeadSha,
         liveSourceRevision,
         now,
@@ -20265,6 +20322,16 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
       markdown = replaceFrontMatterValue(markdown, "apply_checked_at", new Date().toISOString());
       if (!dryRun) writeReportMarkdown(path, markdown, subjectState);
     };
+    const eventApplyDispositionProof = (actionTaken: ActionTaken): Partial<ApplyResult> => {
+      if (!emitEventApplyProof) return {};
+      if (actionTaken === "skipped_same_author_pair") {
+        return { terminalPolicyNoopVerified: true };
+      }
+      if (actionTaken === "skipped_changed_since_review") {
+        return { sourceDriftVerified: true };
+      }
+      return {};
+    };
     const recordApplySkipped = (
       actionTaken: ActionTaken,
       reason: string,
@@ -20279,6 +20346,7 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
           emitEventApplyProof,
           liveGuardVerified,
         }),
+        ...eventApplyDispositionProof(actionTaken),
       });
       processedCount += 1;
       maybeLogProgress(`skipped #${number}: ${reason}`);
@@ -21230,6 +21298,12 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
             reviewStartLeaseOwner(leaseComment) === reportReviewLeaseOwner,
         )
       : [];
+    const reportOwnedLeaseUpdatedAts = reportOwnedLeaseComments
+      .map(commentUpdatedAt)
+      .filter((updatedAt): updatedAt is string => timestampMs(updatedAt) !== null);
+    for (const updatedAt of reportOwnedLeaseUpdatedAts) {
+      allowedSelfMutationUpdatedAts.add(updatedAt);
+    }
     const latestLabelFreshnessAutomationUpdatedAt = [
       existingReviewComment,
       ...reportOwnedLeaseComments,
@@ -21517,6 +21591,7 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
         number,
         action: "skipped_changed_since_review",
         reason: options.reason,
+        ...eventApplyDispositionProof("skipped_changed_since_review"),
       });
       processedCount += 1;
       maybeLogProgress(`skipped #${number}: ${options.reason}`);
@@ -21678,6 +21753,7 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
         number,
         action: "skipped_changed_since_review",
         reason: "updated_at changed",
+        ...eventApplyDispositionProof("skipped_changed_since_review"),
       });
       processedCount += 1;
       maybeLogProgress(`skipped #${number}: changed since review`);
@@ -21699,6 +21775,7 @@ function applyDecisionsCommandInner(args: Args, runtimeBudget: GitHubRuntimeBudg
           number,
           action: "skipped_changed_since_review",
           reason: "snapshot changed",
+          ...eventApplyDispositionProof("skipped_changed_since_review"),
         });
         processedCount += 1;
         maybeLogProgress(`skipped #${number}: snapshot changed`);

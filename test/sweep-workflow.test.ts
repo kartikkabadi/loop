@@ -40,6 +40,13 @@ test("review workflow gives Codex a read-only inspection token", () => {
     exactReviewStep,
     /CLAWSWEEPER_PROOF_INSPECTION_TOKEN: \$\{\{ steps\.target-read-token\.outputs\.token \|\| github\.token \}\}/,
   );
+  assert.match(
+    exactReviewStep,
+    /report_path="artifacts\/event\/\$\{\{ steps\.target\.outputs\.item_number \}\}\.md"/,
+  );
+  assert.match(exactReviewStep, /coordination-held\.json/);
+  assert.match(exactReviewStep, /echo "retry_at=\$retry_at" >> "\$GITHUB_OUTPUT"/);
+  assert.match(exactReviewStep, /Exact review produced no artifact for open item/);
   assert.match(reviewJob, /uses: \.\/clawsweeper\/\.github\/actions\/setup-codex/);
   assert.doesNotMatch(reviewJob, /uses: \.\/\.github\/actions\/setup-codex/);
 });
@@ -56,6 +63,10 @@ test("exact event publish and routing require a successful fresh review artifact
   const setupCodexStart = eventReviewJob.indexOf("- uses: ./.github/actions/setup-codex");
   const exactReviewStart = eventReviewJob.indexOf("- name: Review exact event item");
   const publishStart = eventReviewJob.indexOf("- name: Publish event result and apply safe close");
+  const releaseUnsuccessfulStart = eventReviewJob.indexOf(
+    "- name: Release unsuccessful workflow-owned review lease",
+    publishStart,
+  );
   const routeStart = eventReviewJob.indexOf("- name: Route synced ClawSweeper verdict");
   const deferredRouteStart = eventReviewJob.indexOf(
     "- name: Queue deferred exact verdict router",
@@ -75,7 +86,8 @@ test("exact event publish and routing require a successful fresh review artifact
   const liveItemStep = eventReviewJob.slice(liveItemStart, setupPnpmStart);
   const setupCodexStep = eventReviewJob.slice(setupCodexStart, exactReviewStart);
   const exactReviewStep = eventReviewJob.slice(exactReviewStart, publishStart);
-  const publishStep = eventReviewJob.slice(publishStart, routeStart);
+  const publishStep = eventReviewJob.slice(publishStart, releaseUnsuccessfulStart);
+  const releaseUnsuccessfulStep = eventReviewJob.slice(releaseUnsuccessfulStart, routeStart);
   const routeStep = eventReviewJob.slice(routeStart, deferredRouteStart);
   const deferredRouteStep = eventReviewJob.slice(deferredRouteStart, releaseLeaseStart);
   const reactStep = eventReviewJob.slice(reactStart, failStart);
@@ -129,8 +141,19 @@ test("exact event publish and routing require a successful fresh review artifact
   assert.match(publishStep, /gh api "repos\/\$TARGET_REPO" >\/dev\/null/);
   assert.match(publishStep, /cat "\$live_item_error" >&2/);
   assert.match(publishStep, /Exact review produced no artifact for open item/);
+  assert.ok(releaseUnsuccessfulStart > publishStart);
+  assert.match(releaseUnsuccessfulStep, /always\(\)/);
+  assert.match(
+    releaseUnsuccessfulStep,
+    /github-run-\$\{\{ github\.run_id \}\}-\$\{\{ github\.run_attempt \}\}/,
+  );
+  assert.match(releaseUnsuccessfulStep, /clawsweeper-review-lease item=\$ITEM_NUMBER/);
+  assert.match(releaseUnsuccessfulStep, /owner=\$LEASE_OWNER/);
+  assert.match(releaseUnsuccessfulStep, /issues\/comments\/\$lease_id/);
+  assert.match(releaseUnsuccessfulStep, /--method DELETE/);
   assert.match(publisher, /"--event-apply-proof"/);
   assert.match(publisher, /exactEventApplyProof\(/);
+  assert.match(publisher, /const requeueLatestExpected = applyDisposition === "source_drift"/);
   assert.match(publisher, /terminal_missing=/);
   assert.match(publisher, /terminal_closed=/);
   assert.match(publisher, /guarded_open=/);
@@ -138,6 +161,7 @@ test("exact event publish and routing require a successful fresh review artifact
   assert.match(publisher, /routing_deferred=/);
   assert.match(publisher, /class GuardedOpenPublishRaceError extends Error/);
   assert.match(publisher, /class RoutableSyncPublishRaceError extends Error/);
+  assert.match(publisher, /class SourceDriftPublishRaceError extends Error/);
   assert.match(publisher, /class TerminalClosedPublishRaceError extends Error/);
   assert.match(publisher, /class TerminalMissingPublishRaceError extends Error/);
   assert.match(publisher, /terminalClosedExpected: closedCount > 0/);
@@ -152,9 +176,12 @@ test("exact event publish and routing require a successful fresh review artifact
   assert.match(publisher, /guardedOpenAction !== null/);
   assert.match(publisher, /error instanceof GuardedOpenPublishRaceError/);
   assert.match(publisher, /error instanceof RoutableSyncPublishRaceError/);
+  assert.match(publisher, /error instanceof SourceDriftPublishRaceError/);
   assert.match(publisher, /error instanceof TerminalClosedPublishRaceError/);
   assert.match(publisher, /error instanceof TerminalMissingPublishRaceError/);
   assert.match(publisher, /Event state .* was not applied because .*requeue/);
+  assert.match(publisher, /policy_noop=/);
+  assert.match(publisher, /requeue_latest=/);
   assert.doesNotMatch(publisher, /entry\.action === "review_comment_synced"/);
   assert.ok(authoritativeReset > publisherCompleteStart);
   assert.ok(authoritativeRefresh > authoritativeReset);
@@ -166,6 +193,8 @@ test("exact event publish and routing require a successful fresh review artifact
   assert.match(routeStep, /steps\.publish-event-result\.outputs\.guarded_open != 'true'/);
   assert.match(routeStep, /steps\.publish-event-result\.outputs\.remote_tuple_verified == 'true'/);
   assert.match(routeStep, /steps\.publish-event-result\.outputs\.routing_deferred == 'false'/);
+  assert.match(routeStep, /steps\.publish-event-result\.outputs\.policy_noop != 'true'/);
+  assert.match(routeStep, /steps\.publish-event-result\.outputs\.requeue_latest != 'true'/);
   assert.doesNotMatch(routeStep, /outputs\.routing_deferred != 'true'/);
   assert.match(
     deferredRouteStep,
@@ -256,6 +285,127 @@ test("exact event publish and routing require a successful fresh review artifact
   assert.match(failStep, /steps\.publish-event-result\.outputs\.guarded_open != 'true'/);
   assert.match(failStep, /steps\.route-synced-verdict\.outcome != 'success'/);
   assert.match(failStep, /steps\.queue-deferred-verdict-router\.outcome != 'success'/);
+  assert.match(failStep, /steps\.publish-event-result\.outputs\.policy_noop != 'true'/);
+  assert.match(failStep, /steps\.publish-event-result\.outputs\.requeue_latest != 'true'/);
+  assert.match(
+    eventReviewJob,
+    /RETRY_AT: \$\{\{ steps\.review-exact-event-item\.outputs\.retry_at \}\}/,
+  );
+  assert.match(eventReviewJob, /\.\.\.\(retryAt \? \{ retry_at: retryAt \} : \{\}\)/);
+  assert.match(
+    eventReviewJob,
+    /REQUEUE_LATEST: \$\{\{ steps\.publish-event-result\.outputs\.requeue_latest \}\}/,
+  );
+  assert.match(eventReviewJob, /\.\.\.\(requeueLatest \? \{ requeue_latest: true \} : \{\}\)/);
+  assert.match(eventReviewJob, /id: complete-exact-review-queue/);
+  assert.match(
+    eventReviewJob,
+    /Fail unacknowledged source-drift requeue[\s\S]*steps\.complete-exact-review-queue\.outcome != 'success'/,
+  );
+  const reReviewStatus = eventReviewJob.indexOf("- name: Mark source-drift re-review queued");
+  const completeQueue = eventReviewJob.indexOf("- name: Complete exact-review queue lease");
+  assert.ok(completeQueue > 0 && reReviewStatus > completeQueue);
+  assert.match(
+    eventReviewJob,
+    /Mark source-drift re-review queued[\s\S]*steps\.complete-exact-review-queue\.outcome == 'success'/,
+  );
+  assert.match(
+    eventReviewJob,
+    /React to target item completion[\s\S]*steps\.publish-event-result\.outputs\.policy_noop == 'true'/,
+  );
+  assert.match(eventReviewJob, /if \[ "\$POLICY_NOOP" != "true" \]; then/);
+});
+
+test("exact event workflow binds all work to the canonical queue claim", () => {
+  const workflow = readText(".github/workflows/sweep.yml");
+  const eventStart = workflow.indexOf("\n  event-review-apply:");
+  const eventEnd = workflow.indexOf("\n  target-fanout:", eventStart);
+  const eventJob = workflow.slice(eventStart, eventEnd);
+  const claimStart = eventJob.indexOf("- name: Claim exact-review queue lease");
+  const checkoutStart = eventJob.indexOf("- uses: actions/checkout@v7", claimStart);
+  const claimStep = eventJob.slice(claimStart, checkoutStart);
+  const claimedWork = eventJob.slice(checkoutStart);
+
+  assert.match(
+    claimStep,
+    /ITEM_KEY: \$\{\{ github\.event\.client_payload\.queue_claim\.item_key \|\| github\.event\.client_payload\.item_key \}\}/,
+  );
+  assert.match(
+    claimStep,
+    /QUEUE_LEASE_REVISION: \$\{\{ github\.event\.client_payload\.queue_claim\.lease_revision \|\| github\.event\.client_payload\.lease_revision \}\}/,
+  );
+  assert.match(
+    claimStep,
+    /hasTuple \? \{ item_key: itemKey, lease_revision: leaseRevision \} : \{\}/,
+  );
+  assert.match(claimStep, /response\.item_key !== requestedItemKey/);
+  assert.match(claimStep, /response\.lease_revision !== requestedLeaseRevision/);
+  assert.match(claimStep, /const itemKey = `\$\{targetRepo\}#\$\{itemNumber\}`/);
+  assert.match(claimStep, /claim_generation=\$\{responseProtocol === 2 \? claimGeneration : ""\}/);
+  assert.match(claimStep, /protocol_version=\$\{responseProtocol\}/);
+  assert.match(claimStep, /decision=\$\{JSON\.stringify\(decision\)\}/);
+  assert.doesNotMatch(claimedWork, /github\.event\.client_payload/);
+  assert.match(claimedWork, /gh api "repos\/\$TARGET_REPO" --jq \.default_branch/);
+  assert.match(claimedWork, /if \.pull_request then "pull_request" else "issue" end/);
+  assert.match(claimedWork, /steps\.live-item\.outputs\.target_branch/);
+  assert.match(
+    claimedWork,
+    /CLAIM_DECISION: \$\{\{ steps\.claim-exact-review-queue\.outputs\.decision \}\}/,
+  );
+  assert.match(
+    claimedWork,
+    /const decision = JSON\.parse\(process\.env\.CLAIM_DECISION \|\| "\{\}"\)/,
+  );
+  assert.match(
+    claimedWork,
+    /targetRepo !== "openclaw\/clawhub" \|\| process\.env\.CLAWHUB_ENABLED === "1"/,
+  );
+  assert.match(
+    claimedWork,
+    /Create target read token[\s\S]*steps\.target\.outputs\.target_enabled == 'true'/,
+  );
+  assert.match(
+    claimedWork,
+    /Check live target item state[\s\S]*steps\.target\.outputs\.target_enabled == 'true'/,
+  );
+  assert.match(
+    claimedWork,
+    /Fail unsuccessful exact review[\s\S]*steps\.target\.outputs\.target_enabled != 'false'/,
+  );
+  assert.match(
+    claimedWork,
+    /CLAIM_GENERATION: \$\{\{ steps\.claim-exact-review-queue\.outputs\.claim_generation \}\}/,
+  );
+  assert.match(
+    claimedWork,
+    /PROTOCOL_VERSION: \$\{\{ steps\.claim-exact-review-queue\.outputs\.protocol_version \}\}/,
+  );
+  assert.match(claimedWork, /item_key: process\.env\.ITEM_KEY/);
+  assert.match(claimedWork, /lease_revision: leaseRevision/);
+  assert.match(claimedWork, /claim_generation: claimGeneration/);
+});
+
+test("exact event workflow keeps both queue protocol versions live during rolling deploys", () => {
+  const workflow = readText(".github/workflows/sweep.yml");
+  const eventStart = workflow.indexOf("\n  event-review-apply:");
+  const eventEnd = workflow.indexOf("\n  target-fanout:", eventStart);
+  const eventJob = workflow.slice(eventStart, eventEnd);
+  const claimStart = eventJob.indexOf("- name: Claim exact-review queue lease");
+  const checkoutStart = eventJob.indexOf("- uses: actions/checkout@v7", claimStart);
+  const claimStep = eventJob.slice(claimStart, checkoutStart);
+  const completeStart = eventJob.indexOf("- name: Complete exact-review queue lease");
+  const completeEnd = eventJob.indexOf("\n      - ", completeStart + 1);
+  const completeStep = eventJob.slice(completeStart, completeEnd);
+
+  assert.match(claimStep, /DISPATCH_PAYLOAD: \$\{\{ toJSON\(github\.event\.client_payload\) \}\}/);
+  assert.match(claimStep, /const responseProtocol = Number\(response\.protocol_version \|\| 1\)/);
+  assert.match(claimStep, /const legacyDecision = \{/);
+  assert.match(claimStep, /response\.decision && typeof response\.decision === "object"/);
+  assert.match(claimStep, /reviewOptions\.command_status_marker/);
+  assert.match(claimStep, /responseProtocol === 2/);
+  assert.match(completeStep, /protocolVersion !== 1 && protocolVersion !== 2/);
+  assert.match(completeStep, /protocolVersion === 2/);
+  assert.match(completeStep, /: \{\}\),/);
 });
 
 test("dashboard syncs Worker secrets with durable lifecycle storage", () => {
@@ -1575,13 +1725,13 @@ test("sweep event reviews and target fanout avoid storm amplification", () => {
   assert.match(eventBlock, /concurrency:/);
   assert.match(
     eventBlock,
-    /clawsweeper-event-review-\$\{\{ github\.event\.client_payload\.target_repo/,
-  );
-  assert.match(
-    eventBlock,
-    /group: clawsweeper-event-review-\$\{\{ github\.event\.client_payload\.target_repo \|\| 'openclaw\/openclaw' \}\}-\$\{\{ github\.event\.client_payload\.item_number/,
+    /group: clawsweeper-event-review-\$\{\{ github\.event\.client_payload\.queue_claim\.item_key \|\| github\.event\.client_payload\.item_key \|\| github\.run_id \}\}/,
   );
   assert.match(eventBlock, /queue_lease_id != ''/);
+  assert.match(eventBlock, /item_key: process\.env\.ITEM_KEY/);
+  assert.match(eventBlock, /lease_revision: leaseRevision/);
+  assert.match(eventBlock, /claim_generation: claimGeneration/);
+  assert.match(eventBlock, /decision=\$\{JSON\.stringify\(decision\)\}/);
   assert.match(eventBlock, /cancel-in-progress: false/);
   assert.match(legacyIntakeBlock, /legacy-event-queue-intake:/);
   assert.match(legacyIntakeBlock, /\/internal\/exact-review\/enqueue/);
@@ -1612,7 +1762,7 @@ test("setup-state defaults to an auth-safe shallow checkout", () => {
   assert.match(action, /ref: state/);
 });
 
-test("sweep exact event reviews consume adaptive Codex timeout payload", () => {
+test("sweep exact event reviews consume only the immutable claimed decision", () => {
   const workflow = readText(".github/workflows/sweep.yml");
   const resolveBlock = workflow.slice(
     workflow.indexOf("- name: Resolve event payload"),
@@ -1625,32 +1775,18 @@ test("sweep exact event reviews consume adaptive Codex timeout payload", () => {
 
   assert.match(
     resolveBlock,
-    /ADAPTIVE_CODEX_TIMEOUT_MS: \$\{\{ github\.event\.client_payload\.review_options\.codex_timeout_ms \|\| github\.event\.client_payload\.codex_timeout_ms \|\| '' \}\}/,
+    /CLAIM_DECISION: \$\{\{ steps\.claim-exact-review-queue\.outputs\.decision \}\}/,
   );
   assert.match(
     resolveBlock,
     /CONFIGURED_CODEX_TIMEOUT_MS: \$\{\{ vars\.CLAWSWEEPER_CODEX_TIMEOUT_MS \|\| '1200000' \}\}/,
   );
-  assert.match(
-    resolveBlock,
-    /MEDIA_PROOF_TIMEOUT_MS: \$\{\{ github\.event\.client_payload\.review_options\.media_proof_timeout_ms \|\| github\.event\.client_payload\.media_proof_timeout_ms \|\| '0' \}\}/,
-  );
-  assert.match(resolveBlock, /Ignoring invalid adaptive codex_timeout_ms payload/);
-  assert.match(
-    resolveBlock,
-    /configured_codex_timeout_ms="\$\(\(10#\$configured_codex_timeout_ms\)\)"/,
-  );
-  assert.match(
-    resolveBlock,
-    /adaptive_codex_timeout_ms="\$\(\(10#\$adaptive_codex_timeout_ms\)\)"/,
-  );
-  assert.match(resolveBlock, /media_proof_timeout_ms="\$\(\(10#\$media_proof_timeout_ms\)\)"/);
-  assert.match(resolveBlock, /\[ "\$media_proof_timeout_ms" -gt 480000 \]/);
-  assert.match(resolveBlock, /\[ "\$adaptive_codex_timeout_ms" -lt 600000 \]/);
-  assert.match(resolveBlock, /\[ "\$adaptive_codex_timeout_ms" -gt 1800000 \]/);
-  assert.match(resolveBlock, /\[ "\$adaptive_codex_timeout_ms" -gt "\$codex_timeout_ms" \]/);
-  assert.match(resolveBlock, /echo "codex_timeout_ms=\$codex_timeout_ms"/);
-  assert.match(resolveBlock, /echo "media_proof_timeout_ms=\$media_proof_timeout_ms"/);
+  assert.match(resolveBlock, /const decision = JSON\.parse\(process\.env\.CLAIM_DECISION/);
+  assert.match(resolveBlock, /Math\.min\(1_800_000, Math\.max\(600_000, adaptiveValue\)\)/);
+  assert.match(resolveBlock, /Math\.min\(480_000, mediaValue\)/);
+  assert.match(resolveBlock, /codex_timeout_ms: Math\.max\(configuredTimeout, adaptiveTimeout\)/);
+  assert.match(resolveBlock, /media_proof_timeout_ms: mediaTimeout/);
+  assert.doesNotMatch(resolveBlock, /github\.event\.client_payload/);
   assert.match(
     reviewBlock,
     /codex_timeout_ms="\$\{\{ steps\.target\.outputs\.codex_timeout_ms \}\}"/,
@@ -1679,8 +1815,8 @@ test("sweep exact event reviews preserve the configured fallback without an adap
     resolveBlock,
     /CONFIGURED_CODEX_TIMEOUT_MS: \$\{\{ vars\.CLAWSWEEPER_CODEX_TIMEOUT_MS \|\| '1200000' \}\}/,
   );
-  assert.match(resolveBlock, /codex_timeout_ms="\$configured_codex_timeout_ms"/);
-  assert.match(resolveBlock, /\[ "\$adaptive_codex_timeout_ms" -gt "\$codex_timeout_ms" \]/);
+  assert.match(resolveBlock, /configuredValue > 0 \? configuredValue : 1_200_000/);
+  assert.match(resolveBlock, /codex_timeout_ms: Math\.max\(configuredTimeout, adaptiveTimeout\)/);
 });
 
 test("github activity workflow scopes cancellation to matching item activity", () => {

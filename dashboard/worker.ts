@@ -39,6 +39,7 @@ type ExactReviewDecision = {
 type ExactReviewQueueItem = {
   key: string;
   decision: ExactReviewDecision;
+  leaseDecision?: ExactReviewDecision;
   state: "pending" | "dispatching" | "leased";
   revision: number;
   createdAt: number;
@@ -51,6 +52,7 @@ type ExactReviewQueueItem = {
   claimedRunId?: string;
   claimedRunAttempt?: number;
   claimGeneration?: number;
+  claimProtocolVersion?: 1 | 2;
 };
 type ExactReviewCompletionOutcome = "success" | "failure" | "cancelled";
 type ExactReviewClaimedRun = {
@@ -97,6 +99,7 @@ const DEFAULT_EXACT_REVIEW_DISPATCH_LEASE_MS = 10 * 60 * 1000;
 const DEFAULT_EXACT_REVIEW_EXECUTION_LEASE_MS = 130 * 60 * 1000;
 const DEFAULT_EXACT_REVIEW_RETRY_MS = 30_000;
 const DEFAULT_EXACT_REVIEW_WORKFLOW_PAUSED_RETRY_MS = 60_000;
+const EXACT_REVIEW_COMPLETION_RETRY_MAX_MS = 2 * 60 * 60 * 1000;
 const EXACT_REVIEW_RECONCILE_RUN_LIMIT = 32;
 const EXACT_REVIEW_RECONCILE_CLAIM_MATCH_LIMIT = EXACT_REVIEW_RECONCILE_RUN_LIMIT * 2;
 const EXACT_REVIEW_RECONCILE_CONCURRENCY = 4;
@@ -421,8 +424,16 @@ export class ExactReviewQueue {
     if (request.method === "POST" && url.pathname === "/claim") {
       const body = objectValue(await request.json().catch(() => null));
       const leaseId = String(body.lease_id || "").trim();
+      const itemKey = String(body.item_key || "").trim();
+      const leaseRevision = Number(body.lease_revision);
       const runId = String(body.run_id || "").trim();
       if (!leaseId || !runId) return json({ error: "missing_lease_or_run" }, 400);
+      if (!/^\d+$/.test(runId)) return json({ error: "invalid_run_id" }, 400);
+      const tupleClaim = Boolean(itemKey) || body.lease_revision !== undefined;
+      if (tupleClaim && (!itemKey || !Number.isInteger(leaseRevision) || leaseRevision < 1)) {
+        return json({ error: "invalid_lease_revision" }, 400);
+      }
+      const claimProtocolVersion: 1 | 2 = tupleClaim ? 2 : 1;
       const runAttempt = exactReviewRunAttempt(body.run_attempt);
       if (body.run_attempt !== undefined && runAttempt === null) {
         return json({ error: "invalid_run_attempt" }, 400);
@@ -430,45 +441,137 @@ export class ExactReviewQueue {
 
       const now = Date.now();
       const state = await this.readState();
-      const item = exactReviewItemForLease(state, leaseId);
-      if (!item || !isLiveExactReviewLease(item, now)) {
+      const item = tupleClaim ? state.items[itemKey] : exactReviewItemForLease(state, leaseId);
+      if (
+        !item ||
+        item.leaseId !== leaseId ||
+        (tupleClaim && item.leaseRevision !== leaseRevision) ||
+        !isLiveExactReviewLease(item, now)
+      ) {
         return json({ error: "lease_not_active" }, 409);
       }
       if (item.claimedRunId && item.claimedRunId !== runId) {
         return json({ error: "lease_already_claimed" }, 409);
       }
 
+      // Deploys can observe a pre-snapshot lease. Recover it only when no newer
+      // enqueue has replaced the decision that was dispatched for this revision.
+      if (!item.leaseDecision) {
+        if (item.revision !== item.leaseRevision) {
+          return json({ error: "lease_decision_unavailable" }, 409);
+        }
+        item.leaseDecision = { ...item.decision };
+      }
+
+      const claimedRunAttempt = item.claimedRunAttempt;
+      if (item.claimedRunId && claimedRunAttempt !== undefined) {
+        if (runAttempt === null) return json({ error: "missing_run_attempt" }, 409);
+        if (runAttempt < claimedRunAttempt) {
+          return json({ error: "stale_run_attempt" }, 409);
+        }
+        if (runAttempt === claimedRunAttempt) {
+          if (
+            item.claimProtocolVersion !== undefined &&
+            item.claimProtocolVersion !== claimProtocolVersion
+          ) {
+            return json({ error: "claim_protocol_mismatch" }, 409);
+          }
+          const claimGeneration = Math.max(1, exactReviewClaimGeneration(item.claimGeneration));
+          if (
+            item.claimGeneration !== claimGeneration ||
+            item.claimProtocolVersion !== claimProtocolVersion
+          ) {
+            item.claimGeneration = claimGeneration;
+            item.claimProtocolVersion = claimProtocolVersion;
+            await this.writeState(state);
+          }
+          return json(exactReviewClaimResponse(item, claimProtocolVersion, claimGeneration));
+        }
+      } else if (item.claimedRunId && runAttempt === null) {
+        if (
+          item.claimProtocolVersion !== undefined &&
+          item.claimProtocolVersion !== claimProtocolVersion
+        ) {
+          return json({ error: "claim_protocol_mismatch" }, 409);
+        }
+        const claimGeneration = Math.max(1, exactReviewClaimGeneration(item.claimGeneration));
+        if (
+          item.claimGeneration !== claimGeneration ||
+          item.claimProtocolVersion !== claimProtocolVersion
+        ) {
+          item.claimGeneration = claimGeneration;
+          item.claimProtocolVersion = claimProtocolVersion;
+          await this.writeState(state);
+        }
+        return json(exactReviewClaimResponse(item, claimProtocolVersion, claimGeneration));
+      }
+
       item.state = "leased";
       item.claimedRunId = runId;
       item.claimedRunAttempt = runAttempt ?? undefined;
       item.claimGeneration = exactReviewClaimGeneration(item.claimGeneration) + 1;
+      item.claimProtocolVersion = claimProtocolVersion;
       item.leaseExpiresAt = now + exactReviewExecutionLeaseMs(this.env);
       await this.writeState(state);
       await this.scheduleNext(state, now);
-      return json({
-        ok: true,
-        claimed: true,
-        item_key: item.key,
-        revision: item.leaseRevision,
-      });
+      return json(exactReviewClaimResponse(item, claimProtocolVersion, item.claimGeneration));
     }
 
     if (request.method === "POST" && url.pathname === "/complete") {
       const body = objectValue(await request.json().catch(() => null));
       const leaseId = String(body.lease_id || "").trim();
+      const itemKey = String(body.item_key || "").trim();
+      const leaseRevision = Number(body.lease_revision);
+      const claimGeneration = Number(body.claim_generation);
       const runId = String(body.run_id || "").trim();
       if (!leaseId || !runId) return json({ error: "missing_lease_or_run" }, 400);
+      if (!/^\d+$/.test(runId)) return json({ error: "invalid_run_id" }, 400);
+      const tupleCompletion =
+        Boolean(itemKey) ||
+        body.lease_revision !== undefined ||
+        body.claim_generation !== undefined;
+      if (tupleCompletion) {
+        if (!itemKey || !Number.isInteger(leaseRevision) || leaseRevision < 1) {
+          return json({ error: "invalid_lease_revision" }, 400);
+        }
+        if (!Number.isInteger(claimGeneration) || claimGeneration < 1) {
+          return json({ error: "invalid_claim_generation" }, 400);
+        }
+      }
+      const completionProtocolVersion: 1 | 2 = tupleCompletion ? 2 : 1;
       const runAttempt = exactReviewRunAttempt(body.run_attempt);
       if (body.run_attempt !== undefined && runAttempt === null) {
         return json({ error: "invalid_run_attempt" }, 400);
       }
       const outcome = exactReviewCompletionOutcome(body.outcome, "success");
       if (!outcome) return json({ error: "invalid_outcome" }, 400);
+      const requeueLatest = body.requeue_latest === true;
+      if (body.requeue_latest !== undefined && typeof body.requeue_latest !== "boolean") {
+        return json({ error: "invalid_requeue_latest" }, 400);
+      }
+      if (requeueLatest && outcome !== "success") {
+        return json({ error: "invalid_requeue_latest_outcome" }, 400);
+      }
 
       const now = Date.now();
+      const requestedRetryAt = exactReviewCompletionRetryAt(body.retry_at, now);
+      if (body.retry_at !== undefined && requestedRetryAt === null) {
+        return json({ error: "invalid_retry_at" }, 400);
+      }
       const state = await this.readState();
-      const item = exactReviewItemForLease(state, leaseId);
-      if (!item || item.claimedRunId !== runId) return json({ error: "lease_not_claimed" }, 409);
+      const item = tupleCompletion ? state.items[itemKey] : exactReviewItemForLease(state, leaseId);
+      if (
+        !item ||
+        item.leaseId !== leaseId ||
+        (tupleCompletion && item.leaseRevision !== leaseRevision) ||
+        (tupleCompletion && exactReviewClaimGeneration(item.claimGeneration) !== claimGeneration) ||
+        item.claimedRunId !== runId
+      ) {
+        return json({ error: "lease_not_claimed" }, 409);
+      }
+      if ((item.claimProtocolVersion ?? 1) !== completionProtocolVersion) {
+        return json({ error: "lease_protocol_not_claimed" }, 409);
+      }
       if (
         item.claimedRunAttempt !== undefined &&
         (runAttempt === null || runAttempt !== item.claimedRunAttempt)
@@ -480,12 +583,23 @@ export class ExactReviewQueue {
       // Keep the claim until the signed workflow_run backstop verifies that exact attempt as
       // terminal, otherwise cancellation or a failing post-action could be acknowledged as
       // success. A newer revision is already known to need another review and can requeue now.
-      if (outcome === "success" && item.revision <= Number(item.leaseRevision || 0)) {
+      if (
+        outcome === "success" &&
+        !requeueLatest &&
+        item.revision <= Number(item.leaseRevision || 0)
+      ) {
         await this.scheduleNext(state, now);
         return json({ ok: true, requeued: false, deferred: true });
       }
 
-      const requeued = finishExactReviewQueueItem(state, item, now, outcome);
+      const requeued = finishExactReviewQueueItem(
+        state,
+        item,
+        now,
+        outcome,
+        requestedRetryAt ?? undefined,
+        requeueLatest,
+      );
       await this.writeState(state);
       await this.scheduleNext(state, now);
       return json({ ok: true, requeued });
@@ -650,8 +764,11 @@ export class ExactReviewQueue {
       item.state = "dispatching";
       item.leaseId = crypto.randomUUID();
       item.leaseRevision = item.revision;
+      item.leaseDecision = { ...item.decision };
       item.leaseExpiresAt = now + exactReviewDispatchLeaseMs(this.env);
       item.claimedRunId = undefined;
+      item.claimedRunAttempt = undefined;
+      item.claimGeneration = undefined;
     }
     await this.writeState(state);
     if (!admitted.length) {
@@ -664,8 +781,10 @@ export class ExactReviewQueue {
       try {
         await dispatchClawsweeperItem({
           token: preflight.token,
-          decision: item.decision,
+          decision: item.leaseDecision || item.decision,
+          itemKey: item.key,
           leaseId: item.leaseId,
+          leaseRevision: item.leaseRevision,
         });
       } catch {
         failures.push({ key: item.key, leaseId: String(item.leaseId || "") });
@@ -1521,6 +1640,23 @@ function exactReviewItemForLease(state: ExactReviewQueueState, leaseId: string) 
   return Object.values(state.items).find((item) => item.leaseId === leaseId) || null;
 }
 
+function exactReviewClaimResponse(
+  item: ExactReviewQueueItem,
+  protocolVersion: 1 | 2,
+  claimGeneration: number,
+) {
+  return {
+    ok: true,
+    claimed: true,
+    protocol_version: protocolVersion,
+    item_key: item.key,
+    ...(protocolVersion === 1 ? { revision: item.leaseRevision } : {}),
+    lease_revision: item.leaseRevision,
+    claim_generation: claimGeneration,
+    decision: item.leaseDecision,
+  };
+}
+
 function exactReviewCompletionOutcome(
   value,
   fallback?: ExactReviewCompletionOutcome,
@@ -1636,9 +1772,12 @@ function finishExactReviewQueueItem(
   item: ExactReviewQueueItem,
   now: number,
   outcome: ExactReviewCompletionOutcome,
+  requestedRetryAt = 0,
+  requeueLatest = false,
 ) {
   const retryingFailure = outcome !== "success";
-  const requeued = retryingFailure || item.revision > Number(item.leaseRevision || 0);
+  const hasNewerRevision = item.revision > Number(item.leaseRevision || 0);
+  const requeued = retryingFailure || hasNewerRevision || requeueLatest;
   if (requeued) {
     clearExactReviewLease(item);
     item.state = "pending";
@@ -1647,6 +1786,7 @@ function finishExactReviewQueueItem(
       item.nextAttemptAt = Math.max(
         exactReviewQueueEnqueueAttemptAt(state, now),
         now + exactReviewRetryDelayMs(item.attempts),
+        hasNewerRevision ? 0 : requestedRetryAt,
       );
     } else {
       item.nextAttemptAt = exactReviewQueueEnqueueAttemptAt(state, now);
@@ -1659,13 +1799,23 @@ function finishExactReviewQueueItem(
   return requeued;
 }
 
+function exactReviewCompletionRetryAt(value, now: number): number | null {
+  if (value === undefined || value === null || value === "") return null;
+  const retryAt = Date.parse(String(value));
+  if (!Number.isFinite(retryAt)) return null;
+  if (retryAt > now + EXACT_REVIEW_COMPLETION_RETRY_MAX_MS) return null;
+  return Math.max(now, retryAt);
+}
+
 function clearExactReviewLease(item: ExactReviewQueueItem) {
   item.leaseId = undefined;
   item.leaseRevision = undefined;
+  item.leaseDecision = undefined;
   item.leaseExpiresAt = undefined;
   item.claimedRunId = undefined;
   item.claimedRunAttempt = undefined;
   item.claimGeneration = undefined;
+  item.claimProtocolVersion = undefined;
 }
 
 function isLiveExactReviewLease(item: ExactReviewQueueItem, now: number) {
@@ -2227,12 +2377,19 @@ async function addIssueCommentReaction({ token, repo, commentId, content }) {
 async function dispatchClawsweeperItem({
   token,
   decision,
+  itemKey,
   leaseId,
+  leaseRevision,
 }: {
   token: string;
   decision: ExactReviewDecision;
-  leaseId?: string;
+  itemKey: string;
+  leaseId: string;
+  leaseRevision: number;
 }) {
+  // Keep the v1 fields during the rolling-upgrade window. Old workflows consume
+  // this immutable dispatch snapshot, while v2 workflows ignore it after claim
+  // and consume the Worker's leaseDecision response instead.
   const reviewOptions = {
     ...(decision.codexTimeoutMs ? { codex_timeout_ms: decision.codexTimeoutMs } : {}),
     ...(decision.mediaProofTimeoutMs
@@ -2251,6 +2408,12 @@ async function dispatchClawsweeperItem({
     body: {
       event_type: "clawsweeper_item",
       client_payload: {
+        queue_lease_id: leaseId,
+        queue_claim: {
+          protocol_version: 2,
+          item_key: itemKey,
+          lease_revision: leaseRevision,
+        },
         target_repo: decision.targetRepo,
         target_branch: decision.targetBranch,
         item_number: decision.itemNumber,
@@ -2258,7 +2421,6 @@ async function dispatchClawsweeperItem({
         source_event: decision.sourceEvent,
         source_action: decision.sourceAction,
         supersedes_in_progress: decision.supersedesInProgress,
-        ...(leaseId ? { queue_lease_id: leaseId } : {}),
         ...(Object.keys(reviewOptions).length > 0 ? { review_options: reviewOptions } : {}),
       },
     },
