@@ -80,7 +80,10 @@ import {
   LOCAL_REVIEW_WEB_SEARCH_CONFIG,
 } from "./commit-sweeper.js";
 import { AUTOMATION_LIMITS } from "./limits.js";
-import { freshExactHeadReviewStartLease } from "./repair/comment-router-core.js";
+import {
+  expiredReviewStartStatusLeases,
+  freshExactHeadReviewStartLease,
+} from "./repair/comment-router-core.js";
 import {
   AUTOMERGE_LABEL,
   AUTOFIX_LABEL,
@@ -17985,6 +17988,11 @@ function postReviewStartStatusComment(options: {
   if (initialLease) {
     return { status: "held", lease: null, retryAt: initialLease.expiresAt };
   }
+  reapExpiredDedicatedReviewStartLeases(
+    options.item.number,
+    initialState.dedicatedLeaseComments,
+    startedAtMs,
+  );
   const body = renderReviewStartStatusComment(leaseOptions);
   const payload = writeCommentPayload(options.item.number, body);
   const createArgs = [
@@ -18057,6 +18065,41 @@ function deleteOwnedDedicatedReviewStartLease(
       }`,
     );
     return false;
+  }
+}
+
+function reapExpiredDedicatedReviewStartLeases(
+  itemNumber: number,
+  dedicatedLeaseComments: Record<string, unknown>[],
+  nowMs: number,
+): void {
+  const expired = expiredReviewStartStatusLeases({
+    comments: dedicatedLeaseComments,
+    itemNumber,
+    trustedAuthors: new Set(
+      [...PATCHABLE_REVIEW_COMMENT_AUTHORS].map((author) => author.toLowerCase()),
+    ),
+    nowMs,
+  });
+  for (const lease of expired) {
+    try {
+      ghWithRetry([
+        "api",
+        `repos/${targetRepo()}/issues/comments/${lease.commentId}`,
+        "--method",
+        "DELETE",
+      ]);
+      console.error(
+        `[review] reaped expired review lease comment ${lease.commentId} for #${itemNumber} (lease expired ${lease.expiresAt})`,
+      );
+    } catch (error) {
+      // A failed reap must never block acquiring the new lease.
+      console.error(
+        `[review] could not reap expired review lease comment ${lease.commentId} for #${itemNumber}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+    }
   }
 }
 

@@ -892,6 +892,53 @@ test("event snapshots fail closed on packet mismatch and equal-time divergence",
   });
 });
 
+test("event record paths normalize display-cased target repos to the profile slug", () => {
+  const paths = eventRecordPaths({
+    targetRepo: "steipete/Nameplate",
+    itemNumber: "24",
+    snapshotDir: "snapshot",
+  });
+  assert.equal(paths.targetSlug, "steipete-nameplate");
+  assert.equal(paths.itemRecord, "records/steipete-nameplate/items/24.md");
+  assert.equal(paths.closedRecord, "records/steipete-nameplate/closed/24.md");
+  assert.equal(paths.planRecord, "records/steipete-nameplate/plans/24.md");
+  assert.equal(paths.decisionPacket, "records/steipete-nameplate/decision-packets/24.json");
+
+  const lowercase = eventRecordPaths({
+    targetRepo: "openclaw/openclaw",
+    itemNumber: "91668",
+    snapshotDir: "snapshot",
+  });
+  assert.equal(lowercase.targetSlug, "openclaw-openclaw");
+});
+
+test("display-cased target repo captures the tuple written under the lowercase profile slug", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "clawsweeper-event-records-case-"));
+  const store = {
+    targetRepo: "steipete/Nameplate",
+    itemNumber: "24",
+    snapshotDir: path.join(root, "snapshot"),
+  };
+
+  withCwd(root, () => {
+    const paths = eventRecordPaths(store);
+    resetEventSnapshot(store);
+    captureEventBaseSnapshot(store);
+    // apply-artifacts writes through the repository profile, which lowercases
+    // the repo before deriving the slug.
+    writeEventTuple(paths, {
+      marker: "case-normalized candidate",
+      reviewedAt: "2026-07-10T20:20:00.000Z",
+      itemUpdatedAt: "2026-07-10T20:00:00Z",
+      packet: false,
+      plan: false,
+    });
+    const captured = captureEventSnapshot(store);
+    assert.equal(fs.existsSync(captured.snapshotItem), true);
+    assert.equal(applyEventSnapshot(captured), "open");
+  });
+});
+
 function withCwd(cwd, callback) {
   const previous = process.cwd();
   process.chdir(cwd);

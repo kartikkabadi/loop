@@ -33,6 +33,7 @@ import {
   createCachedLabelNumberLookup,
   existingCommandStatusBlocksReplay,
   existingModeStatusBlocksReplay,
+  expiredReviewStartStatusLeases,
   freshExactHeadReviewStartLease,
   hasCommandResponseMarker,
   issueImplementationClusterId,
@@ -1510,6 +1511,92 @@ test("label sweeps honor fresh trusted exact-head review start leases", () => {
       trustedAuthors: new Set(["other-bot[bot]"]),
     }),
     null,
+  );
+});
+
+test("expired review start leases select only provably lapsed dedicated lease comments", () => {
+  const itemNumber = 24;
+  const headSha = "0123456789abcdef0123456789abcdef01234567";
+  const leaseComment = (id, owner, startedAt, expiresAt, overrides = {}) => ({
+    id,
+    user: { login: overrides.login ?? "clawsweeper[bot]" },
+    body: [
+      "ClawSweeper status: review started.",
+      `<!-- clawsweeper-review-status:started item=${itemNumber} sha=${headSha} started_at=${startedAt} lease_expires_at=${expiresAt}${owner ? ` owner=${owner}` : ""} v=${overrides.version ?? "1"} -->`,
+      overrides.identityMarker ?? `<!-- clawsweeper-review-lease item=${itemNumber} -->`,
+    ].join("\n"),
+  });
+  const nowMs = Date.parse("2026-07-11T01:38:00.000Z");
+  const options = {
+    itemNumber,
+    trustedAuthors: new Set(["clawsweeper[bot]"]),
+    nowMs,
+  };
+
+  const expiredUuidOwner = leaseComment(
+    101,
+    "5749cf7a-f0ff-4a0f-ad39-e4e0534b38e0",
+    "2026-07-10T20:14:01.432Z",
+    "2026-07-10T20:44:01.432Z",
+  );
+  const expiredRunOwner = leaseComment(
+    102,
+    "github-run-29134971283-1",
+    "2026-07-10T20:49:54.000Z",
+    "2026-07-10T21:19:54.000Z",
+  );
+  const freshLease = leaseComment(
+    103,
+    "github-run-29135098886-1",
+    "2026-07-11T01:37:58.000Z",
+    "2026-07-11T02:07:58.000Z",
+  );
+  const malformedExpiry = leaseComment(104, "owner-a", "2026-07-10T20:14:01.432Z", "not-a-date");
+  const untrustedAuthor = leaseComment(
+    105,
+    "owner-b",
+    "2026-07-10T20:14:01.432Z",
+    "2026-07-10T20:44:01.432Z",
+    { login: "impostor" },
+  );
+  const legacyReviewComment = leaseComment(
+    106,
+    "owner-c",
+    "2026-07-10T20:14:01.432Z",
+    "2026-07-10T20:44:01.432Z",
+    { identityMarker: `<!-- clawsweeper-review item=${itemNumber} -->` },
+  );
+  const idlessExpired = {
+    ...leaseComment(0, "owner-d", "2026-07-10T20:14:01.432Z", "2026-07-10T20:44:01.432Z"),
+    id: undefined,
+  };
+
+  assert.deepEqual(
+    expiredReviewStartStatusLeases({
+      ...options,
+      comments: [
+        expiredUuidOwner,
+        expiredRunOwner,
+        freshLease,
+        malformedExpiry,
+        untrustedAuthor,
+        legacyReviewComment,
+        idlessExpired,
+      ],
+    }),
+    [
+      { commentId: 101, expiresAt: "2026-07-10T20:44:01.432Z" },
+      { commentId: 102, expiresAt: "2026-07-10T21:19:54.000Z" },
+    ],
+  );
+  assert.deepEqual(expiredReviewStartStatusLeases({ ...options, comments: [freshLease] }), []);
+  assert.deepEqual(
+    expiredReviewStartStatusLeases({
+      ...options,
+      itemNumber: 25,
+      comments: [expiredUuidOwner],
+    }),
+    [],
   );
 });
 

@@ -1802,6 +1802,44 @@ export function freshExactHeadReviewStartLease({
     : null;
 }
 
+export function expiredReviewStartStatusLeases({
+  comments,
+  itemNumber,
+  trustedAuthors = new Set<string>(),
+  nowMs = Date.now(),
+}: {
+  comments: LooseRecord[];
+  itemNumber: number;
+  trustedAuthors?: ReadonlySet<string>;
+  nowMs?: number;
+}): Array<{ commentId: number; expiresAt: string }> {
+  if (!Number.isInteger(itemNumber) || itemNumber <= 0) return [];
+  const expired: Array<{ commentId: number; expiresAt: string }> = [];
+  for (const comment of comments) {
+    const author = String(comment?.user?.login ?? "")
+      .trim()
+      .toLowerCase();
+    if (!author || !trustedAuthors.has(author)) continue;
+    const body = String(comment?.body ?? "");
+    // Only dedicated lease comments are reapable. The durable review comment can
+    // carry the same started marker via the legacy combined-lease path, and it
+    // must never be deleted here.
+    if (!body.includes(`<!-- clawsweeper-review-lease item=${itemNumber} -->`)) continue;
+    const canonical = canonicalReviewStartStatusMarker(body);
+    if (!canonical || canonical.itemNumber !== itemNumber) continue;
+    if (String(canonical.marker.attrs.v ?? "") !== "1") continue;
+    const expiresAt = String(canonical.marker.attrs.lease_expires_at ?? "");
+    const expiresAtMs = Date.parse(expiresAt);
+    // Unparseable expiry never qualifies: deleting is unrecoverable, so only a
+    // lease that provably lapsed may be reaped.
+    if (!Number.isFinite(expiresAtMs) || expiresAtMs >= nowMs) continue;
+    const rawCommentId = Number(comment?.id);
+    if (!Number.isInteger(rawCommentId) || rawCommentId <= 0) continue;
+    expired.push({ commentId: rawCommentId, expiresAt });
+  }
+  return expired;
+}
+
 export function trustedAutomationPredatesReviewStartLease({
   command,
   currentHeadSha,

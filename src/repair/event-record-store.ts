@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
+import { normalizeRepo, slugForRepo } from "../repository-profiles.js";
 import {
   chooseRecordTupleWinner,
   recordTupleContentsEqual,
@@ -39,7 +40,10 @@ export type EventSnapshotApplyResult =
   | "missing";
 
 export function eventRecordPaths(store: EventRecordStore): EventRecordPaths {
-  const targetSlug = store.targetRepo.replace("/", "-");
+  // Record tuples are written under the lowercased repository-profile slug
+  // (normalizeRepo + slugForRepo); read with the same normalization so
+  // display-cased target repos (steipete/Nameplate) resolve the same paths.
+  const targetSlug = slugForRepo(normalizeRepo(store.targetRepo));
   const tuple = recordTuplePaths({ repository: targetSlug, number: store.itemNumber });
   return {
     targetSlug,
