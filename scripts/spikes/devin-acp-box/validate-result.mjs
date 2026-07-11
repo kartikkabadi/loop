@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Loop Phase 0C — deterministic host validator for reviewer result JSON.
+ * Loop Phase 0C.1 — deterministic host validator for reviewer result JSON.
  * Node built-ins only. Exit 0 only when the document is valid.
  *
  * Usage:
@@ -17,6 +17,7 @@ const MAX_FILE_BYTES = 64 * 1024;
 const MAX_FINDINGS = 32;
 const MAX_STRING = 4_000;
 const MAX_SUMMARY = 8_000;
+const MAX_PATH_CHARS = 256;
 const SHA_RE = /^[0-9a-f]{40}$/;
 const SEVERITIES = new Set(["P0", "P1", "P2", "P3"]);
 const OUTCOMES = new Set(["pass", "fail"]);
@@ -30,6 +31,44 @@ const REQUIRED_TOP = [
   "summary",
   "findings",
 ];
+
+/**
+ * Reject any path with `..` / `.` / empty segments, absolutes, backslashes,
+ * even when path.normalize would stay inside the repo.
+ */
+export function validateRepoRelativePath(p) {
+  if (typeof p !== "string" || !p.trim()) {
+    return { ok: false, code: "E_PATH", message: "path must be non-empty string" };
+  }
+  if (p.length > MAX_PATH_CHARS) {
+    return {
+      ok: false,
+      code: "E_PATH_LENGTH",
+      message: `path exceeds ${MAX_PATH_CHARS} characters`,
+    };
+  }
+  if (path.isAbsolute(p) || p.includes("\\") || p.includes("\0")) {
+    return {
+      ok: false,
+      code: "E_PATH_ESCAPE",
+      message: "path must be repo-relative POSIX without backslashes",
+    };
+  }
+  if (p === "." || p === "..") {
+    return { ok: false, code: "E_PATH_ESCAPE", message: "path must not be . or .." };
+  }
+  const segments = p.split("/");
+  for (const seg of segments) {
+    if (seg === "" || seg === "." || seg === "..") {
+      return {
+        ok: false,
+        code: "E_PATH_ESCAPE",
+        message: "path must not contain empty, '.', or '..' segments",
+      };
+    }
+  }
+  return { ok: true };
+}
 
 export function validateResultObject(doc) {
   const errors = [];
@@ -67,39 +106,37 @@ export function validateResultObject(doc) {
   if (!Array.isArray(doc.findings)) {
     err("E_FINDINGS_TYPE", "findings must be an array");
   } else {
-    if (doc.findings.length > MAX_FINDINGS)
+    if (doc.findings.length > MAX_FINDINGS) {
       err("E_FINDINGS_CAP", `findings exceeds ${MAX_FINDINGS}`);
+    }
+    if (doc.outcome === "pass" && doc.findings.length !== 0) {
+      err("E_OUTCOME_FINDINGS", "outcome pass requires zero findings");
+    }
+    if (doc.outcome === "fail" && doc.findings.length < 1) {
+      err("E_OUTCOME_FINDINGS", "outcome fail requires one or more findings");
+    }
     doc.findings.forEach((f, i) => {
-      const p = `findings[${i}]`;
+      const pfx = `findings[${i}]`;
       if (!f || typeof f !== "object" || Array.isArray(f)) {
-        err("E_FINDING_OBJECT", `${p} must be object`);
+        err("E_FINDING_OBJECT", `${pfx} must be object`);
         return;
       }
       for (const k of Object.keys(f)) {
         if (!["severity", "path", "line", "message", "evidence"].includes(k)) {
-          err("E_FINDING_UNKNOWN_FIELD", `${p} unknown field: ${k}`);
+          err("E_FINDING_UNKNOWN_FIELD", `${pfx} unknown field: ${k}`);
         }
       }
-      if (!SEVERITIES.has(f.severity)) err("E_SEVERITY", `${p}.severity invalid`);
-      if (typeof f.path !== "string" || !f.path.trim()) {
-        err("E_PATH", `${p}.path must be non-empty string`);
-      } else {
-        if (path.isAbsolute(f.path) || f.path.includes("\\")) {
-          err("E_PATH_ESCAPE", `${p}.path must be repo-relative POSIX`);
-        }
-        const norm = path.posix.normalize(f.path);
-        if (norm.startsWith("../") || norm === ".." || norm.startsWith("/")) {
-          err("E_PATH_ESCAPE", `${p}.path escapes repository root`);
-        }
-      }
+      if (!SEVERITIES.has(f.severity)) err("E_SEVERITY", `${pfx}.severity invalid`);
+      const pathCheck = validateRepoRelativePath(f.path);
+      if (!pathCheck.ok) err(pathCheck.code, `${pfx}.${pathCheck.message}`);
       if (!Number.isInteger(f.line) || f.line < 1) {
-        err("E_LINE", `${p}.line must be integer >= 1`);
+        err("E_LINE", `${pfx}.line must be integer >= 1`);
       }
       if (typeof f.message !== "string" || !f.message.trim() || f.message.length > MAX_STRING) {
-        err("E_MESSAGE", `${p}.message must be non-empty within bound`);
+        err("E_MESSAGE", `${pfx}.message must be non-empty within bound`);
       }
       if (typeof f.evidence !== "string" || !f.evidence.trim() || f.evidence.length > MAX_STRING) {
-        err("E_EVIDENCE", `${p}.evidence must be non-empty within bound`);
+        err("E_EVIDENCE", `${pfx}.evidence must be non-empty within bound`);
       }
     });
   }
@@ -146,11 +183,11 @@ function validFixture() {
     summary: "Seeded defect found in arithmetic helper.",
     findings: [
       {
-        severity: "P1",
+        severity: "P0",
         path: "src/math.js",
-        line: 3,
-        message: "add() returns incorrect sum for positive integers",
-        evidence: "expect(add(2,2)).toBe(4) fails because implementation returns a-b",
+        line: 2,
+        message: "add() returns a - b instead of a + b",
+        evidence: "node --test: AssertionError add(2, 3) returned -1, expected 5",
       },
     ],
   };
@@ -189,11 +226,46 @@ function runSelfTests() {
     "E_HEAD_SHA",
   );
   check(
-    "path_escape",
+    "path_escape_dotdot",
     (d) => {
       d.findings[0].path = "../secret";
     },
     "E_PATH_ESCAPE",
+  );
+  check(
+    "path_escape_normalize_inside",
+    (d) => {
+      d.findings[0].path = "src/../secret.js";
+    },
+    "E_PATH_ESCAPE",
+  );
+  check(
+    "path_escape_nested_dotdot",
+    (d) => {
+      d.findings[0].path = "a/../../secret";
+    },
+    "E_PATH_ESCAPE",
+  );
+  check(
+    "path_absolute",
+    (d) => {
+      d.findings[0].path = "/absolute";
+    },
+    "E_PATH_ESCAPE",
+  );
+  check(
+    "path_windows",
+    (d) => {
+      d.findings[0].path = "src\\math.js";
+    },
+    "E_PATH_ESCAPE",
+  );
+  check(
+    "path_oversized",
+    (d) => {
+      d.findings[0].path = `${"a".repeat(MAX_PATH_CHARS + 1)}.js`;
+    },
+    "E_PATH_LENGTH",
   );
   check(
     "invalid_severity",
@@ -201,6 +273,20 @@ function runSelfTests() {
       d.findings[0].severity = "critical";
     },
     "E_SEVERITY",
+  );
+  check(
+    "pass_with_findings",
+    (d) => {
+      d.outcome = "pass";
+    },
+    "E_OUTCOME_FINDINGS",
+  );
+  check(
+    "fail_without_findings",
+    (d) => {
+      d.findings = [];
+    },
+    "E_OUTCOME_FINDINGS",
   );
 
   const dir = mkdtempSync(path.join(tmpdir(), "loop-0c-val-"));
