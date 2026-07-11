@@ -129,32 +129,163 @@ function normalizeAjvErrors(errors: ErrorObject[] | null | undefined): ContractE
   return out;
 }
 
+function contractError(code: string, message: string): ContractError {
+  return { code, instancePath: "/", message };
+}
+
+function isFinitePositiveInteger(value: unknown): value is number {
+  return (
+    typeof value === "number" && Number.isFinite(value) && Number.isInteger(value) && value > 0
+  );
+}
+
+function resolveMaxBytes(options?: { maxBytes?: number }): number | ParseFailure {
+  if (options === undefined || options.maxBytes === undefined) {
+    return DEFAULT_RESULT_MAX_BYTES;
+  }
+  if (!isFinitePositiveInteger(options.maxBytes)) {
+    return {
+      ok: false,
+      error: contractError("E_RESULT_MAX_BYTES", "maxBytes must be a finite positive integer"),
+    };
+  }
+  return options.maxBytes;
+}
+
+function isJsonValueStart(text: string, i = 0): boolean {
+  const ch = text[i];
+  if (!ch) return false;
+  // t/f/n only count when the full literal is present; otherwise prose like
+  // `note {...}` is leading non-JSON text, not malformed JSON.
+  if (ch === "t") return text.startsWith("true", i);
+  if (ch === "f") return text.startsWith("false", i);
+  if (ch === "n") return text.startsWith("null", i);
+  return ch === "{" || ch === "[" || ch === '"' || ch === "-" || (ch >= "0" && ch <= "9");
+}
+
+/**
+ * Return the exclusive end index of the first JSON value starting at `i`,
+ * or -1 if a complete value cannot be scanned.
+ */
+function endIndexOfJsonValue(text: string, i: number): number {
+  if (i >= text.length) return -1;
+  const ch = text[i]!;
+  if (ch === "{") return endIndexOfObject(text, i);
+  if (ch === "[") return endIndexOfArray(text, i);
+  if (ch === '"') return endIndexOfString(text, i);
+  if (ch === "t" && text.startsWith("true", i)) return i + 4;
+  if (ch === "f" && text.startsWith("false", i)) return i + 5;
+  if (ch === "n" && text.startsWith("null", i)) return i + 4;
+  if (ch === "-" || (ch >= "0" && ch <= "9")) return endIndexOfNumber(text, i);
+  return -1;
+}
+
+function endIndexOfString(text: string, start: number): number {
+  let i = start + 1;
+  while (i < text.length) {
+    const ch = text[i]!;
+    if (ch === "\\") {
+      i += 2;
+      continue;
+    }
+    if (ch === '"') return i + 1;
+    i += 1;
+  }
+  return -1;
+}
+
+function endIndexOfNumber(text: string, start: number): number {
+  let i = start;
+  if (text[i] === "-") i += 1;
+  if (i >= text.length) return -1;
+  if (text[i] === "0") {
+    i += 1;
+  } else if (text[i]! >= "1" && text[i]! <= "9") {
+    i += 1;
+    while (i < text.length && text[i]! >= "0" && text[i]! <= "9") i += 1;
+  } else {
+    return -1;
+  }
+  if (text[i] === ".") {
+    i += 1;
+    if (i >= text.length || text[i]! < "0" || text[i]! > "9") return -1;
+    while (i < text.length && text[i]! >= "0" && text[i]! <= "9") i += 1;
+  }
+  if (text[i] === "e" || text[i] === "E") {
+    i += 1;
+    if (text[i] === "+" || text[i] === "-") i += 1;
+    if (i >= text.length || text[i]! < "0" || text[i]! > "9") return -1;
+    while (i < text.length && text[i]! >= "0" && text[i]! <= "9") i += 1;
+  }
+  return i;
+}
+
+function skipWs(text: string, i: number): number {
+  while (i < text.length && /\s/.test(text[i]!)) i += 1;
+  return i;
+}
+
+function endIndexOfArray(text: string, start: number): number {
+  let i = skipWs(text, start + 1);
+  if (i < text.length && text[i] === "]") return i + 1;
+  while (i < text.length) {
+    const end = endIndexOfJsonValue(text, i);
+    if (end < 0) return -1;
+    i = skipWs(text, end);
+    if (i >= text.length) return -1;
+    if (text[i] === "]") return i + 1;
+    if (text[i] !== ",") return -1;
+    i = skipWs(text, i + 1);
+  }
+  return -1;
+}
+
+function endIndexOfObject(text: string, start: number): number {
+  let i = skipWs(text, start + 1);
+  if (i < text.length && text[i] === "}") return i + 1;
+  while (i < text.length) {
+    if (text[i] !== '"') return -1;
+    const keyEnd = endIndexOfString(text, i);
+    if (keyEnd < 0) return -1;
+    i = skipWs(text, keyEnd);
+    if (i >= text.length || text[i] !== ":") return -1;
+    i = skipWs(text, i + 1);
+    const valueEnd = endIndexOfJsonValue(text, i);
+    if (valueEnd < 0) return -1;
+    i = skipWs(text, valueEnd);
+    if (i >= text.length) return -1;
+    if (text[i] === "}") return i + 1;
+    if (text[i] !== ",") return -1;
+    i = skipWs(text, i + 1);
+  }
+  return -1;
+}
+
 /**
  * Parse exactly one JSON object from model-produced text.
  * Measures the raw input in UTF-8 bytes; trims surrounding whitespace only.
+ * Never returns raw JSON.parse exception text in errors.
  */
 export function parseExactJsonObject(text: string, options?: { maxBytes?: number }): ParseResult {
   if (typeof text !== "string") {
     return {
       ok: false,
-      error: {
-        code: "E_RESULT_JSON",
-        instancePath: "/",
-        message: "input must be a string",
-      },
+      error: contractError("E_RESULT_JSON", "input must be a string"),
     };
   }
 
-  const maxBytes = options?.maxBytes ?? DEFAULT_RESULT_MAX_BYTES;
+  const maxBytesOrErr = resolveMaxBytes(options);
+  if (typeof maxBytesOrErr !== "number") return maxBytesOrErr;
+  const maxBytes = maxBytesOrErr;
+
   const byteLength = Buffer.byteLength(text, "utf8");
   if (byteLength > maxBytes) {
     return {
       ok: false,
-      error: {
-        code: "E_RESULT_TOO_LARGE",
-        instancePath: "/",
-        message: `input exceeds ${maxBytes} UTF-8 bytes (got ${byteLength})`,
-      },
+      error: contractError(
+        "E_RESULT_TOO_LARGE",
+        `input exceeds ${maxBytes} UTF-8 bytes (got ${byteLength})`,
+      ),
     };
   }
 
@@ -162,58 +293,52 @@ export function parseExactJsonObject(text: string, options?: { maxBytes?: number
   if (!trimmed) {
     return {
       ok: false,
-      error: {
-        code: "E_RESULT_EMPTY",
-        instancePath: "/",
-        message: "empty output",
-      },
+      error: contractError("E_RESULT_EMPTY", "empty output"),
     };
   }
 
   if (trimmed.startsWith("```")) {
     return {
       ok: false,
-      error: {
-        code: "E_RESULT_EXTRA_TEXT",
-        instancePath: "/",
-        message: "markdown fence rejected",
-      },
+      error: contractError("E_RESULT_EXTRA_TEXT", "markdown fence rejected"),
+    };
+  }
+
+  if (!isJsonValueStart(trimmed)) {
+    return {
+      ok: false,
+      error: contractError("E_RESULT_EXTRA_TEXT", "leading non-JSON text"),
+    };
+  }
+
+  const valueEnd = endIndexOfJsonValue(trimmed, 0);
+  if (valueEnd < 0) {
+    return {
+      ok: false,
+      error: contractError("E_RESULT_JSON", "malformed JSON"),
+    };
+  }
+  if (valueEnd !== trimmed.length) {
+    return {
+      ok: false,
+      error: contractError("E_RESULT_EXTRA_TEXT", "trailing text or multiple JSON values"),
     };
   }
 
   let value: unknown;
   try {
     value = JSON.parse(trimmed);
-  } catch (err) {
-    const detail = err instanceof Error ? err.message : String(err);
-    if (/[{[]/.test(trimmed)) {
-      return {
-        ok: false,
-        error: {
-          code: "E_RESULT_EXTRA_TEXT",
-          instancePath: "/",
-          message: `JSON with surrounding text or multiple values: ${detail}`,
-        },
-      };
-    }
+  } catch {
     return {
       ok: false,
-      error: {
-        code: "E_RESULT_JSON",
-        instancePath: "/",
-        message: detail,
-      },
+      error: contractError("E_RESULT_JSON", "malformed JSON"),
     };
   }
 
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
     return {
       ok: false,
-      error: {
-        code: "E_RESULT_NOT_OBJECT",
-        instancePath: "/",
-        message: "root must be a non-null object",
-      },
+      error: contractError("E_RESULT_NOT_OBJECT", "root must be a non-null object"),
     };
   }
 
@@ -227,13 +352,7 @@ export function validateResultContract(
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
     return {
       ok: false,
-      errors: [
-        {
-          code: "E_RESULT_NOT_OBJECT",
-          instancePath: "/",
-          message: "root must be a non-null object",
-        },
-      ],
+      errors: [contractError("E_RESULT_NOT_OBJECT", "root must be a non-null object")],
     };
   }
 

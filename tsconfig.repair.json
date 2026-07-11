@@ -18,6 +18,7 @@
   "include": [
     "src/repair/**/*.ts",
     "src/repository-profiles.ts",
+    "src/result-contracts.ts",
     "src/codex-output-capture.ts",
     "src/codex-spawn.ts",
     "src/codex-app-server-worker.ts",
