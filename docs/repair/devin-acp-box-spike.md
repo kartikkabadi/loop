@@ -370,145 +370,140 @@ Prior lease `cbx_b66390f165e1` / slug `violet-prawn` / box `bx_8ezbf3vk` empiric
 
 ---
 
-# Phase 0C — session recovery, reviewer isolation, structured-result proof
+# Phase 0C.1 — authoritative session recovery / isolation rerun
 
 **Date:** 2026-07-11
-**Phase 0B merge SHA:** `800f603d7399cb0f1e62cfcae624e573cbd44f93` (PR #3; approved head `4d7651f3dfdf052141d8896c5a4d318885482f5d`)
-**Branch:** `spike/phase-0c-session-recovery`
-**Harness:** `scripts/spikes/devin-acp-box/phase0c.mjs` `0.1.0-phase0c` + `validate-result.mjs` (Node built-ins only)
+**Branch:** `spike/phase-0c-session-recovery` (PR https://github.com/kartikkabadi/loop/pull/4)
+**Harness:** `scripts/spikes/devin-acp-box/phase0c.mjs` `0.1.1-phase0c1` + `validate-result.mjs`
 **Frozen Phase 0B client:** `scripts/spikes/devin-acp-box/client.mjs` (untouched)
 **Crabbox:** CLI `0.37.1`
 **Box CLI:** `0.1.123-ascii-prod1`
 **Devin CLI (inside Boxes):** `3000.1.27 (0d4bf12e)`
 **Node (inside Boxes):** `v24.15.0`
-**ACP:** v1; load method exercised: `session/load` with `{ sessionId, cwd, mcpServers }`
+**ACP:** v1; `session/load` with `{ sessionId, cwd, mcpServers }`
+
+Prior Phase 0C (`0.1.0-phase0c`) matrix is superseded by this 0C.1 rerun. Do not treat older rows as authoritative.
 
 ## A. Scope and non-goals
 
-Prove same-session multi-turn continuity, `session/load` after ACP process restart, Box stop/resume recovery, host-owned structured JSON validation, independent exact-head review on a separate verifier Box, credential isolation, artifact digests, and complete cleanup.
+Prove continuity, ACP restart load, Box stop/resume load, host structured validation, independent exact-head review, credential isolation, artifact digests, steer fallback, and cleanup.
 
 Non-goals: no `AgentSessionRuntime`, no production ClawSweeper changes, no Codex cutover, no workflows/schemas/prompts/deps/lockfiles, no Devin on GHA, no `devin -p`, no ACP-over-Crabbox stdin.
 
 ## B. Box identities (sanitized)
 
-| Role               | Lease              | Slug          | Box           | Notes                                                                                        |
-| ------------------ | ------------------ | ------------- | ------------- | -------------------------------------------------------------------------------------------- |
-| Builder / recovery | `cbx_4687abe6548e` | `pearl-prawn` | `bx_x3k6nku4` | subdomain `risus-gloats-shear`; IP changed after resume (`188.245.118.41` → `78.47.221.222`) |
-| Verifier           | `cbx_ca3b3735389e` | `violet-crab` | `bx_9gtvfm4w` | distinct Box; no builder session material                                                    |
+| Role               | Lease              | Slug              | Box           | Notes                                                                 |
+| ------------------ | ------------------ | ----------------- | ------------- | --------------------------------------------------------------------- |
+| Builder / recovery | `cbx_bf6102222cf2` | `swift-lobster`   | `bx_u9pjq6ax` | subdomain `jowls-cloths-leaker`; IP after resume `188.34.195.254`     |
+| Verifier           | `cbx_1809dad17086` | `harbor-crayfish` | `bx_r8vkrfd8` | distinct Box; no builder session material                             |
 
-Session digests only (no raw session IDs in docs):
+Session digests only (no raw session IDs):
 
 | Context                   | Digest                                                             |
 | ------------------------- | ------------------------------------------------------------------ |
-| Continuity / load session | `7fdc7b83ff032c8908ce4a864b3bafa02d2c7cf8f551752c529068d3d3246fce` |
-| Verifier review session   | `4d27cbcbe6b2d04ef9475a184cb9fe4cdc7dcfebbf91552283a540391be9c6d2` |
-| Nonce hash                | `edfc0a64bd92bd630a61445ca1bb3fb888ac3dc088aab745083e752bce80ecaa` |
+| Continuity / load session | `34873be0924efc3ab7e918aad3a3ddafecfb490951f024f7eeaf15d9332837fa` |
+| Verifier review session   | `fc0186fbd757b28a22c52b8005247c36b01f4b2c901c0cc4030262cff5bf494e` |
+| Nonce hash                | `cd36ad1cf867d79b642422c4b3297a9ea4cc96201dedfcfe8ff8b3dc3c0908e1` |
 
 ## C. ACP contract inspection
 
 | Layer                         | Result                                                                                                                                                         |
 | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Advertised                    | `loadSession: true`; prompt image/embeddedContext; session list/additionalDirectories objects; no mid-turn steer capability                                    |
-| Spec methods                  | `session/new`, `session/load` (params: `sessionId`, `cwd`, `mcpServers`), `session/prompt`, `session/cancel`, `session/update`                                 |
-| Empirically accepted by Devin | `session/load` succeeds and returns an object; subsequent prompt works                                                                                         |
-| Proven state preservation     | Same-session second prompt (P0C-13); load after new ACP PID (P0C-14); load after Box stop/resume (P0C-15) all returned the exact nonce without re-supplying it |
-| Steer                         | No native mid-turn steer observed. Cancel → `stopReason=cancelled` works. Same-process continue prompt after cancel crashes Devin ACP (`receiver dropped`)     |
+| Spec methods                  | `session/new`, `session/load`, `session/prompt`, `session/cancel`, `session/update`                                                                            |
+| Empirically accepted by Devin | `session/load` succeeds; subsequent prompt recovers exact nonce                                                                                                |
+| Proven state preservation     | P0C-13 / P0C-14 / P0C-15 all recovered the nonce without re-supplying it                                                                                       |
+| Steer                         | No native mid-turn steer. Cancel → `stopReason=cancelled`. Same-process continue after cancel crashes ACP (`receiver dropped`); select fresh-session fallback |
 
-## D. Evidence matrix
+## D. Evidence matrix (authoritative 0C.1)
 
-| ID         | Result   | Evidence                                                                                                                                               | Timing                     | Fallback / runtime effect                                                                                |
-| ---------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------- | -------------------------------------------------------------------------------------------------------- |
-| **P0C-13** | **PASS** | Two prompts, same session digest; both `stopReason=end_turn`; second returns exact nonce marker; zero tool requests                                    | d1=1959ms, d2=5343ms       | `continueSession` / same-session prompt approved for Phase 2                                             |
-| **P0C-14** | **PASS** | New ACP PID `78660`; `session/load` ok; nonce recovered; no transcript replay into recovery prompt                                                     | load=1475ms, prompt=1580ms | Durable `loadSession` approved                                                                           |
-| **P0C-15** | **PASS** | `box stop` → snapshot → `box resume` same Box ID/subdomain; credentials.toml present; Devin symlink needed repair after resume; `session/load` + nonce | load=848ms, prompt=6970ms  | Box stop/resume recovery supported when filesystem+creds persist; host must repair CLI symlink if broken |
-| **P0C-16** | **PASS** | Host extracts JSON from agent messages only; `validate-result.mjs` exit 0; review hash `40830f04…a7ccc4`                                               | 18506ms                    | Host validator is authoritative; model cooperation ≠ validation                                          |
-| **P0C-17** | **PASS** | Separate verifier Box; clean exact head `f5a0bf67…`; fresh ACP+session; finding `src/math.js` P0 with test evidence; validator ok                      | 23916ms                    | Reviewer isolation: separate Box + clean exact head mandatory                                            |
-| **P0C-18** | **PASS** | Parent had all six sentinel keys; Devin `/proc/<pid>/environ` and child env had zero forbidden keys; artifact secret scan clean                        | —                          | Credential scrub boundary mandatory                                                                      |
-| **P0C-19** | **PASS** | Summaries, capabilities, transcripts, stderr, review results, validator reports collected; non-self-referential `summaryPayloadSha256`                 | —                          | Digests recorded below                                                                                   |
-| **P0C-20** | **PASS** | Leases released; both Boxes absent from inventory; leases not found; local canary dirs + env helper removed                                            | —                          | Cleanup is a hard gate                                                                                   |
+| ID         | Result   | Evidence                                                                                                                                                          | Timing                         | Fallback / runtime effect                                                                                |
+| ---------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| **P0C-13** | **PASS** | Same session digest; both `end_turn`; exact nonce on second prompt; zero tool requests                                                                            | d1=2993ms, d2=1947ms           | `continueSession` approved                                                                               |
+| **P0C-14** | **PASS** | New ACP PID; `session/load` ok; nonce present                                                                                                                     | load=1476ms, prompt=1927ms     | Durable `loadSession` approved                                                                           |
+| **P0C-15** | **PASS** | `box stop` → snapshot → `box resume` same Box ID/subdomain; IP changed; absolute `ln -sfn` Devin repair; `session/load` + nonce                                   | load=1038ms, prompt=2301ms     | Host must repair CLI symlink after resume                                                                |
+| **P0C-16** | **PASS** | First suite attempt timed out without remote `.git` after `--fresh-sync`; rerun after git-bundle restore; validator ok; review hash `bc8e77b0…a0911b`               | 258116ms (rerun)               | Expand `--base-sha`/`--head-sha` on the **local** side; restore `.git` via bundle (Crabbox excludes it)  |
+| **P0C-17** | **PASS** | Separate verifier Box; clean porcelain; exact head `1d53e668…`; seeded `src/math.js` P0 hit; validator ok                                                         | 39863ms structured             | Reviewer isolation mandatory                                                                             |
+| **P0C-18** | **PASS** | Six parent sentinels present; ACP/terminal scrubbed env empty of secrets; terminal child inspected (`terminalProcOk`); `ACCESS_DENIED`; no secret leak            | rerun after harness harden     | Credential scrub + OS user boundary mandatory                                                            |
+| **P0C-19** | **PASS** | Summaries, capabilities, transcripts, stderr, review/validator artifacts downloaded; payload digests recorded                                                     | —                              | Digests below                                                                                            |
+| **P0C-20** | **PASS** | Both leases released via `crabbox stop`; spike Boxes absent from `box list` (404 on further stop); older unrelated stopped Boxes remain on the account            | —                              | Spike Boxes cleaned; leftover account Boxes noted                                                        |
+| **steer**  | **PASS** | Cancel reached `cancelled`; same-process continue failed as expected; strategy `cancel+fresh-session-checkpoint-rehydrate`                                        | —                              | Option 4 selected                                                                                        |
 
 ### Canary SHAs
 
-| Item                                           | Value                                       |
-| ---------------------------------------------- | ------------------------------------------- |
-| Builder base                                   | `ed671f290725a4dfbbee4ebd94cbdc7f5d274ee0`  |
-| Builder head (labeled seed, structured-review) | `35a9476a744671b0368f1b59382ab789041d4f77`  |
-| Verifier head (defect without seed label)      | `f5a0bf67a46c98dd0fe018c5a865b5b5988df706`  |
-| Seeded defect                                  | `add()` returns `a - b`; path `src/math.js` |
+| Item              | Value                                      |
+| ----------------- | ------------------------------------------ |
+| Base (correct)    | `dcc053c3db4d560462e7149da44ff80e57240cbc` |
+| Head (scripts)    | `1d53e668882d00ebee5489251e44b9f06a27bbcd` |
+| Seeded defect     | `add()` returns `a - b`; path `src/math.js` (no seed label comment) |
 
 ### Authoritative artifact digests (selected)
 
-| Artifact                                | SHA-256                                                            | Bytes   |
-| --------------------------------------- | ------------------------------------------------------------------ | ------- |
-| builder `summary.json` (payload digest) | `cd5b3477db245ed21fc9ebd5f3d0889931a32f45616ee37656898aa4c4691907` | —       |
-| builder capabilities                    | `1c936a93ecf3fe8e57d297c5ed564244b330ae5aead9b9b28e8a6dd632615538` | 883     |
-| builder transcript                      | `4767fc03c01508b24c4bb2ae68ae730ca3f8125d0fc87666f2263090d422be98` | 1073538 |
-| P0C-16 review-result                    | `40830f04bbfc9ccf322c038b61d97579d1e48bfcd542787a9d24c0dda6a7ccc4` | 682     |
-| P0C-15 summary payload                  | `991dab1b98531d8305e52beb7dfb90fce6949b32b42ec2d8cb7b0e82ea55bf1c` | —       |
-| verifier review-result                  | `eef17283e16ede1ad7dc55056f4f1103994413263cb1c01bc783659d7d26cfa8` | 637     |
-| verifier summary payload                | `077d298155bcdf6b53779b7fae25f171717976e5f1c7629071997095ee524c7c` | —       |
+| Artifact                         | SHA-256 / payload                                                      | Bytes |
+| -------------------------------- | ---------------------------------------------------------------------- | ----- |
+| builder capabilities             | `1c936a93ecf3fe8e57d297c5ed564244b330ae5aead9b9b28e8a6dd632615538`     | 883   |
+| P0C-16 review-result             | `bc8e77b0e3a58aa37ca09973da8b8a91919e9194a8939f9730c7662a11a0911b`     | 671   |
+| P0C-16 summary payload           | `c02e66169ebe42f240f2867eda25189ead254958fb2efd9a025f21fc7d434537`     | —     |
+| P0C-18 summary payload           | `c5e8d35e98ea4ffdaead72359c3a07a1e041713b9aae15d3c5d5bd17d945ea1c`     | —     |
+| steer summary payload            | `421849ca352bfc53c60fc6680f192b0fb8bf33aa8bbabcb87d7db1b2f2655e81`     | —     |
+| P0C-15 summary payload           | `ad1f6309e0dc3918eba2bdb562553752666fae3dc86927ca327a2e7e26baa992`     | —     |
+| verifier review-result           | `4bfd9948ee6a21528450e5509798b0c029d5655581e4901b6d47b23672f69e07`     | 598   |
+| verifier summary payload         | `65d387f12905da2851688aee557e6a0bdd5e793bdd2c6b5e366e1a6b964767ca`     | —     |
 
-Raw transcripts stay outside Git.
+Raw transcripts stay outside Git (`/tmp/loop-phase-0c1-evidence`).
 
 ## E. Steer strategy (chosen)
 
 **Option 4:** `cancel + fresh session with host checkpoint rehydration`.
 
-Proven:
-
 1. Native ACP mid-turn steer — **not observed**.
-2. Cancel + continued prompt in same ACP process — **FAIL** (ACP exits with `receiver dropped` after `stopReason=cancelled`).
-3. Cancel + load session + continued prompt — not required once (2) fails; load itself works (P0C-14/15).
-4. Cancel + fresh session + host checkpoint — **selected** for Phase 2.
+2. Cancel + same-process continue — **FAIL** (ACP exits after `cancelled`).
+3. Cancel + fresh session + host checkpoint — **selected**.
 
-## F. Phase 2 runtime capability contract (empirically justified)
+## F. Phase 1 / Phase 2 runtime contract (empirically justified)
 
-### Mandatory operations
+### Mandatory
 
 ```text
 initialize
-capabilities (from initialize result)
-createSession          # session/new
-prompt                 # session/prompt
-cancel                 # session/cancel → expect stopReason=cancelled
+capabilities
+createSession
+prompt
+cancel                    # expect stopReason=cancelled
 ```
 
-### Capability-gated operations (proven)
+### Capability-gated (proven)
 
 ```text
-continueSession        # second+ prompt on same sessionId (P0C-13)
-loadSession            # session/load after new ACP process (P0C-14)
-                       # and after Box stop/resume (P0C-15)
+continueSession           # P0C-13
+loadSession               # P0C-14, P0C-15
 ```
 
 ### Unsupported / fallback
 
 ```text
-native mid-turn steer                          # unsupported
-cancel + same-process continue prompt          # unsupported (crashes ACP)
-Box recovery if stop/resume unavailable:
-  persist task checkpoint + artifacts outside Box,
-  provision fresh Box,
-  create fresh Devin session,
-  rehydrate with bounded host-owned context
-steer after cancel:
-  persist checkpoint, fresh session, rehydrate
+native mid-turn steer
+cancel + same-process continue prompt
+Box recovery if stop/resume unavailable → fresh Box + fresh session + host checkpoint
 ```
 
 ### Boundaries
 
-- **Host validation:** `validate-result.mjs`-shaped deterministic contract; reject unknown fields; host writes `review-result.json`.
-- **Credential boundary:** Devin receives only Box-local auth + HOME/PATH/locale/XDG + canary task context. No GitHub/App/Box/Crabbox/CF/OpenAI secrets.
-- **Reviewer isolation:** separate Box; clean exact head; no builder session IDs/transcripts/prior agent output.
-- **Box recovery:** `box stop` / `box resume` preserves Box ID + disk + Devin credentials; host must tolerate IP change and repair broken `~/.local/bin/devin` symlink after resume.
+- Host validation via `validate-result.mjs`; reject unknown fields.
+- Credential boundary: Devin ACP/terminal env scrubbed; terminal runs as `loop-runner`; canary credentials file yields `ACCESS_DENIED`.
+- Reviewer isolation: separate Box + clean exact head + no builder session material.
+- Box recovery: stop/resume keeps Box ID + disk + creds; repair absolute Devin symlink; tolerate IP change.
 
-## G. Go / no-go for production implementation
+## G. Go / no-go for Phase 1
 
-**GO to design `AgentSessionRuntime` against the contract above.** Production implementation has **not** begun in this PR.
+**GO for Phase 1 design of `AgentSessionRuntime` against the contract above.**
 
-## H. Notes / hazards
+All of P0C-13…P0C-20 and steer PASS on this 0C.1 harness. Production implementation has **not** begun in this PR.
 
-1. First builder-suite structured pass failed host JSON extraction because thought chunks polluted joined text; fixed by collecting only `agent_message_chunk` (authoritative P0C-16 rerun PASS).
-2. After Box resume, Devin CLI symlink can break (`~/.local/bin/devin` → relative target); repair before ACP.
-3. Crabbox sync excludes `.git`; verifier used a git bundle reconstructed inside the Box.
-4. Do not answer `wait_for_exit` with immediate local SIGTERM during cancel (Phase 0B); same-process continue after cancel still crashes — use fresh session.
+## H. Hardening notes (0C.1)
+
+1. Expand `--base-sha` / `--head-sha` on the **local** side into the remote command string (remote `$VAR` in single quotes is empty).
+2. Devin re-escapes `sh -lc` scripts; allowlist uses `canonicalizeShellScript`, then spawn rewrites security/cancel probes to canonical scripts.
+3. `sudo` children are root-owned; host attests `/proc/<pid>/environ` via `sudo cat` (does not weaken the isolation assertion).
+4. Crabbox sync excludes `.git`; use a git bundle + restore before structured/exact-head modes. Avoid `--fresh-sync` afterward unless restoring git again.
+5. After Box resume, force `ln -sfn` to the absolute Devin binary before ACP.

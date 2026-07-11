@@ -14,6 +14,7 @@
  *   --mode security-probe      P0C-18 sentinel env isolation
  *   --mode cancel-continue     steer fallback: cancel + same-session prompt
  *   --mode builder-suite       continuity → restart-load → structured → security → cancel-continue
+ *   --mode self-check          host-only auth/json/cap tests (no Devin)
  *
  * Writes under --outdir: capabilities.json, transcript.jsonl, stderr.log, summary.json,
  * and mode-specific artifacts (review-result.json, validator-report.json, …).
@@ -29,19 +30,109 @@ import {
   existsSync,
   realpathSync,
   rmSync,
+  symlinkSync,
+  unlinkSync,
 } from "node:fs";
 import path from "node:path";
 import process from "node:process";
 import { setTimeout as delay } from "node:timers/promises";
 import { fileURLToPath } from "node:url";
 
-const CLIENT_VERSION = "0.1.0-phase0c";
+const CLIENT_VERSION = "0.1.1-phase0c1";
 const PROTOCOL_VERSION = 1;
 const REQUEST_TIMEOUT_MS = 180_000;
 const PROCESS_TIMEOUT_MS = 600_000;
 const KILL_GRACE_MS = 3_000;
 const MAX_TERMINAL_OUTPUT_BYTES = 256 * 1024;
 const VERSION_TIMEOUT_MS = 15_000;
+const REPO_TERMINAL_USER = "loop-runner";
+const REPO_TERMINAL_HOME = "/home/loop-runner";
+const CRED_CANARY_DIR = "/home/user/.local/share/devin-canary";
+const CRED_CANARY_PATH = `${CRED_CANARY_DIR}/credentials.canary`;
+const SECURITY_PROBE_SCRIPT =
+  'node -e "const fs=require(\\"fs\\");const p=\\"/home/user/.local/share/devin-canary/credentials.canary\\";try{const v=fs.readFileSync(p,\\"utf8\\");process.stdout.write(\\"ACCESS_OK\\")}catch(e){process.stdout.write(\\"ACCESS_DENIED\\")};process.stdout.write(\\"\\\\n\\")" ; sleep 2';
+const CANCEL_SLEEP_SCRIPT = "sleep 30; printf SHOULD_NOT_COMPLETE";
+
+/** Collapse shell/JSON quote noise so Devin's re-escaped -lc scripts still match. */
+function canonicalizeShellScript(script) {
+  let s = String(script || "");
+  for (let i = 0; i < 10; i++) {
+    const next = s
+      .replace(/\\+"/g, '"')
+      .replace(/\\+'/g, "'")
+      .replace(/\\n/g, "\n")
+      .replace(/\\\\/g, "\\");
+    if (next === s) break;
+    s = next;
+  }
+  return s.replace(/\s+/g, " ").trim();
+}
+
+function isSecurityProbeInvocation(command, args) {
+  const c = String(command || "");
+  const a = Array.isArray(args) ? args.map(String) : [];
+  const expected = canonicalizeShellScript(SECURITY_PROBE_SCRIPT);
+
+  const scriptLooksLikeProbe = (script) => {
+    const got = canonicalizeShellScript(script);
+    if (got === expected) return true;
+    return (
+      got.includes(CRED_CANARY_PATH) &&
+      got.includes("ACCESS_DENIED") &&
+      got.includes("ACCESS_OK") &&
+      /readFileSync/.test(got) &&
+      /^node\s+-e\b/.test(got) &&
+      !/\b(curl|wget|ssh|python|perl|ruby|npm|pip|docker)\b/i.test(got)
+    );
+  };
+
+  if (c === "node" && a.length === 2 && a[0] === "-e") {
+    const body = canonicalizeShellScript(a[1]);
+    const expectedBody = canonicalizeShellScript(
+      SECURITY_PROBE_SCRIPT.replace(/^node -e /, "").replace(/^"(.*)"$/s, "$1"),
+    );
+    return (
+      body === expectedBody ||
+      (body.includes(CRED_CANARY_PATH) &&
+        body.includes("ACCESS_DENIED") &&
+        body.includes("ACCESS_OK") &&
+        /readFileSync/.test(body) &&
+        !/\b(curl|wget|ssh|python|perl|ruby|npm|pip|docker)\b/i.test(body))
+    );
+  }
+  if ((c === "sh" || c === "bash") && a.length === 2 && a[0] === "-lc") {
+    return a[1] === SECURITY_PROBE_SCRIPT || scriptLooksLikeProbe(a[1]);
+  }
+  return false;
+}
+
+function isCancelSleepInvocation(command, args) {
+  const c = String(command || "");
+  const a = Array.isArray(args) ? args.map(String) : [];
+  if ((c === "sh" || c === "bash") && a.length === 2 && a[0] === "-lc") {
+    let got = canonicalizeShellScript(a[1]);
+    if ((got.startsWith('"') && got.endsWith('"')) || (got.startsWith("'") && got.endsWith("'"))) {
+      got = got.slice(1, -1).trim();
+    }
+    return (
+      a[1] === CANCEL_SLEEP_SCRIPT ||
+      got === canonicalizeShellScript(CANCEL_SLEEP_SCRIPT) ||
+      (/^sleep\s+30\b/.test(got) &&
+        /SHOULD_NOT_COMPLETE/.test(got) &&
+        !/\b(curl|wget|ssh)\b/i.test(got))
+    );
+  }
+  return false;
+}
+
+const EXPECTED_DEFECT = {
+  path: "src/math.js",
+  lineMin: 1,
+  lineMax: 4,
+  severity: "P0",
+  outcome: "fail",
+  evidenceRe: /-1|AssertionError|!==\s*5|not equal/i,
+};
 
 const FORBIDDEN_ENV_EXACT = new Set([
   "GH_TOKEN",
@@ -119,7 +210,7 @@ function digest16(s) {
   return sha256Text(s).slice(0, 16);
 }
 
-function buildChildEnv(parentEnv) {
+function scrubEnvKeys(parentEnv) {
   const env = {};
   for (const key of Object.keys(parentEnv)) {
     if (FORBIDDEN_ENV_EXACT.has(key)) continue;
@@ -128,7 +219,27 @@ function buildChildEnv(parentEnv) {
     env[key] = parentEnv[key];
   }
   if (!env.PATH && parentEnv.PATH) env.PATH = parentEnv.PATH;
+  return env;
+}
+
+/** Environment for `devin acp` — Box user HOME so Devin can read its own credentials. */
+function buildAcpEnv(parentEnv) {
+  const env = scrubEnvKeys(parentEnv);
   if (!env.HOME && parentEnv.HOME) env.HOME = parentEnv.HOME;
+  return env;
+}
+
+/** Environment for repository terminal children — isolated user, no Devin HOME. */
+function buildRepoTerminalEnv(parentEnv) {
+  const env = scrubEnvKeys(parentEnv);
+  env.HOME = REPO_TERMINAL_HOME;
+  env.USER = REPO_TERMINAL_USER;
+  env.LOGNAME = REPO_TERMINAL_USER;
+  delete env.XDG_DATA_HOME;
+  delete env.XDG_CONFIG_HOME;
+  delete env.XDG_STATE_HOME;
+  delete env.XDG_CACHE_HOME;
+  delete env.XDG_RUNTIME_DIR;
   return env;
 }
 
@@ -258,7 +369,7 @@ function extractTerminalCommand(toolCall) {
 }
 
 function mergeToolCall(cached, incoming) {
-  const base = { ...(cached || {}) };
+  const base = { ...cached };
   if (!incoming || typeof incoming !== "object") return base;
   for (const [k, v] of Object.entries(incoming)) {
     if (v === undefined || v === null) continue;
@@ -291,66 +402,130 @@ function findRejectOption(options) {
   );
 }
 
-function isAllowlistedTerminal(command, args, mode) {
+function argLooksLikePath(arg) {
+  if (!arg || typeof arg !== "string") return false;
+  if (arg.startsWith("-")) return false;
+  if (/^[0-9a-f]{40}$/.test(arg)) return false;
+  if (/^[0-9a-f]{40}\.\.[0-9a-f]{40}$/.test(arg)) return false;
+  if (arg.includes("/") || arg.includes("\\") || arg === "." || arg === "..") return true;
+  if (/\.(js|mjs|cjs|ts|json|md|txt)$/.test(arg)) return true;
+  return false;
+}
+
+function rejectPathArg(jailRoot, arg) {
+  if (arg.includes("\0") || arg.includes("\\")) {
+    return { ok: false, reason: "path_illegal_chars" };
+  }
+  if (path.isAbsolute(arg)) {
+    return { ok: false, reason: "path_absolute" };
+  }
+  if (arg.split("/").includes("..") || arg === ".." || arg.startsWith("../")) {
+    return { ok: false, reason: "path_dotdot" };
+  }
+  try {
+    assertInsideJail(jailRoot, arg);
+    return { ok: true };
+  } catch {
+    return { ok: false, reason: "path_outside_jail" };
+  }
+}
+
+/**
+ * Shared authorization for permission + terminal/create.
+ * Validates normalized executable, every argument, mode, and jail root.
+ */
+function authorizeTerminalCommand(jailRoot, command, args, mode) {
   const c = String(command || "");
   const a = Array.isArray(args) ? args.map(String) : [];
+  if (!c || c.includes("/") || c.includes("\\") || c.includes("..")) {
+    return { ok: false, reason: "bad_executable", command: c, args: a };
+  }
+
   const eq = (x, y) =>
     x.command === y.command &&
     x.args.length === y.args.length &&
     x.args.every((v, i) => v === y.args[i]);
   const n = { command: c, args: a };
+
+  // git -C <path> … — validate -C path first; never discard without checking.
+  if (c === "git" && a[0] === "-C") {
+    if (a.length < 3) return { ok: false, reason: "git_C_incomplete", command: c, args: a };
+    const pathCheck = rejectPathArg(jailRoot, a[1]);
+    if (!pathCheck.ok) {
+      return { ok: false, reason: `git_C_${pathCheck.reason}`, command: c, args: a };
+    }
+    const inner = authorizeTerminalCommand(jailRoot, "git", a.slice(2), mode);
+    if (!inner.ok) return { ...inner, command: c, args: a };
+    return { ok: true, reason: "allowlist_git_C", command: c, args: a, matchedRule: inner.reason };
+  }
+
   if (mode === "cancel" || mode === "any") {
-    if (
-      eq(n, { command: "sh", args: ["-lc", "sleep 30; printf SHOULD_NOT_COMPLETE"] }) ||
-      eq(n, { command: "bash", args: ["-lc", "sleep 30; printf SHOULD_NOT_COMPLETE"] })
-    ) {
-      return true;
+    if (isCancelSleepInvocation(c, a)) {
+      return { ok: true, reason: "cancel_sleep", command: c, args: a };
     }
   }
-  if (mode === "basic" || mode === "any" || mode === "review") {
-    const basic = [
-      { command: "pwd", args: [] },
-      { command: "node", args: ["--test", "test/math.test.js"] },
-      { command: "node", args: ["--test"] },
-      { command: "sh", args: ["-lc", "pwd"] },
-      { command: "sh", args: ["-lc", "node --test"] },
-      { command: "sh", args: ["-lc", "node --test test/math.test.js"] },
-      { command: "cat", args: ["src/math.js"] },
-      { command: "cat", args: ["test/math.test.js"] },
-      { command: "git", args: ["diff", "--stat"] },
-      { command: "git", args: ["status", "--short"] },
-      { command: "git", args: ["rev-parse", "HEAD"] },
-      { command: "git", args: ["log", "--oneline", "-5"] },
-      { command: "ls", args: ["-la"] },
-      { command: "ls", args: ["-la", "."] },
+
+  if (mode === "security" || mode === "any") {
+    if (isSecurityProbeInvocation(c, a)) {
+      return { ok: true, reason: "security_probe", command: c, args: a };
+    }
+  }
+
+  if (mode === "basic" || mode === "review" || mode === "any" || mode === "security") {
+    const exact = [
+      { command: "pwd", args: [], rule: "pwd" },
+      { command: "node", args: ["--test", "test/math.test.js"], rule: "node_test_math" },
+      { command: "node", args: ["--test"], rule: "node_test" },
+      { command: "sh", args: ["-lc", "pwd"], rule: "sh_pwd" },
+      { command: "sh", args: ["-lc", "node --test"], rule: "sh_node_test" },
+      {
+        command: "sh",
+        args: ["-lc", "node --test test/math.test.js"],
+        rule: "sh_node_test_math",
+      },
+      { command: "cat", args: ["src/math.js"], rule: "cat_math" },
+      { command: "cat", args: ["test/math.test.js"], rule: "cat_math_test" },
+      { command: "git", args: ["diff", "--stat"], rule: "git_diff_stat" },
+      { command: "git", args: ["status", "--short"], rule: "git_status" },
+      { command: "git", args: ["rev-parse", "HEAD"], rule: "git_rev_parse" },
+      { command: "git", args: ["log", "--oneline", "-5"], rule: "git_log" },
+      { command: "ls", args: ["-la"], rule: "ls_la_cwd" },
     ];
-    if (basic.some((b) => eq(n, b))) return true;
-    // Allow git diff base..head when both are 40-hex
-    if (c === "git" && a[0] === "diff" && a.length >= 2) {
-      const range = a[1];
-      if (/^[0-9a-f]{40}\.\.[0-9a-f]{40}$/.test(range)) return true;
-      // git diff --stat <base> <head>
+    for (const e of exact) {
+      if (eq(n, { command: e.command, args: e.args })) {
+        for (const arg of e.args) {
+          if (argLooksLikePath(arg)) {
+            const pc = rejectPathArg(jailRoot, arg);
+            if (!pc.ok) return { ok: false, reason: pc.reason, command: c, args: a };
+          }
+        }
+        return { ok: true, reason: e.rule, command: c, args: a };
+      }
+    }
+
+    if (c === "git" && a[0] === "diff") {
+      if (a.length === 2 && /^[0-9a-f]{40}\.\.[0-9a-f]{40}$/.test(a[1])) {
+        return { ok: true, reason: "git_diff_range", command: c, args: a };
+      }
       if (
-        a[1] === "--stat" &&
         a.length === 4 &&
+        a[1] === "--stat" &&
         /^[0-9a-f]{40}$/.test(a[2]) &&
         /^[0-9a-f]{40}$/.test(a[3])
       ) {
-        return true;
+        return { ok: true, reason: "git_diff_stat_shas", command: c, args: a };
       }
       if (a.length === 3 && /^[0-9a-f]{40}$/.test(a[1]) && /^[0-9a-f]{40}$/.test(a[2])) {
-        return true;
+        return { ok: true, reason: "git_diff_two_shas", command: c, args: a };
       }
     }
-    // git -C <jail> …
-    if (c === "git" && a[0] === "-C" && a.length >= 3) {
-      const rest = a.slice(2);
-      return isAllowlistedTerminal("git", rest, mode);
-    }
-    // ls -la <jail-or-relative>
-    if (c === "ls" && a[0] === "-la" && a.length <= 2) return true;
   }
-  return false;
+
+  // Explicit rejects for known dangerous shapes called out in review.
+  if (c === "ls" && a[0] === "-la" && a.length >= 2) {
+    return { ok: false, reason: "ls_path_rejected", command: c, args: a };
+  }
+  return { ok: false, reason: "no_allowlist_match", command: c, args: a };
 }
 
 function normalizeTerminalInvocation(command, args) {
@@ -365,8 +540,7 @@ function normalizeTerminalInvocation(command, args) {
 }
 
 function readProcEnvironKeys(pid) {
-  try {
-    const raw = readFileSync(`/proc/${pid}/environ`);
+  const parse = (raw) => {
     const keys = raw
       .toString("utf8")
       .split("\0")
@@ -374,36 +548,78 @@ function readProcEnvironKeys(pid) {
       .map((e) => e.split("=")[0])
       .sort();
     return { ok: true, keys };
+  };
+  try {
+    return parse(readFileSync(`/proc/${pid}/environ`));
   } catch (err) {
-    return { ok: false, error: String(err.message || err), keys: [] };
+    // sudo children are root-owned; host already has NOPASSWD for isolation setup.
+    try {
+      const raw = execFileSync("sudo", ["-n", "cat", `/proc/${pid}/environ`], {
+        encoding: "buffer",
+        maxBuffer: 1024 * 1024,
+      });
+      return parse(raw);
+    } catch (err2) {
+      return {
+        ok: false,
+        error: String(err2.message || err2 || err.message || err),
+        keys: [],
+      };
+    }
   }
 }
 
-function scanArtifactsForSecrets(outdir, extraForbidden = []) {
+function collectExactSecretValues() {
+  const values = [];
+  for (const key of SENTINEL_KEYS) {
+    if (process.env[key]) values.push(process.env[key]);
+  }
+  for (const [k, v] of Object.entries(process.env)) {
+    if (k.startsWith("LOOP_SENTINEL_") && v) values.push(v);
+  }
+  return values;
+}
+
+function injectSentinelProbeEnv() {
+  for (const key of SENTINEL_KEYS) {
+    if (!process.env[key]) {
+      process.env[key] = `LOOP_SENTINEL_${key}_${randomBytes(8).toString("hex")}`;
+    }
+  }
+}
+
+function scanArtifactsForSecrets(outdir, extraForbidden = [], extraValues = []) {
   const findings = [];
   const patterns = [
     /-----BEGIN (?:RSA |OPENSSH |EC )?PRIVATE KEY-----/,
-    /\bBearer\s+[A-Za-z0-9._\-]{20,}/,
+    /\bBearer\s+[A-Za-z0-9._-]{20,}/,
     /\b(ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9]{20,}/,
     /\bsk-[A-Za-z0-9]{20,}/,
-    /\bbox_[A-Za-z0-9_\-]{20,}/,
+    /\bbox_[A-Za-z0-9_-]{20,}/,
   ];
+  const exactValues = [...collectExactSecretValues(), ...extraValues].filter(
+    (v) => typeof v === "string" && v.length >= 8,
+  );
   for (const name of [
     "transcript.jsonl",
     "stderr.log",
     "summary.json",
     "review-result.json",
     "capabilities.json",
+    "validator-report.json",
+    "host-state.json",
   ]) {
     const p = path.join(outdir, name);
     if (!existsSync(p)) continue;
     const text = readFileSync(p, "utf8");
     for (const key of [...FORBIDDEN_ENV_EXACT, ...extraForbidden]) {
-      if (text.includes(`${key}=`) || text.includes(`"${key}"`)) {
-        // key name alone in envKeyNames lists is OK; look for value assignment patterns
-        if (new RegExp(`${key}\\s*[=:]\\s*[^\\s"]{4,}`).test(text)) {
-          findings.push({ file: name, kind: "env_assignment", key });
-        }
+      if (new RegExp(`${key}\\s*[=:]\\s*[^\\s"]{4,}`).test(text)) {
+        findings.push({ file: name, kind: "env_assignment", key });
+      }
+    }
+    for (const val of exactValues) {
+      if (text.includes(val)) {
+        findings.push({ file: name, kind: "exact_sentinel_value" });
       }
     }
     for (const re of patterns) {
@@ -428,32 +644,51 @@ function computeSummaryPayloadSha256(summary) {
   return sha256Text(JSON.stringify(stable(clone)));
 }
 
-function extractJsonObject(text) {
-  const start = text.indexOf("{");
-  const end = text.lastIndexOf("}");
-  if (start < 0 || end <= start) return null;
-  try {
-    return JSON.parse(text.slice(start, end + 1));
-  } catch {
-    return null;
+/** Require exactly one JSON object as the entire agent message (trim only). */
+function parseExactJsonObject(text) {
+  if (typeof text !== "string") {
+    return { ok: false, code: "E_NO_JSON", message: "not a string" };
   }
+  const trimmed = text.trim();
+  if (!trimmed) return { ok: false, code: "E_NO_JSON", message: "empty" };
+  if (trimmed.startsWith("```")) {
+    return { ok: false, code: "E_EXTRA_TEXT", message: "markdown fence rejected" };
+  }
+  let value;
+  try {
+    value = JSON.parse(trimmed);
+  } catch (err) {
+    if (/[{[]/.test(trimmed)) {
+      return {
+        ok: false,
+        code: "E_EXTRA_TEXT",
+        message: `JSON with surrounding text or multiple values: ${err.message}`,
+      };
+    }
+    return { ok: false, code: "E_NO_JSON", message: String(err.message || err) };
+  }
+  if (value === null || typeof value !== "object" || Array.isArray(value)) {
+    return { ok: false, code: "E_NOT_OBJECT", message: "root must be object" };
+  }
+  return { ok: true, value };
 }
 
 class TerminalHandle {
-  constructor({ id, child, cwd, byteLimit }) {
+  constructor({ id, child, cwd, byteLimit, innerPid = null }) {
     this.id = id;
     this.child = child;
     this.cwd = cwd;
-    this.output = "";
+    this.outputBuf = Buffer.alloc(0);
     this.truncated = false;
     this.exitCode = null;
     this.signal = null;
     this.exited = false;
     this.byteLimit = byteLimit;
     this.pid = child.pid;
+    this.innerPid = innerPid;
     this.waiters = [];
-    child.stdout?.on("data", (buf) => this.#append(buf.toString("utf8")));
-    child.stderr?.on("data", (buf) => this.#append(buf.toString("utf8")));
+    child.stdout?.on("data", (buf) => this.#append(buf));
+    child.stderr?.on("data", (buf) => this.#append(buf));
     child.on("exit", (code, signal) => {
       this.exited = true;
       this.exitCode = code;
@@ -461,13 +696,19 @@ class TerminalHandle {
       for (const w of this.waiters.splice(0)) w({ exitCode: code, signal });
     });
   }
-  #append(s) {
+  get output() {
+    return this.outputBuf.toString("utf8");
+  }
+  #append(chunk) {
     if (this.truncated) return;
-    const next = this.output + s;
-    if (Buffer.byteLength(next) > this.byteLimit) {
-      this.output = next.slice(0, this.byteLimit);
+    const buf = Buffer.isBuffer(chunk) ? chunk : Buffer.from(String(chunk), "utf8");
+    const next = Buffer.concat([this.outputBuf, buf]);
+    if (next.byteLength > this.byteLimit) {
+      this.outputBuf = next.subarray(0, this.byteLimit);
       this.truncated = true;
-    } else this.output = next;
+    } else {
+      this.outputBuf = next;
+    }
   }
   waitForExit() {
     if (this.exited) return Promise.resolve({ exitCode: this.exitCode, signal: this.signal });
@@ -497,11 +738,12 @@ class TerminalHandle {
 }
 
 class AcpClient {
-  constructor({ outdir, cwd, devinBin, childEnv, terminalMode = "basic" }) {
+  constructor({ outdir, cwd, devinBin, childEnv, terminalEnv = null, terminalMode = "basic" }) {
     this.outdir = outdir;
     this.cwd = realpathSync(cwd);
     this.devinBin = devinBin;
     this.childEnv = childEnv;
+    this.terminalEnv = terminalEnv || buildRepoTerminalEnv(process.env);
     this.terminalMode = terminalMode;
     this.child = null;
     this.childExited = false;
@@ -712,7 +954,7 @@ class AcpClient {
       let result;
       switch (method) {
         case "session/request_permission":
-          result = this.#handlePermission(params);
+          result = await this.#handlePermission(params);
           break;
         case "fs/read_text_file": {
           const p = assertInsideJail(this.cwd, params.path);
@@ -824,14 +1066,20 @@ class AcpClient {
     }
   }
 
-  #handlePermission(params) {
+  async #handlePermission(params) {
     const options = Array.isArray(params?.options) ? params.options : [];
     const incoming = params?.toolCall || {};
-    const toolCallId = incoming.toolCallId || null;
-    const toolCall = mergeToolCall(
-      toolCallId ? this.toolCallCache.get(toolCallId) : null,
-      incoming,
-    );
+    const toolCallId = incoming.toolCallId || incoming.toolCallID || null;
+
+    // Permission may arrive with only toolCallId; wait briefly for tool_call rawInput.
+    let toolCall = mergeToolCall(toolCallId ? this.toolCallCache.get(toolCallId) : null, incoming);
+    const waitDeadline = monotonicMs() + 2_000;
+    while (monotonicMs() < waitDeadline) {
+      toolCall = mergeToolCall(toolCallId ? this.toolCallCache.get(toolCallId) : null, incoming);
+      if (toolCallId) this.toolCallCache.set(toolCallId, toolCall);
+      if (extractTerminalCommand(toolCall).command || toolCall.rawInput || toolCall.input) break;
+      await delay(15);
+    }
     if (toolCallId) this.toolCallCache.set(toolCallId, toolCall);
     const extracted = extractTerminalCommand(toolCall);
     const reject = (reason) => {
@@ -856,23 +1104,30 @@ class AcpClient {
     if (/write|edit|delete|network|fetch|install/i.test(kind) || /write|edit|delete/i.test(title)) {
       return reject("disallowed_tool_kind");
     }
-    if (
-      extracted.command &&
-      isAllowlistedTerminal(extracted.command, extracted.args, this.terminalMode)
-    ) {
-      const allowOpt = findAllowOption(options);
-      if (!allowOpt) return reject("no_allow_option_present");
-      this.permissionDecisions.push({
-        t: nowIso(),
-        decision: "allow",
-        reason: "allowlist_command_match",
-        matchedRule: `${extracted.command} ${extracted.args.join(" ")}`.trim(),
-        mode: this.terminalMode,
-        extractShape: extracted.shape,
-        command: extracted.command,
-        args: extracted.args,
-      });
-      return { outcome: { outcome: "selected", optionId: allowOpt.optionId } };
+    if (extracted.command) {
+      const normalized = normalizeTerminalInvocation(extracted.command, extracted.args);
+      const auth = authorizeTerminalCommand(
+        this.cwd,
+        normalized.command,
+        normalized.args,
+        this.terminalMode,
+      );
+      if (auth.ok) {
+        const allowOpt = findAllowOption(options);
+        if (!allowOpt) return reject("no_allow_option_present");
+        this.permissionDecisions.push({
+          t: nowIso(),
+          decision: "allow",
+          reason: auth.reason,
+          matchedRule: `${extracted.command} ${extracted.args.join(" ")}`.trim(),
+          mode: this.terminalMode,
+          extractShape: extracted.shape,
+          command: extracted.command,
+          args: extracted.args,
+        });
+        return { outcome: { outcome: "selected", optionId: allowOpt.optionId } };
+      }
+      return reject(auth.reason || "no_allowlist_match");
     }
     if (extracted.pathHint) {
       try {
@@ -898,22 +1153,68 @@ class AcpClient {
 
   #handleTerminalCreate(params) {
     const cwd = params.cwd ? assertInsideJail(this.cwd, params.cwd) : this.cwd;
-    const normalized = normalizeTerminalInvocation(params.command, params.args);
-    if (!isAllowlistedTerminal(normalized.command, normalized.args, this.terminalMode)) {
+    let normalized = normalizeTerminalInvocation(params.command, params.args);
+    const auth = authorizeTerminalCommand(
+      this.cwd,
+      normalized.command,
+      normalized.args,
+      this.terminalMode,
+    );
+    if (!auth.ok) {
       throw new Error(
-        `terminal command denied: ${params.command} (normalized=${normalized.command} ${normalized.args.join(" ")})`,
+        `terminal command denied (${auth.reason}): ${params.command} (normalized=${normalized.command} ${normalized.args.join(" ")})`,
       );
+    }
+    // ponytail: Devin re-escapes -lc scripts; allowlist matches loosely, spawn uses
+    // canonical scripts so sh/node actually run (upgrade: structured argv from Devin).
+    if (auth.reason === "security_probe") {
+      if (normalized.command === "node") {
+        const body = SECURITY_PROBE_SCRIPT.replace(/^node -e /, "").replace(/^"(.*)"$/s, "$1");
+        normalized = { command: "node", args: ["-e", body], shape: "canonical_security" };
+      } else {
+        normalized = {
+          command: "sh",
+          args: ["-lc", SECURITY_PROBE_SCRIPT],
+          shape: "canonical_security",
+        };
+      }
+    } else if (auth.reason === "cancel_sleep") {
+      normalized = {
+        command: "sh",
+        args: ["-lc", CANCEL_SLEEP_SCRIPT],
+        shape: "canonical_cancel",
+      };
     }
     const clamp = clampOutputByteLimit(params.outputByteLimit);
     this.effectiveOutputLimits.push(clamp);
     const id = `term_${randomBytes(4).toString("hex")}`;
-    const child = spawn(normalized.command, normalized.args, {
-      cwd,
-      env: this.childEnv,
-      stdio: ["ignore", "pipe", "pipe"],
-      detached: true,
-      shell: false,
-    });
+    // Always spawn under isolated unprivileged user — independent of Devin auto-allow.
+    // sudo env_reset drops PATH; pass scrubbed PATH via env(1) so nvm node remains reachable.
+    const termPath = this.terminalEnv.PATH || "/usr/bin:/bin";
+    const child = spawn(
+      "sudo",
+      [
+        "-n",
+        "-u",
+        REPO_TERMINAL_USER,
+        "-H",
+        "--",
+        "env",
+        `PATH=${termPath}`,
+        `HOME=${REPO_TERMINAL_HOME}`,
+        `USER=${REPO_TERMINAL_USER}`,
+        `LOGNAME=${REPO_TERMINAL_USER}`,
+        normalized.command,
+        ...normalized.args,
+      ],
+      {
+        cwd,
+        env: this.terminalEnv,
+        stdio: ["ignore", "pipe", "pipe"],
+        detached: true,
+        shell: false,
+      },
+    );
     const handle = new TerminalHandle({
       id,
       child,
@@ -922,11 +1223,17 @@ class AcpClient {
     });
     handle.command = normalized.command;
     handle.args = normalized.args;
+    handle.authReason = auth.reason;
     this.terminals.set(id, handle);
-    if (this.terminalMode === "cancel" && typeof this.activeTerminalWaiter === "function") {
-      const waiter = this.activeTerminalWaiter;
-      this.activeTerminalWaiter = null;
-      waiter({
+    const notify = (info) => {
+      if (typeof this.activeTerminalWaiter === "function") {
+        const waiter = this.activeTerminalWaiter;
+        this.activeTerminalWaiter = null;
+        waiter(info);
+      }
+    };
+    if (this.terminalMode === "cancel" || this.terminalMode === "security") {
+      notify({
         t: nowIso(),
         monoMs: monotonicMs(),
         kind: "terminal_create_live",
@@ -1110,6 +1417,9 @@ function parseArgs(argv) {
     baseSha: null,
     headSha: null,
     taskId: "phase0c-task",
+    builderBoxId: null,
+    verifierBoxId: null,
+    expectedPath: "src/math.js",
   };
   for (let i = 2; i < argv.length; i++) {
     const a = argv[i];
@@ -1122,18 +1432,143 @@ function parseArgs(argv) {
     else if (a === "--base-sha") out.baseSha = argv[++i];
     else if (a === "--head-sha") out.headSha = argv[++i];
     else if (a === "--task-id") out.taskId = argv[++i];
+    else if (a === "--builder-box-id") out.builderBoxId = argv[++i];
+    else if (a === "--verifier-box-id") out.verifierBoxId = argv[++i];
+    else if (a === "--expected-path") out.expectedPath = argv[++i];
     else {
       console.error("Unknown arg", a);
       process.exit(2);
     }
   }
+  if (out.mode === "self-check") {
+    if (!out.outdir) out.outdir = "/tmp/loop-0c1-selfcheck-out";
+    if (!out.cwd) out.cwd = out.outdir;
+  }
   if (!out.outdir || !out.cwd) {
-    console.error(
-      "Usage: node phase0c.mjs --mode <mode> --outdir <dir> --cwd <jail> [--session-id ...] [--nonce ...] [--base-sha ...] [--head-sha ...]",
-    );
+    console.error("Usage: node phase0c.mjs --mode <mode> --outdir <dir> --cwd <jail> [...]");
     process.exit(2);
   }
   return out;
+}
+
+function runSelfCheck(args) {
+  mkdirSync(args.outdir, { recursive: true });
+  mkdirSync(args.cwd, { recursive: true });
+  const jail = realpathSync(args.cwd);
+  mkdirSync(path.join(jail, "src"), { recursive: true });
+  mkdirSync(path.join(jail, "test"), { recursive: true });
+  writeFileSync(path.join(jail, "src/math.js"), "export function add(a,b){return a+b}\n");
+  writeFileSync(path.join(jail, "test/math.test.js"), 'import test from "node:test";\n');
+
+  const cases = [];
+  const check = (name, ok, detail = "") => cases.push({ name, ok: !!ok, detail });
+
+  check("reject_ls_root", !authorizeTerminalCommand(jail, "ls", ["-la", "/"], "basic").ok);
+  check("reject_ls_dotdot", !authorizeTerminalCommand(jail, "ls", ["-la", "../../"], "basic").ok);
+  check(
+    "reject_git_C_tmp",
+    !authorizeTerminalCommand(jail, "git", ["-C", "/tmp", "status", "--short"], "basic").ok,
+  );
+  check("accept_pwd", authorizeTerminalCommand(jail, "pwd", [], "basic").ok);
+  check(
+    "accept_node_test",
+    authorizeTerminalCommand(jail, "node", ["--test", "test/math.test.js"], "basic").ok,
+  );
+  check(
+    "accept_git_C_jail",
+    authorizeTerminalCommand(jail, "git", ["-C", ".", "status", "--short"], "basic").ok,
+  );
+  check(
+    "accept_security_probe_exact",
+    authorizeTerminalCommand(jail, "sh", ["-lc", SECURITY_PROBE_SCRIPT], "security").ok,
+  );
+  // Devin re-escapes -lc scripts; matcher must still allow the canary probe.
+  {
+    const escapedProbe =
+      'node -e \\"const fs=require(\\\\\\"fs\\\\\\");const p=\\\\\\"/home/user/.local/share/devin-canary/credentials.canary\\\\\\";try{const v=fs.readFileSync(p,\\\\\\"utf8\\\\\\");process.stdout.write(\\\\\\"ACCESS_OK\\\\\\")}catch(e){process.stdout.write(\\\\\\"ACCESS_DENIED\\\\\\")};process.stdout.write(\\\\\\"\\\\\\\\n\\\\\\")\\" ; sleep 2';
+    check(
+      "accept_security_probe_escaped",
+      authorizeTerminalCommand(jail, "sh", ["-lc", escapedProbe], "security").ok,
+    );
+  }
+  check(
+    "accept_cancel_sleep_quoted",
+    authorizeTerminalCommand(
+      jail,
+      "sh",
+      ["-lc", '"sleep 30; printf SHOULD_NOT_COMPLETE"'],
+      "cancel",
+    ).ok,
+  );
+  check(
+    "reject_security_curl",
+    !authorizeTerminalCommand(
+      jail,
+      "sh",
+      ["-lc", `curl https://evil.example; ${SECURITY_PROBE_SCRIPT}`],
+      "security",
+    ).ok,
+  );
+
+  // symlink escape — target must live outside jail
+  const escapeDir = path.join(path.dirname(jail), "loop-0c1-escape-outside");
+  mkdirSync(escapeDir, { recursive: true });
+  writeFileSync(path.join(escapeDir, "secret.txt"), "secret\n");
+  const linkPath = path.join(jail, "escape-link");
+  try {
+    if (existsSync(linkPath)) unlinkSync(linkPath);
+    symlinkSync(escapeDir, linkPath);
+    let rejected = false;
+    try {
+      assertInsideJail(jail, "escape-link/secret.txt");
+    } catch {
+      rejected = true;
+    }
+    check("reject_symlink_escape", rejected);
+  } catch (err) {
+    check("reject_symlink_escape", false, String(err.message || err));
+  } finally {
+    try {
+      rmSync(escapeDir, { recursive: true, force: true });
+    } catch {
+      /* ignore */
+    }
+  }
+
+  // UTF-8 byte cap
+  const handle = {
+    outputBuf: Buffer.alloc(0),
+    truncated: false,
+    byteLimit: 10,
+  };
+  const append = (chunk) => {
+    const buf = Buffer.isBuffer(chunk) ? chunk : Buffer.from(String(chunk), "utf8");
+    const next = Buffer.concat([handle.outputBuf, buf]);
+    if (next.byteLength > handle.byteLimit) {
+      handle.outputBuf = next.subarray(0, handle.byteLimit);
+      handle.truncated = true;
+    } else handle.outputBuf = next;
+  };
+  append("éééééééé"); // each é is 2 bytes
+  check(
+    "utf8_byte_cap",
+    handle.truncated && handle.outputBuf.byteLength === 10 && handle.outputBuf.byteLength <= 10,
+    `bytes=${handle.outputBuf.byteLength}`,
+  );
+
+  // strict JSON
+  check("json_valid", parseExactJsonObject('{"a":1}').ok);
+  check("json_fenced", parseExactJsonObject('```json\n{"a":1}\n```').code === "E_EXTRA_TEXT");
+  check("json_leading", parseExactJsonObject('note {"a":1}').code === "E_EXTRA_TEXT");
+  check("json_trailing", parseExactJsonObject('{"a":1} trailing').code === "E_EXTRA_TEXT");
+  check("json_two_objects", parseExactJsonObject('{"a":1}{"b":2}').code === "E_EXTRA_TEXT");
+  check("json_array", parseExactJsonObject("[1]").code === "E_NOT_OBJECT");
+
+  const failed = cases.filter((c) => !c.ok);
+  const report = { ok: failed.length === 0, cases, clientVersion: CLIENT_VERSION };
+  writeFileSync(path.join(args.outdir, "self-check.json"), JSON.stringify(report, null, 2) + "\n");
+  console.log(JSON.stringify(report, null, 2));
+  process.exit(failed.length === 0 ? 0 : 1);
 }
 
 function recordRow(rows, id, status, detail) {
@@ -1141,18 +1576,22 @@ function recordRow(rows, id, status, detail) {
 }
 
 async function withClient(args, terminalMode, fn) {
-  const childEnv = buildChildEnv(process.env);
+  const childEnv = buildAcpEnv(process.env);
+  const terminalEnv = buildRepoTerminalEnv(process.env);
   const client = new AcpClient({
     outdir: args.outdir,
     cwd: args.cwd,
     devinBin: args.devinBin,
     childEnv,
+    terminalEnv,
     terminalMode,
   });
   const ctx = {
     client,
     childEnv,
+    terminalEnv,
     envKeys: Object.keys(childEnv).sort(),
+    terminalEnvKeys: Object.keys(terminalEnv).sort(),
     rows: [],
   };
   try {
@@ -1372,7 +1811,9 @@ async function modeStructuredReview(args, state) {
       `baseSha=${baseSha}`,
       `headSha=${headSha}`,
       "Inspect the repository at HEAD and run relevant tests if needed.",
-      "Return EXACTLY one JSON object as your final message (no markdown fences) matching:",
+      "Return EXACTLY one JSON object as your entire final agent message.",
+      "No markdown fences, no prose before or after, no extra JSON values.",
+      "The complete message must be valid JSON.parse() input producing one object matching:",
       JSON.stringify({
         schemaVersion: 1,
         taskId: args.taskId,
@@ -1392,19 +1833,21 @@ async function modeStructuredReview(args, state) {
         ],
       }),
       "Use outcome fail if you find defects.",
-      "Do not write files. Put the JSON only in the agent message.",
+      "Do not write files. The agent message body must be only the JSON object.",
     ].join("\n");
     const t0 = monotonicMs();
     const before = client.updates.length;
     const result = await client.prompt(session.sessionId, prompt, 300_000);
     const text = client.collectAgentMessageText(before);
     const ms = monotonicMs() - t0;
-    const obj = extractJsonObject(text);
+    const parsed = parseExactJsonObject(text);
+    const obj = parsed.ok ? parsed.value : null;
     const reviewPath = path.join(args.outdir, "review-result.json");
-    let validator = { ok: false, errors: [{ code: "E_NO_JSON", message: "no JSON extracted" }] };
+    let validator = {
+      ok: false,
+      errors: [{ code: parsed.code || "E_NO_JSON", message: parsed.message || "no JSON" }],
+    };
     if (obj) {
-      // Force host-expected SHAs into a copy only for validation after checking model values?
-      // Spec: model must return exact base/head; validator enforces.
       writeFileSync(reviewPath, JSON.stringify(obj, null, 2) + "\n");
       try {
         const out = execFileSync(
@@ -1451,18 +1894,53 @@ async function modeStructuredReview(args, state) {
 }
 
 async function modeExactHeadReview(args, state) {
-  // Same structured review but asserts clean exact head context from env files written by host.
-  const status = execFileSync("git", ["status", "--short", "--untracked-files=no"], {
-    cwd: args.cwd,
-    encoding: "utf8",
-  });
-  const head = execFileSync("git", ["rev-parse", "HEAD"], {
-    cwd: args.cwd,
-    encoding: "utf8",
-  }).trim();
-  const base = args.baseSha;
+  const rows = [];
+  if (args.builderBoxId && args.verifierBoxId && args.builderBoxId === args.verifierBoxId) {
+    recordRow(rows, "P0C-17", "FAIL", JSON.stringify({ reason: "same_box_as_builder" }));
+    state.exactHead = { ok: false };
+    return { rows, ok: false };
+  }
+
+  let status = "";
+  let head = "";
+  let baseType = "";
+  let headType = "";
+  let diffCheck = { ok: false, error: null };
+  try {
+    status = execFileSync("git", ["status", "--porcelain=v1", "--untracked-files=all"], {
+      cwd: args.cwd,
+      encoding: "utf8",
+    });
+    head = execFileSync("git", ["rev-parse", "HEAD"], { cwd: args.cwd, encoding: "utf8" }).trim();
+    baseType = execFileSync("git", ["cat-file", "-t", args.baseSha], {
+      cwd: args.cwd,
+      encoding: "utf8",
+    }).trim();
+    headType = execFileSync("git", ["cat-file", "-t", args.headSha], {
+      cwd: args.cwd,
+      encoding: "utf8",
+    }).trim();
+    try {
+      execFileSync("git", ["diff", "--check", `${args.baseSha}..${args.headSha}`], {
+        cwd: args.cwd,
+        encoding: "utf8",
+      });
+      diffCheck = { ok: true, error: null };
+    } catch (err) {
+      diffCheck = { ok: false, error: String(err.message || err) };
+    }
+  } catch (err) {
+    recordRow(
+      rows,
+      "P0C-17",
+      "FAIL",
+      JSON.stringify({ reason: "preflight_error", error: String(err.message || err) }),
+    );
+    state.exactHead = { ok: false };
+    return { rows, ok: false };
+  }
+
   if (head !== args.headSha) {
-    const rows = [];
     recordRow(
       rows,
       "P0C-17",
@@ -1473,74 +1951,327 @@ async function modeExactHeadReview(args, state) {
     return { rows, ok: false };
   }
   if (status.trim()) {
-    const rows = [];
-    recordRow(rows, "P0C-17", "FAIL", JSON.stringify({ reason: "dirty_worktree", status }));
+    recordRow(rows, "P0C-17", "FAIL", JSON.stringify({ reason: "dirty_or_untracked", status }));
     state.exactHead = { ok: false, head, status };
     return { rows, ok: false };
   }
+  if (baseType !== "commit" || headType !== "commit") {
+    recordRow(
+      rows,
+      "P0C-17",
+      "FAIL",
+      JSON.stringify({ reason: "sha_not_commit", baseType, headType }),
+    );
+    state.exactHead = { ok: false, head, status };
+    return { rows, ok: false };
+  }
+  if (!diffCheck.ok) {
+    recordRow(
+      rows,
+      "P0C-17",
+      "FAIL",
+      JSON.stringify({ reason: "diff_check_failed", error: diffCheck.error }),
+    );
+    state.exactHead = { ok: false, head, status };
+    return { rows, ok: false };
+  }
+
   const structured = await modeStructuredReview(args, state);
+  rows.push(...structured.rows);
   const findings = structured.obj?.findings || [];
+  const defectPath = args.expectedPath || EXPECTED_DEFECT.path;
   const seededHit = findings.some(
     (f) =>
-      typeof f.path === "string" &&
-      f.path.includes("math") &&
-      typeof f.message === "string" &&
-      /add|sum|subtract|incorrect|wrong/i.test(f.message),
+      f.path === defectPath &&
+      f.severity === EXPECTED_DEFECT.severity &&
+      Number.isInteger(f.line) &&
+      f.line >= EXPECTED_DEFECT.lineMin &&
+      f.line <= EXPECTED_DEFECT.lineMax &&
+      typeof f.evidence === "string" &&
+      EXPECTED_DEFECT.evidenceRe.test(f.evidence),
   );
   const ok =
     structured.ok &&
     structured.obj?.role === "reviewer" &&
-    structured.obj?.baseSha === base &&
+    structured.obj?.outcome === EXPECTED_DEFECT.outcome &&
+    structured.obj?.baseSha === args.baseSha &&
     structured.obj?.headSha === args.headSha &&
     seededHit;
   recordRow(
-    structured.rows,
+    rows,
     "P0C-17",
     ok ? "PASS" : "FAIL",
     JSON.stringify({
       head,
-      clean: !status.trim(),
+      cleanPorcelain: !status.trim(),
+      untrackedChecked: true,
+      baseType,
+      headType,
+      diffCheckOk: diffCheck.ok,
       seededHit,
+      expectedPath: defectPath,
+      expectedSeverity: EXPECTED_DEFECT.severity,
       findingCount: findings.length,
       validatorOk: structured.validator?.ok,
       sessionDigest: state.structured?.sessionDigest,
+      builderBoxId: args.builderBoxId || null,
+      verifierBoxId: args.verifierBoxId || null,
     }),
   );
-  state.exactHead = { ok, head, status: status.trim(), seededHit, findings };
-  return structured;
+  state.exactHead = {
+    ok,
+    head,
+    status: status.trim(),
+    seededHit,
+    findings,
+    untrackedChecked: true,
+  };
+  return { rows, ok, obj: structured.obj, validator: structured.validator };
+}
+
+function ensureIsolationBoundary() {
+  const canarySecret = `LOOP_CRED_CANARY_${randomBytes(16).toString("hex")}`;
+  try {
+    execFileSync(
+      "sudo",
+      [
+        "-n",
+        "useradd",
+        "-r",
+        "-m",
+        "-d",
+        REPO_TERMINAL_HOME,
+        "-s",
+        "/usr/sbin/nologin",
+        REPO_TERMINAL_USER,
+      ],
+      { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] },
+    );
+  } catch (err) {
+    const msg = String(err.stderr || err.message || err);
+    if (!/already exists|exists/i.test(msg)) {
+      // continue — user may already exist; verify below
+    }
+  }
+  try {
+    execFileSync("id", [REPO_TERMINAL_USER], { encoding: "utf8" });
+  } catch (err) {
+    return {
+      ok: false,
+      error: `loop-runner user unavailable: ${String(err.message || err)}`,
+      canaryPath: CRED_CANARY_PATH,
+      canarySecret: null,
+    };
+  }
+  try {
+    mkdirSync(CRED_CANARY_DIR, { recursive: true, mode: 0o700 });
+    writeFileSync(CRED_CANARY_PATH, canarySecret + "\n", { mode: 0o600 });
+  } catch (err) {
+    return {
+      ok: false,
+      error: `canary write failed: ${String(err.message || err)}`,
+      canaryPath: CRED_CANARY_PATH,
+      canarySecret: null,
+    };
+  }
+  try {
+    execFileSync(
+      "sudo",
+      ["-n", "-u", REPO_TERMINAL_USER, "-H", "--", "test", "!", "-r", CRED_CANARY_PATH],
+      { encoding: "utf8" },
+    );
+  } catch (err) {
+    return {
+      ok: false,
+      error: `loop-runner can read canary (boundary missing): ${String(err.message || err)}`,
+      canaryPath: CRED_CANARY_PATH,
+      canarySecret,
+    };
+  }
+  // Prove sudo spawn works for pwd
+  try {
+    execFileSync("sudo", ["-n", "-u", REPO_TERMINAL_USER, "-H", "--", "pwd"], {
+      encoding: "utf8",
+    });
+  } catch (err) {
+    return {
+      ok: false,
+      error: `sudo -u loop-runner spawn failed: ${String(err.message || err)}`,
+      canaryPath: CRED_CANARY_PATH,
+      canarySecret,
+    };
+  }
+  return { ok: true, canaryPath: CRED_CANARY_PATH, canarySecret, error: null };
+}
+
+function findDescendantPids(rootPid) {
+  const pids = [];
+  try {
+    const kids = readFileSync(`/proc/${rootPid}/task/${rootPid}/children`, "utf8")
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean);
+    for (const k of kids) {
+      const n = Number(k);
+      if (Number.isFinite(n)) {
+        pids.push(n);
+        pids.push(...findDescendantPids(n));
+      }
+    }
+  } catch {
+    /* ignore */
+  }
+  return pids;
 }
 
 async function modeSecurityProbe(args, state) {
-  return withClient(args, "basic", async ({ client, rows, childEnv, envKeys }) => {
-    const parentHasSentinels = SENTINEL_KEYS.filter((k) => process.env[k]);
-    const childHas = SENTINEL_KEYS.filter((k) => Object.prototype.hasOwnProperty.call(childEnv, k));
-    const proc = client.childPid ? readProcEnvironKeys(client.childPid) : { ok: false, keys: [] };
-    const procHas = SENTINEL_KEYS.filter((k) => proc.keys.includes(k));
-    // Spawn a trivial allowlisted terminal to inspect child env if possible
-    const session = await client.newSession();
-    await client.prompt(session.sessionId, "Do not use tools. Reply with LOOP_P0C18_OK.", 60_000);
-    const livePid = client.childPid;
-    const after = livePid ? readProcEnvironKeys(livePid) : proc;
-    const scan = scanArtifactsForSecrets(args.outdir, SENTINEL_KEYS);
-    const ok =
-      childHas.length === 0 && procHas.length === 0 && scan.ok && parentHasSentinels.length > 0; // prove we injected into parent
+  injectSentinelProbeEnv();
+  const boundary = ensureIsolationBoundary();
+  if (!boundary.ok) {
+    const rows = [];
     recordRow(
       rows,
       "P0C-18",
-      ok ? "PASS" : "FAIL",
-      JSON.stringify({
-        parentSentinelKeysPresent: parentHasSentinels,
-        childEnvForbiddenKeys: childHas,
-        procForbiddenKeys: procHas,
-        procReadOk: after.ok,
-        artifactScanOk: scan.ok,
-        findings: scan.findings,
-        envKeyNames: envKeys,
-      }),
+      "FAIL",
+      JSON.stringify({ reason: "os_boundary_unavailable", error: boundary.error }),
     );
-    state.security = { ok, parentHasSentinels, childHas, procHas, scan };
-    return { rows, ok };
-  });
+    state.security = { ok: false, boundary };
+    return { rows, ok: false };
+  }
+  state.canarySecret = boundary.canarySecret;
+
+  return withClient(
+    args,
+    "security",
+    async ({ client, rows, childEnv, envKeys, terminalEnvKeys }) => {
+      const parentHasSentinels = SENTINEL_KEYS.filter((k) => process.env[k]);
+      const acpEnvHas = SENTINEL_KEYS.filter((k) =>
+        Object.prototype.hasOwnProperty.call(childEnv, k),
+      );
+      const termEnvHas = SENTINEL_KEYS.filter((k) =>
+        Object.prototype.hasOwnProperty.call(client.terminalEnv, k),
+      );
+      const acpProc = client.childPid
+        ? readProcEnvironKeys(client.childPid)
+        : { ok: false, keys: [] };
+      const acpProcHas = SENTINEL_KEYS.filter((k) => acpProc.keys.includes(k));
+
+      const session = await client.newSession();
+      let saw = null;
+      client.activeTerminalWaiter = (info) => {
+        saw = info;
+      };
+      const promptPromise = client
+        .prompt(
+          session.sessionId,
+          [
+            "You must use the terminal tool.",
+            "Execute exactly this command and no other (copy verbatim):",
+            `sh -lc ${JSON.stringify(SECURITY_PROBE_SCRIPT)}`,
+            "Do not modify the command.",
+          ].join(" "),
+          180_000,
+        )
+        .then((r) => ({ ok: true, result: r }))
+        .catch((e) => ({ ok: false, error: String(e.message || e) }));
+
+      const deadline = monotonicMs() + 120_000;
+      while (!saw && monotonicMs() < deadline) await delay(20);
+      client.activeTerminalWaiter = null;
+
+      let terminalProcHas = [];
+      let terminalProcOk = false;
+      let terminalPids = [];
+      let termOutput = "";
+      if (saw?.pid) {
+        // ponytail: poll briefly so env/sh/node descendants exist before /proc inspect
+        const inspectDeadline = monotonicMs() + 5_000;
+        while (monotonicMs() < inspectDeadline) {
+          terminalPids = [saw.pid, ...findDescendantPids(saw.pid)];
+          if (terminalPids.length > 1) break;
+          await delay(20);
+        }
+        for (const pid of terminalPids) {
+          const env = readProcEnvironKeys(pid);
+          if (env.ok) {
+            terminalProcOk = true;
+            for (const k of SENTINEL_KEYS) {
+              if (env.keys.includes(k) && !terminalProcHas.includes(k)) terminalProcHas.push(k);
+            }
+          }
+        }
+        const handle = [...client.terminals.values()].find((t) => t.id === saw.terminalId);
+        if (handle) {
+          await Promise.race([handle.waitForExit(), delay(30_000)]);
+          termOutput = handle.output;
+        }
+      }
+
+      const promptOutcome = await Promise.race([
+        promptPromise,
+        delay(60_000).then(() => ({ ok: false, error: "timeout" })),
+      ]);
+
+      const accessDenied = termOutput.includes("ACCESS_DENIED");
+      const accessOk = termOutput.includes("ACCESS_OK");
+      const secretLeaked = boundary.canarySecret && termOutput.includes(boundary.canarySecret);
+      const scan = scanArtifactsForSecrets(args.outdir, SENTINEL_KEYS, [
+        boundary.canarySecret,
+        ...collectExactSecretValues(),
+      ]);
+
+      const ok =
+        boundary.ok &&
+        parentHasSentinels.length === SENTINEL_KEYS.length &&
+        acpEnvHas.length === 0 &&
+        termEnvHas.length === 0 &&
+        acpProcHas.length === 0 &&
+        !!saw?.pid &&
+        terminalProcOk &&
+        terminalProcHas.length === 0 &&
+        accessDenied &&
+        !accessOk &&
+        !secretLeaked &&
+        scan.ok &&
+        promptOutcome.ok;
+
+      recordRow(
+        rows,
+        "P0C-18",
+        ok ? "PASS" : "FAIL",
+        JSON.stringify({
+          boundaryOk: boundary.ok,
+          parentSentinelKeysPresent: parentHasSentinels,
+          acpEnvForbiddenKeys: acpEnvHas,
+          terminalEnvForbiddenKeys: termEnvHas,
+          acpProcForbiddenKeys: acpProcHas,
+          terminalChildInspected: !!saw?.pid,
+          terminalPidsCount: terminalPids.length,
+          terminalProcOk,
+          terminalProcForbiddenKeys: terminalProcHas,
+          accessDenied,
+          accessOk,
+          secretLeaked,
+          artifactScanOk: scan.ok,
+          findings: scan.findings,
+          acpEnvKeyNames: envKeys,
+          terminalEnvKeyNames: terminalEnvKeys,
+          stopReason: promptOutcome.result?.stopReason || promptOutcome.error || null,
+        }),
+      );
+      state.security = {
+        ok,
+        parentHasSentinels,
+        childHas: acpEnvHas,
+        procHas: acpProcHas,
+        terminalProcHas,
+        accessDenied,
+        scan,
+        boundary,
+      };
+      return { rows, ok };
+    },
+  );
 }
 
 async function modeCancelContinue(args, state) {
@@ -1822,8 +2553,12 @@ async function main() {
   let rows = [];
 
   try {
+    if (args.mode === "self-check") {
+      runSelfCheck(args);
+      return;
+    }
     try {
-      state.devinVersion = await runDevinVersion(args.devinBin, buildChildEnv(process.env));
+      state.devinVersion = await runDevinVersion(args.devinBin, buildAcpEnv(process.env));
     } catch (err) {
       state.devinVersion = null;
       recordRow(rows, "devin-version", "FAIL", String(err.message || err));
