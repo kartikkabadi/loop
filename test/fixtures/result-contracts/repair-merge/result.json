@@ -1,0 +1,50 @@
+{
+  "status": "planned",
+  "repo": "openclaw/openclaw",
+  "cluster_id": "host-contract-merge",
+  "mode": "plan",
+  "summary": "Merge candidate #4242 after cleared preflight.",
+  "actions": [
+    {
+      "target": "#4242",
+      "action": "merge_candidate",
+      "status": "planned",
+      "idempotency_key": "merge_candidate:#4242",
+      "classification": "canonical",
+      "target_kind": "pull_request",
+      "target_updated_at": "2026-07-01T12:00:00Z",
+      "canonical": "#4242",
+      "duplicate_of": null,
+      "candidate_fix": null,
+      "comment": null,
+      "evidence": [
+        "CI is green on the candidate head.",
+        "Maintainer approved merge after Codex /review."
+      ],
+      "reason": "Candidate is merge-ready with cleared merge_preflight."
+    }
+  ],
+  "needs_human": [],
+  "canonical": "#4242",
+  "canonical_issue": null,
+  "canonical_pr": "#4242",
+  "merge_preflight": [
+    {
+      "target": "#4242",
+      "security_status": "cleared",
+      "security_evidence": ["No security-sensitive signals on the PR."],
+      "comments_status": "resolved",
+      "comments_evidence": ["All review threads are resolved."],
+      "bot_comments_status": "resolved",
+      "bot_comments_evidence": ["No unresolved bot comments."],
+      "codex_review": {
+        "command": "/review",
+        "status": "passed",
+        "findings_addressed": true,
+        "evidence": ["Codex /review passed with no remaining findings."]
+      },
+      "validation_commands": ["pnpm test"]
+    }
+  ],
+  "fix_artifact": null
+}

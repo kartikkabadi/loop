@@ -1,0 +1,15 @@
+{
+  "repo": "openclaw/openclaw",
+  "cluster_id": "host-contract-merge",
+  "mode": "plan",
+  "items": [
+    {
+      "ref": "#4242",
+      "kind": "pull_request",
+      "state": "open",
+      "updated_at": "2026-07-01T12:00:00Z",
+      "security_sensitive": false,
+      "url": "https://github.com/openclaw/openclaw/pull/4242"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "status": "planned",
+  "repo": "openclaw/openclaw",
+  "cluster_id": "host-contract-actionless",
+  "mode": "plan",
+  "summary": "No repair actions are warranted for this cluster.",
+  "actions": [],
+  "needs_human": [],
+  "canonical": null,
+  "canonical_issue": null,
+  "canonical_pr": null,
+  "merge_preflight": [],
+  "fix_artifact": null
+}
