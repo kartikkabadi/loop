@@ -202,223 +202,168 @@ Conclusion: the streaming SSH command path is **not** a persistent duplex ACP JS
 
 # Phase 0B — Devin ACP protocol inside ASCII Box
 
+**Authoritative evidence:** hardened rerun (Prompt 0B.1) below.
+**Historical first run:** retained in §H at the end of this Phase 0B section (pre-harden harness; weaker assertions / auto-allow permissions).
+
 **Date:** 2026-07-11
 **Docs access date:** 2026-07-11
-**Loop base SHA:** `ad932cff9161508235249179ae6cb56345d857fa` (PR #2 / Phase 0A merge)
-**Phase 0A merge SHA:** `ad932cff9161508235249179ae6cb56345d857fa`
+**Loop branch / pre-commit HEAD:** `spike/phase-0b-devin-acp-protocol` @ `21bc84872cae9f6b35f38c87837ef11706ad2ee2`
+**Loop base (Phase 0A merge):** `ad932cff9161508235249179ae6cb56345d857fa`
+**Harness:** `scripts/spikes/devin-acp-box/client.mjs` `0.1.8-phase0b1`
 **Crabbox:** CLI `0.37.1` · source `3134f34eea72c4a8a5790b0531d740d46c548e8c`
 **Box CLI:** `0.1.123-ascii-prod1`
 **Devin CLI (inside Box):** `3000.1.27 (0d4bf12e)`
 **Node (inside Box):** `v24.15.0`
 **ACP specification:** v1 (`protocolVersion` requested and selected: `1`)
-**ACP TypeScript SDK inspected:** `@agentclientprotocol/sdk` release `v1.2.1` (reference only; spike client is dependency-free)
 
-## 1. Scope and non-goals
+## A. Scope and non-goals
 
-### Objective
+Prove a hardened Node ACP client **inside** an ASCII Box can speak newline-delimited JSON-RPC with local `devin acp` under fail-closed permissions, host-owned output caps, strict envelope validation, exact terminal lifecycle, and authoritative cancel/cleanup proofs.
 
-Prove a small Node client running **inside** an ASCII Box can launch local `devin acp` and speak newline-delimited JSON-RPC over stdio for initialize, session/new, session/prompt, session/update, terminal client requests, and session/cancel.
+Non-goals unchanged: no `AgentSessionRuntime`, no production ClawSweeper changes, no Codex cutover, no Phase 0C implementation, no ACP-over-Crabbox stdin, no `devin -p` as architecture, no committed transcripts/credentials.
 
-### Non-goals
-
-- No production `AgentSessionRuntime`
-- No ClawSweeper source/workflow/schema/prompt/dependency changes
-- No Codex lane cutover
-- No Phase 0C
-- No ACP tunneling over Crabbox SSH stdin
-- No `devin -p` as architecture
-- No committing raw transcripts or credentials
-
-## 2. Topology
-
-```text
-Local Cursor → Crabbox → ASCII Box
-  → node scripts/spikes/devin-acp-box/client.mjs
-      ↔ stdio JSON-RPC
-        ↔ local `devin acp`
-```
-
-Canary workspace (disposable git repo, not Loop checkout):
-`/home/user/crabbox/cbx_b66390f165e1/loop-phase-0b-1VhIbE`
-Local canary commit: `993fe48ff584af7dc03b2789f8e9e14b351c6518`
-Marker digest: `42f441918ff6688e7c2a476ec69f3ad62fd737179e223f8f1d215ee5e825ae68`
-
-## 3. Box lifecycle (sanitized)
+## B. Hardened Box lifecycle (authoritative)
 
 | Field | Value |
 |---|---|
-| Lease | `cbx_b66390f165e1` |
-| Slug | `violet-prawn` |
-| Box | `bx_8ezbf3vk` |
-| Host | `46.224.51.6` |
-| Warmup | **19.689s** (wall ~19.9s) |
-| Stop/delete | **20.353s** → status not found (exit 4); `box info` 404 |
+| Lease | `cbx_f937aae38537` |
+| Slug | `blue-prawn` |
+| Box | `bx_wt5kzg3a` |
+| Host | `188.245.81.138` |
+| Warmup | **14.761s** |
+| Canary commit | `ace47296fe14d135b21d23c3a7cd804c2c2bc202` |
+| Marker digest | `95f226f4a0c0fdbc88ee7a30419b769cb75187748a5daba6a2301e9cf83257ed` |
+| Stop/delete | lease released; `bx_wt5kzg3a` / `blue-prawn` absent from Box list; orphan probe empty |
 
-## 4. Authentication (no values)
+Topology unchanged: Crabbox transport only; ACP client colocated with `devin acp` inside Box; stored CLI credentials (no headless `authenticate(devin-browser)`).
 
-| Observation | Detail |
+## C. Permission policy (fail-closed)
+
+- Never auto-select an allow option merely because one exists.
+- Merge `session/request_permission.toolCall` with cached `session/update` tool_call fields (`rawInput` is often only on the update).
+- Allow only exact allowlisted canary commands for the current mode (`basic` vs `cancel`), or jailed read of `transport-input.txt`.
+- Reject network/install/write/unknown/incomplete requests; record every decision.
+
+**Observed on authoritative run:** one allow — `cancel_sleep` for `sh -lc 'sleep 30; printf SHOULD_NOT_COMPLETE'` (`extractShape=shell_line`). `pwd` terminal session was cog-auto-allowed inside Devin (no ACP permission request). Unrelated commands (e.g. earlier `echo test` during failed retries) were denied by allowlist.
+
+## D. Host-owned terminal output bound
+
+- Host maximum: `MAX_TERMINAL_OUTPUT_BYTES = 262144` (256 KiB).
+- Agent `outputByteLimit` may only reduce the limit.
+- Authoritative effective limits recorded: `120000` (`source=agent_requested`) for both terminal sessions.
+
+## E. Jail self-checks
+
+All five startup/`--self-check` assertions **PASS**: relative in-jail accepted; absolute in-jail accepted; `../` escape rejected; symlink escape rejected; missing child under symlink escape rejected. Relative paths resolve from the canary jail root, not `process.cwd()` ambient.
+
+## F. Strict JSON-RPC framing
+
+Every non-empty stdout line validated as JSON-RPC 2.0 request / notification / response. Authoritative: `jsonRpcFraming.ok=true`, `violations=[]`, `lineCount=487`. Stderr remains the only diagnostic channel.
+
+## G. Authoritative results
+
+### Initialize / capabilities
+
+Capability response unchanged vs first run (`capabilities.json` SHA-256 `1c936a93…615538`). Protocol `1`. Auth: stored CLI credentials; advertised `devin-browser` not invoked headless.
+
+### Sessions / basic prompt
+
+Three `session/new` digests:
+
+1. `f46d2a84bc07b22240d0aee8b822fa536645e82942d8b6b049f88c7948252b59`
+2. `d073d226a174b6ff933c0412ff33f0fd52154e99b05dcb60c5715e6371bc2702`
+3. `37cfc4cf455dd498aef2a4d62453eca8bcadd0ab52ca359f02a994995f81d05d`
+
+Basic: `stopReason=end_turn`, marker `LOOP_ACP_BASIC_OK`, **978ms**.
+
+### Terminal lifecycle (P0B-14)
+
+Exact sequence: `terminal/create` → `terminal/wait_for_exit` → `terminal/output` → `terminal/release`
+Command: `pwd` (normalized); exit `0`; cwd matched canary; `LOOP_ACP_TERM_OK`; `stopReason=end_turn`; no unexpected client methods; no unrelated permission grants. Devin may send create as a single shell-line string; harness normalizes before allowlist/spawn.
+
+### Cancellation (P0B-15…17)
+
+| Metric | Value |
 |---|---|
-| Pre-existing Box credential file | `~/.local/share/devin/credentials.toml` present before install |
-| Install | Official `curl -fsSL https://cli.devin.ai/install.sh \| bash` on Box |
-| `devin auth status` | Logged in (via Devin); Pro tier — values not logged beyond account email already shown by CLI |
-| ACP `authMethods` | `[{ id: "devin-browser", name: "Log in with browser" }]` |
-| Mechanism used | **stored CLI credentials** |
-| Failed approach (recorded) | Calling ACP `authenticate` with `devin-browser` starts PKCE and hangs headless (~180s), then blocks `session/new`. Spike client now skips browser-only authenticate. |
-| stderr policy note | `ACP_BACKEND not set. Will accept host credentials if provided, otherwise fall back to env vars and stored CLI credentials.` |
+| Active evidence | live terminal for allowlisted cancel sleep |
+| `session/cancel` | sent only after create RPC was acknowledged (cancel-during-create crashes Devin with `receiver dropped`) |
+| Local kill | deferred until after prompt result (immediate SIGTERM+wait_for_exit answer also crashes ACP) |
+| `msActiveToCancelSend` | **0** |
+| `msCancelSendToPromptResult` | **37** |
+| `msCancelSendToTerminalExit` | **87** |
+| `stopReason` | **`cancelled`** |
+| `SHOULD_NOT_COMPLETE` | absent |
+| Remaining spike terminals | **0** |
+| `_cognition.ai/agent_stopped.cause` | `cancelled` |
 
-## 5. Exact initialize request shape
+### Digest scheme (corrected)
 
-```json
-{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "method": "initialize",
-  "params": {
-    "protocolVersion": 1,
-    "clientCapabilities": {
-      "fs": { "readTextFile": true, "writeTextFile": false },
-      "terminal": true
-    },
-    "clientInfo": {
-      "name": "loop-phase0b-spike",
-      "title": "Loop Phase 0B ACP Spike",
-      "version": "0.1.0-phase0b"
-    }
-  }
-}
-```
+The first-run `summary.json` self-SHA was **invalid** (hash inserted then rewritten). Authoritative scheme:
 
-## 6. Sanitized initialize response (full capability structure)
-
-```json
-{
-  "protocolVersion": 1,
-  "agentCapabilities": {
-    "loadSession": true,
-    "promptCapabilities": { "image": true, "audio": false, "embeddedContext": true },
-    "mcpCapabilities": { "http": false, "sse": false },
-    "sessionCapabilities": { "list": {}, "additionalDirectories": {} },
-    "_meta": {
-      "cognition.ai/multiRootWorkspace": true,
-      "cognition.ai/sessionRename": true,
-      "cognition.ai/documentLifecycle": true,
-      "cognition.ai/terminalLifecycle": true
-    }
-  },
-  "authMethods": [
-    { "id": "devin-browser", "name": "Log in with browser", "description": "Sign in via your browser" }
-  ],
-  "agentInfo": { "name": "affogato", "title": "Affogato Agent", "version": "0.0.0-dev" },
-  "_meta": { "mcpConfigPath": "/home/user/.config/devin/config.json" }
-}
-```
-
-### Advertised vs absent (do not assume for Phase 0C without use)
-
-| Capability | Observed |
-|---|---|
-| `loadSession` | **true** (advertised; not exercised in 0B) |
-| `sessionCapabilities.list` | present (empty object) |
-| mid-turn steer | **not** observed / not claimed |
-| session close/delete/fork | **not** claimed from this spike |
-| MCP http/sse | false |
-| terminal (client) | used successfully |
-
-## 7. Session creation
-
-Three `session/new` calls succeeded. Session ID digests (SHA-256):
-
-1. `6b5be7d6eda25f7c0c60b208efd5d60dc762d5ab262387810d2dccd5de87cd9d`
-2. `eb0c0ba06d48a0d8beedb9e15bc4451dfa040d7295c79a631fd4c966cf0fa432`
-3. `1c89a9b138ec583edcc0dc2e36f090f0be4d1ee916e2064c17204bcd5257fa0f`
-
-## 8. Basic prompt + updates
-
-- Prompt: `Reply with exactly LOOP_ACP_BASIC_OK and do not use any tools.`
-- Result: `stopReason=end_turn`; marker present in agent message stream
-- Duration: **1422ms**
-- Update types observed: `config_option_update`, `current_mode_update`, `available_commands_update`, `session_info_update`, `agent_thought_chunk`, `agent_message_chunk`, `usage_update`
-
-## 9. Safe terminal request sequence
-
-Client-directed methods (in order family):
-`terminal/create` → `terminal/wait_for_exit` → `terminal/output` → `terminal/release`
-Allowlisted command: `pwd`
-Result: `stopReason=end_turn`; duration **2926ms**
-
-## 10. Cancellation timeline
-
-| Event | Evidence |
-|---|---|
-| Active tool observed | `terminal/create` for allowlisted `sh -lc 'sleep 30; printf SHOULD_NOT_COMPLETE'` |
-| `session/cancel` sent | immediately after terminal create evidence |
-| Cancel latency | **44ms** until prompt returned |
-| Prompt outcome | `stopReason: cancelled` |
-| `SHOULD_NOT_COMPLETE` emitted? | **No** |
-| Remaining terminals | **0** |
-
-## 11. JSON-RPC framing
-
-- stdout: newline-delimited JSON-RPC only (`P0B-05` PASS; no non-JSON samples)
-- stderr: separate diagnostic log (Devin/chisel INFO lines)
-- Concurrent request IDs correlated by client
-
-## 12. Environment boundary
-
-Child env key names only:
-`HOME`, `LANG`, `LC_ALL`, `LOGNAME`, `PATH`, `SHELL`, `USER`, `XDG_DATA_DIRS`, `XDG_RUNTIME_DIR`, `XDG_SESSION_CLASS`, `XDG_SESSION_ID`, `XDG_SESSION_TYPE`
-
-Forbidden keys audit: **passed** (no `GITHUB_*`, `ASCII_BOX_*`, `OPENAI_*`, `CODEX_*`, etc.)
-
-## 13. Evidence artifacts (not committed)
-
-Collected via Crabbox `--download` to `/tmp/loop-phase-0b-artifacts/` (wiped after docs):
+- `artifactDigests` for non-summary files only;
+- `summaryPayloadSha256` = SHA-256 of canonical summary JSON with `summaryPayloadSha256` omitted (**not** the SHA-256 of the final file);
+- external final-file SHA-256 recorded in docs/PR after script exit.
 
 | File | Bytes | SHA-256 |
 |---|---:|---|
 | `capabilities.json` | 883 | `1c936a93ecf3fe8e57d297c5ed564244b330ae5aead9b9b28e8a6dd632615538` |
-| `transcript.jsonl` | 247715 | `f0282fa06050b3b292d477fe6180af004a87cdfa1bba71a4d0c56932d65e3236` |
-| `stderr.log` | 6765 | `5dfc115cda926cff3ee7bd82131fd81da337ec8ab806c20a803ed055b4625bce` |
-| `summary.json` | 5195 | `5cc5a743c7696b4a72307b18b94765d24a8a8426050e1b342e988a01712cb2cf` |
+| `transcript.jsonl` | 314507 | `fd3698df36d8453b4e6be4ddb4d791f9d57d62c3852f7e31965b3e931f422920` |
+| `stderr.log` | 7653 | `c84b9524bf3019097007a6bf23032f9f38038522a4cf4b6a554eba7ecf04ded6` |
+| `summary.json` (final file) | 9287 | `4b877ae5808e3d707d0d2e03cbf105a48938c7900a68d8df7b1ebba24b651a32` |
+| `summaryPayloadSha256` | — | `4199e9e5fa4eec9bb4b77d3e27638e894d0c7657ffba06586b8f7a8d7aef469a` |
 
-## 14. Failures / retries / deviations
+Secret scan: **PASS** (`findings=[]`). Non-summary digests matched final files.
 
-1. **First ACP run:** called `authenticate` with `devin-browser` → PKCE hang → `session/new` timeout. Client updated to skip browser-only ACP authenticate and rely on stored CLI credentials.
-2. **Orphan probe false positive:** `pgrep -af 'devin acp'` matched the wrapping `bash -lc` command line; dedicated `pgrep -x devin` / awk filter showed **no** leftover Devin processes after client exit.
-3. **`pkill` cleanup run** before retry returned crabbox exit 255 once (no matching process); lease remained healthy.
+### Process / Box cleanup
 
-## 15. Pass/fail matrix
+- Spike terminals: exited (`SIGTERM`); remaining live count **0**.
+- `devin acp`: exited (`SIGTERM`); post-run `pgrep -x devin` empty; post-stop orphan probe empty.
+- Box `bx_wt5kzg3a` / slug `blue-prawn` released and absent from inventory.
+
+### Hardened P0B matrix (authoritative)
 
 | ID | Result | Evidence |
 |---|---|---|
-| P0B-01 Node available inside Box | **PASS** | `v24.15.0` via nvm |
-| P0B-02 Devin CLI available inside Box | **PASS** | `devin 3000.1.27` after official install |
-| P0B-03 Devin Box-side authentication succeeds | **PASS** | `devin auth status` logged in; stored credentials |
-| P0B-04 `devin acp` starts | **PASS** | stderr ACP server PID; client spawn |
-| P0B-05 stdout JSON-RPC only | **PASS** | assertion + empty nonJsonSamples |
-| P0B-06 initialize succeeds | **PASS** | 94ms; capabilities.json |
+| P0B-01 Node available inside Box | **PASS** | `v24.15.0` |
+| P0B-02 Devin CLI available inside Box | **PASS** | `3000.1.27` |
+| P0B-03 Devin Box-side authentication succeeds | **PASS** | stored CLI credentials |
+| P0B-04 `devin acp` starts | **PASS** | spawn + stderr ACP server |
+| P0B-05 stdout JSON-RPC envelopes | **PASS** | strict envelope validation; 0 violations |
+| P0B-06 initialize succeeds | **PASS** | 117ms |
 | P0B-07 protocol version negotiated | **PASS** | selected `1` |
-| P0B-08 exact capability response captured | **PASS** | capabilities.json hash above |
-| P0B-09 authentication requirement handled | **PASS** | skipped browser PKCE; stored CLI creds |
-| P0B-10 session/new succeeds | **PASS** | 3 session digests |
-| P0B-11 session/prompt succeeds | **PASS** | basic + terminal prompts |
-| P0B-12 session/update stream observed | **PASS** | update types listed above |
-| P0B-13 basic response completes correctly | **PASS** | `LOOP_ACP_BASIC_OK` |
-| P0B-14 safe terminal client request handled | **PASS** | terminal/* sequence for `pwd` |
-| P0B-15 cancel after active tool | **PASS** | terminal_create then cancel |
-| P0B-16 cancelled op does not complete | **PASS** | no `SHOULD_NOT_COMPLETE` |
-| P0B-17 cancel within bound | **PASS** | 44ms ≪ 60s |
+| P0B-08 exact capability response captured | **PASS** | capabilities hash above |
+| P0B-09 authentication requirement handled | **PASS** | stored CLI; skip browser PKCE |
+| P0B-10 session/new succeeds | **PASS** | 3 digests |
+| P0B-11 session/prompt succeeds | **PASS** | basic + terminal + cancel |
+| P0B-12 session/update stream observed | **PASS** | thought/message/usage/… |
+| P0B-13 basic response completes correctly | **PASS** | marker + `end_turn` |
+| P0B-14 safe terminal lifecycle | **PASS** | create→wait→output→release; `pwd`; exit 0 |
+| P0B-15 cancel after active tool | **PASS** | live terminal then cancel |
+| P0B-16 cancelled op does not complete | **PASS** | no `SHOULD_NOT_COMPLETE`; terminals exited |
+| P0B-17 cancel stopReason + timings | **PASS** | `cancelled` in 37ms; term exit 87ms |
 | P0B-18 no forbidden credentials reach Devin | **PASS** | env key audit |
-| P0B-19 evidence collected/verified | **PASS** | hashes above; JSON parse |
-| P0B-20 no orphan terminal/Devin process | **PASS** | `NO_DEVIN_PROCS` after exit |
-| P0B-21 Box stopped/deleted | **PASS** | lease released; 404; absent from list |
+| P0B-19 evidence collected/verified | **PASS** | parse + digests + secret scan |
+| P0B-20 no orphan terminal/Devin process | **PASS** | cleanup proven |
+| P0B-21 Box stopped/deleted | **PASS** | lease released; absent from list |
 
-## 16. Go / no-go for Phase 0C
+### Failures during hardening (not concealed)
 
-**GO for Phase 0C** (session recovery / reviewer isolation / security proofs), with constraints:
+1. Auto-allow removal initially rejected cancel permissions until toolCall cache + shell-line `rawInput` parsing.
+2. Devin `terminal/create` sends shell-line `command` with null `args` — require normalize-before-allowlist.
+3. Cancel **before** create response, or answering `wait_for_exit` with immediate local SIGTERM during cancel, crashes Devin (`failed to send response, receiver dropped`) and omits prompt `stopReason`. Fix: cancel only after create ack; defer local kill until prompt settles.
+4. Crabbox `set -e` + nonzero client exit can skip artifact download — wrapper now forces exit 0 after writing artifacts; pass/fail is in `summary.json` / `client.exit`.
 
-- Core rows P0B-03–P0B-13 and P0B-15–P0B-21 all PASS; P0B-14 PASS.
+## H. Historical first run (pre-harden; non-authoritative)
+
+Prior lease `cbx_b66390f165e1` / slug `violet-prawn` / box `bx_8ezbf3vk` empirically negotiated ACP v1 and observed `stopReason=cancelled` (~44ms), but the committed harness could false-pass (weak P0B-05/14/17), auto-approve permissions, honor agent-raised output limits, treat `child.killed` as exit, and record an invalid summary self-digest. That run remains useful as transport/protocol smoke evidence only; **do not** treat its PASS table as the Phase 0C foundation.
+
+## I. Go / no-go for Phase 0C
+
+**GO for Phase 0C**, with constraints:
+
+- Hardened rows P0B-01…P0B-21 all PASS on the authoritative rerun.
+- Fail-closed permissions, host output cap, jail resolution, strict JSON-RPC envelopes, exact terminal lifecycle, and cancel `stopReason=cancelled` are proven by machine assertions.
 - Do not call headless `authenticate(devin-browser)`; use Box-local stored CLI credentials.
-- Treat `loadSession: true` as advertised only — prove resume/load empirically in 0C before depending on it.
+- Treat `loadSession: true` as advertised only until 0C proves resume/load.
 - Keep ACP client colocated with `devin acp` inside Box; Crabbox remains transport only.
 - Production runtime implementation has **not** begun.
