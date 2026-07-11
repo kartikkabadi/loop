@@ -77,10 +77,12 @@ test("parseExactJsonObject rejects empty, fenced, prose, multi-value, array, and
   const leading = parseExactJsonObject('note {"a":1}');
   assert.equal(leading.ok, false);
   assert.equal(leading.error?.code, "E_RESULT_EXTRA_TEXT");
+  assert.equal(leading.error?.message, "leading non-JSON text");
 
   const trailing = parseExactJsonObject('{"a":1} trailing');
   assert.equal(trailing.ok, false);
   assert.equal(trailing.error?.code, "E_RESULT_EXTRA_TEXT");
+  assert.equal(trailing.error?.message, "trailing text or multiple JSON values");
 
   const two = parseExactJsonObject('{"a":1}{"b":2}');
   assert.equal(two.ok, false);
@@ -95,7 +97,20 @@ test("parseExactJsonObject rejects empty, fenced, prose, multi-value, array, and
   assert.equal(prim.error?.code, "E_RESULT_NOT_OBJECT");
 });
 
-test("parseExactJsonObject enforces UTF-8 byte cap", () => {
+test("parseExactJsonObject classifies malformed JSON without leaking parser details", () => {
+  const malformed = parseExactJsonObject("{not-json");
+  assert.equal(malformed.ok, false);
+  assert.equal(malformed.error?.code, "E_RESULT_JSON");
+  assert.equal(malformed.error?.message, "malformed JSON");
+  assert.doesNotMatch(String(malformed.error?.message), /Unexpected|JSON\.parse|position/i);
+
+  // A lone `{` inside prose must not use a broad contains-brace heuristic.
+  const proseOnly = parseExactJsonObject("see { brace");
+  assert.equal(proseOnly.ok, false);
+  assert.equal(proseOnly.error?.code, "E_RESULT_EXTRA_TEXT");
+});
+
+test("parseExactJsonObject enforces UTF-8 byte cap and maxBytes option shape", () => {
   const emoji = "😀"; // 4 UTF-8 bytes
   const oversized = parseExactJsonObject(`{"x":"${emoji}"}`, { maxBytes: 8 });
   assert.equal(oversized.ok, false);
@@ -105,6 +120,12 @@ test("parseExactJsonObject enforces UTF-8 byte cap", () => {
   assert.equal(within.ok, true);
 
   assert.equal(DEFAULT_RESULT_MAX_BYTES, 1_048_576);
+
+  for (const maxBytes of [0, -1, 1.5, Number.NaN, Number.POSITIVE_INFINITY, "8" as unknown]) {
+    const bad = parseExactJsonObject('{"a":1}', { maxBytes: maxBytes as number });
+    assert.equal(bad.ok, false);
+    assert.equal(bad.error?.code, "E_RESULT_MAX_BYTES");
+  }
 });
 
 test("decision schema accepts complete valid fixture", () => {
