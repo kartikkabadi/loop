@@ -78,6 +78,8 @@ type FakeArgExtra = {
   lineBytes?: number;
   secretSentinel?: string;
   loadSession?: boolean;
+  cwd?: string;
+  secondSessionId?: string;
 };
 
 type RecordingHost = DevinAcpHostServices & {
@@ -110,6 +112,8 @@ function fakeArgs(scenario: string, extra: FakeArgExtra = {}): string[] {
   if (extra.lineBytes !== undefined) args.push(`--line-bytes=${extra.lineBytes}`);
   if (extra.secretSentinel) args.push(`--secret-sentinel=${extra.secretSentinel}`);
   if (extra.loadSession === false) args.push("--load-session=false");
+  if (extra.secondSessionId) args.push(`--second-session-id=${extra.secondSessionId}`);
+  if (extra.cwd !== undefined) args.push(`--cwd=${extra.cwd}`);
   return args;
 }
 
@@ -721,6 +725,8 @@ test("D: fs and terminal dispatch with valid absolute paths and sessionId", asyn
         assert.equal(readReq.method, DEVIN_ACP_HOST_METHODS.filesystemRead);
         assert.equal(readReq.params.sessionId, SESSION_ID);
         assert.equal(readReq.params.path, "/tmp/README.md");
+        assert.equal(readReq.params.line, 0);
+        assert.equal(readReq.params.limit, 0);
       },
     );
 
@@ -728,7 +734,7 @@ test("D: fs and terminal dispatch with valid absolute paths and sessionId", asyn
     await withController(
       baseOptions(workspace, {
         hostServices: termHost,
-        devinArgs: fakeArgs("terminal", { outputChunks: "t" }),
+        devinArgs: fakeArgs("terminal", { outputChunks: "t", cwd: workspace }),
       }),
       async (controller) => {
         const runtime = await controller.runtime.initialize();
@@ -737,7 +743,8 @@ test("D: fs and terminal dispatch with valid absolute paths and sessionId", asyn
         const createReq = termHost.requests.find((r) => r.kind === "terminal-create");
         assert.ok(createReq);
         assert.equal(createReq.params.sessionId, SESSION_ID);
-        assert.equal(createReq.params.cwd, "/tmp");
+        assert.equal(createReq.params.cwd, workspace);
+        assert.equal(createReq.params.outputByteLimit, 0);
       },
     );
   } finally {
@@ -752,6 +759,8 @@ test("D: malformed host params return -32602 and never call handler", async () =
       "malformed-permission",
       "malformed-fs",
       "malformed-terminal",
+      "malformed-terminal-env",
+      "malformed-terminal-env-nul",
     ] as const) {
       let calls = 0;
       const host = recordingHost(async () => {
@@ -840,7 +849,11 @@ test("D: host-hang times out host request but prompt completes", async () => {
         hostServices: host,
         hostRequestTimeoutMs: 200,
         requestTimeoutMs: 5_000,
-        devinArgs: fakeArgs("host-hang", { outputChunks: "hung", hostResponsePath }),
+        devinArgs: fakeArgs("host-hang", {
+          outputChunks: "hung",
+          hostResponsePath,
+          cwd: workspace,
+        }),
       }),
       async (controller) => {
         const runtime = await controller.runtime.initialize();
@@ -1340,8 +1353,7 @@ test("I: events redact secrets, session ids, prompts, and untrusted metadata", a
         const runtime = await controller.runtime.initialize();
         const session = await runtime.createSession({ cwd: workspace });
         const result = await runtime.prompt({ sessionId: session.id, text: promptText });
-        // protocol result may retain raw evil stopReason; event must not
-        assert.ok(typeof result.stopReason === "string");
+        assert.equal(result.stopReason, "end_turn");
       },
     );
 
@@ -1359,7 +1371,7 @@ test("I: events redact secrets, session ids, prompts, and untrusted metadata", a
     assert.ok(events.some((e) => e.type === "session_update" && e.updateKind === "unknown"));
     const completed = events.find((e) => e.type === "prompt_completed");
     assert.ok(completed && completed.type === "prompt_completed");
-    assert.equal(completed.stopReason, "unknown");
+    assert.equal(completed.stopReason, "end_turn");
     assert.equal(completed.sessionIdDigest, expectedDigest);
   } finally {
     rmSync(workspace, { recursive: true, force: true });
@@ -1468,4 +1480,437 @@ test("validation rejects empty/NUL and relative workspaceRoot", () => {
     (error: unknown) =>
       error instanceof DevinAcpRuntimeError && error.code === "E_DEVIN_ACP_VALIDATION",
   );
+});
+
+// ---------------------------------------------------------------------------
+// K. Phase 3A.2 hardening
+// ---------------------------------------------------------------------------
+
+test("K: controlled-error message bypass is sanitized", async () => {
+  const workspace = makeWorkspace();
+  const hostResponsePath = path.join(workspace, "controlled-throw.ndjson");
+  try {
+    const secretPath = "/home/user/.config/devin/credentials.toml";
+
+    class EvilControlledError extends ControlledAcpRpcError {
+      constructor() {
+        super(-32603);
+        this.message = `${SECRET} ${secretPath}`;
+      }
+    }
+
+    const host: DevinAcpHostServices = {
+      capabilities: { readTextFile: true, writeTextFile: true, terminal: true },
+      async handle() {
+        throw new EvilControlledError();
+      },
+    };
+
+    await withController(
+      baseOptions(workspace, {
+        hostServices: host,
+        devinArgs: fakeArgs("host-secret-throw", {
+          outputChunks: "e",
+          hostResponsePath,
+          secretSentinel: SECRET,
+        }),
+      }),
+      async (controller) => {
+        const runtime = await controller.runtime.initialize();
+        const session = await runtime.createSession({ cwd: workspace });
+        const result = await runtime.prompt({ sessionId: session.id, text: "err" });
+        assert.equal(result.outputText, "e");
+
+        const responses = readHostResponses(hostResponsePath);
+        const err = responses.find((r) => r.id === "host-secret-1");
+        assert.equal(err?.error?.code, -32603);
+        assert.equal(err?.error?.message, CONTROLLED_RPC_MESSAGES.HOST_REQUEST_FAILED);
+        assertNoSecret(responses);
+        assert.equal(JSON.stringify(responses).includes(secretPath), false);
+      },
+    );
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
+
+test("K: duplicate inbound host-request IDs reject before second handler", async () => {
+  const workspace = makeWorkspace();
+  const hostResponsePath = path.join(workspace, "host-dup.ndjson");
+  try {
+    let calls = 0;
+    const host = recordingHost(async () => {
+      calls += 1;
+      await delay(50);
+      return { ok: true };
+    });
+
+    await withController(
+      baseOptions(workspace, {
+        hostServices: host,
+        hostRequestTimeoutMs: 500,
+        requestTimeoutMs: 5_000,
+        devinArgs: fakeArgs("duplicate-host", { outputChunks: "d", hostResponsePath }),
+      }),
+      async (controller) => {
+        const runtime = await controller.runtime.initialize();
+        const session = await runtime.createSession({ cwd: workspace });
+        const result = await runtime.prompt({ sessionId: session.id, text: "dup" });
+        assert.equal(result.outputText, "d");
+        assert.equal(calls, 1);
+        assert.equal(host.requests.length, 1);
+
+        await delay(200);
+        const responses = readHostResponses(hostResponsePath);
+        const dupResponses = responses.filter((r) => r.id === "host-dup-1");
+        assert.equal(
+          dupResponses.some((r) => r.result?.ok === true),
+          true,
+          "original handler result must be present",
+        );
+        assert.equal(
+          dupResponses.some((r) => r.error?.code === -32603),
+          true,
+          "duplicate request must be rejected",
+        );
+        assertNoSecret(responses);
+      },
+    );
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
+
+test("K: unsolicited host requests are rejected outside active prompts", async () => {
+  const workspace = makeWorkspace();
+  const hostResponsePath = path.join(workspace, "unsolicited.ndjson");
+  try {
+    const host = recordingHost(async () => ({ ok: true }));
+
+    await withController(
+      baseOptions(workspace, {
+        hostServices: host,
+        devinArgs: fakeArgs("unsolicited-before-prompt", {
+          outputChunks: "u",
+          hostResponsePath,
+        }),
+      }),
+      async (controller) => {
+        const runtime = await controller.runtime.initialize();
+        const session = await runtime.createSession({ cwd: workspace });
+        const result = await runtime.prompt({ sessionId: session.id, text: "u" });
+        assert.equal(result.outputText, "u");
+        assert.equal(host.requests.length, 0);
+
+        const responses = readHostResponses(hostResponsePath);
+        const unsolicited = responses.find((r) => r.id === "host-unsolicited-before");
+        assert.equal(unsolicited?.error?.code, -32602);
+        assertNoSecret(responses);
+      },
+    );
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
+
+test("K: host requests for other registered sessions are rejected", async () => {
+  const workspace = makeWorkspace();
+  const secondSessionId = "sess-other-002";
+  const hostResponsePath = path.join(workspace, "other-session.ndjson");
+  try {
+    const host = recordingHost(async () => ({ ok: true }));
+
+    await withController(
+      baseOptions(workspace, {
+        hostServices: host,
+        devinArgs: fakeArgs("other-session", {
+          outputChunks: "o",
+          hostResponsePath,
+          secondSessionId,
+        }),
+      }),
+      async (controller) => {
+        const runtime = await controller.runtime.initialize();
+        const first = await runtime.createSession({ cwd: workspace });
+        await runtime.loadSession!({ sessionId: secondSessionId, cwd: workspace });
+        const result = await runtime.prompt({ sessionId: first.id, text: "o" });
+        assert.equal(result.outputText, "o");
+        assert.equal(host.requests.length, 0);
+
+        const responses = readHostResponses(hostResponsePath);
+        const other = responses.find((r) => r.id === "host-other-session");
+        assert.equal(other?.error?.code, -32602);
+        assertNoSecret(responses);
+      },
+    );
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
+
+test("K: stale same-session tool-call update does not poison next prompt", async () => {
+  const workspace = makeWorkspace();
+  const hostResponsePath = path.join(workspace, "stale-cache.ndjson");
+  try {
+    const host = recordingHost(async (request) => {
+      if (request.kind === "permission") {
+        const raw = request.params.toolCall.rawInput as { command?: string } | undefined;
+        if (request.params.toolCall.toolCallId === "tc_shared") {
+          assert.equal(raw?.command, "second");
+          assert.equal(JSON.stringify(request.params.toolCall).includes(`STALE_${SECRET}`), false);
+          assertNoSecret(request.params.toolCall);
+        }
+        return { outcome: { outcome: "cancelled" } };
+      }
+      return { ok: true };
+    });
+
+    await withController(
+      baseOptions(workspace, {
+        hostServices: host,
+        devinArgs: fakeArgs("stale-cache", {
+          outputChunks: "s",
+          hostResponsePath,
+          secretSentinel: SECRET,
+        }),
+      }),
+      async (controller) => {
+        const runtime = await controller.runtime.initialize();
+        const session = await runtime.createSession({ cwd: workspace });
+        const first = await runtime.prompt({ sessionId: session.id, text: "first" });
+        assert.equal(first.outputText, "first");
+
+        await delay(150);
+
+        const second = await runtime.continueSession!({ sessionId: session.id, text: "second" });
+        assert.equal(second.outputText, "second");
+        assert.ok(host.requests.some((r) => r.kind === "permission"));
+      },
+    );
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
+
+test("K: tool-call cache bounds final merged entry", () => {
+  const cache = new DevinAcpToolCallCache({ maxEntries: 8, maxEntryBytes: 64 });
+  const toolCallId = "tc_grow";
+  for (let i = 0; i < 10; i += 1) {
+    cache.merge("sess-1", toolCallId, {
+      toolCallId,
+      sessionUpdate: "tool_call_update",
+      rawInput: { [`key${i}`]: "a".repeat(16) },
+    });
+  }
+  const stored = cache.get("sess-1", toolCallId);
+  assert.ok(stored);
+  assert.equal(
+    JSON.stringify(stored).includes("key9"),
+    false,
+    "oversized merged content must be discarded",
+  );
+  assert.equal(
+    stored.rawInput,
+    undefined,
+    "rawInput must be dropped when merged entry exceeds limit",
+  );
+  assert.equal(stored.toolCallId, "tc_grow");
+});
+
+test("K: parse host request rejects invalid ACP schema", () => {
+  const baseFs = {
+    sessionId: "s",
+    path: "/tmp/x",
+  };
+
+  for (const bad of [Number.NaN, -1, 1.5, Number.MAX_SAFE_INTEGER + 1, "x"]) {
+    assert.throws(
+      () =>
+        parseDevinAcpHostRequest(DEVIN_ACP_HOST_METHODS.filesystemRead, { ...baseFs, line: bad }),
+      (error: unknown) => error instanceof ControlledAcpRpcError && error.code === -32602,
+    );
+    assert.throws(
+      () =>
+        parseDevinAcpHostRequest(DEVIN_ACP_HOST_METHODS.filesystemRead, { ...baseFs, limit: bad }),
+      (error: unknown) => error instanceof ControlledAcpRpcError && error.code === -32602,
+    );
+  }
+
+  const fsZero = parseDevinAcpHostRequest(DEVIN_ACP_HOST_METHODS.filesystemRead, {
+    ...baseFs,
+    line: 0,
+    limit: null,
+  });
+  assert.equal(fsZero.kind === "filesystem-read" && fsZero.params.line, 0);
+  const fsNull = parseDevinAcpHostRequest(DEVIN_ACP_HOST_METHODS.filesystemRead, {
+    ...baseFs,
+    line: null,
+    limit: 0,
+  });
+  assert.equal(fsNull.kind === "filesystem-read" && fsNull.params.limit, 0);
+
+  const termNoCwd = parseDevinAcpHostRequest(DEVIN_ACP_HOST_METHODS.terminalCreate, {
+    sessionId: "s",
+    command: "pwd",
+    outputByteLimit: 0,
+  });
+  assert.equal(termNoCwd.kind === "terminal-create" && termNoCwd.params.cwd, undefined);
+  assert.throws(
+    () =>
+      parseDevinAcpHostRequest(DEVIN_ACP_HOST_METHODS.terminalCreate, {
+        sessionId: "s",
+        command: "pwd",
+        cwd: "relative",
+      }),
+    (error: unknown) => error instanceof ControlledAcpRpcError && error.code === -32602,
+  );
+  assert.throws(
+    () =>
+      parseDevinAcpHostRequest(DEVIN_ACP_HOST_METHODS.terminalCreate, {
+        sessionId: "s",
+        command: "pwd",
+        env: [{ name: "A=B", value: "v" }],
+      }),
+    (error: unknown) => error instanceof ControlledAcpRpcError && error.code === -32602,
+  );
+  assert.throws(
+    () =>
+      parseDevinAcpHostRequest(DEVIN_ACP_HOST_METHODS.terminalCreate, {
+        sessionId: "s",
+        command: "pwd",
+        env: [{ name: "A", value: "v\u0000" }],
+      }),
+    (error: unknown) => error instanceof ControlledAcpRpcError && error.code === -32602,
+  );
+});
+
+test("K: terminal cwd falls back to session cwd and rejects escapes", async () => {
+  const workspace = makeWorkspace();
+  const outside = mkdtempSync(path.join(tmpdir(), "loop-acp-out-"));
+  try {
+    const fallbackHost = recordingHost();
+    await withController(
+      baseOptions(workspace, {
+        hostServices: fallbackHost,
+        devinArgs: fakeArgs("terminal", { outputChunks: "fb" }),
+      }),
+      async (controller) => {
+        const runtime = await controller.runtime.initialize();
+        const session = await runtime.createSession({ cwd: workspace });
+        const result = await runtime.prompt({ sessionId: session.id, text: "fb" });
+        assert.equal(result.outputText, "fb");
+        const createReq = fallbackHost.requests.find((r) => r.kind === "terminal-create");
+        assert.ok(createReq);
+        assert.equal(createReq.params.cwd, session.cwd);
+      },
+    );
+
+    const escapeHost = recordingHost();
+    const escapeResponsePath = path.join(workspace, "term-escape.ndjson");
+    await withController(
+      baseOptions(workspace, {
+        hostServices: escapeHost,
+        devinArgs: fakeArgs("terminal", {
+          outputChunks: "e",
+          cwd: outside,
+          hostResponsePath: escapeResponsePath,
+        }),
+      }),
+      async (controller) => {
+        const runtime = await controller.runtime.initialize();
+        const session = await runtime.createSession({ cwd: workspace });
+        const result = await runtime.prompt({ sessionId: session.id, text: "e" });
+        assert.equal(result.outputText, "e");
+        assert.equal(escapeHost.requests.length, 0);
+        const responses = readHostResponses(escapeResponsePath);
+        const err = responses.find((r) => r.id === "host-term-1");
+        assert.equal(err?.error?.code, -32602);
+        assertNoSecret(responses);
+      },
+    );
+
+    const realDir = path.join(workspace, "real-dir");
+    mkdirSync(realDir);
+    const linkDir = path.join(workspace, "link-dir");
+    symlinkSync(realDir, linkDir);
+    const expected = realpathSync(realDir);
+
+    const canonicalHost = recordingHost();
+    const canonicalResponsePath = path.join(workspace, "term-canonical.ndjson");
+    await withController(
+      baseOptions(workspace, {
+        hostServices: canonicalHost,
+        devinArgs: fakeArgs("terminal", {
+          outputChunks: "c",
+          cwd: linkDir,
+          hostResponsePath: canonicalResponsePath,
+        }),
+      }),
+      async (controller) => {
+        const runtime = await controller.runtime.initialize();
+        const session = await runtime.createSession({ cwd: workspace });
+        const result = await runtime.prompt({ sessionId: session.id, text: "c" });
+        assert.equal(result.outputText, "c");
+        const createReq = canonicalHost.requests.find((r) => r.kind === "terminal-create");
+        assert.ok(createReq);
+        assert.equal(createReq.params.cwd, expected);
+        assert.notEqual(createReq.params.cwd, linkDir);
+      },
+    );
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+    rmSync(outside, { recursive: true, force: true });
+  }
+});
+
+test("K: exact stop-reason union rejects unknown values", async () => {
+  const workspace = makeWorkspace();
+  const events: DevinAcpRuntimeEvent[] = [];
+  try {
+    await withController(
+      baseOptions(workspace, {
+        devinArgs: fakeArgs("bad-stop-reason", { outputChunks: "x", secretSentinel: SECRET }),
+        eventSink: (e) => events.push(e),
+      }),
+      async (controller) => {
+        const runtime = await controller.runtime.initialize();
+        const session = await runtime.createSession({ cwd: workspace });
+        await assert.rejects(
+          () => runtime.prompt({ sessionId: session.id, text: "bad" }),
+          (error: unknown) => {
+            assertNoSecret(error);
+            return error instanceof DevinAcpRuntimeError && error.code === "E_DEVIN_ACP_PROTOCOL";
+          },
+        );
+      },
+    );
+
+    const serialized = JSON.stringify(events);
+    assert.equal(serialized.includes(SECRET), false);
+    assert.equal(
+      events.some((e) => e.type === "prompt_completed"),
+      false,
+    );
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
+
+test("K: workspaceRoot resolution failure redacts path", () => {
+  const missing = `/tmp/loop-acp-missing-${SECRET}`;
+  try {
+    assert.throws(
+      () =>
+        createDevinAcpRuntimeController({
+          workspaceRoot: missing,
+          parentEnv: process.env,
+        }),
+      (error: unknown) => {
+        assertNoSecret(error);
+        return error instanceof DevinAcpRuntimeError && error.code === "E_DEVIN_ACP_VALIDATION";
+      },
+    );
+  } finally {
+    /* path never created, nothing to clean */
+  }
 });

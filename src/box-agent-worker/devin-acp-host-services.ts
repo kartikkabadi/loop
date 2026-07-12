@@ -12,30 +12,47 @@ export const CONTROLLED_RPC_MESSAGES = {
   REQUEST_CANCELLED: "Request cancelled",
 } as const;
 
+export function messageForControlledCode(code: ControlledAcpRpcCode): string {
+  switch (code) {
+    case -32601:
+      return CONTROLLED_RPC_MESSAGES.METHOD_NOT_FOUND;
+    case -32602:
+      return CONTROLLED_RPC_MESSAGES.INVALID_PARAMS;
+    case -32603:
+      return CONTROLLED_RPC_MESSAGES.HOST_REQUEST_FAILED;
+    case -32800:
+      return CONTROLLED_RPC_MESSAGES.REQUEST_CANCELLED;
+    default: {
+      const _exhaustive: never = code;
+      return _exhaustive;
+    }
+  }
+}
+
 export class ControlledAcpRpcError extends Error {
   readonly code: ControlledAcpRpcCode;
 
-  constructor(code: ControlledAcpRpcCode, message: string) {
-    super(message);
+  constructor(code: ControlledAcpRpcCode) {
+    super(messageForControlledCode(code));
     this.name = "ControlledAcpRpcError";
     this.code = code;
   }
 }
 
 export function methodNotFoundError(): ControlledAcpRpcError {
-  return new ControlledAcpRpcError(-32601, CONTROLLED_RPC_MESSAGES.METHOD_NOT_FOUND);
+  return new ControlledAcpRpcError(-32601);
 }
 
 export function invalidParamsError(): ControlledAcpRpcError {
-  return new ControlledAcpRpcError(-32602, CONTROLLED_RPC_MESSAGES.INVALID_PARAMS);
+  return new ControlledAcpRpcError(-32602);
 }
 
 export function hostRequestFailedError(): ControlledAcpRpcError {
-  return new ControlledAcpRpcError(-32603, CONTROLLED_RPC_MESSAGES.HOST_REQUEST_FAILED);
+  return new ControlledAcpRpcError(-32603);
 }
 
 export function requestCancelledError(): ControlledAcpRpcError {
-  return new ControlledAcpRpcError(-32800, CONTROLLED_RPC_MESSAGES.REQUEST_CANCELLED);
+  return new ControlledAcpRpcError(-32800);
 }
 
 export const DEVIN_ACP_HOST_METHODS = {
@@ -86,7 +103,7 @@ export type DevinAcpTerminalCreateParams = Readonly<{
   sessionId: string;
   command: string;
   args: readonly string[];
-  cwd: string;
+  cwd?: string;
   env?: readonly DevinAcpTerminalEnvEntry[];
   outputByteLimit?: number;
 }>;
@@ -176,8 +193,15 @@ function assertAbsolutePath(value: unknown): string {
   return pathValue;
 }
 
-function assertPositiveSafeInt(value: unknown): number {
-  if (typeof value !== "number" || !Number.isSafeInteger(value) || value <= 0) {
+function assertNonNegativeSafeInt(value: unknown): number {
+  if (typeof value !== "number" || !Number.isSafeInteger(value) || value < 0) {
+    throw invalidParamsError();
+  }
+  return value;
+}
+
+function assertNulSafeString(value: unknown): string {
+  if (typeof value !== "string" || value.includes("\0")) {
     throw invalidParamsError();
   }
   return value;
@@ -222,11 +246,11 @@ function parseFilesystemReadParams(params: unknown): DevinAcpFilesystemReadParam
     line?: number;
     limit?: number;
   } = { sessionId, path: pathValue };
-  if (Object.prototype.hasOwnProperty.call(params, "line")) {
-    out.line = assertPositiveSafeInt(params.line);
+  if (Object.prototype.hasOwnProperty.call(params, "line") && params.line !== null) {
+    out.line = assertNonNegativeSafeInt(params.line);
   }
-  if (Object.prototype.hasOwnProperty.call(params, "limit")) {
-    out.limit = assertPositiveSafeInt(params.limit);
+  if (Object.prototype.hasOwnProperty.call(params, "limit") && params.limit !== null) {
+    out.limit = assertNonNegativeSafeInt(params.limit);
   }
   return out;
 }
@@ -246,7 +270,6 @@ function parseTerminalCreateParams(params: unknown): DevinAcpTerminalCreateParam
   if (!isPlainObject(params)) throw invalidParamsError();
   const sessionId = assertNonEmptySafeString(params.sessionId);
   const command = assertNonEmptySafeString(params.command);
-  const cwd = assertAbsolutePath(params.cwd);
   let args: string[] = [];
   if (Object.prototype.hasOwnProperty.call(params, "args")) {
     if (!Array.isArray(params.args)) throw invalidParamsError();
@@ -259,27 +282,30 @@ function parseTerminalCreateParams(params: unknown): DevinAcpTerminalCreateParam
     sessionId: string;
     command: string;
     args: string[];
-    cwd: string;
+    cwd?: string;
     env?: DevinAcpTerminalEnvEntry[];
     outputByteLimit?: number;
-  } = { sessionId, command, args, cwd };
+  } = { sessionId, command, args };
+  if (Object.prototype.hasOwnProperty.call(params, "cwd") && params.cwd !== null) {
+    out.cwd = assertAbsolutePath(params.cwd);
+  }
   if (Object.prototype.hasOwnProperty.call(params, "env")) {
     if (!Array.isArray(params.env)) throw invalidParamsError();
     out.env = params.env.map((entry) => {
       if (!isPlainObject(entry)) throw invalidParamsError();
+      const name = assertNonEmptySafeString(entry.name);
+      if (name.includes("=")) throw invalidParamsError();
       return {
-        name: assertNonEmptySafeString(entry.name),
-        value:
-          typeof entry.value === "string"
-            ? entry.value
-            : (() => {
-                throw invalidParamsError();
-              })(),
+        name,
+        value: assertNulSafeString(entry.value),
       };
     });
   }
-  if (Object.prototype.hasOwnProperty.call(params, "outputByteLimit")) {
-    out.outputByteLimit = assertPositiveSafeInt(params.outputByteLimit);
+  if (
+    Object.prototype.hasOwnProperty.call(params, "outputByteLimit") &&
+    params.outputByteLimit !== null
+  ) {
+    out.outputByteLimit = assertNonNegativeSafeInt(params.outputByteLimit);
   }
   return out;
 }
@@ -439,8 +465,11 @@ export class DevinAcpToolCallCache {
     const previous = this.entries.get(cacheKey);
     const merged = mergeToolCallEntry(previous, bounded);
 
+    const stored = boundCacheUpdate(merged, this.maxEntryBytes);
+    if (!stored) return;
+
     if (previous !== undefined) {
-      this.entries.set(cacheKey, merged);
+      this.entries.set(cacheKey, stored);
       return;
     }
 
@@ -449,7 +478,7 @@ export class DevinAcpToolCallCache {
       if (oldest === undefined) break;
       this.entries.delete(oldest);
     }
-    this.entries.set(cacheKey, merged);
+    this.entries.set(cacheKey, stored);
   }
 
   get(sessionId: string, toolCallId: string): ToolCallCacheEntry | undefined {
@@ -523,6 +552,6 @@ export function mergePermissionParamsWithToolCallCache(
     { ...cached },
     params.toolCall,
   ) as DevinAcpPermissionParams["toolCall"];
-  cache.merge(params.sessionId, toolCallId, params.toolCall);
+  cache.merge(params.sessionId, toolCallId, { ...mergedToolCall });
   return { ...params, toolCall: mergedToolCall };
 }

@@ -30,11 +30,13 @@ function parseArgs(argv) {
     delayMs: 0,
     outputChunks: ["Hello ", "world"],
     sessionId: "sess_fake_001",
+    secondSessionId: "sess_second_001",
     lineBytes: 2_000_000,
     maxOutputChars: null,
     secretSentinel: "FAKE_SECRET_SENTINEL_XYZ",
     loadSession: true,
     ignoreSigterm: false,
+    cwd: null,
   };
   for (const arg of argv.slice(2)) {
     if (arg.startsWith("--scenario=")) out.scenario = arg.slice("--scenario=".length);
@@ -46,7 +48,9 @@ function parseArgs(argv) {
     else if (arg.startsWith("--output-chunks=")) {
       out.outputChunks = arg.slice("--output-chunks=".length).split(",");
     } else if (arg.startsWith("--session-id=")) out.sessionId = arg.slice("--session-id=".length);
-    else if (arg.startsWith("--line-bytes="))
+    else if (arg.startsWith("--second-session-id=")) {
+      out.secondSessionId = arg.slice("--second-session-id=".length);
+    } else if (arg.startsWith("--line-bytes="))
       out.lineBytes = Number(arg.slice("--line-bytes=".length));
     else if (arg.startsWith("--max-output-chars=")) {
       out.maxOutputChars = Number(arg.slice("--max-output-chars=".length));
@@ -56,6 +60,8 @@ function parseArgs(argv) {
       out.loadSession = arg.slice("--load-session=".length) !== "false";
     } else if (arg.startsWith("--ignore-sigterm=")) {
       out.ignoreSigterm = arg.slice("--ignore-sigterm=".length) === "true";
+    } else if (arg.startsWith("--cwd=")) {
+      out.cwd = arg.slice("--cwd=".length);
     }
   }
   return out;
@@ -290,6 +296,15 @@ async function handleSessionNew(id, params) {
     return;
   }
   const sessionId = args.sessionId;
+  if (args.scenario === "unsolicited-before-prompt") {
+    write({
+      jsonrpc: "2.0",
+      id: "host-unsolicited-before",
+      method: "terminal/create",
+      params: { sessionId, command: "pwd", args: [] },
+    });
+    await waitForHostResponse("host-unsolicited-before");
+  }
   respond(id, { sessionId, cwd: params?.cwd ?? null });
 }
 
@@ -306,7 +321,12 @@ async function settlePrompt(id, sessionId, stopReason, chunks) {
   if (args.scenario === "untrusted-events") {
     emitUntrustedMetadata(sessionId);
     emitAgentChunks(sessionId, chunks, false);
-    respond(id, { stopReason: `evil_stop_${args.secretSentinel}`, sessionId });
+    respond(id, { stopReason: "end_turn", sessionId });
+    return;
+  }
+  if (args.scenario === "bad-stop-reason") {
+    emitAgentChunks(sessionId, ["bad"], false);
+    respond(id, { stopReason: args.secretSentinel, sessionId });
     return;
   }
   emitAgentChunks(sessionId, chunks, args.scenario !== "excess-output");
@@ -453,9 +473,39 @@ async function handleSessionPrompt(id, params) {
       jsonrpc: "2.0",
       id: "host-bad-term",
       method: "terminal/create",
-      params: { sessionId, command: "pwd" },
+      params: { sessionId, command: "pwd", cwd: "relative" },
     });
     await waitForHostResponse("host-bad-term");
+  }
+
+  if (args.scenario === "malformed-terminal-env") {
+    write({
+      jsonrpc: "2.0",
+      id: "host-bad-term-env",
+      method: "terminal/create",
+      params: {
+        sessionId,
+        command: "pwd",
+        cwd: null,
+        env: [{ name: "BAD=NAME", value: "v" }],
+      },
+    });
+    await waitForHostResponse("host-bad-term-env");
+  }
+
+  if (args.scenario === "malformed-terminal-env-nul") {
+    write({
+      jsonrpc: "2.0",
+      id: "host-bad-term-env-nul",
+      method: "terminal/create",
+      params: {
+        sessionId,
+        command: "pwd",
+        cwd: null,
+        env: [{ name: "VALID", value: "v\u0000" }],
+      },
+    });
+    await waitForHostResponse("host-bad-term-env-nul");
   }
 
   if (args.scenario === "fs") {
@@ -466,6 +516,8 @@ async function handleSessionPrompt(id, params) {
       params: {
         sessionId,
         path: "/tmp/README.md",
+        line: 0,
+        limit: 0,
         secret: args.secretSentinel,
       },
     });
@@ -473,34 +525,159 @@ async function handleSessionPrompt(id, params) {
   }
 
   if (args.scenario === "terminal") {
+    const params = {
+      sessionId,
+      command: "pwd",
+      args: [],
+      outputByteLimit: 0,
+      secret: args.secretSentinel,
+    };
+    if (args.cwd !== null) {
+      params.cwd = args.cwd;
+    }
     write({
       jsonrpc: "2.0",
       id: "host-term-1",
       method: "terminal/create",
-      params: {
-        sessionId,
-        command: "pwd",
-        args: [],
-        cwd: "/tmp",
-        secret: args.secretSentinel,
-      },
+      params,
     });
     await waitForHostResponse("host-term-1");
   }
 
   if (args.scenario === "host-hang") {
+    const params = {
+      sessionId,
+      command: "sleep",
+      args: ["999"],
+    };
+    if (args.cwd !== null) {
+      params.cwd = args.cwd;
+    }
     write({
       jsonrpc: "2.0",
       id: "host-hang-1",
       method: "terminal/create",
-      params: {
-        sessionId,
-        command: "sleep",
-        args: ["999"],
-        cwd: "/tmp",
-      },
+      params,
     });
     await waitForHostResponse("host-hang-1", 10_000);
+  }
+
+  if (args.scenario === "duplicate-host") {
+    for (let i = 0; i < 5; i += 1) {
+      write({
+        jsonrpc: "2.0",
+        id: "host-dup-1",
+        method: "fs/read_text_file",
+        params: { sessionId, path: "/tmp/duplicate.md" },
+      });
+    }
+    await waitForHostResponse("host-dup-1");
+  }
+
+  if (args.scenario === "other-session") {
+    write({
+      jsonrpc: "2.0",
+      id: "host-other-session",
+      method: "terminal/create",
+      params: {
+        sessionId: args.secondSessionId,
+        command: "pwd",
+        args: [],
+        cwd: null,
+      },
+    });
+    await waitForHostResponse("host-other-session");
+  }
+
+  if (args.scenario === "unsolicited-between-prompts") {
+    if (promptCount === 1) {
+      await settlePrompt(id, sessionId, "end_turn", ["first"]);
+      await delay(50);
+      write({
+        jsonrpc: "2.0",
+        id: "host-between",
+        method: "fs/read_text_file",
+        params: { sessionId, path: "/tmp/between.md" },
+      });
+      await waitForHostResponse("host-between");
+      return;
+    }
+    if (promptCount === 2) {
+      await settlePrompt(id, sessionId, "end_turn", ["second"]);
+      return;
+    }
+  }
+
+  if (args.scenario === "stale-cache") {
+    if (promptCount === 1) {
+      // First prompt: cache a tool_call, request permission, then finish.
+      write({
+        jsonrpc: "2.0",
+        method: "session/update",
+        params: {
+          sessionId,
+          update: {
+            sessionUpdate: "tool_call",
+            toolCallId: "tc_shared",
+            rawInput: { command: "first" },
+          },
+        },
+      });
+      write({
+        jsonrpc: "2.0",
+        id: "host-perm-stale-1",
+        method: "session/request_permission",
+        params: {
+          sessionId,
+          options: [{ optionId: "reject-once", name: "Reject", kind: "reject_once" }],
+          toolCall: { toolCallId: "tc_shared" },
+        },
+      });
+      await waitForHostResponse("host-perm-stale-1");
+      await settlePrompt(id, sessionId, "end_turn", ["first"]);
+      await delay(50);
+      // Late stale update after the prompt has finished.
+      write({
+        jsonrpc: "2.0",
+        method: "session/update",
+        params: {
+          sessionId,
+          update: {
+            sessionUpdate: "tool_call_update",
+            toolCallId: "tc_shared",
+            rawInput: { command: `STALE_${args.secretSentinel}` },
+          },
+        },
+      });
+      return;
+    }
+    if (promptCount === 2) {
+      write({
+        jsonrpc: "2.0",
+        method: "session/update",
+        params: {
+          sessionId,
+          update: {
+            sessionUpdate: "tool_call",
+            toolCallId: "tc_shared",
+            rawInput: { command: "second" },
+          },
+        },
+      });
+      write({
+        jsonrpc: "2.0",
+        id: "host-perm-stale-2",
+        method: "session/request_permission",
+        params: {
+          sessionId,
+          options: [{ optionId: "reject-once", name: "Reject", kind: "reject_once" }],
+          toolCall: { toolCallId: "tc_shared" },
+        },
+      });
+      await waitForHostResponse("host-perm-stale-2");
+      await settlePrompt(id, sessionId, "end_turn", ["second"]);
+      return;
+    }
   }
 
   if (args.scenario === "host-secret-throw") {

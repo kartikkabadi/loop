@@ -7,6 +7,7 @@ import { TextDecoder } from "node:util";
 import {
   CONTROLLED_RPC_MESSAGES,
   ControlledAcpRpcError,
+  messageForControlledCode,
   type ControlledAcpRpcCode,
 } from "./devin-acp-host-services.js";
 
@@ -118,7 +119,6 @@ type ValidatedEnvelope =
     }>;
 
 const CONTROLLED_CODES = new Set<number>([-32601, -32602, -32603, -32800]);
-const CONTROLLED_MESSAGES = new Set<string>(Object.values(CONTROLLED_RPC_MESSAGES));
 
 function assertPositiveSafeInt(label: string, value: number): number {
   if (!Number.isSafeInteger(value) || value <= 0) {
@@ -258,6 +258,17 @@ export function createAcpStdioTransport(options: AcpStdioTransportOptions): AcpS
     method: string,
     params: unknown,
   ): Promise<void> {
+    if (inFlightHost.has(id)) {
+      tryWriteHostMessage({
+        jsonrpc: "2.0",
+        id,
+        error: {
+          code: -32603,
+          message: CONTROLLED_RPC_MESSAGES.HOST_REQUEST_FAILED,
+        },
+      });
+      return;
+    }
     if (inFlightHost.size >= maxInFlightHostRequests) {
       tryWriteHostMessage({
         jsonrpc: "2.0",
@@ -721,19 +732,14 @@ function validateJsonRpcEnvelope(
 
 function mapHandlerError(error: unknown): { code: ControlledAcpRpcCode; message: string } {
   if (error instanceof ControlledAcpRpcError) {
-    return { code: error.code, message: error.message };
+    return { code: error.code, message: messageForControlledCode(error.code) };
   }
   if (typeof error === "object" && error !== null) {
-    const record = error as { code?: unknown; message?: unknown };
-    if (
-      typeof record.code === "number" &&
-      CONTROLLED_CODES.has(record.code) &&
-      typeof record.message === "string" &&
-      CONTROLLED_MESSAGES.has(record.message)
-    ) {
+    const record = error as { code?: unknown };
+    if (typeof record.code === "number" && CONTROLLED_CODES.has(record.code)) {
       return {
         code: record.code as ControlledAcpRpcCode,
-        message: record.message,
+        message: messageForControlledCode(record.code as ControlledAcpRpcCode),
       };
     }
   }

@@ -30,10 +30,14 @@ import {
   ControlledAcpRpcError,
   denyAllDevinAcpHostServices,
   DevinAcpToolCallCache,
+  hostRequestFailedError,
+  invalidParamsError,
   mergePermissionParamsWithToolCallCache,
   parseDevinAcpHostRequest,
+  type DevinAcpHostRequest,
   type DevinAcpHostServices,
   type DevinAcpPermissionParams,
+  type DevinAcpTerminalCreateParams,
 } from "./devin-acp-host-services.js";
 
 const PROTOCOL_VERSION = 1 as const;
@@ -360,7 +364,14 @@ class DevinAcpRuntimeImpl implements AgentSessionRuntime {
     if (!path.isAbsolute(options.workspaceRoot)) {
       throw new DevinAcpRuntimeError("E_DEVIN_ACP_VALIDATION", "workspaceRoot must be absolute");
     }
-    this.#workspaceRoot = realpathSync(options.workspaceRoot);
+    try {
+      this.#workspaceRoot = realpathSync(options.workspaceRoot);
+    } catch {
+      throw new DevinAcpRuntimeError(
+        "E_DEVIN_ACP_VALIDATION",
+        "workspaceRoot could not be resolved",
+      );
+    }
 
     const command = options.devinCommand ?? "devin";
     assertSafeString("devinCommand", command);
@@ -705,6 +716,12 @@ class DevinAcpRuntimeImpl implements AgentSessionRuntime {
           "session/prompt returned invalid stopReason",
         );
       }
+      if (!KNOWN_STOP_REASONS.has(result.stopReason)) {
+        throw new DevinAcpRuntimeError(
+          "E_DEVIN_ACP_PROTOCOL",
+          "session/prompt returned invalid stopReason",
+        );
+      }
 
       const promptResult: AgentPromptResult = {
         sessionId: input.sessionId,
@@ -748,31 +765,37 @@ class DevinAcpRuntimeImpl implements AgentSessionRuntime {
   }
 
   async #onHostRequest(method: string, params: unknown): Promise<unknown> {
-    let request;
+    let request: DevinAcpHostRequest;
     try {
       request = parseDevinAcpHostRequest(method, params);
     } catch (error) {
       if (error instanceof ControlledAcpRpcError) throw error;
-      throw new ControlledAcpRpcError(-32602, "Invalid params");
+      throw invalidParamsError();
+    }
+
+    const active = this.#activePrompt;
+    if (
+      !active ||
+      active.sessionId !== request.params.sessionId ||
+      !this.#sessions.has(request.params.sessionId)
+    ) {
+      throw invalidParamsError();
     }
 
     if (request.kind === "permission") {
-      const activeSession = this.#activePrompt?.sessionId;
-      if (!activeSession || request.params.sessionId !== activeSession) {
-        throw new ControlledAcpRpcError(-32602, "Invalid params");
-      }
-      if (!this.#sessions.has(request.params.sessionId)) {
-        throw new ControlledAcpRpcError(-32602, "Invalid params");
-      }
       const merged: DevinAcpPermissionParams = mergePermissionParamsWithToolCallCache(
         request.params,
         this.#toolCallCache,
       );
       request = { ...request, params: merged };
-    } else if ("sessionId" in request.params) {
-      if (!this.#sessions.has(request.params.sessionId)) {
-        throw new ControlledAcpRpcError(-32602, "Invalid params");
-      }
+    } else if (request.kind === "terminal-create") {
+      const session = this.#sessions.get(request.params.sessionId);
+      if (!session) throw invalidParamsError();
+      const resolved = this.#resolveTerminalCwd(request.params.cwd, session);
+      request = {
+        ...request,
+        params: { ...request.params, cwd: resolved } as DevinAcpTerminalCreateParams,
+      };
     }
 
     try {
@@ -782,7 +805,7 @@ class DevinAcpRuntimeImpl implements AgentSessionRuntime {
     } catch (error) {
       this.#emit({ type: "host_request", requestKind: request.kind, outcome: "rejected" });
       if (error instanceof ControlledAcpRpcError) throw error;
-      throw new ControlledAcpRpcError(-32603, "Host request failed");
+      throw hostRequestFailedError();
     }
   }
 
@@ -816,7 +839,7 @@ class DevinAcpRuntimeImpl implements AgentSessionRuntime {
       (update.sessionUpdate === "tool_call" || update.sessionUpdate === "tool_call_update")
     ) {
       const active = this.#activePrompt;
-      if (!active || active.sessionId === sessionId) {
+      if (active && active.sessionId === sessionId) {
         this.#toolCallCache.merge(sessionId, toolCallId, update);
       }
     }
@@ -854,6 +877,15 @@ class DevinAcpRuntimeImpl implements AgentSessionRuntime {
       exitCode: info.exitCode,
       signal: info.signal,
     });
+  }
+
+  #resolveTerminalCwd(provided: string | undefined, session: LiveSession): string {
+    if (provided === undefined) return session.cwd;
+    try {
+      return resolveInsideWorkspace(this.#workspaceRoot, provided);
+    } catch {
+      throw invalidParamsError();
+    }
   }
 
   #assertNotRequiresRestart(): void {
