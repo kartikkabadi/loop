@@ -174,9 +174,11 @@ test("repair Codex heartbeat wrapper uses bounded process capture", () => {
   assert.notEqual(helperStart, -1);
   assert.notEqual(helperEnd, -1);
   const helper = source.slice(helperStart, helperEnd);
-  assert.match(helper, /return runCodexProcess\(\{/);
+  assert.match(helper, /return runCodexProcessAdapter\(/);
+  assert.match(helper, /selectCodexProcessAdapter\(/);
   assert.match(helper, /\{ stdoutPath: options\.stdoutPath \}/);
   assert.match(helper, /\{ stderrPath: options\.stderrPath \}/);
+  assert.doesNotMatch(helper, /from ["'].*codex-process\.js["']/);
   assert.doesNotMatch(helper, /spawnSync\("codex"/);
   assert.doesNotMatch(source, /CLAWSWEEPER_CODEX_STDIO_MAX_BUFFER_MB/);
   assert.doesNotMatch(source, /writeFileSync\([^)]*codexResult\.stdout/);

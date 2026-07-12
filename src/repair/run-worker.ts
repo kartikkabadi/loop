@@ -10,7 +10,7 @@ import {
   codexOutputTail,
   openCodexOutputCapture,
 } from "../codex-output-capture.js";
-import { codexAppServerProcessOptionsFromEnv, runCodexProcess } from "../codex-process.js";
+import { runCodexProcessAdapter, selectCodexProcessAdapter } from "../codex-process-adapter.js";
 import { spawnCodex, terminateCodexProcessTree } from "../codex-spawn.js";
 import { deterministicAutomergeResult } from "./deterministic-automerge-result.js";
 import {
@@ -255,19 +255,25 @@ function spawnCodexWithHeartbeat({
   stderrPath,
   timeoutMs,
 }: LooseRecord): Promise<LooseRecord> {
-  const appServer = codexAppServerProcessOptionsFromEnv("Codex planning worker");
-  if (appServer) {
+  const selection = selectCodexProcessAdapter({
+    label: "Codex planning worker",
+    env: process.env,
+  });
+  if (selection.kind === "app-server") {
     return Promise.resolve(
-      runCodexProcess({
-        args: commandArgs,
-        cwd,
-        env: codexEnv(),
-        input,
-        timeoutMs,
-        stdoutPath: codexTranscriptPath,
-        stderrPath,
-        appServer,
-      }),
+      runCodexProcessAdapter(
+        {
+          label: "Codex planning worker",
+          args: commandArgs,
+          cwd,
+          env: codexEnv(),
+          input,
+          timeoutMs,
+          stdoutPath: codexTranscriptPath,
+          stderrPath,
+        },
+        selection,
+      ),
     );
   }
   return new Promise((resolve) => {
