@@ -18,7 +18,7 @@
  *   --ignore-sigterm=<true|false>
  */
 
-import { appendFileSync, writeFileSync } from "node:fs";
+import { appendFileSync, closeSync, writeFileSync } from "node:fs";
 import process from "node:process";
 
 function parseArgs(argv) {
@@ -262,7 +262,6 @@ async function handleInitialize(id) {
   if (args.delayMs > 0 && args.scenario === "timeout") {
     await delay(args.delayMs);
   }
-
   const agentCapabilities = {};
   if (args.loadSession && args.scenario !== "no-load-session") {
     agentCapabilities.loadSession = true;
@@ -304,6 +303,12 @@ async function handleSessionNew(id, params) {
       params: { sessionId, command: "pwd", args: [] },
     });
     await waitForHostResponse("host-unsolicited-before");
+  }
+  if (args.scenario === "stdin-close") {
+    respond(id, { sessionId, cwd: params?.cwd ?? null });
+    closeSync(0);
+    setInterval(() => {}, 1_000);
+    return;
   }
   respond(id, { sessionId, cwd: params?.cwd ?? null });
 }
@@ -693,6 +698,18 @@ async function handleSessionPrompt(id, params) {
       },
     });
     await waitForHostResponse("host-secret-1");
+  }
+
+  if (args.scenario === "controlled-map") {
+    for (let i = 1; i <= 6; i += 1) {
+      write({
+        jsonrpc: "2.0",
+        id: `host-map-${i}`,
+        method: "fs/read_text_file",
+        params: { sessionId, path: `/tmp/map-${i}` },
+      });
+      await waitForHostResponse(`host-map-${i}`);
+    }
   }
 
   if (args.scenario === "host-concurrency") {

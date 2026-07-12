@@ -118,7 +118,6 @@ type ValidatedEnvelope =
       error: Readonly<{ code: number; message: string; data?: unknown }>;
     }>;
 
-const CONTROLLED_CODES = new Set<number>([-32601, -32602, -32603, -32800]);
 
 function assertPositiveSafeInt(label: string, value: number): number {
   if (!Number.isSafeInteger(value) || value <= 0) {
@@ -205,9 +204,14 @@ export function createAcpStdioTransport(options: AcpStdioTransportOptions): AcpS
   }
 
   function writeMessage(message: Record<string, unknown>): void {
-    assertWritable();
-    const line = `${JSON.stringify(message)}\n`;
-    child!.stdin.write(line);
+    try {
+      assertWritable();
+      const line = `${JSON.stringify(message)}\n`;
+      child!.stdin.write(line);
+    } catch {
+      failTransport(new AcpTransportError("E_ACP_CLOSED", "ACP transport stdin closed"));
+      throw new AcpTransportError("E_ACP_CLOSED", "ACP transport stdin closed");
+    }
   }
 
   function tryWriteHostMessage(message: Record<string, unknown>): boolean {
@@ -457,7 +461,8 @@ export function createAcpStdioTransport(options: AcpStdioTransportOptions): AcpS
       onStderrData(chunk);
     });
     processChild.stdin.on("error", () => {
-      // Ignore stdin errors during shutdown races.
+      if (shuttingDown || closed || fatalError) return;
+      failTransport(new AcpTransportError("E_ACP_CLOSED", "ACP transport stdin closed"));
     });
     processChild.on("error", () => {
       failTransport(new AcpTransportError("E_ACP_SPAWN", "ACP child process error"));
@@ -738,17 +743,9 @@ function validateJsonRpcEnvelope(
 }
 
 function mapHandlerError(error: unknown): { code: ControlledAcpRpcCode; message: string } {
-  if (error instanceof ControlledAcpRpcError) {
-    return { code: error.code, message: messageForControlledCode(error.code) };
-  }
-  if (typeof error === "object" && error !== null) {
-    const record = error as { code?: unknown };
-    if (typeof record.code === "number" && CONTROLLED_CODES.has(record.code)) {
-      return {
-        code: record.code as ControlledAcpRpcCode,
-        message: messageForControlledCode(record.code as ControlledAcpRpcCode),
-      };
-    }
+  const code = ControlledAcpRpcError.getControlledCode(error);
+  if (code !== undefined) {
+    return { code, message: messageForControlledCode(code) };
   }
   return { code: -32603, message: CONTROLLED_RPC_MESSAGES.HOST_REQUEST_FAILED };
 }
