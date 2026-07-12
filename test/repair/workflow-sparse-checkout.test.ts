@@ -12,6 +12,7 @@ const REPAIR_RUNTIME_PATHS = [
   "src/codex-output-capture.ts",
   "src/codex-process-worker.ts",
   "src/codex-process.ts",
+  "src/codex-process-adapter.ts",
   "src/codex-spawn.ts",
   "src/codex-transient.ts",
   "src/github-json.ts",

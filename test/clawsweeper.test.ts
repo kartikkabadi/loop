@@ -2295,9 +2295,16 @@ test("synchronous Codex review surfaces use the shared bounded runner", () => {
     "src/pr-close-coverage-proof.ts",
   ]) {
     const source = readText(file);
-    assert.match(source, /runCodexProcess/);
+    assert.match(source, /runCodexProcessAdapter/);
+    assert.doesNotMatch(source, /runCodexProcess[^A]|runCodexProcess$/m);
+    assert.doesNotMatch(source, /codexAppServerProcessOptionsFromEnv/);
     assert.doesNotMatch(source, /spawnSync\(\s*"codex"/);
   }
+  // pr-close no longer imports codex-process.js; clawsweeper/commit-sweeper may keep error helpers.
+  assert.doesNotMatch(
+    readText("src/pr-close-coverage-proof.ts"),
+    /from ["'].*codex-process\.js["']/,
+  );
   assert.match(readText("src/clawsweeper.ts"), /"--output-last-message",\s*outputPath,\s*"--json"/);
 });
 

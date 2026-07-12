@@ -20,7 +20,8 @@ import { publishCheckFromReport, splitFrontMatter } from "./commit-checks.js";
 import { argBool, argNumber, argString, parseArgs, type Args } from "./clawsweeper-args.js";
 import { safeOutputTail } from "./clawsweeper-text.js";
 import { codexEnv, codexLoginConfig, codexModelArgs, PUBLIC_CODEX_MODEL } from "./codex-env.js";
-import { codexProcessErrorCode, runCodexProcess } from "./codex-process.js";
+import { runCodexProcessAdapter } from "./codex-process-adapter.js";
+import { codexProcessErrorCode } from "./codex-process.js";
 import { runText } from "./command.js";
 import { ghRetryKind, ghRetryWaitMs } from "./github-retry.js";
 import {
@@ -322,24 +323,28 @@ function runCodex(options: {
     ...(options.extraCodexConfig ?? []),
   ];
   if (options.serviceTier) codexConfig.splice(1, 0, `service_tier="${options.serviceTier}"`);
-  const result = runCodexProcess({
-    args: [
-      "exec",
-      ...codexModelArgs(options.model),
-      ...codexConfig.flatMap((config) => ["-c", config]),
-      "-C",
-      options.targetDir,
-      "--output-last-message",
-      outputPath,
-      "--sandbox",
-      options.sandboxMode,
-      "-",
-    ],
-    cwd: options.targetDir,
-    env: codexEnv({ ghToken: process.env.COMMIT_SWEEPER_TARGET_GH_TOKEN }),
-    input: readFileSync(promptPath, "utf8"),
-    timeoutMs: options.timeoutMs,
-  });
+  const result = runCodexProcessAdapter(
+    {
+      label: "Commit sweeper review",
+      args: [
+        "exec",
+        ...codexModelArgs(options.model),
+        ...codexConfig.flatMap((config) => ["-c", config]),
+        "-C",
+        options.targetDir,
+        "--output-last-message",
+        outputPath,
+        "--sandbox",
+        options.sandboxMode,
+        "-",
+      ],
+      cwd: options.targetDir,
+      env: codexEnv({ ghToken: process.env.COMMIT_SWEEPER_TARGET_GH_TOKEN }),
+      input: readFileSync(promptPath, "utf8"),
+      timeoutMs: options.timeoutMs,
+    },
+    { kind: "process" },
+  );
   if (result.error || result.status !== 0 || !existsSync(outputPath)) {
     const timeout = codexProcessErrorCode(result.error) === "ETIMEDOUT";
     const detail =

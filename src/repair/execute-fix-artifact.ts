@@ -34,7 +34,7 @@ import {
   isRetryableCodexTransportError,
   isTerminalCodexErrorMessage,
 } from "../codex-transient.js";
-import { codexAppServerProcessOptionsFromEnv, runCodexProcess } from "../codex-process.js";
+import { runCodexProcessAdapter, selectCodexProcessAdapter } from "../codex-process-adapter.js";
 import {
   branchHasBaseDiff,
   completeRebaseIfResolved,
@@ -346,17 +346,21 @@ function spawnCodexSyncWithHeartbeat(
     if (typeof options.cwd !== "string" || typeof options.input !== "string") {
       throw new Error(`${label} requires string cwd and input.`);
     }
-    const appServer = codexAppServerProcessOptionsFromEnv(label);
-    return runCodexProcess({
-      args,
-      cwd: options.cwd,
-      env: options.env ?? process.env,
-      input: options.input,
-      timeoutMs: options.timeout ?? currentCodexTimeoutMs(),
-      ...(options.stdoutPath ? { stdoutPath: options.stdoutPath } : {}),
-      ...(options.stderrPath ? { stderrPath: options.stderrPath } : {}),
-      ...(appServer ? { appServer } : {}),
-    });
+    const env = options.env ?? process.env;
+    const selection = selectCodexProcessAdapter({ label, env: process.env });
+    return runCodexProcessAdapter(
+      {
+        label,
+        args,
+        cwd: options.cwd,
+        env,
+        input: options.input,
+        timeoutMs: options.timeout ?? currentCodexTimeoutMs(),
+        ...(options.stdoutPath ? { stdoutPath: options.stdoutPath } : {}),
+        ...(options.stderrPath ? { stderrPath: options.stderrPath } : {}),
+      },
+      selection,
+    );
   } finally {
     stopCodexHeartbeat(heartbeat);
   }
