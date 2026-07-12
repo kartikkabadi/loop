@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 import { existsSync, lstatSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { codexEnv } from "./codex-env.js";
-import { runCodexProcess } from "./codex-process.js";
+import { runCodexProcessAdapter } from "./codex-process-adapter.js";
 import { safeOutputTail, truncateText } from "./clawsweeper-text.js";
 
 export type PrCloseCoverageProofModelDecision = "covered" | "keep_open";
@@ -293,26 +293,30 @@ export function runPrCloseCoverageProofModel(options: {
   if (options.runtime.serviceTier) {
     codexConfig.splice(1, 0, `service_tier="${options.runtime.serviceTier}"`);
   }
-  const result = runCodexProcess({
-    args: [
-      "exec",
-      ...codexModelArgs(options.runtime.model),
-      ...codexConfig.flatMap((config) => ["-c", config]),
-      "-C",
-      options.runtime.rootDir,
-      "--output-schema",
-      options.runtime.schemaPath,
-      "--output-last-message",
-      outputPath,
-      "--sandbox",
-      options.runtime.sandboxMode,
-      "-",
-    ],
-    cwd: options.runtime.rootDir,
-    env: codexEnv({ ghToken: options.runtime.ghToken }),
-    input: prompt,
-    timeoutMs: options.runtime.timeoutMs,
-  });
+  const result = runCodexProcessAdapter(
+    {
+      label: "PR close coverage proof",
+      args: [
+        "exec",
+        ...codexModelArgs(options.runtime.model),
+        ...codexConfig.flatMap((config) => ["-c", config]),
+        "-C",
+        options.runtime.rootDir,
+        "--output-schema",
+        options.runtime.schemaPath,
+        "--output-last-message",
+        outputPath,
+        "--sandbox",
+        options.runtime.sandboxMode,
+        "-",
+      ],
+      cwd: options.runtime.rootDir,
+      env: codexEnv({ ghToken: options.runtime.ghToken }),
+      input: prompt,
+      timeoutMs: options.runtime.timeoutMs,
+    },
+    { kind: "process" },
+  );
   if (result.error) {
     throw new Error(
       `Codex PR close coverage proof failed for #${options.source.number}: ${
