@@ -28,6 +28,7 @@ import {
   DEVIN_ACP_HOST_METHODS as DEVIN_ACP_HOST_METHODS_JS,
   classifyDevinAcpHostRequest as classifyDevinAcpHostRequestJs,
   parseDevinAcpHostRequest as parseDevinAcpHostRequestJs,
+  mergePermissionParamsWithToolCallCache as mergePermissionParamsWithToolCallCacheJs,
   ControlledAcpRpcError as ControlledAcpRpcErrorJs,
   CONTROLLED_RPC_MESSAGES as CONTROLLED_RPC_MESSAGES_JS,
 } from "../dist/box-agent-worker/devin-acp-host-services.js";
@@ -58,6 +59,8 @@ const classifyDevinAcpHostRequest =
   classifyDevinAcpHostRequestJs as typeof HostMod.classifyDevinAcpHostRequest;
 const parseDevinAcpHostRequest =
   parseDevinAcpHostRequestJs as typeof HostMod.parseDevinAcpHostRequest;
+const mergePermissionParamsWithToolCallCache =
+  mergePermissionParamsWithToolCallCacheJs as typeof HostMod.mergePermissionParamsWithToolCallCache;
 const ControlledAcpRpcError = ControlledAcpRpcErrorJs as typeof HostMod.ControlledAcpRpcError;
 const CONTROLLED_RPC_MESSAGES =
   CONTROLLED_RPC_MESSAGES_JS as typeof HostMod.CONTROLLED_RPC_MESSAGES;
@@ -1552,28 +1555,43 @@ test("K: duplicate inbound host-request IDs reject before second handler", async
         requestTimeoutMs: 5_000,
         devinArgs: fakeArgs("duplicate-host", { outputChunks: "d", hostResponsePath }),
       }),
-      async (controller) => {
+      async (controller, events) => {
         const runtime = await controller.runtime.initialize();
         const session = await runtime.createSession({ cwd: workspace });
-        const result = await runtime.prompt({ sessionId: session.id, text: "dup" });
-        assert.equal(result.outputText, "d");
+
+        await assert.rejects(
+          () => runtime.prompt({ sessionId: session.id, text: "dup" }),
+          (error: unknown) => {
+            assertNoSecret(error);
+            return error instanceof AcpTransportError && error.code === "E_ACP_PROTOCOL";
+          },
+        );
+
         assert.equal(calls, 1);
         assert.equal(host.requests.length, 1);
 
-        await delay(200);
+        // Wait for the fatal shutdown to complete and the child to exit.
+        await controller.shutdown();
+
         const responses = readHostResponses(hostResponsePath);
         const dupResponses = responses.filter((r) => r.id === "host-dup-1");
         assert.equal(
-          dupResponses.some((r) => r.result?.ok === true),
-          true,
-          "original handler result must be present",
+          dupResponses.length,
+          0,
+          "no response may be written for a duplicated host request id",
         );
-        assert.equal(
-          dupResponses.some((r) => r.error?.code === -32603),
-          true,
-          "duplicate request must be rejected",
+        assert.ok(
+          events.some((e) => e.type === "process_exited"),
+          "peer must be terminated after duplicate host id",
         );
-        assertNoSecret(responses);
+        assert.ok(
+          !events.some((e) => e.type === "prompt_completed"),
+          "prompt must not complete after duplicate host id",
+        );
+        assertNoSecret(events);
+
+        // Shutdown must remain idempotent after the fatal transport state.
+        await controller.shutdown();
       },
     );
   } finally {
@@ -1912,5 +1930,173 @@ test("K: workspaceRoot resolution failure redacts path", () => {
     );
   } finally {
     /* path never created, nothing to clean */
+  }
+});
+
+// ---------------------------------------------------------------------------
+// L. Phase 3A.3 final boundary gaps
+// ---------------------------------------------------------------------------
+
+test("L: cache bounds the exact object delivered to permission handler", () => {
+  const cache = new DevinAcpToolCallCache({ maxEntries: 8, maxEntryBytes: 64 });
+  const toolCallId = "tc_bound";
+
+  for (let i = 0; i < 5; i += 1) {
+    cache.merge("sess-1", toolCallId, {
+      toolCallId,
+      sessionUpdate: "tool_call_update",
+      rawInput: { [`chunk${i}`]: "a".repeat(12) },
+    });
+  }
+
+  const stored = cache.get("sess-1", toolCallId);
+  assert.ok(stored);
+  const storedBytes = Buffer.byteLength(JSON.stringify(stored), "utf8");
+  assert.ok(storedBytes <= 64, `stored entry must be <= 64 bytes, got ${storedBytes}`);
+  assert.equal(stored.rawInput, undefined, "rawInput must be dropped when merged entry exceeds cap");
+
+  const params: HostMod.DevinAcpPermissionParams = {
+    sessionId: "sess-1",
+    options: [{ optionId: "reject-once", name: "Reject", kind: "reject_once" }],
+    toolCall: { toolCallId },
+  };
+
+  const merged = mergePermissionParamsWithToolCallCache(params, cache);
+  const mergedBytes = Buffer.byteLength(JSON.stringify(merged.toolCall), "utf8");
+  assert.ok(
+    mergedBytes <= 64,
+    `toolCall delivered to handler must be <= 64 bytes, got ${mergedBytes}`,
+  );
+  assert.equal(merged.toolCall.rawInput, undefined, "handler must not receive oversized rawInput");
+  assert.equal(merged.toolCall.toolCallId, "tc_bound");
+});
+
+test("L: oversized direct permission toolCall is bounded or rejected", () => {
+  const cache = new DevinAcpToolCallCache({ maxEntries: 8, maxEntryBytes: 64 });
+
+  const normal: HostMod.DevinAcpPermissionParams = {
+    sessionId: "sess-1",
+    options: [{ optionId: "reject-once", name: "Reject", kind: "reject_once" }],
+    toolCall: {
+      toolCallId: "tc_huge_raw",
+      rawInput: { command: "x".repeat(256) },
+    },
+  };
+
+  const bounded = mergePermissionParamsWithToolCallCache(normal, cache);
+  const boundedBytes = Buffer.byteLength(JSON.stringify(bounded.toolCall), "utf8");
+  assert.ok(boundedBytes <= 64, `bounded toolCall must be <= 64 bytes, got ${boundedBytes}`);
+  assert.equal(bounded.toolCall.rawInput, undefined);
+  assert.equal(bounded.toolCall.toolCallId, "tc_huge_raw");
+
+  const hugeId = "x".repeat(96);
+  const invalid: HostMod.DevinAcpPermissionParams = {
+    sessionId: "sess-1",
+    options: [{ optionId: "reject-once", name: "Reject", kind: "reject_once" }],
+    toolCall: { toolCallId: hugeId },
+  };
+
+  assert.throws(
+    () => mergePermissionParamsWithToolCallCache(invalid, cache),
+    (error: unknown) =>
+      error instanceof ControlledAcpRpcError && error.code === -32602,
+  );
+});
+
+test("L: huge safe metadata fields cannot exceed cache cap", () => {
+  const cache = new DevinAcpToolCallCache({ maxEntries: 8, maxEntryBytes: 64 });
+  const hugeId = "x".repeat(96);
+  const hugeSession = "tool_call_update_".repeat(10);
+  const hugeTitle = "y".repeat(200);
+
+  assert.equal(
+    cache.mergeAndGet("sess-1", hugeId, { toolCallId: hugeId, sessionUpdate: hugeSession }),
+    undefined,
+    "huge toolCallId/sessionUpdate must be rejected entirely",
+  );
+
+  assert.equal(
+    cache.mergeAndGet("sess-1", "tc_title", {
+      toolCallId: "tc_title",
+      sessionUpdate: "tool_call",
+      title: hugeTitle,
+    }),
+    undefined,
+    "huge safe title must be rejected entirely",
+  );
+
+  assert.equal(cache.get("sess-1", "tc_title"), undefined);
+  assert.equal(cache.size, 0);
+});
+
+test("L: serialized cache entries and handler-visible toolCall fit within maxEntryBytes", () => {
+  const cache = new DevinAcpToolCallCache({ maxEntries: 4, maxEntryBytes: 64 });
+
+  for (let i = 0; i < 20; i += 1) {
+    cache.merge("sess-1", "t", {
+      toolCallId: "t",
+      sessionUpdate: "u",
+      rawInput: { step: i, payload: "b".repeat(24) },
+    });
+  }
+
+  const stored = cache.get("sess-1", "t");
+  assert.ok(stored);
+  assert.ok(Buffer.byteLength(JSON.stringify(stored), "utf8") <= 64);
+
+  const params: HostMod.DevinAcpPermissionParams = {
+    sessionId: "sess-1",
+    options: [{ optionId: "reject-once", name: "Reject", kind: "reject_once" }],
+    toolCall: { toolCallId: "t" },
+  };
+  const merged = mergePermissionParamsWithToolCallCache(params, cache);
+  assert.ok(Buffer.byteLength(JSON.stringify(merged.toolCall), "utf8") <= 64);
+});
+
+test("L: workspaceRoot is immutable after construction", async () => {
+  const workspace = makeWorkspace();
+  const outside = mkdtempSync(path.join(tmpdir(), "loop-acp-out-"));
+  const hostResponsePath = path.join(workspace, "root-replace.ndjson");
+  try {
+    const host = recordingHost(async () => ({ ok: true }));
+
+    await withController(
+      baseOptions(workspace, {
+        hostServices: host,
+        devinArgs: fakeArgs("terminal", { outputChunks: "r", cwd: workspace, hostResponsePath }),
+      }),
+      async (controller) => {
+        const runtime = await controller.runtime.initialize();
+
+        // Before replacement: session creation works.
+        const first = await runtime.createSession({ cwd: workspace });
+        assert.equal(first.cwd, workspace);
+
+        // Replace the workspace root path with a symlink to an outside directory.
+        rmSync(workspace, { recursive: true, force: true });
+        symlinkSync(outside, workspace);
+
+        // New sessions through the replaced path must reject the outside destination.
+        await assert.rejects(
+          () => runtime.createSession({ cwd: workspace }),
+          (error: unknown) => {
+            assertNoSecret(error);
+            return error instanceof DevinAcpRuntimeError && error.code === "E_DEVIN_ACP_VALIDATION";
+          },
+        );
+
+        // Terminal cwd through the replaced path must also reject.
+        const result = await runtime.prompt({ sessionId: first.id, text: "r" });
+        assert.equal(result.outputText, "r");
+        assert.equal(host.requests.length, 0);
+        const responses = readHostResponses(hostResponsePath);
+        const err = responses.find((r) => r.id === "host-term-1");
+        assert.equal(err?.error?.code, -32602);
+        assertNoSecret(responses);
+      },
+    );
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+    rmSync(outside, { recursive: true, force: true });
   }
 });

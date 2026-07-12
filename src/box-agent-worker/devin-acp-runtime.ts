@@ -293,7 +293,8 @@ export function scrubDevinAcpChildEnv(parentEnv: Readonly<NodeJS.ProcessEnv>): N
 
 function resolveInsideWorkspace(workspaceRoot: string, candidate: string): string {
   assertSafeString("path", candidate);
-  const rootReal = realpathSync(workspaceRoot);
+  // workspaceRoot is the pinned, already-canonical root set during construction.
+  const rootReal = workspaceRoot;
   const abs = path.isAbsolute(candidate)
     ? path.resolve(candidate)
     : path.resolve(rootReal, candidate);
