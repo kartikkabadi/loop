@@ -31,7 +31,8 @@ import {
   PUBLIC_CODEX_MODEL,
   redactInternalCodexModel,
 } from "./codex-env.js";
-import { codexProcessErrorCode, runCodexProcess } from "./codex-process.js";
+import { runCodexProcessAdapter } from "./codex-process-adapter.js";
+import { codexProcessErrorCode } from "./codex-process.js";
 import {
   codexJsonlFailureDetail,
   codexRetryDelayMs,
@@ -8337,38 +8338,44 @@ function runCodex(options: {
           retryable: false,
         });
       }
-      const result = runCodexProcess({
-        args: [
-          "exec",
-          ...codexModelArgs(options.model),
-          ...codexConfig.flatMap((config) => ["-c", config]),
-          "-C",
-          options.openclawDir,
-          "--output-schema",
-          CLAWSWEEPER_DECISION_SCHEMA_PATH,
-          "--output-last-message",
-          outputPath,
-          "--json",
-          "--sandbox",
-          options.sandboxMode,
-          "--add-dir",
-          proofScratchDir,
-          "-",
-        ],
-        cwd: options.openclawDir,
-        env: {
-          ...codexEnv({
-            ghToken: process.env.CLAWSWEEPER_PROOF_INSPECTION_TOKEN,
-            preserveCodexAuth: options.preserveCodexAuth,
-          }),
-          CLAWSWEEPER_PROOF_SCRATCH_DIR: proofScratchDir,
-          ...(options.preferWindowsAppBinary ? { CLAWSWEEPER_PREFER_WINDOWS_CODEX_APP: "1" } : {}),
+      const result = runCodexProcessAdapter(
+        {
+          label: "ClawSweeper review",
+          args: [
+            "exec",
+            ...codexModelArgs(options.model),
+            ...codexConfig.flatMap((config) => ["-c", config]),
+            "-C",
+            options.openclawDir,
+            "--output-schema",
+            CLAWSWEEPER_DECISION_SCHEMA_PATH,
+            "--output-last-message",
+            outputPath,
+            "--json",
+            "--sandbox",
+            options.sandboxMode,
+            "--add-dir",
+            proofScratchDir,
+            "-",
+          ],
+          cwd: options.openclawDir,
+          env: {
+            ...codexEnv({
+              ghToken: process.env.CLAWSWEEPER_PROOF_INSPECTION_TOKEN,
+              preserveCodexAuth: options.preserveCodexAuth,
+            }),
+            CLAWSWEEPER_PROOF_SCRATCH_DIR: proofScratchDir,
+            ...(options.preferWindowsAppBinary
+              ? { CLAWSWEEPER_PREFER_WINDOWS_CODEX_APP: "1" }
+              : {}),
+          },
+          input: prompt,
+          stderrPath: join(options.workDir, `${options.item.number}.${attempt}.codex.stderr.log`),
+          stdoutPath: join(options.workDir, `${options.item.number}.${attempt}.codex.stdout.log`),
+          timeoutMs: remainingMs,
         },
-        input: prompt,
-        stderrPath: join(options.workDir, `${options.item.number}.${attempt}.codex.stderr.log`),
-        stdoutPath: join(options.workDir, `${options.item.number}.${attempt}.codex.stdout.log`),
-        timeoutMs: remainingMs,
-      });
+        { kind: "process" },
+      );
       const dirtyAfter = openclawDirtyStatus(options.openclawDir);
       if (dirtyAfter) {
         throw new Error(
@@ -8642,22 +8649,26 @@ function runCodexAssist(options: {
     codexLoginConfig(),
     'approval_policy="never"',
   ];
-  const result = runCodexProcess({
-    args: [
-      "exec",
-      ...codexModelArgs(options.model),
-      ...codexConfig.flatMap((config) => ["-c", config]),
-      "--output-last-message",
-      outputPath,
-      "--sandbox",
-      options.sandboxMode,
-      "-",
-    ],
-    cwd: ROOT,
-    env: codexEnv(),
-    input: prompt,
-    timeoutMs: options.timeoutMs,
-  });
+  const result = runCodexProcessAdapter(
+    {
+      label: "ClawSweeper assist",
+      args: [
+        "exec",
+        ...codexModelArgs(options.model),
+        ...codexConfig.flatMap((config) => ["-c", config]),
+        "--output-last-message",
+        outputPath,
+        "--sandbox",
+        options.sandboxMode,
+        "-",
+      ],
+      cwd: ROOT,
+      env: codexEnv(),
+      input: prompt,
+      timeoutMs: options.timeoutMs,
+    },
+    { kind: "process" },
+  );
   if (result.error || result.status !== 0 || !existsSync(outputPath)) {
     const detail =
       result.error instanceof Error

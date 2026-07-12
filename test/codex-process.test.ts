@@ -18,6 +18,10 @@ import {
   codexSpawnInvocation,
   runCodexProcess,
 } from "../dist/codex-process.js";
+import {
+  runCodexProcessAdapter,
+  selectCodexProcessAdapter,
+} from "../dist/codex-process-adapter.js";
 
 const tmpPrefix = join(tmpdir(), "clawsweeper-codex-process-test-");
 
@@ -426,4 +430,349 @@ rl.on("line", (line) => {
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
+});
+
+test("Codex process adapter selection matrix", () => {
+  assert.deepEqual(selectCodexProcessAdapter({ label: "worker", env: {} }), {
+    kind: "process",
+  });
+  assert.deepEqual(
+    selectCodexProcessAdapter({
+      label: "worker",
+      env: { CLAWSWEEPER_STEERABLE_CODEX: "0" },
+    }),
+    { kind: "process" },
+  );
+  assert.deepEqual(
+    selectCodexProcessAdapter({
+      label: "worker",
+      env: { CLAWSWEEPER_STEERABLE_CODEX: "true" },
+    }),
+    { kind: "process" },
+  );
+
+  const enabled = selectCodexProcessAdapter({
+    label: "exact-label",
+    env: {
+      CLAWSWEEPER_STEERABLE_CODEX: "1",
+      CLAWSWEEPER_CRABFLEET_RUNNER_PTY_URL: "  ",
+      CLAWSWEEPER_CRABFLEET_WORK_STATE_URL: "",
+      CLAWSWEEPER_CRABFLEET_AGENT_TOKEN: "   ",
+    },
+  });
+  assert.equal(enabled.kind, "app-server");
+  if (enabled.kind !== "app-server") throw new Error("expected app-server");
+  assert.equal(enabled.appServer.label, "exact-label");
+  assert.equal(enabled.appServer.runnerPtyUrl, undefined);
+  assert.equal(enabled.appServer.workStateUrl, undefined);
+  assert.equal(enabled.appServer.agentToken, undefined);
+  assert.match(enabled.appServer.statePath, /clawsweeper-thread-state\.json$/);
+
+  const explicit = selectCodexProcessAdapter({
+    label: "steerable",
+    env: {
+      CLAWSWEEPER_STEERABLE_CODEX: "1",
+      CLAWSWEEPER_CODEX_THREAD_STATE: "/tmp/explicit-thread-state.json",
+      CLAWSWEEPER_CRABFLEET_RUNNER_PTY_URL: " https://pty.example/ ",
+      CLAWSWEEPER_CRABFLEET_WORK_STATE_URL: "https://state.example/",
+      CLAWSWEEPER_CRABFLEET_AGENT_TOKEN: " agent-token ",
+      CODEX_HOME: "/unused-home",
+    },
+  });
+  assert.deepEqual(explicit, {
+    kind: "app-server",
+    appServer: {
+      statePath: "/tmp/explicit-thread-state.json",
+      label: "steerable",
+      runnerPtyUrl: "https://pty.example/",
+      workStateUrl: "https://state.example/",
+      agentToken: "agent-token",
+    },
+  });
+
+  const previous = process.env.CLAWSWEEPER_STEERABLE_CODEX;
+  process.env.CLAWSWEEPER_STEERABLE_CODEX = "1";
+  try {
+    assert.deepEqual(
+      selectCodexProcessAdapter({
+        label: "ambient-ignored",
+        env: { CLAWSWEEPER_STEERABLE_CODEX: "0" },
+      }),
+      { kind: "process" },
+    );
+  } finally {
+    if (previous === undefined) delete process.env.CLAWSWEEPER_STEERABLE_CODEX;
+    else process.env.CLAWSWEEPER_STEERABLE_CODEX = previous;
+  }
+});
+
+test("Codex process adapter process-mode parity", () => {
+  const root = mkdtempSync(tmpPrefix);
+  const binDir = join(root, "custom codex bin");
+  const markerPath = join(root, "stdin.txt");
+  const argvPath = join(root, "argv.json");
+  const scriptPath = join(root, "fake-codex.js");
+  const stdoutPath = join(root, "out.stdout.log");
+  const stderrPath = join(root, "out.stderr.log");
+  mkdirSync(binDir, { recursive: true });
+  writeFileSync(
+    scriptPath,
+    `const fs = require("node:fs");
+const input = fs.readFileSync(0, "utf8");
+fs.writeFileSync(process.env.CODEX_TEST_STDIN_PATH, input);
+fs.writeFileSync(process.env.CODEX_TEST_ARGV_PATH, JSON.stringify(process.argv.slice(2)));
+process.stdout.write("adapter-parity-ok");
+process.stderr.write("adapter-stderr");
+`,
+  );
+  const codexPath =
+    process.platform === "win32" ? join(binDir, "custom-codex.cmd") : join(binDir, "custom-codex");
+  if (process.platform === "win32") {
+    writeFileSync(codexPath, `@echo off\r\nnode "%~dp0\\..\\fake-codex.js" %*\r\n`);
+  } else {
+    writeFileSync(codexPath, `#!/usr/bin/env node\n${readFileSync(scriptPath, "utf8")}`, {
+      mode: 0o755,
+    });
+  }
+
+  const sharedArgs = ["exec", "--cd", join(root, "directory with spaces"), "a&b", "-"];
+  const sharedEnv = {
+    ...process.env,
+    CODEX_BIN: codexPath,
+    CODEX_TEST_ARGV_PATH: argvPath,
+    CODEX_TEST_STDIN_PATH: markerPath,
+  };
+
+  try {
+    const direct = runCodexProcess({
+      args: [...sharedArgs],
+      cwd: root,
+      env: sharedEnv,
+      input: "prompt over stdin",
+      timeoutMs: 10_000,
+      stdoutPath,
+      stderrPath,
+      tailBytes: 4096,
+      outputFileBytes: 1024 * 1024,
+    });
+    rmSync(markerPath, { force: true });
+    rmSync(argvPath, { force: true });
+    rmSync(stdoutPath, { force: true });
+    rmSync(stderrPath, { force: true });
+    const viaAdapter = runCodexProcessAdapter(
+      {
+        label: "parity",
+        args: [...sharedArgs],
+        cwd: root,
+        env: sharedEnv,
+        input: "prompt over stdin",
+        timeoutMs: 10_000,
+        stdoutPath,
+        stderrPath,
+        tailBytes: 4096,
+        outputFileBytes: 1024 * 1024,
+      },
+      { kind: "process" },
+    );
+
+    assert.equal(viaAdapter.status, direct.status);
+    assert.equal(viaAdapter.signal, direct.signal);
+    assert.equal(viaAdapter.error, undefined);
+    assert.equal(direct.error, undefined);
+    assert.match(viaAdapter.stdout, /adapter-parity-ok/);
+    assert.match(viaAdapter.stderr, /adapter-stderr/);
+    assert.equal(readFileSync(markerPath, "utf8"), "prompt over stdin");
+    assert.deepEqual(JSON.parse(readFileSync(argvPath, "utf8")), sharedArgs);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("Codex process adapter app-server parity", () => {
+  const root = mkdtempSync(tmpPrefix);
+  const binDir = join(root, "node_modules", ".bin");
+  const statePath = join(root, "session", "state.json");
+  const outputPath = join(root, "last-message.json");
+  const requestsPath = join(root, "requests.jsonl");
+  const argsPath = join(root, "args.json");
+  mkdirSync(binDir, { recursive: true });
+  const scriptPath = join(root, "app-server-codex.cjs");
+  writeFileSync(
+    scriptPath,
+    `
+const fs = require("node:fs");
+const readline = require("node:readline");
+const requestsPath = process.env.CODEX_TEST_REQUESTS_PATH;
+fs.writeFileSync(process.env.CODEX_TEST_ARGS_PATH, JSON.stringify(process.argv.slice(2)));
+const rl = readline.createInterface({ input: process.stdin });
+function send(value) { process.stdout.write(JSON.stringify(value) + "\\n"); }
+rl.on("line", (line) => {
+  const message = JSON.parse(line);
+  fs.appendFileSync(requestsPath, JSON.stringify(message) + "\\n");
+  if (message.method === "initialize") {
+    send({ id: message.id, result: { userAgent: "fake", codexHome: "/tmp", platformFamily: "unix", platformOs: "linux" } });
+  } else if (message.method === "thread/start") {
+    send({ id: message.id, result: { thread: { id: "thread-1", sessionId: "session-1" } } });
+  } else if (message.method === "thread/resume") {
+    send({ id: message.id, result: { thread: { id: message.params.threadId, sessionId: "session-1" } } });
+  } else if (message.method === "turn/start") {
+    send({ id: message.id, result: { turn: { id: "turn-1", status: "inProgress", items: [] } } });
+    setTimeout(() => {
+      send({ method: "item/completed", params: {
+        threadId: "thread-1",
+        turnId: "turn-1",
+        completedAtMs: Date.now(),
+        item: { type: "agentMessage", id: "message-1", text: '{"status":"planned"}' }
+      } });
+      send({ method: "turn/completed", params: {
+        threadId: "thread-1",
+        turn: { id: "turn-1", status: "completed", items: [] }
+      } });
+    }, 5);
+  }
+});
+`,
+  );
+  const codexPath =
+    process.platform === "win32" ? join(binDir, "codex.cmd") : join(binDir, "codex");
+  if (process.platform === "win32") {
+    writeFileSync(codexPath, `@echo off\r\nnode "%~dp0\\..\\..\\app-server-codex.cjs" %*\r\n`);
+  } else {
+    writeFileSync(codexPath, `#!/usr/bin/env node\n${readFileSync(scriptPath, "utf8")}`, {
+      mode: 0o755,
+    });
+  }
+  const env = {
+    ...process.env,
+    CODEX_BIN: codexPath,
+    CODEX_TEST_ARGS_PATH: argsPath,
+    CODEX_TEST_REQUESTS_PATH: requestsPath,
+    CLAWSWEEPER_STEERABLE_CODEX: "1",
+    CLAWSWEEPER_CODEX_THREAD_STATE: statePath,
+  };
+  const disabled = selectCodexProcessAdapter({
+    label: "test worker",
+    env: { ...env, CLAWSWEEPER_STEERABLE_CODEX: "0" },
+  });
+  assert.equal(disabled.kind, "process");
+  const selection = selectCodexProcessAdapter({ label: "test worker", env });
+  assert.equal(selection.kind, "app-server");
+
+  try {
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      const result = runCodexProcessAdapter(
+        {
+          label: "test worker",
+          args: [
+            "exec",
+            "--cd",
+            root,
+            "--sandbox",
+            "workspace-write",
+            "-c",
+            "sandbox_workspace_write.network_access=false",
+            "-c",
+            'forced_login_method="chatgpt"',
+            "--output-last-message",
+            outputPath,
+            "--json",
+            "-",
+          ],
+          cwd: root,
+          env,
+          input: "Plan the repair.",
+          timeoutMs: 10_000,
+        },
+        selection,
+      );
+      assert.equal(result.status, 0, result.stderr);
+      assert.equal(result.error, undefined);
+      assert.equal(readFileSync(outputPath, "utf8"), '{"status":"planned"}');
+    }
+
+    const state = JSON.parse(readFileSync(statePath, "utf8"));
+    assert.equal(state.threadId, "thread-1");
+    assert.deepEqual(JSON.parse(readFileSync(argsPath, "utf8")), [
+      "-c",
+      'forced_login_method="chatgpt"',
+      "app-server",
+      "--listen",
+      "stdio://",
+    ]);
+    const requests = readFileSync(requestsPath, "utf8")
+      .trim()
+      .split("\n")
+      .map((line) => JSON.parse(line));
+    assert.equal(requests.filter((request) => request.method === "thread/start").length, 1);
+    assert.equal(requests.filter((request) => request.method === "thread/resume").length, 1);
+    assert.equal(requests.filter((request) => request.method === "turn/start").length, 2);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("Codex process adapter does not mutate inputs", () => {
+  const root = mkdtempSync(tmpPrefix);
+  const binDir = join(root, "bin");
+  mkdirSync(binDir, { recursive: true });
+  const codexPath = join(binDir, "codex");
+  writeFileSync(codexPath, `#!/usr/bin/env node\nprocess.stdout.write("ok");\n`);
+  chmodSync(codexPath, 0o755);
+
+  const args = Object.freeze(["exec", "-"]);
+  const env = Object.freeze({
+    ...process.env,
+    CODEX_BIN: codexPath,
+    CLAWSWEEPER_STEERABLE_CODEX: "0",
+  });
+  const options = Object.freeze({
+    label: "immutable",
+    args,
+    cwd: root,
+    env,
+    input: "x",
+    timeoutMs: 10_000,
+  });
+  const selection = Object.freeze(
+    selectCodexProcessAdapter({ label: "immutable", env: { ...env } }),
+  );
+  const selectionBefore = structuredClone(selection);
+
+  try {
+    const result = runCodexProcessAdapter(options, selection);
+    assert.equal(result.status, 0);
+    assert.deepEqual([...args], ["exec", "-"]);
+    assert.equal(env.CLAWSWEEPER_STEERABLE_CODEX, "0");
+    assert.deepEqual(selection, selectionBefore);
+    assert.equal(options.label, "immutable");
+    assert.equal(options.input, "x");
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("Codex process adapter source seam keeps routing imports centralized", () => {
+  const productionFiles = [
+    "src/clawsweeper.ts",
+    "src/commit-sweeper.ts",
+    "src/pr-close-coverage-proof.ts",
+    "src/repair/run-worker.ts",
+    "src/repair/execute-fix-artifact.ts",
+  ];
+  for (const file of productionFiles) {
+    const source = readFileSync(join(process.cwd(), file), "utf8");
+    assert.doesNotMatch(
+      source,
+      /import\s*\{[^}]*\brunCodexProcess\b[^}]*\}\s*from\s*["'][^"']*codex-process\.js["']/,
+    );
+    assert.doesNotMatch(
+      source,
+      /import\s*\{[^}]*\bcodexAppServerProcessOptionsFromEnv\b[^}]*\}\s*from\s*["'][^"']*codex-process\.js["']/,
+    );
+    assert.match(source, /codex-process-adapter\.js/);
+  }
+  const adapter = readFileSync(join(process.cwd(), "src/codex-process-adapter.ts"), "utf8");
+  assert.match(adapter, /codexAppServerProcessOptionsFromEnv/);
+  assert.match(adapter, /runCodexProcess/);
+  assert.doesNotMatch(adapter, /agent-session-runtime/);
 });
