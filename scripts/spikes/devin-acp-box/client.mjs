@@ -387,7 +387,7 @@ function extractTerminalCommand(toolCall) {
 }
 
 function mergeToolCall(cached, incoming) {
-  const base = { ...(cached || {}) };
+  const base = { ...cached };
   if (!incoming || typeof incoming !== "object") return base;
   for (const [k, v] of Object.entries(incoming)) {
     if (v === undefined || v === null) continue;
@@ -1489,7 +1489,7 @@ function validateTranscriptFile(transcriptPath) {
     let row;
     try {
       row = JSON.parse(line);
-    } catch (e) {
+    } catch {
       ok = false;
       violations.push({ reason: "jsonl_parse", sample: line.slice(0, 80) });
       continue;
