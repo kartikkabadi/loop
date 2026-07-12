@@ -701,7 +701,7 @@ async function handleSessionPrompt(id, params) {
   }
 
   if (args.scenario === "controlled-map") {
-    for (let i = 1; i <= 6; i += 1) {
+    for (let i = 1; i <= 8; i += 1) {
       write({
         jsonrpc: "2.0",
         id: `host-map-${i}`,
