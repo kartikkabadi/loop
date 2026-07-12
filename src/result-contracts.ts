@@ -35,6 +35,13 @@ export type ParseAndValidationResult =
 /** Default UTF-8 byte limit for model-produced result text (1 MiB). */
 export const DEFAULT_RESULT_MAX_BYTES = 1_048_576;
 
+/**
+ * Maximum object/array nesting depth for the host JSON boundary scanner.
+ * Enforced with an iterative stack so model-controlled nesting cannot overflow
+ * the JavaScript call stack.
+ */
+export const MAX_JSON_NESTING_DEPTH = 64;
+
 const SCHEMA_FILES: Record<ResultContractName, string> = {
   "clawsweeper-decision": "clawsweeper-decision.schema.json",
   "repair-result": join("repair", "codex-result.schema.json"),
@@ -104,17 +111,40 @@ function parseErrorCode(keyword: string | undefined): string {
   }
 }
 
+function hostSchemaMessage(keyword: string | undefined): string {
+  switch (keyword) {
+    case "required":
+      return "required field missing";
+    case "additionalProperties":
+      return "additional property rejected";
+    case "enum":
+    case "const":
+      return "value is not in the allowed set";
+    case "type":
+      return "value has the wrong type";
+    case "minItems":
+    case "maxItems":
+    case "minLength":
+    case "maxLength":
+    case "minimum":
+    case "maximum":
+    case "pattern":
+      return "schema constraint failed";
+    default:
+      return "schema validation failed";
+  }
+}
+
 function normalizeAjvErrors(errors: ErrorObject[] | null | undefined): ContractError[] {
   const out: ContractError[] = [];
   for (const err of errors ?? []) {
     const instancePath = err.instancePath || "/";
     const keyword = err.keyword;
-    const message = err.message ? String(err.message) : "schema validation failed";
     out.push({
       code: parseErrorCode(keyword),
       instancePath,
       keyword,
-      message,
+      message: hostSchemaMessage(keyword),
     });
   }
   out.sort((a, b) => {
@@ -133,216 +163,396 @@ function contractError(code: string, message: string): ContractError {
   return { code, instancePath: "/", message };
 }
 
-function isFinitePositiveInteger(value: unknown): value is number {
-  return (
-    typeof value === "number" && Number.isFinite(value) && Number.isInteger(value) && value > 0
-  );
+function isPositiveSafeInteger(value: unknown): value is number {
+  return typeof value === "number" && Number.isSafeInteger(value) && value > 0;
 }
 
 function resolveMaxBytes(options?: { maxBytes?: number }): number | ParseFailure {
   if (options === undefined || options.maxBytes === undefined) {
     return DEFAULT_RESULT_MAX_BYTES;
   }
-  if (!isFinitePositiveInteger(options.maxBytes)) {
+  if (!isPositiveSafeInteger(options.maxBytes)) {
     return {
       ok: false,
-      error: contractError("E_RESULT_MAX_BYTES", "maxBytes must be a finite positive integer"),
+      error: contractError("E_RESULT_MAX_BYTES", "maxBytes must be a finite positive safe integer"),
     };
   }
   return options.maxBytes;
 }
 
-function isJsonValueStart(text: string, i = 0): boolean {
-  const ch = text[i];
-  if (!ch) return false;
-  // t/f/n only count when the full literal is present; otherwise prose like
-  // `note {...}` is leading non-JSON text, not malformed JSON.
-  if (ch === "t") return text.startsWith("true", i);
-  if (ch === "f") return text.startsWith("false", i);
-  if (ch === "n") return text.startsWith("null", i);
-  return ch === "{" || ch === "[" || ch === '"' || ch === "-" || (ch >= "0" && ch <= "9");
+/** RFC 8259 JSON whitespace only: space, tab, CR, LF. */
+function isJsonWs(ch: string | undefined): boolean {
+  return ch === " " || ch === "\t" || ch === "\r" || ch === "\n";
 }
 
-/**
- * Return the exclusive end index of the first JSON value starting at `i`,
- * or -1 if a complete value cannot be scanned.
- */
-function endIndexOfJsonValue(text: string, i: number): number {
-  if (i >= text.length) return -1;
-  const ch = text[i]!;
-  if (ch === "{") return endIndexOfObject(text, i);
-  if (ch === "[") return endIndexOfArray(text, i);
-  if (ch === '"') return endIndexOfString(text, i);
-  if (ch === "t" && text.startsWith("true", i)) return i + 4;
-  if (ch === "f" && text.startsWith("false", i)) return i + 5;
-  if (ch === "n" && text.startsWith("null", i)) return i + 4;
-  if (ch === "-" || (ch >= "0" && ch <= "9")) return endIndexOfNumber(text, i);
-  return -1;
+function skipJsonWs(text: string, i: number): number {
+  while (i < text.length && isJsonWs(text[i])) i += 1;
+  return i;
 }
 
-function endIndexOfString(text: string, start: number): number {
+type ScanOk = { ok: true; end: number };
+type ScanFail = { ok: false; code: "E_RESULT_JSON" | "E_RESULT_TOO_DEEP"; message: string };
+type ScanResult = ScanOk | ScanFail;
+
+type ContainerFrame =
+  | { kind: "array"; expect: "value-or-end" | "comma-or-end" }
+  | { kind: "object"; expect: "key-or-end" | "colon" | "value" | "comma-or-end" };
+
+function scanFail(code: ScanFail["code"], message: string): ScanFail {
+  return { ok: false, code, message };
+}
+
+function scanString(text: string, start: number): ScanResult {
+  // start points at opening quote
   let i = start + 1;
   while (i < text.length) {
     const ch = text[i]!;
+    if (ch === '"') return { ok: true, end: i + 1 };
     if (ch === "\\") {
-      i += 2;
-      continue;
+      if (i + 1 >= text.length) return scanFail("E_RESULT_JSON", "malformed JSON");
+      const esc = text[i + 1]!;
+      if ('"\\/bfnrt'.includes(esc)) {
+        i += 2;
+        continue;
+      }
+      if (esc === "u") {
+        if (i + 5 >= text.length) return scanFail("E_RESULT_JSON", "malformed JSON");
+        for (let k = 2; k <= 5; k += 1) {
+          const h = text[i + k]!;
+          const ok = (h >= "0" && h <= "9") || (h >= "a" && h <= "f") || (h >= "A" && h <= "F");
+          if (!ok) return scanFail("E_RESULT_JSON", "malformed JSON");
+        }
+        i += 6;
+        continue;
+      }
+      return scanFail("E_RESULT_JSON", "malformed JSON");
     }
-    if (ch === '"') return i + 1;
+    // Unescaped control characters are invalid in JSON strings.
+    if (ch.charCodeAt(0) < 0x20) return scanFail("E_RESULT_JSON", "malformed JSON");
     i += 1;
   }
-  return -1;
+  return scanFail("E_RESULT_JSON", "malformed JSON");
 }
 
-function endIndexOfNumber(text: string, start: number): number {
+function scanNumber(text: string, start: number): ScanResult {
   let i = start;
   if (text[i] === "-") i += 1;
-  if (i >= text.length) return -1;
+  if (i >= text.length) return scanFail("E_RESULT_JSON", "malformed JSON");
   if (text[i] === "0") {
     i += 1;
+    // Leading zeros are invalid (e.g. 01).
+    if (i < text.length && text[i]! >= "0" && text[i]! <= "9") {
+      return scanFail("E_RESULT_JSON", "malformed JSON");
+    }
   } else if (text[i]! >= "1" && text[i]! <= "9") {
     i += 1;
     while (i < text.length && text[i]! >= "0" && text[i]! <= "9") i += 1;
   } else {
-    return -1;
+    return scanFail("E_RESULT_JSON", "malformed JSON");
   }
   if (text[i] === ".") {
     i += 1;
-    if (i >= text.length || text[i]! < "0" || text[i]! > "9") return -1;
+    if (i >= text.length || text[i]! < "0" || text[i]! > "9") {
+      return scanFail("E_RESULT_JSON", "malformed JSON");
+    }
     while (i < text.length && text[i]! >= "0" && text[i]! <= "9") i += 1;
   }
   if (text[i] === "e" || text[i] === "E") {
     i += 1;
     if (text[i] === "+" || text[i] === "-") i += 1;
-    if (i >= text.length || text[i]! < "0" || text[i]! > "9") return -1;
+    if (i >= text.length || text[i]! < "0" || text[i]! > "9") {
+      return scanFail("E_RESULT_JSON", "malformed JSON");
+    }
     while (i < text.length && text[i]! >= "0" && text[i]! <= "9") i += 1;
   }
-  return i;
+  return { ok: true, end: i };
 }
 
-function skipWs(text: string, i: number): number {
-  while (i < text.length && /\s/.test(text[i]!)) i += 1;
-  return i;
+function scanLiteral(text: string, start: number, literal: string): ScanResult {
+  if (text.startsWith(literal, start)) return { ok: true, end: start + literal.length };
+  return scanFail("E_RESULT_JSON", "malformed JSON");
 }
 
-function endIndexOfArray(text: string, start: number): number {
-  let i = skipWs(text, start + 1);
-  if (i < text.length && text[i] === "]") return i + 1;
-  while (i < text.length) {
-    const end = endIndexOfJsonValue(text, i);
-    if (end < 0) return -1;
-    i = skipWs(text, end);
-    if (i >= text.length) return -1;
-    if (text[i] === "]") return i + 1;
-    if (text[i] !== ",") return -1;
-    i = skipWs(text, i + 1);
+/**
+ * Iterative RFC 8259 boundary scan for the first JSON value starting at `start`.
+ * Uses an explicit stack; never recurses on model-controlled nesting.
+ */
+function scanJsonValue(text: string, start: number): ScanResult {
+  const stack: ContainerFrame[] = [];
+  let i = start;
+  let needValue = true;
+
+  while (i < text.length || stack.length > 0) {
+    if (needValue) {
+      if (i >= text.length) return scanFail("E_RESULT_JSON", "malformed JSON");
+      const ch = text[i]!;
+
+      if (ch === "{") {
+        if (stack.length + 1 > MAX_JSON_NESTING_DEPTH) {
+          return scanFail("E_RESULT_TOO_DEEP", `JSON nesting exceeds ${MAX_JSON_NESTING_DEPTH}`);
+        }
+        stack.push({ kind: "object", expect: "key-or-end" });
+        i = skipJsonWs(text, i + 1);
+        needValue = false;
+        continue;
+      }
+      if (ch === "[") {
+        if (stack.length + 1 > MAX_JSON_NESTING_DEPTH) {
+          return scanFail("E_RESULT_TOO_DEEP", `JSON nesting exceeds ${MAX_JSON_NESTING_DEPTH}`);
+        }
+        stack.push({ kind: "array", expect: "value-or-end" });
+        i = skipJsonWs(text, i + 1);
+        needValue = false;
+        continue;
+      }
+      if (ch === '"') {
+        const s = scanString(text, i);
+        if (!s.ok) return s;
+        i = s.end;
+        needValue = false;
+      } else if (ch === "-" || (ch >= "0" && ch <= "9")) {
+        const n = scanNumber(text, i);
+        if (!n.ok) return n;
+        i = n.end;
+        needValue = false;
+      } else if (ch === "t") {
+        const lit = scanLiteral(text, i, "true");
+        if (!lit.ok) return lit;
+        i = lit.end;
+        needValue = false;
+      } else if (ch === "f") {
+        const lit = scanLiteral(text, i, "false");
+        if (!lit.ok) return lit;
+        i = lit.end;
+        needValue = false;
+      } else if (ch === "n") {
+        const lit = scanLiteral(text, i, "null");
+        if (!lit.ok) return lit;
+        i = lit.end;
+        needValue = false;
+      } else {
+        return scanFail("E_RESULT_JSON", "malformed JSON");
+      }
+
+      if (stack.length === 0) return { ok: true, end: i };
+
+      const top = stack[stack.length - 1]!;
+      if (top.kind === "array") top.expect = "comma-or-end";
+      else top.expect = "comma-or-end";
+      i = skipJsonWs(text, i);
+      continue;
+    }
+
+    // Container structural state (not expecting a bare value).
+    if (stack.length === 0) return { ok: true, end: i };
+    const frame = stack[stack.length - 1]!;
+    if (i >= text.length) return scanFail("E_RESULT_JSON", "malformed JSON");
+
+    if (frame.kind === "array") {
+      if (frame.expect === "value-or-end") {
+        if (text[i] === "]") {
+          stack.pop();
+          i += 1;
+          if (stack.length === 0) return { ok: true, end: i };
+          const parent = stack[stack.length - 1]!;
+          parent.expect = "comma-or-end";
+          i = skipJsonWs(text, i);
+          continue;
+        }
+        needValue = true;
+        continue;
+      }
+      // comma-or-end
+      if (text[i] === "]") {
+        stack.pop();
+        i += 1;
+        if (stack.length === 0) return { ok: true, end: i };
+        const parent = stack[stack.length - 1]!;
+        parent.expect = "comma-or-end";
+        i = skipJsonWs(text, i);
+        continue;
+      }
+      if (text[i] === ",") {
+        i = skipJsonWs(text, i + 1);
+        needValue = true;
+        continue;
+      }
+      return scanFail("E_RESULT_JSON", "malformed JSON");
+    }
+
+    // object
+    if (frame.expect === "key-or-end") {
+      if (text[i] === "}") {
+        stack.pop();
+        i += 1;
+        if (stack.length === 0) return { ok: true, end: i };
+        const parent = stack[stack.length - 1]!;
+        parent.expect = "comma-or-end";
+        i = skipJsonWs(text, i);
+        continue;
+      }
+      if (text[i] !== '"') return scanFail("E_RESULT_JSON", "malformed JSON");
+      const key = scanString(text, i);
+      if (!key.ok) return key;
+      i = skipJsonWs(text, key.end);
+      frame.expect = "colon";
+      continue;
+    }
+    if (frame.expect === "colon") {
+      if (text[i] !== ":") return scanFail("E_RESULT_JSON", "malformed JSON");
+      i = skipJsonWs(text, i + 1);
+      frame.expect = "value";
+      needValue = true;
+      continue;
+    }
+    // comma-or-end
+    if (text[i] === "}") {
+      stack.pop();
+      i += 1;
+      if (stack.length === 0) return { ok: true, end: i };
+      const parent = stack[stack.length - 1]!;
+      parent.expect = "comma-or-end";
+      i = skipJsonWs(text, i);
+      continue;
+    }
+    if (text[i] === ",") {
+      i = skipJsonWs(text, i + 1);
+      frame.expect = "key-or-end";
+      // After a comma, next must be a key (not end). Force key path.
+      if (i >= text.length || text[i] === "}") {
+        return scanFail("E_RESULT_JSON", "malformed JSON");
+      }
+      continue;
+    }
+    return scanFail("E_RESULT_JSON", "malformed JSON");
   }
-  return -1;
+
+  return scanFail("E_RESULT_JSON", "malformed JSON");
 }
 
-function endIndexOfObject(text: string, start: number): number {
-  let i = skipWs(text, start + 1);
-  if (i < text.length && text[i] === "}") return i + 1;
-  while (i < text.length) {
-    if (text[i] !== '"') return -1;
-    const keyEnd = endIndexOfString(text, i);
-    if (keyEnd < 0) return -1;
-    i = skipWs(text, keyEnd);
-    if (i >= text.length || text[i] !== ":") return -1;
-    i = skipWs(text, i + 1);
-    const valueEnd = endIndexOfJsonValue(text, i);
-    if (valueEnd < 0) return -1;
-    i = skipWs(text, valueEnd);
-    if (i >= text.length) return -1;
-    if (text[i] === "}") return i + 1;
-    if (text[i] !== ",") return -1;
-    i = skipWs(text, i + 1);
+function classifyValueStart(text: string): ParseFailure | null {
+  const ch = text[0];
+  if (!ch) return { ok: false, error: contractError("E_RESULT_EMPTY", "empty output") };
+
+  if (ch === "+") {
+    return { ok: false, error: contractError("E_RESULT_JSON", "malformed JSON") };
   }
-  return -1;
+
+  if (ch === "t") {
+    if (text.startsWith("true")) return null;
+    if ("true".startsWith(text) || text.startsWith("tru")) {
+      return { ok: false, error: contractError("E_RESULT_JSON", "malformed JSON") };
+    }
+    return { ok: false, error: contractError("E_RESULT_EXTRA_TEXT", "leading non-JSON text") };
+  }
+  if (ch === "f") {
+    if (text.startsWith("false")) return null;
+    if ("false".startsWith(text) || text.startsWith("fals")) {
+      return { ok: false, error: contractError("E_RESULT_JSON", "malformed JSON") };
+    }
+    return { ok: false, error: contractError("E_RESULT_EXTRA_TEXT", "leading non-JSON text") };
+  }
+  if (ch === "n") {
+    if (text.startsWith("null")) return null;
+    if ("null".startsWith(text) || text.startsWith("nul")) {
+      return { ok: false, error: contractError("E_RESULT_JSON", "malformed JSON") };
+    }
+    return { ok: false, error: contractError("E_RESULT_EXTRA_TEXT", "leading non-JSON text") };
+  }
+
+  if (ch === "{" || ch === "[" || ch === '"' || ch === "-" || (ch >= "0" && ch <= "9")) {
+    return null;
+  }
+
+  return { ok: false, error: contractError("E_RESULT_EXTRA_TEXT", "leading non-JSON text") };
 }
 
 /**
  * Parse exactly one JSON object from model-produced text.
  * Measures the raw input in UTF-8 bytes; trims surrounding whitespace only.
- * Never returns raw JSON.parse exception text in errors.
+ * Never returns raw JSON.parse exception text or rejected values in errors.
  */
 export function parseExactJsonObject(text: string, options?: { maxBytes?: number }): ParseResult {
-  if (typeof text !== "string") {
-    return {
-      ok: false,
-      error: contractError("E_RESULT_JSON", "input must be a string"),
-    };
-  }
-
-  const maxBytesOrErr = resolveMaxBytes(options);
-  if (typeof maxBytesOrErr !== "number") return maxBytesOrErr;
-  const maxBytes = maxBytesOrErr;
-
-  const byteLength = Buffer.byteLength(text, "utf8");
-  if (byteLength > maxBytes) {
-    return {
-      ok: false,
-      error: contractError(
-        "E_RESULT_TOO_LARGE",
-        `input exceeds ${maxBytes} UTF-8 bytes (got ${byteLength})`,
-      ),
-    };
-  }
-
-  const trimmed = text.trim();
-  if (!trimmed) {
-    return {
-      ok: false,
-      error: contractError("E_RESULT_EMPTY", "empty output"),
-    };
-  }
-
-  if (trimmed.startsWith("```")) {
-    return {
-      ok: false,
-      error: contractError("E_RESULT_EXTRA_TEXT", "markdown fence rejected"),
-    };
-  }
-
-  if (!isJsonValueStart(trimmed)) {
-    return {
-      ok: false,
-      error: contractError("E_RESULT_EXTRA_TEXT", "leading non-JSON text"),
-    };
-  }
-
-  const valueEnd = endIndexOfJsonValue(trimmed, 0);
-  if (valueEnd < 0) {
-    return {
-      ok: false,
-      error: contractError("E_RESULT_JSON", "malformed JSON"),
-    };
-  }
-  if (valueEnd !== trimmed.length) {
-    return {
-      ok: false,
-      error: contractError("E_RESULT_EXTRA_TEXT", "trailing text or multiple JSON values"),
-    };
-  }
-
-  let value: unknown;
   try {
-    value = JSON.parse(trimmed);
+    if (typeof text !== "string") {
+      return {
+        ok: false,
+        error: contractError("E_RESULT_JSON", "input must be a string"),
+      };
+    }
+
+    const maxBytesOrErr = resolveMaxBytes(options);
+    if (typeof maxBytesOrErr !== "number") return maxBytesOrErr;
+    const maxBytes = maxBytesOrErr;
+
+    const byteLength = Buffer.byteLength(text, "utf8");
+    if (byteLength > maxBytes) {
+      return {
+        ok: false,
+        error: contractError(
+          "E_RESULT_TOO_LARGE",
+          `input exceeds ${maxBytes} UTF-8 bytes (got ${byteLength})`,
+        ),
+      };
+    }
+
+    const trimmed = text.trim();
+    if (!trimmed) {
+      return {
+        ok: false,
+        error: contractError("E_RESULT_EMPTY", "empty output"),
+      };
+    }
+
+    if (trimmed.startsWith("```")) {
+      return {
+        ok: false,
+        error: contractError("E_RESULT_EXTRA_TEXT", "markdown fence rejected"),
+      };
+    }
+
+    const startClass = classifyValueStart(trimmed);
+    if (startClass) return startClass;
+
+    const scanned = scanJsonValue(trimmed, 0);
+    if (!scanned.ok) {
+      return {
+        ok: false,
+        error: contractError(scanned.code, scanned.message),
+      };
+    }
+    if (scanned.end !== trimmed.length) {
+      return {
+        ok: false,
+        error: contractError("E_RESULT_EXTRA_TEXT", "trailing text or multiple JSON values"),
+      };
+    }
+
+    let value: unknown;
+    try {
+      value = JSON.parse(trimmed);
+    } catch {
+      return {
+        ok: false,
+        error: contractError("E_RESULT_JSON", "malformed JSON"),
+      };
+    }
+
+    if (value === null || typeof value !== "object" || Array.isArray(value)) {
+      return {
+        ok: false,
+        error: contractError("E_RESULT_NOT_OBJECT", "root must be a non-null object"),
+      };
+    }
+
+    return { ok: true, value: value as Record<string, unknown> };
   } catch {
+    // Public boundary: never let scanner bugs escape as RangeError/etc.
     return {
       ok: false,
       error: contractError("E_RESULT_JSON", "malformed JSON"),
     };
   }
-
-  if (value === null || typeof value !== "object" || Array.isArray(value)) {
-    return {
-      ok: false,
-      error: contractError("E_RESULT_NOT_OBJECT", "root must be a non-null object"),
-    };
-  }
-
-  return { ok: true, value: value as Record<string, unknown> };
 }
 
 export function validateResultContract(
