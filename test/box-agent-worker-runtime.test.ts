@@ -1,6 +1,15 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, symlinkSync } from "node:fs";
+import {
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  readdirSync,
+  realpathSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -18,8 +27,12 @@ import {
   DevinAcpToolCallCache as DevinAcpToolCallCacheJs,
   DEVIN_ACP_HOST_METHODS as DEVIN_ACP_HOST_METHODS_JS,
   classifyDevinAcpHostRequest as classifyDevinAcpHostRequestJs,
+  parseDevinAcpHostRequest as parseDevinAcpHostRequestJs,
+  ControlledAcpRpcError as ControlledAcpRpcErrorJs,
+  CONTROLLED_RPC_MESSAGES as CONTROLLED_RPC_MESSAGES_JS,
 } from "../dist/box-agent-worker/devin-acp-host-services.js";
 import type {
+  DevinAcpHostCapabilities,
   DevinAcpHostRequest,
   DevinAcpHostServices,
 } from "../src/box-agent-worker/devin-acp-host-services.js";
@@ -43,19 +56,43 @@ const DevinAcpToolCallCache =
 const DEVIN_ACP_HOST_METHODS = DEVIN_ACP_HOST_METHODS_JS as typeof HostMod.DEVIN_ACP_HOST_METHODS;
 const classifyDevinAcpHostRequest =
   classifyDevinAcpHostRequestJs as typeof HostMod.classifyDevinAcpHostRequest;
+const parseDevinAcpHostRequest =
+  parseDevinAcpHostRequestJs as typeof HostMod.parseDevinAcpHostRequest;
+const ControlledAcpRpcError = ControlledAcpRpcErrorJs as typeof HostMod.ControlledAcpRpcError;
+const CONTROLLED_RPC_MESSAGES =
+  CONTROLLED_RPC_MESSAGES_JS as typeof HostMod.CONTROLLED_RPC_MESSAGES;
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const FIXTURE = path.join(HERE, "fixtures", "fake-devin-acp.mjs");
 const REPO_ROOT = path.resolve(HERE, "..");
 const SECRET = "FAKE_SECRET_SENTINEL_XYZ";
 const SESSION_ID = "sess-redact-FAKE_SECRET_SENTINEL_XYZ";
+const THOUGHT_TEXT = "secret-thought-should-exclude";
+
+type FakeArgExtra = {
+  hostResponsePath?: string;
+  pidPath?: string;
+  auditPath?: string;
+  delayMs?: number;
+  outputChunks?: string;
+  lineBytes?: number;
+  secretSentinel?: string;
+  loadSession?: boolean;
+};
 
 type RecordingHost = DevinAcpHostServices & {
   readonly requests: DevinAcpHostRequest[];
 };
 
+type HostResponseLine = {
+  jsonrpc?: string;
+  id?: unknown;
+  result?: unknown;
+  error?: { code?: number; message?: string };
+};
+
 function digest(sessionId: string): string {
-  return createHash("sha256").update(sessionId).digest("hex");
+  return createHash("sha256").update(sessionId).digest("hex").slice(0, 16);
 }
 
 function makeWorkspace(): string {
@@ -63,14 +100,16 @@ function makeWorkspace(): string {
   return realpathSync(dir);
 }
 
-function fakeArgs(scenario: string, extra: Record<string, string | number> = {}): string[] {
+function fakeArgs(scenario: string, extra: FakeArgExtra = {}): string[] {
   const args = [FIXTURE, `--scenario=${scenario}`, `--session-id=${SESSION_ID}`];
+  if (extra.hostResponsePath) args.push(`--host-response-path=${extra.hostResponsePath}`);
   if (extra.auditPath) args.push(`--audit-path=${extra.auditPath}`);
   if (extra.pidPath) args.push(`--pid-path=${extra.pidPath}`);
   if (extra.delayMs !== undefined) args.push(`--delay-ms=${extra.delayMs}`);
   if (extra.outputChunks) args.push(`--output-chunks=${extra.outputChunks}`);
   if (extra.lineBytes !== undefined) args.push(`--line-bytes=${extra.lineBytes}`);
   if (extra.secretSentinel) args.push(`--secret-sentinel=${extra.secretSentinel}`);
+  if (extra.loadSession === false) args.push("--load-session=false");
   return args;
 }
 
@@ -112,9 +151,15 @@ async function withController(
 
 function recordingHost(
   handler?: (request: DevinAcpHostRequest) => Promise<unknown>,
+  capabilities: DevinAcpHostCapabilities = {
+    readTextFile: true,
+    writeTextFile: true,
+    terminal: true,
+  },
 ): RecordingHost {
   const requests: DevinAcpHostRequest[] = [];
   return {
+    capabilities,
     requests,
     async handle(request) {
       requests.push(request);
@@ -139,6 +184,36 @@ function processAlive(pid: number): boolean {
   } catch {
     return false;
   }
+}
+
+function readHostResponses(hostResponsePath: string): HostResponseLine[] {
+  const raw = readFileSync(hostResponsePath, "utf8").trim();
+  if (!raw) return [];
+  return raw.split("\n").map((line) => JSON.parse(line) as HostResponseLine);
+}
+
+function isTransportOrRuntimeReject(error: unknown): boolean {
+  assertNoSecret(error);
+  if (error instanceof AcpTransportError) {
+    assert.ok(
+      [
+        "E_ACP_PROTOCOL",
+        "E_ACP_LINE_LIMIT",
+        "E_ACP_TIMEOUT",
+        "E_ACP_EXIT",
+        "E_ACP_SPAWN",
+        "E_ACP_CLOSED",
+        "E_ACP_HOST_REQUEST",
+      ].includes(error.code),
+    );
+    return true;
+  }
+  if (error instanceof DevinAcpRuntimeError) {
+    assertNoSecret(error.message);
+    return true;
+  }
+  assertNoSecret(error);
+  return true;
 }
 
 // ---------------------------------------------------------------------------
@@ -174,8 +249,68 @@ test("A: initialize negotiates protocol 1 and both capabilities", async () => {
       );
 
       assert.ok(events.some((e) => e.type === "initialized" && e.protocolVersion === 1));
-      assert.ok(events.some((e) => e.type === "environment_scrubbed"));
+      const scrub = events.find((e) => e.type === "environment_scrubbed");
+      assert.ok(scrub && scrub.type === "environment_scrubbed");
+      assert.equal(typeof scrub.allowedKeyCount, "number");
+      assert.equal("allowedKeys" in scrub, false);
     });
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
+
+test("A: no-load-session returns ContinueOnly without loadSession method", async () => {
+  const workspace = makeWorkspace();
+  try {
+    await withController(
+      baseOptions(workspace, {
+        devinArgs: fakeArgs("no-load-session", { outputChunks: "ok", loadSession: false }),
+      }),
+      async (controller) => {
+        const initialized = await controller.runtime.initialize();
+        assert.equal(initialized.capabilities.continueSession, true);
+        assert.equal(initialized.capabilities.loadSession, false);
+        assert.equal(typeof initialized.continueSession, "function");
+        assert.equal("loadSession" in initialized, false);
+        assert.equal(typeof (initialized as { loadSession?: unknown }).loadSession, "undefined");
+      },
+    );
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
+
+test("A: deny-all host advertises client capabilities false", () => {
+  assert.deepEqual(denyAllDevinAcpHostServices.capabilities, {
+    readTextFile: false,
+    writeTextFile: false,
+    terminal: false,
+  });
+});
+
+test("A: recording terminal-only host capabilities", () => {
+  const host = recordingHost(undefined, {
+    readTextFile: false,
+    writeTextFile: false,
+    terminal: true,
+  });
+  assert.deepEqual(host.capabilities, {
+    readTextFile: false,
+    writeTextFile: false,
+    terminal: true,
+  });
+});
+
+test("A: safe integer rejection for requestTimeoutMs", () => {
+  const workspace = makeWorkspace();
+  try {
+    for (const bad of [Number.NaN, 0, -1, 1.5, Number.MAX_SAFE_INTEGER + 1]) {
+      assert.throws(
+        () => createDevinAcpRuntimeController(baseOptions(workspace, { requestTimeoutMs: bad })),
+        (error: unknown) =>
+          error instanceof DevinAcpRuntimeError && error.code === "E_DEVIN_ACP_VALIDATION",
+      );
+    }
   } finally {
     rmSync(workspace, { recursive: true, force: true });
   }
@@ -234,22 +369,8 @@ test("B: create/prompt/continue/load and guards", async () => {
         error instanceof DevinAcpRuntimeError && error.code === "E_DEVIN_ACP_VALIDATION",
     );
 
-    const outside = mkdtempSync(path.join(tmpdir(), "loop-acp-out-"));
-    const link = path.join(workspace, "escape-link");
-    symlinkSync(outside, link);
-    await assert.rejects(
-      () =>
-        initialized.createSession({
-          cwd: path.join(link, "nested"),
-        }),
-      (error: unknown) =>
-        error instanceof DevinAcpRuntimeError && error.code === "E_DEVIN_ACP_VALIDATION",
-    );
-    rmSync(outside, { recursive: true, force: true });
-
     await controller.shutdown();
 
-    // load in a fresh process
     const loadController = createDevinAcpRuntimeController(
       baseOptions(workspace, {
         devinArgs: fakeArgs("load", { outputChunks: "loaded" }),
@@ -273,6 +394,63 @@ test("B: create/prompt/continue/load and guards", async () => {
       events.some((e) => e.type === "session_created" && "sessionId" in e),
       false,
     );
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
+
+test("B: symlink escape reject", async () => {
+  const workspace = makeWorkspace();
+  try {
+    await withController(baseOptions(workspace), async (controller) => {
+      const runtime = await controller.runtime.initialize();
+      const outside = mkdtempSync(path.join(tmpdir(), "loop-acp-out-"));
+      const link = path.join(workspace, "escape-link");
+      symlinkSync(outside, link);
+      await assert.rejects(
+        () =>
+          runtime.createSession({
+            cwd: path.join(link, "nested"),
+          }),
+        (error: unknown) =>
+          error instanceof DevinAcpRuntimeError && error.code === "E_DEVIN_ACP_VALIDATION",
+      );
+      rmSync(outside, { recursive: true, force: true });
+    });
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
+
+test("B: canonical cwd uses realpath for in-jail symlink", async () => {
+  const workspace = makeWorkspace();
+  try {
+    const realDir = path.join(workspace, "real-dir");
+    mkdirSync(realDir);
+    const linkDir = path.join(workspace, "link-dir");
+    symlinkSync(realDir, linkDir);
+    const expected = realpathSync(realDir);
+
+    await withController(baseOptions(workspace), async (controller) => {
+      const runtime = await controller.runtime.initialize();
+      const session = await runtime.createSession({ cwd: linkDir });
+      assert.equal(session.cwd, expected);
+      assert.notEqual(session.cwd, linkDir);
+    });
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
+
+test("B: create missing child under in-jail parent returns canonical path", async () => {
+  const workspace = makeWorkspace();
+  try {
+    const child = path.join(workspace, "missing", "nested");
+    await withController(baseOptions(workspace), async (controller) => {
+      const runtime = await controller.runtime.initialize();
+      const session = await runtime.createSession({ cwd: child });
+      assert.equal(session.cwd, path.join(realpathSync(workspace), "missing", "nested"));
+    });
   } finally {
     rmSync(workspace, { recursive: true, force: true });
   }
@@ -302,7 +480,7 @@ test("B: chunks concatenate in order and thoughts excluded", async () => {
 // C. Cancellation
 // ---------------------------------------------------------------------------
 
-test("C: cancel settles with authoritative cancelled stopReason", async () => {
+test("C: cancel settles with cancelled stopReason", async () => {
   const workspace = makeWorkspace();
   try {
     await withController(
@@ -321,9 +499,64 @@ test("C: cancel settles with authoritative cancelled stopReason", async () => {
         await runtime.cancel({ sessionId: session.id });
         const result = await promptPromise;
         assert.equal(result.stopReason, "cancelled");
+      },
+    );
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
+
+test("C: continueSession after cancel rejects with E_DEVIN_ACP_STATE", async () => {
+  const workspace = makeWorkspace();
+  try {
+    await withController(
+      baseOptions(workspace, {
+        devinArgs: fakeArgs("cancel"),
+        requestTimeoutMs: 5_000,
+      }),
+      async (controller) => {
+        const runtime = await controller.runtime.initialize();
+        const session = await runtime.createSession({ cwd: workspace });
+        const promptPromise = runtime.prompt({
+          sessionId: session.id,
+          text: "long",
+        });
+        await delay(30);
+        await runtime.cancel({ sessionId: session.id });
+        await promptPromise;
 
         await assert.rejects(
           () => runtime.continueSession!({ sessionId: session.id, text: "nope" }),
+          (error: unknown) =>
+            error instanceof DevinAcpRuntimeError && error.code === "E_DEVIN_ACP_STATE",
+        );
+      },
+    );
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
+
+test("C: prompt after cancel rejects with E_DEVIN_ACP_STATE", async () => {
+  const workspace = makeWorkspace();
+  try {
+    await withController(
+      baseOptions(workspace, {
+        devinArgs: fakeArgs("prompt-after-cancel-probe", { outputChunks: "partial" }),
+      }),
+      async (controller) => {
+        const runtime = await controller.runtime.initialize();
+        const session = await runtime.createSession({ cwd: workspace });
+        const first = await runtime.prompt({ sessionId: session.id, text: "first" });
+        assert.equal(first.stopReason, "cancelled");
+
+        await assert.rejects(
+          () => runtime.prompt({ sessionId: session.id, text: "second" }),
+          (error: unknown) =>
+            error instanceof DevinAcpRuntimeError && error.code === "E_DEVIN_ACP_STATE",
+        );
+        await assert.rejects(
+          () => runtime.continueSession!({ sessionId: session.id, text: "cont" }),
           (error: unknown) =>
             error instanceof DevinAcpRuntimeError && error.code === "E_DEVIN_ACP_STATE",
         );
@@ -338,13 +571,16 @@ test("C: cancel settles with authoritative cancelled stopReason", async () => {
 // D. Host-service dispatch
 // ---------------------------------------------------------------------------
 
-test("D: host-service dispatch, deny-all, and tool-call cache", async () => {
+test("D: permission with cache merge and valid name fields", async () => {
   const workspace = makeWorkspace();
   try {
     const host = recordingHost(async (request) => {
       if (request.kind === "permission") {
-        const params = request.params as { toolCall?: { rawInput?: unknown } };
-        assert.ok(params.toolCall?.rawInput);
+        assert.ok(request.params.toolCall.rawInput);
+        assert.equal((request.params.toolCall.rawInput as { command?: string }).command, "pwd");
+        assert.ok(
+          request.params.options.every((o) => typeof o.name === "string" && o.name.length > 0),
+        );
         return { outcome: { outcome: "cancelled" } };
       }
       return { handled: request.kind };
@@ -364,7 +600,112 @@ test("D: host-service dispatch, deny-all, and tool-call cache", async () => {
         assert.ok(events.some((e) => e.type === "host_request" && e.requestKind === "permission"));
       },
     );
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
 
+test("D: deny-all permission selects reject_once", async () => {
+  const workspace = makeWorkspace();
+  const hostResponsePath = path.join(workspace, "host-responses.ndjson");
+  try {
+    await withController(
+      baseOptions(workspace, {
+        hostServices: denyAllDevinAcpHostServices,
+        devinArgs: fakeArgs("permission", {
+          outputChunks: "d",
+          hostResponsePath,
+        }),
+      }),
+      async (controller) => {
+        const runtime = await controller.runtime.initialize();
+        const session = await runtime.createSession({ cwd: workspace });
+        const result = await runtime.prompt({ sessionId: session.id, text: "deny-perm" });
+        assert.equal(result.stopReason, "end_turn");
+        const responses = readHostResponses(hostResponsePath);
+        const perm = responses.find((r) => r.id === "host-perm-1");
+        assert.ok(perm?.result);
+        assert.deepEqual(perm?.result, {
+          outcome: { outcome: "selected", optionId: "reject-once" },
+        });
+      },
+    );
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
+
+test("D: deny-all adversarial permission option selection", async () => {
+  const allowWithCancelId = await denyAllDevinAcpHostServices.handle({
+    kind: "permission",
+    method: DEVIN_ACP_HOST_METHODS.permission,
+    params: {
+      sessionId: "s",
+      options: [{ optionId: "cancel-me-not", name: "Allow once", kind: "allow_once" }],
+      toolCall: { toolCallId: "t1" },
+    },
+  });
+  assert.deepEqual(allowWithCancelId, { outcome: { outcome: "cancelled" } });
+
+  const allowAlwaysWithRejectId = await denyAllDevinAcpHostServices.handle({
+    kind: "permission",
+    method: DEVIN_ACP_HOST_METHODS.permission,
+    params: {
+      sessionId: "s",
+      options: [{ optionId: "reject-sounding-allow", name: "Allow always", kind: "allow_always" }],
+      toolCall: { toolCallId: "t2" },
+    },
+  });
+  assert.deepEqual(allowAlwaysWithRejectId, { outcome: { outcome: "cancelled" } });
+
+  const onlyRejectAlways = await denyAllDevinAcpHostServices.handle({
+    kind: "permission",
+    method: DEVIN_ACP_HOST_METHODS.permission,
+    params: {
+      sessionId: "s",
+      options: [{ optionId: "rej-always", name: "Reject always", kind: "reject_always" }],
+      toolCall: { toolCallId: "t3" },
+    },
+  });
+  assert.deepEqual(onlyRejectAlways, {
+    outcome: { outcome: "selected", optionId: "rej-always" },
+  });
+});
+
+test("D: parse throws ControlledAcpRpcError for missing name or bad kind", () => {
+  assert.throws(
+    () =>
+      parseDevinAcpHostRequest(DEVIN_ACP_HOST_METHODS.permission, {
+        sessionId: "s",
+        options: [{ optionId: "x", kind: "allow_once" }],
+        toolCall: { toolCallId: "t" },
+      }),
+    (error: unknown) =>
+      error instanceof ControlledAcpRpcError &&
+      error.code === -32602 &&
+      error.message === CONTROLLED_RPC_MESSAGES.INVALID_PARAMS,
+  );
+
+  assert.throws(
+    () =>
+      parseDevinAcpHostRequest(DEVIN_ACP_HOST_METHODS.permission, {
+        sessionId: "s",
+        options: [{ optionId: "x", name: "X", kind: "not_a_kind" }],
+        toolCall: { toolCallId: "t" },
+      }),
+    (error: unknown) => error instanceof ControlledAcpRpcError && error.code === -32602,
+  );
+
+  assert.equal(classifyDevinAcpHostRequest("nope", {}), null);
+  assert.throws(
+    () => classifyDevinAcpHostRequest(DEVIN_ACP_HOST_METHODS.filesystemRead, { sessionId: "s" }),
+    (error: unknown) => error instanceof ControlledAcpRpcError && error.code === -32602,
+  );
+});
+
+test("D: fs and terminal dispatch with valid absolute paths and sessionId", async () => {
+  const workspace = makeWorkspace();
+  try {
     const fsHost = recordingHost();
     await withController(
       baseOptions(workspace, {
@@ -375,11 +716,11 @@ test("D: host-service dispatch, deny-all, and tool-call cache", async () => {
         const runtime = await controller.runtime.initialize();
         const session = await runtime.createSession({ cwd: workspace });
         await runtime.prompt({ sessionId: session.id, text: "fs" });
-        assert.ok(fsHost.requests.some((r) => r.kind === "filesystem-read"));
-        assert.equal(
-          fsHost.requests.find((r) => r.kind === "filesystem-read")?.method,
-          DEVIN_ACP_HOST_METHODS.filesystemRead,
-        );
+        const readReq = fsHost.requests.find((r) => r.kind === "filesystem-read");
+        assert.ok(readReq);
+        assert.equal(readReq.method, DEVIN_ACP_HOST_METHODS.filesystemRead);
+        assert.equal(readReq.params.sessionId, SESSION_ID);
+        assert.equal(readReq.params.path, "/tmp/README.md");
       },
     );
 
@@ -393,69 +734,260 @@ test("D: host-service dispatch, deny-all, and tool-call cache", async () => {
         const runtime = await controller.runtime.initialize();
         const session = await runtime.createSession({ cwd: workspace });
         await runtime.prompt({ sessionId: session.id, text: "term" });
-        assert.ok(termHost.requests.some((r) => r.kind === "terminal-create"));
+        const createReq = termHost.requests.find((r) => r.kind === "terminal-create");
+        assert.ok(createReq);
+        assert.equal(createReq.params.sessionId, SESSION_ID);
+        assert.equal(createReq.params.cwd, "/tmp");
       },
     );
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
 
-    await withController(
-      baseOptions(workspace, {
-        hostServices: denyAllDevinAcpHostServices,
-        devinArgs: fakeArgs("fs", { outputChunks: "x" }),
-      }),
-      async (controller) => {
-        const runtime = await controller.runtime.initialize();
-        const session = await runtime.createSession({ cwd: workspace });
-        // deny-all throws; transport returns JSON-RPC error to fake; prompt still completes
-        const result = await runtime.prompt({ sessionId: session.id, text: "deny" });
-        assert.equal(result.stopReason, "end_turn");
-      },
-    );
+test("D: malformed host params return -32602 and never call handler", async () => {
+  const workspace = makeWorkspace();
+  try {
+    for (const scenario of [
+      "malformed-permission",
+      "malformed-fs",
+      "malformed-terminal",
+    ] as const) {
+      let calls = 0;
+      const host = recordingHost(async () => {
+        calls += 1;
+        return { ok: true };
+      });
+      const hostResponsePath = path.join(workspace, `${scenario}-host.ndjson`);
+      writeFileSync(hostResponsePath, "", "utf8");
 
-    await withController(
-      baseOptions(workspace, {
-        hostServices: recordingHost(),
-        devinArgs: fakeArgs("unknown-method", { outputChunks: "u" }),
-      }),
-      async (controller) => {
-        const runtime = await controller.runtime.initialize();
-        const session = await runtime.createSession({ cwd: workspace });
-        const result = await runtime.prompt({ sessionId: session.id, text: "unk" });
-        assert.equal(result.outputText, "u");
-      },
-    );
+      await withController(
+        baseOptions(workspace, {
+          hostServices: host,
+          devinArgs: fakeArgs(scenario, { outputChunks: "m", hostResponsePath }),
+        }),
+        async (controller) => {
+          const runtime = await controller.runtime.initialize();
+          const session = await runtime.createSession({ cwd: workspace });
+          const result = await runtime.prompt({ sessionId: session.id, text: scenario });
+          assert.equal(result.stopReason, "end_turn");
+          assert.equal(calls, 0);
+          assert.equal(host.requests.length, 0);
+          const responses = readHostResponses(hostResponsePath);
+          assert.ok(responses.some((r) => r.error?.code === -32602));
+          assertNoSecret(responses);
+        },
+      );
+    }
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
 
-    const throwingHost: DevinAcpHostServices = {
+test("D: host-secret-throw redacts error message on host-response-path", async () => {
+  const workspace = makeWorkspace();
+  const hostResponsePath = path.join(workspace, "secret-throw.ndjson");
+  try {
+    const secretPath = "/home/user/.config/devin/credentials.toml";
+    const host: DevinAcpHostServices = {
+      capabilities: { readTextFile: true, writeTextFile: true, terminal: true },
       async handle() {
-        throw new Error(`boom ${SECRET}`);
+        throw new Error(`${SECRET} ${secretPath}`);
       },
     };
+
     await withController(
       baseOptions(workspace, {
-        hostServices: throwingHost,
-        devinArgs: fakeArgs("terminal", { outputChunks: "e" }),
+        hostServices: host,
+        devinArgs: fakeArgs("host-secret-throw", {
+          outputChunks: "e",
+          hostResponsePath,
+          secretSentinel: SECRET,
+        }),
       }),
       async (controller) => {
         const runtime = await controller.runtime.initialize();
         const session = await runtime.createSession({ cwd: workspace });
         const result = await runtime.prompt({ sessionId: session.id, text: "err" });
         assert.equal(result.outputText, "e");
+
+        const responses = readHostResponses(hostResponsePath);
+        const err = responses.find((r) => r.id === "host-secret-1");
+        assert.equal(err?.error?.code, -32603);
+        assert.equal(err?.error?.message, CONTROLLED_RPC_MESSAGES.HOST_REQUEST_FAILED);
+        assertNoSecret(responses);
+        assert.equal(JSON.stringify(responses).includes(secretPath), false);
       },
     );
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
 
-    assert.equal(classifyDevinAcpHostRequest("nope", {}), null);
-    assert.equal(
-      classifyDevinAcpHostRequest(DEVIN_ACP_HOST_METHODS.permission, {})?.kind,
-      "permission",
+test("D: host-hang times out host request but prompt completes", async () => {
+  const workspace = makeWorkspace();
+  const hostResponsePath = path.join(workspace, "host-hang.ndjson");
+  try {
+    const host = recordingHost(async () => {
+      await new Promise(() => {
+        /* never resolves */
+      });
+      return { ok: false };
+    });
+
+    await withController(
+      baseOptions(workspace, {
+        hostServices: host,
+        hostRequestTimeoutMs: 200,
+        requestTimeoutMs: 5_000,
+        devinArgs: fakeArgs("host-hang", { outputChunks: "hung", hostResponsePath }),
+      }),
+      async (controller) => {
+        const runtime = await controller.runtime.initialize();
+        const session = await runtime.createSession({ cwd: workspace });
+        const result = await runtime.prompt({ sessionId: session.id, text: "hang" });
+        assert.equal(result.outputText, "hung");
+        const responses = readHostResponses(hostResponsePath);
+        assert.ok(
+          responses.some(
+            (r) =>
+              r.id === "host-hang-1" &&
+              r.error?.code === -32603 &&
+              r.error.message === CONTROLLED_RPC_MESSAGES.HOST_REQUEST_FAILED,
+          ),
+        );
+        assertNoSecret(responses);
+      },
     );
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
 
-    const cache = new DevinAcpToolCallCache({ maxEntries: 2 });
-    cache.merge("a", { rawInput: { x: 1 } });
-    cache.merge("b", { rawInput: { y: 2 } });
-    cache.merge("c", { rawInput: { z: 3 } });
-    assert.equal(cache.size, 2);
-    assert.equal(cache.get("a"), undefined);
-    cache.clear();
-    assert.equal(cache.size, 0);
+test("D: host-concurrency caps in-flight host requests", async () => {
+  const workspace = makeWorkspace();
+  const hostResponsePath = path.join(workspace, "host-conc.ndjson");
+  try {
+    const host = recordingHost(async () => {
+      await delay(500);
+      return { ok: true };
+    });
+
+    await withController(
+      baseOptions(workspace, {
+        hostServices: host,
+        maxInFlightHostRequests: 2,
+        hostRequestTimeoutMs: 5_000,
+        requestTimeoutMs: 5_000,
+        devinArgs: fakeArgs("host-concurrency", { outputChunks: "c", hostResponsePath }),
+      }),
+      async (controller) => {
+        const runtime = await controller.runtime.initialize();
+        const session = await runtime.createSession({ cwd: workspace });
+        const result = await runtime.prompt({ sessionId: session.id, text: "conc" });
+        assert.equal(result.outputText, "c");
+        const responses = readHostResponses(hostResponsePath);
+        const rejected = responses.filter((r) => r.error?.code === -32603);
+        assert.ok(rejected.length >= 1, "excess host requests should get -32603");
+        assertNoSecret(responses);
+      },
+    );
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
+
+test("D: cross-session-cache does not leak POISON secret into permission toolCall", async () => {
+  const workspace = makeWorkspace();
+  try {
+    const host = recordingHost(async (request) => {
+      if (request.kind === "permission") {
+        const serialized = JSON.stringify(request.params.toolCall);
+        assert.equal(serialized.includes(`POISON_${SECRET}`), false);
+        assert.equal(serialized.includes(SECRET), false);
+        return { outcome: { outcome: "cancelled" } };
+      }
+      return { ok: true };
+    });
+
+    await withController(
+      baseOptions(workspace, {
+        hostServices: host,
+        devinArgs: fakeArgs("cross-session-cache", {
+          outputChunks: "x",
+          secretSentinel: SECRET,
+        }),
+      }),
+      async (controller) => {
+        const runtime = await controller.runtime.initialize();
+        const session = await runtime.createSession({ cwd: workspace });
+        await runtime.prompt({ sessionId: session.id, text: "cross" });
+        assert.ok(host.requests.some((r) => r.kind === "permission"));
+      },
+    );
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
+
+test("D: unknown host method returns -32601 Method not found", async () => {
+  const workspace = makeWorkspace();
+  const hostResponsePath = path.join(workspace, "unknown-method.ndjson");
+  try {
+    await withController(
+      baseOptions(workspace, {
+        hostServices: recordingHost(),
+        devinArgs: fakeArgs("unknown-method", {
+          outputChunks: "u",
+          hostResponsePath,
+          secretSentinel: SECRET,
+        }),
+      }),
+      async (controller) => {
+        const runtime = await controller.runtime.initialize();
+        const session = await runtime.createSession({ cwd: workspace });
+        const result = await runtime.prompt({ sessionId: session.id, text: "unk" });
+        assert.equal(result.outputText, "u");
+        const responses = readHostResponses(hostResponsePath);
+        const unknown = responses.find((r) => r.id === "host-unknown-1");
+        assert.equal(unknown?.error?.code, -32601);
+        assert.equal(unknown?.error?.message, CONTROLLED_RPC_MESSAGES.METHOD_NOT_FOUND);
+        assertNoSecret(responses);
+      },
+    );
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
+
+test("D: session-scoped tool-call cache isolates same toolCallId across sessions", () => {
+  const cache = new DevinAcpToolCallCache({ maxEntries: 8 });
+  cache.merge("sess-a", "tc_shared", { rawInput: { command: "from-a" } });
+  cache.merge("sess-b", "tc_shared", { rawInput: { command: "from-b" } });
+  assert.deepEqual(cache.get("sess-a", "tc_shared")?.rawInput, { command: "from-a" });
+  assert.deepEqual(cache.get("sess-b", "tc_shared")?.rawInput, { command: "from-b" });
+  cache.clear();
+  assert.equal(cache.size, 0);
+});
+
+test("D: auth -32000 maps to E_DEVIN_ACP_AUTH", async () => {
+  const workspace = makeWorkspace();
+  try {
+    await withController(
+      baseOptions(workspace, {
+        devinArgs: fakeArgs("auth-required", { secretSentinel: SECRET }),
+      }),
+      async (controller) => {
+        const runtime = await controller.runtime.initialize();
+        await assert.rejects(
+          () => runtime.createSession({ cwd: workspace }),
+          (error: unknown) => {
+            assertNoSecret(error);
+            return error instanceof DevinAcpRuntimeError && error.code === "E_DEVIN_ACP_AUTH";
+          },
+        );
+      },
+    );
   } finally {
     rmSync(workspace, { recursive: true, force: true });
   }
@@ -470,7 +1002,14 @@ test("E: framing hardening rejects bad envelopes without secret leak", async () 
   try {
     for (const scenario of [
       "malformed-json",
+      "non-object-json",
       "bad-envelope",
+      "result-and-error",
+      "response-with-method",
+      "invalid-id-type",
+      "unsafe-integer-id",
+      "duplicate-response-id",
+      "unknown-response-id",
       "oversized-line",
       "unterminated-oversize",
       "timeout",
@@ -489,31 +1028,11 @@ test("E: framing hardening rejects bad envelopes without secret leak", async () 
         }),
       );
       try {
-        await assert.rejects(
-          () => controller.runtime.initialize(),
-          (error: unknown) => {
-            assertNoSecret(error);
-            if (error instanceof AcpTransportError) {
-              assert.ok(
-                [
-                  "E_ACP_PROTOCOL",
-                  "E_ACP_LINE_LIMIT",
-                  "E_ACP_TIMEOUT",
-                  "E_ACP_EXIT",
-                  "E_ACP_SPAWN",
-                  "E_ACP_CLOSED",
-                ].includes(error.code),
-              );
-              return true;
-            }
-            if (error instanceof DevinAcpRuntimeError) {
-              assertNoSecret(error.message);
-              return true;
-            }
-            assertNoSecret(error);
-            return true;
-          },
-        );
+        await assert.rejects(async () => {
+          const runtime = await controller.runtime.initialize();
+          // duplicate/unknown may resolve initialize before fatal; next op must fail
+          await runtime.createSession({ cwd: workspace });
+        }, isTransportOrRuntimeReject);
       } finally {
         await controller.shutdown();
       }
@@ -527,7 +1046,7 @@ test("E: framing hardening rejects bad envelopes without secret leak", async () 
 // F. Output bounds
 // ---------------------------------------------------------------------------
 
-test("F: output byte bounds reject over-limit multibyte output", async () => {
+test("F: excess multibyte over limit yields E_DEVIN_ACP_OUTPUT_LIMIT", async () => {
   const workspace = makeWorkspace();
   try {
     await withController(
@@ -545,11 +1064,19 @@ test("F: output byte bounds reject over-limit multibyte output", async () => {
         );
       },
     );
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
 
+test("F: exact byte boundary for ascii chunks succeeds", async () => {
+  const workspace = makeWorkspace();
+  try {
+    const limit = Buffer.byteLength("ab", "utf8");
     await withController(
       baseOptions(workspace, {
-        maxOutputBytes: 3,
-        devinArgs: fakeArgs("chunks", { outputChunks: "ab" }),
+        maxOutputBytes: limit,
+        devinArgs: fakeArgs("exact-bytes", { outputChunks: "ab" }),
       }),
       async (controller) => {
         const runtime = await controller.runtime.initialize();
@@ -563,11 +1090,48 @@ test("F: output byte bounds reject over-limit multibyte output", async () => {
   }
 });
 
+test("F: exact multibyte boundary succeeds; over-limit fails", async () => {
+  const workspace = makeWorkspace();
+  try {
+    await withController(
+      baseOptions(workspace, {
+        maxOutputBytes: 3,
+        devinArgs: fakeArgs("exact-bytes", { outputChunks: "文" }),
+      }),
+      async (controller) => {
+        const runtime = await controller.runtime.initialize();
+        const session = await runtime.createSession({ cwd: workspace });
+        const result = await runtime.prompt({ sessionId: session.id, text: "one" });
+        assert.equal(result.outputText, "文");
+        assert.equal(Buffer.byteLength(result.outputText, "utf8"), 3);
+      },
+    );
+
+    await withController(
+      baseOptions(workspace, {
+        maxOutputBytes: 3,
+        devinArgs: fakeArgs("exact-bytes", { outputChunks: "文文" }),
+      }),
+      async (controller) => {
+        const runtime = await controller.runtime.initialize();
+        const session = await runtime.createSession({ cwd: workspace });
+        await assert.rejects(
+          () => runtime.prompt({ sessionId: session.id, text: "two" }),
+          (error: unknown) =>
+            error instanceof DevinAcpRuntimeError && error.code === "E_DEVIN_ACP_OUTPUT_LIMIT",
+        );
+      },
+    );
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
+
 // ---------------------------------------------------------------------------
 // G. Environment isolation
 // ---------------------------------------------------------------------------
 
-test("G: environment scrub isolates forbidden keys", async () => {
+test("G: environment scrub allowlist and forbidden prefixes", async () => {
   const workspace = makeWorkspace();
   const auditPath = path.join(workspace, "env-audit.txt");
   try {
@@ -576,6 +1140,9 @@ test("G: environment scrub isolates forbidden keys", async () => {
       PATH: process.env.PATH ?? "/usr/bin",
       HOME: process.env.HOME ?? workspace,
       XDG_CONFIG_HOME: path.join(workspace, "xdg-config"),
+      XDG_SECRET_TOKEN: SECRET,
+      XDG_GITHUB_BACKUP: SECRET,
+      LC_SECRET_TOKEN: SECRET,
       GH_TOKEN: SECRET,
       GITHUB_TOKEN: SECRET,
       CLAWSWEEPER_APP_PRIVATE_KEY: SECRET,
@@ -606,6 +1173,9 @@ test("G: environment scrub isolates forbidden keys", async () => {
     const scrubbed = scrubDevinAcpChildEnv(parentEnv);
     assert.equal(scrubbed.GH_TOKEN, undefined);
     assert.equal(scrubbed.GITHUB_TOKEN, undefined);
+    assert.equal(scrubbed.XDG_SECRET_TOKEN, undefined);
+    assert.equal(scrubbed.XDG_GITHUB_BACKUP, undefined);
+    assert.equal(scrubbed.LC_SECRET_TOKEN, undefined);
     assert.equal(scrubbed.PATH, parentEnv.PATH);
     assert.equal(scrubbed.HOME, parentEnv.HOME);
     assert.equal(scrubbed.XDG_CONFIG_HOME, parentEnv.XDG_CONFIG_HOME);
@@ -629,6 +1199,9 @@ test("G: environment scrub isolates forbidden keys", async () => {
         const forbidden = [
           "GH_TOKEN",
           "GITHUB_TOKEN",
+          "XDG_SECRET_TOKEN",
+          "XDG_GITHUB_BACKUP",
+          "LC_SECRET_TOKEN",
           "CLAWSWEEPER_APP_PRIVATE_KEY",
           "ASCII_BOX_API_KEY",
           "CRABBOX_COORDINATOR_TOKEN",
@@ -656,6 +1229,8 @@ test("G: environment scrub isolates forbidden keys", async () => {
         assertNoSecret(events);
         const scrubEvent = events.find((e) => e.type === "environment_scrubbed");
         assert.ok(scrubEvent && scrubEvent.type === "environment_scrubbed");
+        assert.equal(typeof scrubEvent.allowedKeyCount, "number");
+        assert.equal("allowedKeys" in scrubEvent, false);
         assertNoSecret(scrubEvent);
       },
     );
@@ -701,11 +1276,47 @@ test("H: shutdown terminates child and is idempotent", async () => {
   }
 });
 
+test("H: spontaneous-exit emits process_exited once and later ops fail", async () => {
+  const workspace = makeWorkspace();
+  try {
+    const events: DevinAcpRuntimeEvent[] = [];
+    const controller = createDevinAcpRuntimeController(
+      baseOptions(workspace, {
+        devinArgs: fakeArgs("spontaneous-exit"),
+        eventSink: (e) => events.push(e),
+      }),
+    );
+    try {
+      const runtime = await controller.runtime.initialize();
+      const deadline = Date.now() + 2_000;
+      while (
+        Date.now() < deadline &&
+        !events.some((e) => e.type === "process_exited" && e.exitCode === 42)
+      ) {
+        await delay(20);
+      }
+      const exits = events.filter((e) => e.type === "process_exited");
+      assert.equal(exits.length, 1);
+      assert.equal(exits[0]?.type === "process_exited" && exits[0].exitCode, 42);
+
+      await assert.rejects(
+        () => runtime.createSession({ cwd: workspace }),
+        (error: unknown) =>
+          error instanceof DevinAcpRuntimeError && error.code === "E_DEVIN_ACP_STATE",
+      );
+    } finally {
+      await controller.shutdown();
+    }
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
+
 // ---------------------------------------------------------------------------
 // I. Event redaction
 // ---------------------------------------------------------------------------
 
-test("I: events redact prompts, session ids, secrets, and payloads", async () => {
+test("I: events redact secrets, session ids, prompts, and untrusted metadata", async () => {
   const workspace = makeWorkspace();
   try {
     const events: DevinAcpRuntimeEvent[] = [];
@@ -719,7 +1330,7 @@ test("I: events redact prompts, session ids, secrets, and payloads", async () =>
           PATH: process.env.PATH,
         },
         hostServices: recordingHost(),
-        devinArgs: fakeArgs("permission", {
+        devinArgs: fakeArgs("untrusted-events", {
           outputChunks: `OUT_${SECRET}`,
           secretSentinel: SECRET,
         }),
@@ -728,7 +1339,9 @@ test("I: events redact prompts, session ids, secrets, and payloads", async () =>
       async (controller) => {
         const runtime = await controller.runtime.initialize();
         const session = await runtime.createSession({ cwd: workspace });
-        await runtime.prompt({ sessionId: session.id, text: promptText });
+        const result = await runtime.prompt({ sessionId: session.id, text: promptText });
+        // protocol result may retain raw evil stopReason; event must not
+        assert.ok(typeof result.stopReason === "string");
       },
     );
 
@@ -736,9 +1349,18 @@ test("I: events redact prompts, session ids, secrets, and payloads", async () =>
     assert.equal(serialized.includes(SECRET), false);
     assert.equal(serialized.includes(promptText), false);
     assert.equal(serialized.includes(SESSION_ID), false);
-    assert.equal(serialized.includes("THOUGHT_SHOULD_NOT_APPEAR"), false);
-    assert.ok(serialized.includes(digest(SESSION_ID)));
-    assert.ok(events.some((e) => e.type === "prompt_completed"));
+    assert.equal(serialized.includes(THOUGHT_TEXT), false);
+
+    const expectedDigest = digest(SESSION_ID);
+    assert.equal(expectedDigest.length, 16);
+    assert.match(expectedDigest, /^[0-9a-f]{16}$/);
+    assert.ok(serialized.includes(expectedDigest));
+
+    assert.ok(events.some((e) => e.type === "session_update" && e.updateKind === "unknown"));
+    const completed = events.find((e) => e.type === "prompt_completed");
+    assert.ok(completed && completed.type === "prompt_completed");
+    assert.equal(completed.stopReason, "unknown");
+    assert.equal(completed.sessionIdDigest, expectedDigest);
   } finally {
     rmSync(workspace, { recursive: true, force: true });
   }
@@ -775,7 +1397,6 @@ test("J: source boundary — no Crabbox/Codex/GitHub imports or call sites", () 
     for (const needle of forbidden) {
       assert.equal(text.includes(needle), false, `${rel} unexpectedly references ${needle}`);
     }
-    // process.env must not be read outside the scrub input boundary.
     if (rel.endsWith("devin-acp-runtime.ts")) {
       assert.equal(text.includes("process.env"), false);
     }
@@ -833,6 +1454,15 @@ test("validation rejects empty/NUL and relative workspaceRoot", () => {
     () =>
       createDevinAcpRuntimeController({
         workspaceRoot: `/tmp/acp-\0-bad`,
+        parentEnv: process.env,
+      }),
+    (error: unknown) =>
+      error instanceof DevinAcpRuntimeError && error.code === "E_DEVIN_ACP_VALIDATION",
+  );
+  assert.throws(
+    () =>
+      createDevinAcpRuntimeController({
+        workspaceRoot: "",
         parentEnv: process.env,
       }),
     (error: unknown) =>

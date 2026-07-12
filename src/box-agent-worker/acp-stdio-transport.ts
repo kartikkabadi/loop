@@ -4,6 +4,11 @@
  */
 import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
 import { TextDecoder } from "node:util";
+import {
+  CONTROLLED_RPC_MESSAGES,
+  ControlledAcpRpcError,
+  type ControlledAcpRpcCode,
+} from "./devin-acp-host-services.js";
 
 export type AcpTransportErrorCode =
   | "E_ACP_SPAWN"
@@ -24,9 +29,25 @@ export class AcpTransportError extends Error {
   }
 }
 
+/** Peer JSON-RPC error: numeric code only; message is static. */
+export class AcpPeerRpcError extends Error {
+  readonly code: number;
+
+  constructor(code: number) {
+    super("ACP peer RPC error");
+    this.name = "AcpPeerRpcError";
+    this.code = code;
+  }
+}
+
 export type AcpClientRequestHandler = (method: string, params: unknown) => Promise<unknown>;
 
 export type AcpNotificationHandler = (method: string, params: unknown) => void | Promise<void>;
+
+export type AcpProcessExitInfo = Readonly<{
+  exitCode: number | null;
+  signal: NodeJS.Signals | null;
+}>;
 
 export type AcpStdioTransportOptions = Readonly<{
   command: string;
@@ -36,13 +57,17 @@ export type AcpStdioTransportOptions = Readonly<{
   requestTimeoutMs?: number;
   shutdownGraceMs?: number;
   maxLineBytes?: number;
+  hostRequestTimeoutMs?: number;
+  maxInFlightHostRequests?: number;
   requestHandler: AcpClientRequestHandler;
   notificationHandler?: AcpNotificationHandler;
   stderrHandler?: (chunk: string) => void;
+  onProcessExit?: (info: AcpProcessExitInfo) => void;
 }>;
 
 export interface AcpStdioTransport {
   readonly pid: number | null;
+  readonly lastExit: AcpProcessExitInfo | null;
   start(): Promise<void>;
   request(method: string, params: unknown): Promise<unknown>;
   notify(method: string, params: unknown): Promise<void>;
@@ -52,7 +77,8 @@ export interface AcpStdioTransport {
 const DEFAULT_REQUEST_TIMEOUT_MS = 180_000;
 const DEFAULT_SHUTDOWN_GRACE_MS = 3_000;
 const DEFAULT_MAX_LINE_BYTES = 1_048_576;
-const MAX_ERROR_MESSAGE_CHARS = 200;
+const DEFAULT_HOST_REQUEST_TIMEOUT_MS = 30_000;
+const DEFAULT_MAX_IN_FLIGHT_HOST_REQUESTS = 16;
 
 type JsonRpcId = string | number;
 
@@ -60,6 +86,12 @@ type PendingRequest = {
   resolve: (value: unknown) => void;
   reject: (reason: unknown) => void;
   timer: NodeJS.Timeout;
+};
+
+type InFlightHost = {
+  timer: NodeJS.Timeout;
+  generation: number;
+  settled: boolean;
 };
 
 type ValidatedEnvelope =
@@ -85,13 +117,41 @@ type ValidatedEnvelope =
       error: Readonly<{ code: number; message: string; data?: unknown }>;
     }>;
 
+const CONTROLLED_CODES = new Set<number>([-32601, -32602, -32603, -32800]);
+const CONTROLLED_MESSAGES = new Set<string>(Object.values(CONTROLLED_RPC_MESSAGES));
+
+function assertPositiveSafeInt(label: string, value: number): number {
+  if (!Number.isSafeInteger(value) || value <= 0) {
+    throw new AcpTransportError("E_ACP_SPAWN", `${label} must be a positive safe integer`);
+  }
+  return value;
+}
+
 export function createAcpStdioTransport(options: AcpStdioTransportOptions): AcpStdioTransport {
-  const requestTimeoutMs = options.requestTimeoutMs ?? DEFAULT_REQUEST_TIMEOUT_MS;
-  const shutdownGraceMs = options.shutdownGraceMs ?? DEFAULT_SHUTDOWN_GRACE_MS;
-  const maxLineBytes = options.maxLineBytes ?? DEFAULT_MAX_LINE_BYTES;
+  const requestTimeoutMs = assertPositiveSafeInt(
+    "requestTimeoutMs",
+    options.requestTimeoutMs ?? DEFAULT_REQUEST_TIMEOUT_MS,
+  );
+  const shutdownGraceMs = assertPositiveSafeInt(
+    "shutdownGraceMs",
+    options.shutdownGraceMs ?? DEFAULT_SHUTDOWN_GRACE_MS,
+  );
+  const maxLineBytes = assertPositiveSafeInt(
+    "maxLineBytes",
+    options.maxLineBytes ?? DEFAULT_MAX_LINE_BYTES,
+  );
+  const hostRequestTimeoutMs = assertPositiveSafeInt(
+    "hostRequestTimeoutMs",
+    options.hostRequestTimeoutMs ?? DEFAULT_HOST_REQUEST_TIMEOUT_MS,
+  );
+  const maxInFlightHostRequests = assertPositiveSafeInt(
+    "maxInFlightHostRequests",
+    options.maxInFlightHostRequests ?? DEFAULT_MAX_IN_FLIGHT_HOST_REQUESTS,
+  );
   const requestHandler = options.requestHandler;
   const notificationHandler = options.notificationHandler;
   const stderrHandler = options.stderrHandler;
+  const onProcessExit = options.onProcessExit;
 
   let child: ChildProcessWithoutNullStreams | undefined;
   let nextId = 1;
@@ -101,14 +161,22 @@ export function createAcpStdioTransport(options: AcpStdioTransportOptions): AcpS
   let stdoutBuffer = Buffer.alloc(0);
   let fatalError: AcpTransportError | undefined;
   let shutdownPromise: Promise<void> | undefined;
-  let exitPromise: Promise<void> | undefined;
+  let exitPromise: Promise<AcpProcessExitInfo> | undefined;
+  let lastExit: AcpProcessExitInfo | null = null;
+  let hostGeneration = 0;
+  let observedExitEmitted = false;
 
   const pending = new Map<JsonRpcId, PendingRequest>();
+  const inFlightHost = new Map<JsonRpcId, InFlightHost>();
 
   function failTransport(error: AcpTransportError): void {
     if (fatalError) return;
     fatalError = error;
     rejectAllPending(error);
+    rejectAllHostInFlight();
+    if (!shuttingDown && child) {
+      void shutdown().catch(() => undefined);
+    }
   }
 
   function rejectAllPending(error: AcpTransportError): void {
@@ -117,6 +185,14 @@ export function createAcpStdioTransport(options: AcpStdioTransportOptions): AcpS
       entry.reject(error);
     }
     pending.clear();
+  }
+
+  function rejectAllHostInFlight(): void {
+    for (const entry of inFlightHost.values()) {
+      clearTimeout(entry.timer);
+      entry.settled = true;
+    }
+    inFlightHost.clear();
   }
 
   function assertWritable(): void {
@@ -131,30 +207,46 @@ export function createAcpStdioTransport(options: AcpStdioTransportOptions): AcpS
   function writeMessage(message: Record<string, unknown>): void {
     assertWritable();
     const line = `${JSON.stringify(message)}\n`;
-    const ok = child!.stdin.write(line);
-    if (!ok) {
-      // Backpressure only; data is still queued. No throw.
+    child!.stdin.write(line);
+  }
+
+  function tryWriteHostMessage(message: Record<string, unknown>): boolean {
+    if (!child || closed || fatalError) return false;
+    if (!child.stdin.writable || child.stdin.destroyed || child.stdin.writableEnded) return false;
+    try {
+      child.stdin.write(`${JSON.stringify(message)}\n`);
+      return true;
+    } catch {
+      return false;
     }
   }
 
-  function sendHostResult(id: JsonRpcId, result: unknown): void {
-    try {
-      writeMessage({ jsonrpc: "2.0", id, result });
-    } catch {
+  function sendHostResult(id: JsonRpcId, result: unknown, generation: number): void {
+    const entry = inFlightHost.get(id);
+    if (!entry || entry.settled || entry.generation !== generation) return;
+    entry.settled = true;
+    clearTimeout(entry.timer);
+    inFlightHost.delete(id);
+    if (!tryWriteHostMessage({ jsonrpc: "2.0", id, result })) {
       failTransport(
         new AcpTransportError("E_ACP_HOST_REQUEST", "Failed to write host request result"),
       );
     }
   }
 
-  function sendHostError(id: JsonRpcId, code: number, message: string): void {
-    try {
-      writeMessage({
+  function sendHostError(id: JsonRpcId, code: number, message: string, generation: number): void {
+    const entry = inFlightHost.get(id);
+    if (!entry || entry.settled || entry.generation !== generation) return;
+    entry.settled = true;
+    clearTimeout(entry.timer);
+    inFlightHost.delete(id);
+    if (
+      !tryWriteHostMessage({
         jsonrpc: "2.0",
         id,
-        error: { code, message: sanitizeErrorMessage(message) },
-      });
-    } catch {
+        error: { code, message },
+      })
+    ) {
       failTransport(
         new AcpTransportError("E_ACP_HOST_REQUEST", "Failed to write host request error"),
       );
@@ -166,27 +258,31 @@ export function createAcpStdioTransport(options: AcpStdioTransportOptions): AcpS
     method: string,
     params: unknown,
   ): Promise<void> {
+    if (inFlightHost.size >= maxInFlightHostRequests) {
+      tryWriteHostMessage({
+        jsonrpc: "2.0",
+        id,
+        error: {
+          code: -32603,
+          message: CONTROLLED_RPC_MESSAGES.HOST_REQUEST_FAILED,
+        },
+      });
+      return;
+    }
+
+    const generation = ++hostGeneration;
+    const timer = setTimeout(() => {
+      sendHostError(id, -32603, CONTROLLED_RPC_MESSAGES.HOST_REQUEST_FAILED, generation);
+    }, hostRequestTimeoutMs);
+    timer.unref();
+    inFlightHost.set(id, { timer, generation, settled: false });
+
     try {
       const result = await requestHandler(method, params);
-      if (closed || fatalError) {
-        // Still attempt a response if stdin is open; otherwise record host failure.
-        try {
-          assertWritable();
-          writeMessage({ jsonrpc: "2.0", id, result });
-        } catch {
-          failTransport(
-            new AcpTransportError(
-              "E_ACP_HOST_REQUEST",
-              "Failed to write host request result after close",
-            ),
-          );
-        }
-        return;
-      }
-      sendHostResult(id, result);
+      sendHostResult(id, result, generation);
     } catch (error) {
       const mapped = mapHandlerError(error);
-      sendHostError(id, mapped.code, mapped.message);
+      sendHostError(id, mapped.code, mapped.message, generation);
     }
   }
 
@@ -230,9 +326,7 @@ export function createAcpStdioTransport(options: AcpStdioTransportOptions): AcpS
         }
         pending.delete(envelope.id);
         clearTimeout(entry.timer);
-        const rpcError = new Error(sanitizeErrorMessage(envelope.error.message));
-        Object.assign(rpcError, { code: envelope.error.code });
-        entry.reject(rpcError);
+        entry.reject(new AcpPeerRpcError(envelope.error.code));
         return;
       }
       default: {
@@ -314,10 +408,28 @@ export function createAcpStdioTransport(options: AcpStdioTransportOptions): AcpS
     }
   }
 
+  function emitProcessExit(info: AcpProcessExitInfo): void {
+    if (observedExitEmitted) return;
+    observedExitEmitted = true;
+    lastExit = info;
+    try {
+      onProcessExit?.(info);
+    } catch {
+      // exit callback must not crash transport
+    }
+  }
+
   function attachChild(processChild: ChildProcessWithoutNullStreams): void {
     child = processChild;
     exitPromise = new Promise((resolveExit) => {
-      processChild.once("close", () => resolveExit());
+      processChild.once("close", (code, signal) => {
+        const info: AcpProcessExitInfo = {
+          exitCode: typeof code === "number" ? code : null,
+          signal: typeof signal === "string" ? (signal as NodeJS.Signals) : null,
+        };
+        emitProcessExit(info);
+        resolveExit(info);
+      });
     });
 
     processChild.stdout.on("data", (chunk: Buffer) => {
@@ -329,17 +441,13 @@ export function createAcpStdioTransport(options: AcpStdioTransportOptions): AcpS
     processChild.stdin.on("error", () => {
       // Ignore stdin errors during shutdown races.
     });
-    processChild.on("error", (error) => {
-      failTransport(
-        new AcpTransportError(
-          "E_ACP_SPAWN",
-          `ACP child process error: ${sanitizeErrorMessage(errorMessage(error))}`,
-        ),
-      );
+    processChild.on("error", () => {
+      failTransport(new AcpTransportError("E_ACP_SPAWN", "ACP child process error"));
     });
     processChild.on("exit", () => {
       if (shuttingDown || closed) {
         rejectAllPending(new AcpTransportError("E_ACP_CLOSED", "ACP transport shut down"));
+        rejectAllHostInFlight();
         return;
       }
       closed = true;
@@ -366,12 +474,9 @@ export function createAcpStdioTransport(options: AcpStdioTransportOptions): AcpS
         detached: process.platform !== "win32",
         windowsHide: true,
       });
-    } catch (error) {
+    } catch {
       started = false;
-      throw new AcpTransportError(
-        "E_ACP_SPAWN",
-        `Failed to spawn ACP process: ${sanitizeErrorMessage(errorMessage(error))}`,
-      );
+      throw new AcpTransportError("E_ACP_SPAWN", "Failed to spawn ACP process");
     }
 
     attachChild(processChild);
@@ -419,6 +524,7 @@ export function createAcpStdioTransport(options: AcpStdioTransportOptions): AcpS
     shutdownPromise = (async () => {
       const shutdownError = new AcpTransportError("E_ACP_CLOSED", "ACP transport shut down");
       rejectAllPending(shutdownError);
+      rejectAllHostInFlight();
 
       const active = child;
       if (!active) return;
@@ -433,9 +539,18 @@ export function createAcpStdioTransport(options: AcpStdioTransportOptions): AcpS
 
       signalProcessGroup(active, "SIGTERM");
       await waitForExitOrTimeout(active, exitPromise, shutdownGraceMs);
-      if (active.exitCode === null && active.signalCode === null) {
+      if (active.exitCode === null && active.signalCode === null && !lastExit) {
         signalProcessGroup(active, "SIGKILL");
         await waitForExitOrTimeout(active, exitPromise, shutdownGraceMs);
+      }
+
+      if (active.exitCode === null && active.signalCode === null && !lastExit) {
+        active.stdout.removeAllListeners("data");
+        active.stderr.removeAllListeners("data");
+        active.removeAllListeners("error");
+        active.removeAllListeners("exit");
+        child = undefined;
+        throw new AcpTransportError("E_ACP_CLOSED", "ACP child process did not exit");
       }
 
       active.stdout.removeAllListeners("data");
@@ -452,6 +567,9 @@ export function createAcpStdioTransport(options: AcpStdioTransportOptions): AcpS
     get pid(): number | null {
       return child?.pid ?? null;
     },
+    get lastExit(): AcpProcessExitInfo | null {
+      return lastExit;
+    },
     start,
     request,
     notify,
@@ -461,7 +579,7 @@ export function createAcpStdioTransport(options: AcpStdioTransportOptions): AcpS
 
 function waitForExitOrTimeout(
   child: ChildProcessWithoutNullStreams,
-  exitPromise: Promise<void> | undefined,
+  exitPromise: Promise<AcpProcessExitInfo> | undefined,
   timeoutMs: number,
 ): Promise<void> {
   if (child.exitCode !== null || child.signalCode !== null) {
@@ -513,8 +631,8 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
 }
 
 function isJsonRpcId(value: unknown): value is JsonRpcId {
-  if (typeof value === "string") return true;
-  return typeof value === "number" && Number.isInteger(value);
+  if (typeof value === "string") return value.length > 0;
+  return typeof value === "number" && Number.isSafeInteger(value);
 }
 
 function hasOwn(value: Record<string, unknown>, key: string): boolean {
@@ -579,7 +697,7 @@ function validateJsonRpcEnvelope(
     if (!isJsonRpcId(value.id)) return { ok: false, reason: "bad_id" };
     const errorValue = value.error;
     if (!isPlainObject(errorValue)) return { ok: false, reason: "bad_error" };
-    if (typeof errorValue.code !== "number" || !Number.isInteger(errorValue.code)) {
+    if (typeof errorValue.code !== "number" || !Number.isSafeInteger(errorValue.code)) {
       return { ok: false, reason: "bad_error_code" };
     }
     if (typeof errorValue.message !== "string") {
@@ -601,27 +719,23 @@ function validateJsonRpcEnvelope(
   return { ok: false, reason: "unknown_shape" };
 }
 
-function mapHandlerError(error: unknown): { code: number; message: string } {
+function mapHandlerError(error: unknown): { code: ControlledAcpRpcCode; message: string } {
+  if (error instanceof ControlledAcpRpcError) {
+    return { code: error.code, message: error.message };
+  }
   if (typeof error === "object" && error !== null) {
     const record = error as { code?: unknown; message?: unknown };
-    const code =
-      typeof record.code === "number" && Number.isInteger(record.code) ? record.code : -32603;
-    const message =
-      typeof record.message === "string" && record.message.length > 0
-        ? record.message
-        : "Internal error";
-    return { code, message: sanitizeErrorMessage(message) };
+    if (
+      typeof record.code === "number" &&
+      CONTROLLED_CODES.has(record.code) &&
+      typeof record.message === "string" &&
+      CONTROLLED_MESSAGES.has(record.message)
+    ) {
+      return {
+        code: record.code as ControlledAcpRpcCode,
+        message: record.message,
+      };
+    }
   }
-  return { code: -32603, message: "Internal error" };
-}
-
-function errorMessage(error: unknown): string {
-  if (error instanceof Error) return error.message;
-  return "unknown error";
-}
-
-function sanitizeErrorMessage(message: string): string {
-  const trimmed = message.replace(/\s+/g, " ").trim();
-  if (trimmed.length <= MAX_ERROR_MESSAGE_CHARS) return trimmed;
-  return `${trimmed.slice(0, MAX_ERROR_MESSAGE_CHARS)}…`;
+  return { code: -32603, message: CONTROLLED_RPC_MESSAGES.HOST_REQUEST_FAILED };
 }
