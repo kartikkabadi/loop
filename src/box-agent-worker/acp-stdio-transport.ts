@@ -118,7 +118,6 @@ type ValidatedEnvelope =
       error: Readonly<{ code: number; message: string; data?: unknown }>;
     }>;
 
-
 function assertPositiveSafeInt(label: string, value: number): number {
   if (!Number.isSafeInteger(value) || value <= 0) {
     throw new AcpTransportError("E_ACP_SPAWN", `${label} must be a positive safe integer`);
@@ -263,12 +262,7 @@ export function createAcpStdioTransport(options: AcpStdioTransportOptions): AcpS
     params: unknown,
   ): Promise<void> {
     if (inFlightHost.has(id)) {
-      failTransport(
-        new AcpTransportError(
-          "E_ACP_PROTOCOL",
-          "Duplicate inbound host request id",
-        ),
-      );
+      failTransport(new AcpTransportError("E_ACP_PROTOCOL", "Duplicate inbound host request id"));
       return;
     }
     if (inFlightHost.size >= maxInFlightHostRequests) {

@@ -61,7 +61,8 @@ const parseDevinAcpHostRequest =
   parseDevinAcpHostRequestJs as typeof HostMod.parseDevinAcpHostRequest;
 const mergePermissionParamsWithToolCallCache =
   mergePermissionParamsWithToolCallCacheJs as typeof HostMod.mergePermissionParamsWithToolCallCache;
-const ControlledAcpRpcError = ControlledAcpRpcErrorJs as typeof HostMod.ControlledAcpRpcError;
+const ControlledAcpRpcError =
+  ControlledAcpRpcErrorJs as unknown as typeof HostMod.ControlledAcpRpcError;
 const CONTROLLED_RPC_MESSAGES =
   CONTROLLED_RPC_MESSAGES_JS as typeof HostMod.CONTROLLED_RPC_MESSAGES;
 
@@ -1953,7 +1954,11 @@ test("L: cache bounds the exact object delivered to permission handler", () => {
   assert.ok(stored);
   const storedBytes = Buffer.byteLength(JSON.stringify(stored), "utf8");
   assert.ok(storedBytes <= 64, `stored entry must be <= 64 bytes, got ${storedBytes}`);
-  assert.equal(stored.rawInput, undefined, "rawInput must be dropped when merged entry exceeds cap");
+  assert.equal(
+    stored.rawInput,
+    undefined,
+    "rawInput must be dropped when merged entry exceeds cap",
+  );
 
   const params: HostMod.DevinAcpPermissionParams = {
     sessionId: "sess-1",
@@ -1998,8 +2003,7 @@ test("L: oversized direct permission toolCall is bounded or rejected", () => {
 
   assert.throws(
     () => mergePermissionParamsWithToolCallCache(invalid, cache),
-    (error: unknown) =>
-      error instanceof ControlledAcpRpcError && error.code === -32602,
+    (error: unknown) => error instanceof ControlledAcpRpcError && error.code === -32602,
   );
 });
 
@@ -2057,10 +2061,12 @@ test("M: controlled error mapping is nominal and fail-closed", async () => {
   const workspace = makeWorkspace();
   const hostResponsePath = path.join(workspace, "controlled-map.ndjson");
   try {
-    class MutatedCodeError extends ControlledAcpRpcError {
+    class SubclassCodeOverrideError extends ControlledAcpRpcError {
       constructor() {
-        super(-32601);
-        Object.defineProperty(this, "code", { value: 12345, writable: true, configurable: true });
+        super(-32603);
+      }
+      get code(): -32601 {
+        return -32601;
       }
     }
 
@@ -2085,12 +2091,24 @@ test("M: controlled error mapping is nominal and fail-closed", async () => {
             throw { code: -32601 };
           case "/tmp/map-3":
             throw Object.assign(new Error("forged code"), { code: -32601 });
-          case "/tmp/map-4":
-            throw new MutatedCodeError();
+          case "/tmp/map-4": {
+            const shadowed = new ControlledAcpRpcError(-32603);
+            Object.defineProperty(shadowed, "code", {
+              value: -32601,
+              configurable: true,
+            });
+            throw shadowed;
+          }
           case "/tmp/map-5":
             throw new Error(`${SECRET} ${workspace}`);
           case "/tmp/map-6":
             throw proxy;
+          case "/tmp/map-7":
+            throw new SubclassCodeOverrideError();
+          case "/tmp/map-8":
+            throw new (ControlledAcpRpcError as unknown as new (
+              code: number,
+            ) => HostMod.ControlledAcpRpcError)(12345);
           default:
             return { ok: true };
         }
@@ -2115,11 +2133,13 @@ test("M: controlled error mapping is nominal and fail-closed", async () => {
         const map4 = responses.find((r) => r.id === "host-map-4");
         const map5 = responses.find((r) => r.id === "host-map-5");
         const map6 = responses.find((r) => r.id === "host-map-6");
+        const map7 = responses.find((r) => r.id === "host-map-7");
+        const map8 = responses.find((r) => r.id === "host-map-8");
 
         assert.equal(map1?.error?.code, -32601);
         assert.equal(map1?.error?.message, CONTROLLED_RPC_MESSAGES.METHOD_NOT_FOUND);
 
-        for (const r of [map2, map3, map4, map5, map6]) {
+        for (const r of [map2, map3, map4, map5, map6, map7, map8]) {
           assert.equal(r?.error?.code, -32603, `expected -32603 for ${r?.id}`);
           assert.equal(r?.error?.message, CONTROLLED_RPC_MESSAGES.HOST_REQUEST_FAILED);
         }
@@ -2171,7 +2191,10 @@ test("M: stdin close is fatal and sanitized", async () => {
         assert.ok(exitEvent && "signal" in exitEvent);
         assert.equal(exitEvent.signal, "SIGTERM");
         assert.equal(processAlive(startPid), false);
-        assert.equal(events.some((e) => e.type === "prompt_completed"), false);
+        assert.equal(
+          events.some((e) => e.type === "prompt_completed"),
+          false,
+        );
 
         const serialized = JSON.stringify(events);
         assert.equal(serialized.includes(SECRET), false);
