@@ -29,13 +29,35 @@ export function messageForControlledCode(code: ControlledAcpRpcCode): string {
   }
 }
 
+const CONTROLLED_CODES = new Set<number>([-32601, -32602, -32603, -32800]);
+
 export class ControlledAcpRpcError extends Error {
   readonly code: ControlledAcpRpcCode;
+  #controlled = true;
 
   constructor(code: ControlledAcpRpcCode) {
     super(messageForControlledCode(code));
     this.name = "ControlledAcpRpcError";
     this.code = code;
+  }
+
+  static getControlledCode(error: unknown): ControlledAcpRpcCode | undefined {
+    try {
+      if (error instanceof ControlledAcpRpcError && (error as ControlledAcpRpcError).#controlled) {
+        const descriptor = Object.getOwnPropertyDescriptor(error, "code");
+        if (
+          descriptor &&
+          "value" in descriptor &&
+          typeof descriptor.value === "number" &&
+          CONTROLLED_CODES.has(descriptor.value)
+        ) {
+          return descriptor.value as ControlledAcpRpcCode;
+        }
+      }
+    } catch {
+      // Any throw from a proxy or hostile getter is treated as uncontrolled.
+    }
+    return undefined;
   }
 }
 

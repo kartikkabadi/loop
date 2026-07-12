@@ -2053,6 +2053,137 @@ test("L: serialized cache entries and handler-visible toolCall fit within maxEnt
   assert.ok(Buffer.byteLength(JSON.stringify(merged.toolCall), "utf8") <= 64);
 });
 
+test("M: controlled error mapping is nominal and fail-closed", async () => {
+  const workspace = makeWorkspace();
+  const hostResponsePath = path.join(workspace, "controlled-map.ndjson");
+  try {
+    class MutatedCodeError extends ControlledAcpRpcError {
+      constructor() {
+        super(-32601);
+        Object.defineProperty(this, "code", { value: 12345, writable: true, configurable: true });
+      }
+    }
+
+    const proxyTarget = Object.create(ControlledAcpRpcError.prototype);
+    const proxy = new Proxy(proxyTarget, {
+      getOwnPropertyDescriptor(_target, prop) {
+        if (prop === "code") {
+          return { value: -32601, writable: true, configurable: true, enumerable: true };
+        }
+        return undefined;
+      },
+    });
+
+    const host: DevinAcpHostServices = {
+      capabilities: { readTextFile: true, writeTextFile: true, terminal: true },
+      async handle(request) {
+        if (request.kind !== "filesystem-read") return { ok: true };
+        switch (request.params.path) {
+          case "/tmp/map-1":
+            throw new ControlledAcpRpcError(-32601);
+          case "/tmp/map-2":
+            throw { code: -32601 };
+          case "/tmp/map-3":
+            throw Object.assign(new Error("forged code"), { code: -32601 });
+          case "/tmp/map-4":
+            throw new MutatedCodeError();
+          case "/tmp/map-5":
+            throw new Error(`${SECRET} ${workspace}`);
+          case "/tmp/map-6":
+            throw proxy;
+          default:
+            return { ok: true };
+        }
+      },
+    };
+
+    await withController(
+      baseOptions(workspace, {
+        hostServices: host,
+        devinArgs: fakeArgs("controlled-map", { outputChunks: "m", hostResponsePath }),
+      }),
+      async (controller) => {
+        const runtime = await controller.runtime.initialize();
+        const session = await runtime.createSession({ cwd: workspace });
+        const result = await runtime.prompt({ sessionId: session.id, text: "m" });
+        assert.equal(result.outputText, "m");
+
+        const responses = readHostResponses(hostResponsePath);
+        const map1 = responses.find((r) => r.id === "host-map-1");
+        const map2 = responses.find((r) => r.id === "host-map-2");
+        const map3 = responses.find((r) => r.id === "host-map-3");
+        const map4 = responses.find((r) => r.id === "host-map-4");
+        const map5 = responses.find((r) => r.id === "host-map-5");
+        const map6 = responses.find((r) => r.id === "host-map-6");
+
+        assert.equal(map1?.error?.code, -32601);
+        assert.equal(map1?.error?.message, CONTROLLED_RPC_MESSAGES.METHOD_NOT_FOUND);
+
+        for (const r of [map2, map3, map4, map5, map6]) {
+          assert.equal(r?.error?.code, -32603, `expected -32603 for ${r?.id}`);
+          assert.equal(r?.error?.message, CONTROLLED_RPC_MESSAGES.HOST_REQUEST_FAILED);
+        }
+
+        assertNoSecret(responses);
+        assert.equal(JSON.stringify(responses).includes(SECRET), false);
+      },
+    );
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
+
+test("M: stdin close is fatal and sanitized", async () => {
+  const workspace = makeWorkspace();
+  const hostResponsePath = path.join(workspace, "stdin-close.ndjson");
+  try {
+    const host = recordingHost(async () => ({ ok: true }));
+
+    await withController(
+      baseOptions(workspace, {
+        hostServices: host,
+        requestTimeoutMs: 10_000,
+        shutdownGraceMs: 500,
+        devinArgs: fakeArgs("stdin-close", { outputChunks: "s", hostResponsePath }),
+      }),
+      async (controller, events) => {
+        const runtime = await controller.runtime.initialize();
+        const session = await runtime.createSession({ cwd: workspace });
+
+        const startEvent = events.find((e) => e.type === "process_started");
+        const startPid = startEvent && "pid" in startEvent ? startEvent.pid : null;
+        assert.ok(startPid !== null);
+
+        const start = Date.now();
+        await assert.rejects(
+          () => runtime.prompt({ sessionId: session.id, text: "s" }),
+          (error: unknown) => {
+            assertNoSecret(error);
+            return error instanceof AcpTransportError && error.code === "E_ACP_CLOSED";
+          },
+        );
+        const elapsed = Date.now() - start;
+        assert.ok(elapsed < 2_000, `prompt should reject quickly, took ${elapsed}ms`);
+
+        await controller.shutdown();
+
+        const exitEvent = events.find((e) => e.type === "process_exited");
+        assert.ok(exitEvent && "signal" in exitEvent);
+        assert.equal(exitEvent.signal, "SIGTERM");
+        assert.equal(processAlive(startPid), false);
+        assert.equal(events.some((e) => e.type === "prompt_completed"), false);
+
+        const serialized = JSON.stringify(events);
+        assert.equal(serialized.includes(SECRET), false);
+        assert.equal(serialized.includes("EPIPE"), false);
+        assert.equal(serialized.includes("write EPIPE"), false);
+      },
+    );
+  } finally {
+    rmSync(workspace, { recursive: true, force: true });
+  }
+});
+
 test("L: workspaceRoot is immutable after construction", async () => {
   const workspace = makeWorkspace();
   const outside = mkdtempSync(path.join(tmpdir(), "loop-acp-out-"));
