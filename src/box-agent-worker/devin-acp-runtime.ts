@@ -15,20 +15,25 @@ import type {
   AgentSession,
   AgentSessionRuntime,
   CreateAgentSessionInput,
+  InitializedAgentSessionRuntime,
   InitializedAgentSessionRuntimeBoth,
+  InitializedAgentSessionRuntimeContinueOnly,
   LoadAgentSessionInput,
 } from "../agent-session-runtime.js";
 import {
+  AcpPeerRpcError,
   AcpTransportError,
   createAcpStdioTransport,
   type AcpStdioTransport,
 } from "./acp-stdio-transport.js";
 import {
-  classifyDevinAcpHostRequest,
+  ControlledAcpRpcError,
   denyAllDevinAcpHostServices,
   DevinAcpToolCallCache,
   mergePermissionParamsWithToolCallCache,
+  parseDevinAcpHostRequest,
   type DevinAcpHostServices,
+  type DevinAcpPermissionParams,
 } from "./devin-acp-host-services.js";
 
 const PROTOCOL_VERSION = 1 as const;
@@ -37,6 +42,8 @@ const DEFAULT_SHUTDOWN_GRACE_MS = 3_000;
 const DEFAULT_MAX_LINE_BYTES = 1_048_576;
 const DEFAULT_MAX_OUTPUT_BYTES = 1_048_576;
 const DEFAULT_CANCEL_WAIT_MS = 30_000;
+const DEFAULT_HOST_REQUEST_TIMEOUT_MS = 30_000;
+const DEFAULT_MAX_IN_FLIGHT_HOST_REQUESTS = 16;
 
 const FORBIDDEN_ENV_EXACT = new Set([
   "GH_TOKEN",
@@ -89,6 +96,28 @@ const ALLOWED_ENV_KEYS = new Set([
   "XDG_RUNTIME_DIR",
 ]);
 
+const KNOWN_UPDATE_KINDS = new Set([
+  "user_message_chunk",
+  "agent_message_chunk",
+  "agent_thought_chunk",
+  "tool_call",
+  "tool_call_update",
+  "plan",
+  "available_commands_update",
+  "current_mode_update",
+  "config_option_update",
+  "session_info_update",
+  "usage_update",
+]);
+
+const KNOWN_STOP_REASONS = new Set([
+  "end_turn",
+  "max_tokens",
+  "max_turn_requests",
+  "refusal",
+  "cancelled",
+]);
+
 export type DevinAcpRuntimeErrorCode =
   | "E_DEVIN_ACP_VALIDATION"
   | "E_DEVIN_ACP_STATE"
@@ -131,7 +160,6 @@ export type DevinAcpRuntimeEvent =
   | {
       type: "environment_scrubbed";
       allowedKeyCount: number;
-      allowedKeys: readonly string[];
     };
 
 export type DevinAcpRuntimeOptions = Readonly<{
@@ -144,6 +172,8 @@ export type DevinAcpRuntimeOptions = Readonly<{
   shutdownGraceMs?: number;
   maxProtocolLineBytes?: number;
   maxOutputBytes?: number;
+  hostRequestTimeoutMs?: number;
+  maxInFlightHostRequests?: number;
   eventSink?: (event: DevinAcpRuntimeEvent) => void;
 }>;
 
@@ -170,6 +200,10 @@ type ActivePrompt = {
   promptPromise: Promise<AgentPromptResult>;
 };
 
+type NegotiatedCaps =
+  | { continueSession: true; loadSession: true }
+  | { continueSession: true; loadSession: false };
+
 function isPlainObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -186,14 +220,35 @@ function assertFinitePositiveInt(
   fallback: number,
 ): number {
   if (value === undefined) return fallback;
-  if (!Number.isFinite(value) || !Number.isInteger(value) || value <= 0) {
-    throw new DevinAcpRuntimeError("E_DEVIN_ACP_VALIDATION", `${label} must be a positive integer`);
+  if (!Number.isSafeInteger(value) || value <= 0) {
+    throw new DevinAcpRuntimeError(
+      "E_DEVIN_ACP_VALIDATION",
+      `${label} must be a positive safe integer`,
+    );
   }
   return value;
 }
 
 function digestSessionId(sessionId: string): string {
-  return createHash("sha256").update(sessionId).digest("hex");
+  return createHash("sha256").update(sessionId).digest("hex").slice(0, 16);
+}
+
+function sanitizeAgentMeta(value: unknown): string | undefined {
+  if (typeof value !== "string") return undefined;
+  if (value.length === 0) return undefined;
+  // Fail-closed: lowercase ASCII token only — peer-controlled mixed-case/prompt text omitted.
+  if (!/^[a-z0-9][a-z0-9._+-]{0,127}$/.test(value)) return undefined;
+  return value;
+}
+
+function mapUpdateKind(raw: unknown): string {
+  if (typeof raw !== "string") return "unknown";
+  return KNOWN_UPDATE_KINDS.has(raw) ? raw : "unknown";
+}
+
+function mapStopReasonForEvent(raw: unknown): string {
+  if (typeof raw !== "string") return "unknown";
+  return KNOWN_STOP_REASONS.has(raw) ? raw : "unknown";
 }
 
 function extractTextContent(content: unknown): string {
@@ -211,18 +266,11 @@ function extractTextContent(content: unknown): string {
 }
 
 function isAssistantMessageUpdate(update: Record<string, unknown>): boolean {
-  const kind = update.sessionUpdate;
-  return kind === "agent_message_chunk" || kind === "agent_message";
+  return update.sessionUpdate === "agent_message_chunk";
 }
 
 function isThoughtUpdate(update: Record<string, unknown>): boolean {
-  const kind = update.sessionUpdate;
-  return (
-    kind === "agent_thought_chunk" ||
-    kind === "agent_thought" ||
-    kind === "thought_chunk" ||
-    kind === "reasoning"
-  );
+  return update.sessionUpdate === "agent_thought_chunk";
 }
 
 export function scrubDevinAcpChildEnv(parentEnv: Readonly<NodeJS.ProcessEnv>): NodeJS.ProcessEnv {
@@ -230,9 +278,7 @@ export function scrubDevinAcpChildEnv(parentEnv: Readonly<NodeJS.ProcessEnv>): N
   for (const key of Object.keys(parentEnv)) {
     if (FORBIDDEN_ENV_EXACT.has(key)) continue;
     if (FORBIDDEN_ENV_PREFIXES.some((prefix) => key.startsWith(prefix))) continue;
-    if (!ALLOWED_ENV_KEYS.has(key) && !key.startsWith("LC_") && !key.startsWith("XDG_")) {
-      continue;
-    }
+    if (!ALLOWED_ENV_KEYS.has(key)) continue;
     const value = parentEnv[key];
     if (value !== undefined) env[key] = value;
   }
@@ -264,26 +310,23 @@ function resolveInsideWorkspace(workspaceRoot: string, candidate: string): strin
       const parentReal = realpathSync(cur);
       real = path.join(parentReal, ...missing);
     }
-  } catch (error) {
-    throw new DevinAcpRuntimeError(
-      "E_DEVIN_ACP_VALIDATION",
-      `path resolve failed: ${error instanceof Error ? error.message : "unknown"}`,
-    );
+  } catch {
+    throw new DevinAcpRuntimeError("E_DEVIN_ACP_VALIDATION", "path resolve failed");
   }
 
   const rootPrefix = rootReal.endsWith(path.sep) ? rootReal : `${rootReal}${path.sep}`;
   if (real !== rootReal && !real.startsWith(rootPrefix)) {
     throw new DevinAcpRuntimeError("E_DEVIN_ACP_VALIDATION", "path escapes workspace root");
   }
-  return abs;
+  return real;
 }
 
-class MethodNotFoundError extends Error {
-  readonly code = -32601;
-  constructor(method: string) {
-    super(`Method not found: ${method}`);
-    this.name = "MethodNotFoundError";
+function mapTransportOrPeerError(error: unknown): Error {
+  if (error instanceof AcpPeerRpcError && error.code === -32000) {
+    return new DevinAcpRuntimeError("E_DEVIN_ACP_AUTH", "Stored Devin authentication is required");
   }
+  if (error instanceof Error) return error;
+  return new DevinAcpRuntimeError("E_DEVIN_ACP_PROTOCOL", "prompt failed");
 }
 
 class DevinAcpRuntimeImpl implements AgentSessionRuntime {
@@ -296,6 +339,8 @@ class DevinAcpRuntimeImpl implements AgentSessionRuntime {
   readonly #shutdownGraceMs: number;
   readonly #maxLineBytes: number;
   readonly #maxOutputBytes: number;
+  readonly #hostRequestTimeoutMs: number;
+  readonly #maxInFlightHostRequests: number;
   readonly #eventSink: ((event: DevinAcpRuntimeEvent) => void) | undefined;
   readonly #sessions = new Map<string, LiveSession>();
   readonly #toolCallCache = new DevinAcpToolCallCache();
@@ -304,9 +349,11 @@ class DevinAcpRuntimeImpl implements AgentSessionRuntime {
   #initialized = false;
   #shutDown = false;
   #processExited = false;
-  #continuationDisabled = false;
+  #requiresRestart = false;
+  #exitObserved = false;
   #activePrompt: ActivePrompt | null = null;
   #info: InitializedAgentSessionRuntimeBoth["info"] | null = null;
+  #negotiatedCaps: NegotiatedCaps | null = null;
 
   constructor(options: DevinAcpRuntimeOptions) {
     assertSafeString("workspaceRoot", options.workspaceRoot);
@@ -343,21 +390,31 @@ class DevinAcpRuntimeImpl implements AgentSessionRuntime {
       options.maxOutputBytes,
       DEFAULT_MAX_OUTPUT_BYTES,
     );
+    this.#hostRequestTimeoutMs = assertFinitePositiveInt(
+      "hostRequestTimeoutMs",
+      options.hostRequestTimeoutMs,
+      DEFAULT_HOST_REQUEST_TIMEOUT_MS,
+    );
+    this.#maxInFlightHostRequests = assertFinitePositiveInt(
+      "maxInFlightHostRequests",
+      options.maxInFlightHostRequests,
+      DEFAULT_MAX_IN_FLIGHT_HOST_REQUESTS,
+    );
     this.#eventSink = options.eventSink;
     this.#childEnv = scrubDevinAcpChildEnv(options.parentEnv);
     this.#emit({
       type: "environment_scrubbed",
       allowedKeyCount: Object.keys(this.#childEnv).length,
-      allowedKeys: Object.keys(this.#childEnv).sort(),
     });
   }
 
-  async initialize(): Promise<InitializedAgentSessionRuntimeBoth> {
+  async initialize(): Promise<InitializedAgentSessionRuntime> {
     this.#assertNotShutDown();
     if (this.#initialized) {
       throw new DevinAcpRuntimeError("E_DEVIN_ACP_STATE", "runtime already initialized");
     }
 
+    const caps = this.#hostServices.capabilities;
     const transport = createAcpStdioTransport({
       command: this.#command,
       args: this.#args,
@@ -366,10 +423,15 @@ class DevinAcpRuntimeImpl implements AgentSessionRuntime {
       requestTimeoutMs: this.#requestTimeoutMs,
       shutdownGraceMs: this.#shutdownGraceMs,
       maxLineBytes: this.#maxLineBytes,
+      hostRequestTimeoutMs: this.#hostRequestTimeoutMs,
+      maxInFlightHostRequests: this.#maxInFlightHostRequests,
       requestHandler: (method, params) => this.#onHostRequest(method, params),
       notificationHandler: (method, params) => this.#onNotification(method, params),
       stderrHandler: () => {
         /* diagnostics only; never protocol, never logged into events */
+      },
+      onProcessExit: (info) => {
+        this.#onProcessExit(info);
       },
     });
 
@@ -384,8 +446,11 @@ class DevinAcpRuntimeImpl implements AgentSessionRuntime {
       initResult = await transport.request("initialize", {
         protocolVersion: PROTOCOL_VERSION,
         clientCapabilities: {
-          fs: { readTextFile: true, writeTextFile: false },
-          terminal: true,
+          fs: {
+            readTextFile: caps.readTextFile === true,
+            writeTextFile: caps.writeTextFile === true,
+          },
+          terminal: caps.terminal === true,
         },
         clientInfo: {
           name: "loop-devin-acp",
@@ -395,7 +460,7 @@ class DevinAcpRuntimeImpl implements AgentSessionRuntime {
       });
     } catch (error) {
       await this.shutdown().catch(() => undefined);
-      throw error;
+      throw mapTransportOrPeerError(error);
     }
 
     if (!isPlainObject(initResult) || initResult.protocolVersion !== PROTOCOL_VERSION) {
@@ -407,11 +472,16 @@ class DevinAcpRuntimeImpl implements AgentSessionRuntime {
     }
 
     const agentInfo = isPlainObject(initResult.agentInfo) ? initResult.agentInfo : undefined;
-    const agentName = agentInfo && typeof agentInfo.name === "string" ? agentInfo.name : undefined;
-    const agentVersion =
-      agentInfo && typeof agentInfo.version === "string" ? agentInfo.version : undefined;
+    const agentName = sanitizeAgentMeta(agentInfo?.name);
+    const agentVersion = sanitizeAgentMeta(agentInfo?.version);
 
-    this.#assertStoredAuthUsable(initResult);
+    const agentCapabilities = isPlainObject(initResult.agentCapabilities)
+      ? initResult.agentCapabilities
+      : {};
+    const loadSession = agentCapabilities.loadSession === true;
+    this.#negotiatedCaps = loadSession
+      ? { continueSession: true, loadSession: true }
+      : { continueSession: true, loadSession: false };
 
     this.#info = {
       protocolVersion: PROTOCOL_VERSION,
@@ -419,11 +489,10 @@ class DevinAcpRuntimeImpl implements AgentSessionRuntime {
       ...(agentVersion !== undefined ? { agentVersion } : {}),
     };
     this.#initialized = true;
+    // Events omit peer agentName/agentVersion — info may carry sanitized values only.
     this.#emit({
       type: "initialized",
       protocolVersion: PROTOCOL_VERSION,
-      ...(agentName !== undefined ? { agentName } : {}),
-      ...(agentVersion !== undefined ? { agentVersion } : {}),
     });
 
     return this.#initializedRuntime();
@@ -458,35 +527,59 @@ class DevinAcpRuntimeImpl implements AgentSessionRuntime {
 
     if (transport) {
       await transport.shutdown();
+      if (!this.#exitObserved) {
+        const info = transport.lastExit ?? { exitCode: null, signal: null };
+        this.#onProcessExit(info);
+      }
     }
     this.#transport = null;
     this.#processExited = true;
-    this.#emit({ type: "process_exited", exitCode: null, signal: null });
   }
 
-  #initializedRuntime(): InitializedAgentSessionRuntimeBoth {
+  #initializedRuntime(): InitializedAgentSessionRuntime {
     const info = this.#info;
-    if (!info) {
+    const caps = this.#negotiatedCaps;
+    if (!info || !caps) {
       throw new DevinAcpRuntimeError("E_DEVIN_ACP_STATE", "runtime is not initialized");
     }
-    return {
+
+    if (caps.loadSession) {
+      const both: InitializedAgentSessionRuntimeBoth = {
+        info,
+        capabilities: { continueSession: true, loadSession: true },
+        createSession: (input) => this.#createSession(input),
+        prompt: (input) => this.#prompt(input, { isContinuation: false }),
+        continueSession: (input) => this.#prompt(input, { isContinuation: true }),
+        loadSession: (input) => this.#loadSession(input),
+        cancel: (input) => this.#cancel(input),
+      };
+      return both;
+    }
+
+    const continueOnly: InitializedAgentSessionRuntimeContinueOnly = {
       info,
-      capabilities: { continueSession: true, loadSession: true },
+      capabilities: { continueSession: true, loadSession: false },
       createSession: (input) => this.#createSession(input),
       prompt: (input) => this.#prompt(input, { isContinuation: false }),
       continueSession: (input) => this.#prompt(input, { isContinuation: true }),
-      loadSession: (input) => this.#loadSession(input),
       cancel: (input) => this.#cancel(input),
     };
+    return continueOnly;
   }
 
   async #createSession(input: CreateAgentSessionInput): Promise<AgentSession> {
     this.#assertReady();
+    this.#assertNotRequiresRestart();
     const cwd = resolveInsideWorkspace(this.#workspaceRoot, input.cwd);
-    const result = await this.#transport!.request("session/new", {
-      cwd,
-      mcpServers: [],
-    });
+    let result: unknown;
+    try {
+      result = await this.#transport!.request("session/new", {
+        cwd,
+        mcpServers: [],
+      });
+    } catch (error) {
+      throw mapTransportOrPeerError(error);
+    }
     if (!isPlainObject(result) || typeof result.sessionId !== "string" || !result.sessionId) {
       throw new DevinAcpRuntimeError(
         "E_DEVIN_ACP_SESSION",
@@ -501,13 +594,22 @@ class DevinAcpRuntimeImpl implements AgentSessionRuntime {
 
   async #loadSession(input: LoadAgentSessionInput): Promise<AgentSession> {
     this.#assertReady();
+    this.#assertNotRequiresRestart();
+    if (!this.#negotiatedCaps?.loadSession) {
+      throw new DevinAcpRuntimeError("E_DEVIN_ACP_STATE", "loadSession was not negotiated");
+    }
     assertSafeString("sessionId", input.sessionId);
     const cwd = resolveInsideWorkspace(this.#workspaceRoot, input.cwd);
-    const result = await this.#transport!.request("session/load", {
-      sessionId: input.sessionId,
-      cwd,
-      mcpServers: [],
-    });
+    let result: unknown;
+    try {
+      result = await this.#transport!.request("session/load", {
+        sessionId: input.sessionId,
+        cwd,
+        mcpServers: [],
+      });
+    } catch (error) {
+      throw mapTransportOrPeerError(error);
+    }
     const returnedId =
       isPlainObject(result) && typeof result.sessionId === "string"
         ? result.sessionId
@@ -528,6 +630,7 @@ class DevinAcpRuntimeImpl implements AgentSessionRuntime {
     options: { isContinuation: boolean },
   ): Promise<AgentPromptResult> {
     this.#assertReady();
+    this.#assertNotRequiresRestart();
     assertSafeString("sessionId", input.sessionId);
     assertSafeString("text", input.text);
     if (Buffer.byteLength(input.text, "utf8") > this.#maxOutputBytes) {
@@ -541,7 +644,7 @@ class DevinAcpRuntimeImpl implements AgentSessionRuntime {
     if (this.#activePrompt) {
       throw new DevinAcpRuntimeError("E_DEVIN_ACP_STATE", "concurrent prompt rejected");
     }
-    if (this.#continuationDisabled || this.#processExited) {
+    if (this.#processExited) {
       throw new DevinAcpRuntimeError(
         "E_DEVIN_ACP_STATE",
         "runtime process is no longer usable for prompts",
@@ -552,12 +655,6 @@ class DevinAcpRuntimeImpl implements AgentSessionRuntime {
         throw new DevinAcpRuntimeError(
           "E_DEVIN_ACP_STATE",
           "continuation requires a prior completed prompt",
-        );
-      }
-      if (session.lastStopReason === "cancelled") {
-        throw new DevinAcpRuntimeError(
-          "E_DEVIN_ACP_STATE",
-          "continuation after cancelled prompt is unsupported",
         );
       }
     }
@@ -572,7 +669,6 @@ class DevinAcpRuntimeImpl implements AgentSessionRuntime {
     const promptPromise = new Promise<AgentPromptResult>((resolve, reject) => {
       settle = { resolve, reject };
     });
-    // Absorb so settle.reject during the throw path is not an unhandled rejection.
     void promptPromise.then(
       () => undefined,
       () => undefined,
@@ -589,10 +685,15 @@ class DevinAcpRuntimeImpl implements AgentSessionRuntime {
     this.#activePrompt = active;
 
     try {
-      const result = await this.#transport!.request("session/prompt", {
-        sessionId: input.sessionId,
-        prompt: [{ type: "text", text: input.text }],
-      });
+      let result: unknown;
+      try {
+        result = await this.#transport!.request("session/prompt", {
+          sessionId: input.sessionId,
+          prompt: [{ type: "text", text: input.text }],
+        });
+      } catch (error) {
+        throw mapTransportOrPeerError(error);
+      }
 
       if (active.outputLimitError) {
         throw active.outputLimitError;
@@ -611,11 +712,14 @@ class DevinAcpRuntimeImpl implements AgentSessionRuntime {
         outputText: active.outputText,
       };
       session.lastStopReason = result.stopReason;
+      if (result.stopReason === "cancelled") {
+        this.#requiresRestart = true;
+      }
       this.#toolCallCache.clear();
       this.#emit({
         type: "prompt_completed",
         sessionIdDigest: digest,
-        stopReason: result.stopReason,
+        stopReason: mapStopReasonForEvent(result.stopReason),
         outputBytes: active.outputBytes,
       });
       settle.resolve(promptResult);
@@ -623,12 +727,9 @@ class DevinAcpRuntimeImpl implements AgentSessionRuntime {
     } catch (error) {
       this.#toolCallCache.clear();
       if (this.#processExited) {
-        this.#continuationDisabled = true;
+        this.#requiresRestart = true;
       }
-      const wrapped =
-        error instanceof Error
-          ? error
-          : new DevinAcpRuntimeError("E_DEVIN_ACP_PROTOCOL", "prompt failed");
+      const wrapped = mapTransportOrPeerError(error);
       if (active.settle) settle.reject(wrapped);
       throw wrapped;
     } finally {
@@ -647,28 +748,41 @@ class DevinAcpRuntimeImpl implements AgentSessionRuntime {
   }
 
   async #onHostRequest(method: string, params: unknown): Promise<unknown> {
-    const classified = classifyDevinAcpHostRequest(method, params);
-    if (!classified) {
-      throw new MethodNotFoundError(method);
+    let request;
+    try {
+      request = parseDevinAcpHostRequest(method, params);
+    } catch (error) {
+      if (error instanceof ControlledAcpRpcError) throw error;
+      throw new ControlledAcpRpcError(-32602, "Invalid params");
     }
 
-    let request = classified;
-    if (classified.kind === "permission") {
-      const merged = mergePermissionParamsWithToolCallCache(params, this.#toolCallCache);
-      request = { ...classified, params: merged };
+    if (request.kind === "permission") {
+      const activeSession = this.#activePrompt?.sessionId;
+      if (!activeSession || request.params.sessionId !== activeSession) {
+        throw new ControlledAcpRpcError(-32602, "Invalid params");
+      }
+      if (!this.#sessions.has(request.params.sessionId)) {
+        throw new ControlledAcpRpcError(-32602, "Invalid params");
+      }
+      const merged: DevinAcpPermissionParams = mergePermissionParamsWithToolCallCache(
+        request.params,
+        this.#toolCallCache,
+      );
+      request = { ...request, params: merged };
+    } else if ("sessionId" in request.params) {
+      if (!this.#sessions.has(request.params.sessionId)) {
+        throw new ControlledAcpRpcError(-32602, "Invalid params");
+      }
     }
 
     try {
       const result = await this.#hostServices.handle(request);
-      this.#emit({ type: "host_request", requestKind: classified.kind, outcome: "handled" });
+      this.#emit({ type: "host_request", requestKind: request.kind, outcome: "handled" });
       return result;
     } catch (error) {
-      this.#emit({ type: "host_request", requestKind: classified.kind, outcome: "rejected" });
-      if (error instanceof MethodNotFoundError) throw error;
-      if (error instanceof Error && "code" in error) throw error;
-      const wrapped = new Error("host request denied");
-      (wrapped as Error & { code: number }).code = -32000;
-      throw wrapped;
+      this.#emit({ type: "host_request", requestKind: request.kind, outcome: "rejected" });
+      if (error instanceof ControlledAcpRpcError) throw error;
+      throw new ControlledAcpRpcError(-32603, "Host request failed");
     }
   }
 
@@ -679,14 +793,9 @@ class DevinAcpRuntimeImpl implements AgentSessionRuntime {
     const update = isPlainObject(params.update) ? params.update : null;
     if (!update) return;
 
-    const updateKind =
-      typeof update.sessionUpdate === "string"
-        ? update.sessionUpdate
-        : typeof update.type === "string"
-          ? update.type
-          : "unknown";
+    const updateKind = mapUpdateKind(update.sessionUpdate);
 
-    if (sessionId) {
+    if (sessionId && this.#sessions.has(sessionId)) {
       this.#emit({
         type: "session_update",
         sessionIdDigest: digestSessionId(sessionId),
@@ -702,9 +811,14 @@ class DevinAcpRuntimeImpl implements AgentSessionRuntime {
           : null;
     if (
       toolCallId &&
+      sessionId &&
+      this.#sessions.has(sessionId) &&
       (update.sessionUpdate === "tool_call" || update.sessionUpdate === "tool_call_update")
     ) {
-      this.#toolCallCache.merge(toolCallId, update);
+      const active = this.#activePrompt;
+      if (!active || active.sessionId === sessionId) {
+        this.#toolCallCache.merge(sessionId, toolCallId, update);
+      }
     }
 
     if (!this.#activePrompt || !sessionId || this.#activePrompt.sessionId !== sessionId) {
@@ -728,36 +842,25 @@ class DevinAcpRuntimeImpl implements AgentSessionRuntime {
     this.#activePrompt.outputBytes = nextBytes;
   }
 
-  #assertStoredAuthUsable(initResult: Record<string, unknown>): void {
-    const methods = Array.isArray(initResult.authMethods) ? initResult.authMethods : [];
-    if (methods.length === 0) return;
-
-    const methodId = (method: unknown): string => {
-      if (!isPlainObject(method)) return "";
-      if (typeof method.id === "string") return method.id;
-      if (typeof method.method === "string") return method.method;
-      if (typeof method.name === "string") return method.name;
-      return "";
-    };
-
-    const browserOnly = methods.every((method) => {
-      const id = methodId(method);
-      return id.includes("browser") || id.includes("pkce") || id.includes("device");
+  #onProcessExit(info: { exitCode: number | null; signal: string | null }): void {
+    if (this.#exitObserved) return;
+    this.#exitObserved = true;
+    this.#processExited = true;
+    this.#requiresRestart = true;
+    this.#sessions.clear();
+    this.#toolCallCache.clear();
+    this.#emit({
+      type: "process_exited",
+      exitCode: info.exitCode,
+      signal: info.signal,
     });
-    if (browserOnly) return;
+  }
 
-    // Non-browser auth methods present without an interactive path in this PR.
-    // Phase 0 used stored credentials when browser-only; fail closed otherwise.
-    const hasNonInteractive = methods.some((method) => {
-      const id = methodId(method);
-      return (
-        id.length > 0 && !id.includes("browser") && !id.includes("pkce") && !id.includes("device")
-      );
-    });
-    if (hasNonInteractive && !this.#childEnv.HOME && !this.#childEnv.XDG_DATA_HOME) {
+  #assertNotRequiresRestart(): void {
+    if (this.#requiresRestart) {
       throw new DevinAcpRuntimeError(
-        "E_DEVIN_ACP_AUTH",
-        "stored Devin authentication is required but HOME/XDG auth directories are unavailable",
+        "E_DEVIN_ACP_STATE",
+        "runtime requires process restart after cancellation or exit",
       );
     }
   }
@@ -805,5 +908,4 @@ export function createDevinAcpRuntimeController(
   };
 }
 
-// Re-export transport error for tests that assert framing codes.
-export { AcpTransportError };
+export { AcpTransportError, AcpPeerRpcError };

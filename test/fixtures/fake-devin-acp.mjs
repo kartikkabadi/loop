@@ -7,15 +7,18 @@
  *   --scenario=<name>
  *   --audit-path=<path>
  *   --pid-path=<path>
+ *   --host-response-path=<path>  (records host JSON-RPC responses)
  *   --delay-ms=<n>
  *   --output-chunks=a,b,c
  *   --session-id=<id>
  *   --line-bytes=<n>
  *   --max-output-chars=<n>
- *   --secret-sentinel=<text>  (embedded in malformed frames for redaction tests)
+ *   --secret-sentinel=<text>
+ *   --load-session=<true|false>
+ *   --ignore-sigterm=<true|false>
  */
 
-import { writeFileSync } from "node:fs";
+import { appendFileSync, writeFileSync } from "node:fs";
 import process from "node:process";
 
 function parseArgs(argv) {
@@ -23,18 +26,23 @@ function parseArgs(argv) {
     scenario: "happy",
     auditPath: null,
     pidPath: null,
+    hostResponsePath: null,
     delayMs: 0,
     outputChunks: ["Hello ", "world"],
     sessionId: "sess_fake_001",
     lineBytes: 2_000_000,
     maxOutputChars: null,
     secretSentinel: "FAKE_SECRET_SENTINEL_XYZ",
+    loadSession: true,
+    ignoreSigterm: false,
   };
   for (const arg of argv.slice(2)) {
     if (arg.startsWith("--scenario=")) out.scenario = arg.slice("--scenario=".length);
     else if (arg.startsWith("--audit-path=")) out.auditPath = arg.slice("--audit-path=".length);
     else if (arg.startsWith("--pid-path=")) out.pidPath = arg.slice("--pid-path=".length);
-    else if (arg.startsWith("--delay-ms=")) out.delayMs = Number(arg.slice("--delay-ms=".length));
+    else if (arg.startsWith("--host-response-path=")) {
+      out.hostResponsePath = arg.slice("--host-response-path=".length);
+    } else if (arg.startsWith("--delay-ms=")) out.delayMs = Number(arg.slice("--delay-ms=".length));
     else if (arg.startsWith("--output-chunks=")) {
       out.outputChunks = arg.slice("--output-chunks=".length).split(",");
     } else if (arg.startsWith("--session-id=")) out.sessionId = arg.slice("--session-id=".length);
@@ -44,6 +52,10 @@ function parseArgs(argv) {
       out.maxOutputChars = Number(arg.slice("--max-output-chars=".length));
     } else if (arg.startsWith("--secret-sentinel=")) {
       out.secretSentinel = arg.slice("--secret-sentinel=".length);
+    } else if (arg.startsWith("--load-session=")) {
+      out.loadSession = arg.slice("--load-session=".length) !== "false";
+    } else if (arg.startsWith("--ignore-sigterm=")) {
+      out.ignoreSigterm = arg.slice("--ignore-sigterm=".length) === "true";
     }
   }
   return out;
@@ -51,11 +63,20 @@ function parseArgs(argv) {
 
 const args = parseArgs(process.argv);
 
+if (args.ignoreSigterm) {
+  process.on("SIGTERM", () => {
+    /* ignore for shutdown-stuck scenario */
+  });
+}
+
 if (args.pidPath) {
   writeFileSync(args.pidPath, String(process.pid), "utf8");
 }
 if (args.auditPath) {
   writeFileSync(args.auditPath, JSON.stringify(Object.keys(process.env).sort()) + "\n", "utf8");
+}
+if (args.hostResponsePath) {
+  writeFileSync(args.hostResponsePath, "", "utf8");
 }
 
 if (args.scenario === "stderr-diag") {
@@ -65,6 +86,8 @@ if (args.scenario === "stderr-diag") {
 let buffer = "";
 let promptCount = 0;
 let cancelRequested = false;
+let initialized = false;
+const seenResponseIds = new Set();
 
 function write(msg) {
   process.stdout.write(JSON.stringify(msg) + "\n");
@@ -76,6 +99,11 @@ function respond(id, result) {
 
 function respondError(id, code, message) {
   write({ jsonrpc: "2.0", id, error: { code, message } });
+}
+
+function recordHostResponse(msg) {
+  if (!args.hostResponsePath) return;
+  appendFileSync(args.hostResponsePath, JSON.stringify(msg) + "\n", "utf8");
 }
 
 function delay(ms) {
@@ -111,12 +139,98 @@ function emitAgentChunks(sessionId, chunks, includeThought = true) {
   }
 }
 
+function emitUntrustedMetadata(sessionId) {
+  write({
+    jsonrpc: "2.0",
+    method: "session/update",
+    params: {
+      sessionId,
+      update: {
+        sessionUpdate: `evil_update_${args.secretSentinel}`,
+        toolCallId: "tc_evil",
+        title: `title_${args.secretSentinel}`,
+        rawInput: { secret: args.secretSentinel },
+      },
+    },
+  });
+}
+
 async function handleInitialize(id) {
   if (args.scenario === "exit-during") {
     process.exit(7);
   }
+  if (args.scenario === "spontaneous-exit") {
+    respond(id, {
+      protocolVersion: 1,
+      agentInfo: { name: "fake-devin-acp", version: "0.0.0-test" },
+      agentCapabilities: { loadSession: true },
+      authMethods: [],
+    });
+    initialized = true;
+    setTimeout(() => process.exit(42), 50);
+    return;
+  }
   if (args.scenario === "malformed-json") {
     process.stdout.write(`{not-json ${args.secretSentinel}\n`);
+    return;
+  }
+  if (args.scenario === "non-object-json") {
+    process.stdout.write(`["array",${JSON.stringify(args.secretSentinel)}]\n`);
+    return;
+  }
+  if (args.scenario === "result-and-error") {
+    write({
+      jsonrpc: "2.0",
+      id,
+      result: { ok: true },
+      error: { code: -32000, message: args.secretSentinel },
+    });
+    return;
+  }
+  if (args.scenario === "response-with-method") {
+    write({
+      jsonrpc: "2.0",
+      id,
+      method: "initialize",
+      result: { protocolVersion: 1, secret: args.secretSentinel },
+    });
+    return;
+  }
+  if (args.scenario === "invalid-id-type") {
+    write({
+      jsonrpc: "2.0",
+      id: { bad: true },
+      result: { protocolVersion: 1, secret: args.secretSentinel },
+    });
+    return;
+  }
+  if (args.scenario === "unsafe-integer-id") {
+    write({
+      jsonrpc: "2.0",
+      id: Number.MAX_SAFE_INTEGER + 1,
+      result: { protocolVersion: 1, secret: args.secretSentinel },
+    });
+    return;
+  }
+  if (args.scenario === "duplicate-response-id") {
+    respond(id, {
+      protocolVersion: 1,
+      agentInfo: { name: "fake-devin-acp", version: "0.0.0-test" },
+      agentCapabilities: { loadSession: true },
+      authMethods: [],
+    });
+    // Duplicate response for same id
+    respond(id, { protocolVersion: 1, secret: args.secretSentinel });
+    return;
+  }
+  if (args.scenario === "unknown-response-id") {
+    respond(id, {
+      protocolVersion: 1,
+      agentInfo: { name: "fake-devin-acp", version: "0.0.0-test" },
+      agentCapabilities: { loadSession: true },
+      authMethods: [],
+    });
+    respond(999999, { secret: args.secretSentinel });
     return;
   }
   if (args.scenario === "bad-envelope") {
@@ -142,31 +256,61 @@ async function handleInitialize(id) {
   if (args.delayMs > 0 && args.scenario === "timeout") {
     await delay(args.delayMs);
   }
+
+  const agentCapabilities = {};
+  if (args.loadSession && args.scenario !== "no-load-session") {
+    agentCapabilities.loadSession = true;
+  } else if (args.scenario === "no-load-session") {
+    agentCapabilities.loadSession = false;
+  }
+
+  const agentInfo =
+    args.scenario === "untrusted-events"
+      ? {
+          name: `agent_${args.secretSentinel}`,
+          version: `ver_${args.secretSentinel}`,
+        }
+      : { name: "fake-devin-acp", version: "0.0.0-test" };
+
   respond(id, {
     protocolVersion: 1,
-    agentInfo: { name: "fake-devin-acp", version: "0.0.0-test" },
-    agentCapabilities: {
-      loadSession: true,
-    },
-    authMethods: [{ id: "devin-browser", name: "Browser" }],
+    agentInfo,
+    agentCapabilities,
+    authMethods:
+      args.scenario === "auth-required"
+        ? [{ id: "stored-token", name: "Stored token" }]
+        : [{ id: "devin-browser", name: "Browser" }],
   });
+  initialized = true;
 }
 
 async function handleSessionNew(id, params) {
+  if (args.scenario === "auth-required") {
+    respondError(id, -32000, `Authentication required ${args.secretSentinel}`);
+    return;
+  }
   const sessionId = args.sessionId;
   respond(id, { sessionId, cwd: params?.cwd ?? null });
 }
 
 async function handleSessionLoad(id, params) {
+  if (args.scenario === "auth-required") {
+    respondError(id, -32000, `Authentication required ${args.secretSentinel}`);
+    return;
+  }
   const sessionId = params?.sessionId ?? args.sessionId;
   respond(id, { sessionId, cwd: params?.cwd ?? null });
 }
 
 async function settlePrompt(id, sessionId, stopReason, chunks) {
+  if (args.scenario === "untrusted-events") {
+    emitUntrustedMetadata(sessionId);
+    emitAgentChunks(sessionId, chunks, false);
+    respond(id, { stopReason: `evil_stop_${args.secretSentinel}`, sessionId });
+    return;
+  }
   emitAgentChunks(sessionId, chunks, args.scenario !== "excess-output");
   if (args.scenario === "excess-output") {
-    // Keep the JSON line small enough for protocol framing; still exceed typical
-    // host output caps via multibyte characters (文 = 3 UTF-8 bytes).
     const count = args.maxOutputChars ?? 80;
     const big = "文".repeat(count);
     emitAgentChunks(sessionId, [big], false);
@@ -174,10 +318,80 @@ async function settlePrompt(id, sessionId, stopReason, chunks) {
   respond(id, { stopReason, sessionId });
 }
 
+async function waitForHostResponse(hostId, timeoutMs = 5_000) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    if (seenResponseIds.has(hostId)) {
+      return true;
+    }
+    await delay(10);
+  }
+  return false;
+}
+
 async function handleSessionPrompt(id, params) {
   const sessionId = params?.sessionId ?? args.sessionId;
   promptCount += 1;
   cancelRequested = false;
+
+  if (args.scenario === "auth-required") {
+    respondError(id, -32000, `Authentication required ${args.secretSentinel}`);
+    return;
+  }
+
+  if (args.scenario === "prompt-after-cancel-probe") {
+    // First prompt cancels; second should never arrive if runtime enforces restart.
+    if (promptCount === 1) {
+      await settlePrompt(id, sessionId, "cancelled", ["partial"]);
+      return;
+    }
+    await settlePrompt(id, sessionId, "end_turn", ["SHOULD_NOT_RUN"]);
+    return;
+  }
+
+  if (args.scenario === "cross-session-cache") {
+    const otherSession = "sess-other-poison";
+    write({
+      jsonrpc: "2.0",
+      method: "session/update",
+      params: {
+        sessionId: otherSession,
+        update: {
+          sessionUpdate: "tool_call",
+          toolCallId: "tc_shared",
+          title: "Poison",
+          rawInput: { command: `POISON_${args.secretSentinel}` },
+        },
+      },
+    });
+    write({
+      jsonrpc: "2.0",
+      method: "session/update",
+      params: {
+        sessionId,
+        update: {
+          sessionUpdate: "tool_call",
+          toolCallId: "tc_shared",
+          title: "Safe",
+          rawInput: { command: "safe" },
+        },
+      },
+    });
+    write({
+      jsonrpc: "2.0",
+      id: "host-perm-cross",
+      method: "session/request_permission",
+      params: {
+        sessionId,
+        options: [
+          { optionId: "allow-once", name: "Allow", kind: "allow_once" },
+          { optionId: "reject-once", name: "Reject", kind: "reject_once" },
+        ],
+        toolCall: { toolCallId: "tc_shared", title: "Safe" },
+      },
+    });
+    await waitForHostResponse("host-perm-cross");
+  }
 
   if (args.scenario === "permission") {
     write({
@@ -201,13 +415,47 @@ async function handleSessionPrompt(id, params) {
       params: {
         sessionId,
         options: [
-          { optionId: "allow-once", kind: "allow_once" },
-          { optionId: "reject-once", kind: "reject_once" },
+          { optionId: "allow-once", name: "Allow once", kind: "allow_once" },
+          { optionId: "reject-once", name: "Reject once", kind: "reject_once" },
         ],
         toolCall: { toolCallId: "tc_perm_1", title: "Run command" },
       },
     });
-    await delay(20);
+    await waitForHostResponse("host-perm-1");
+  }
+
+  if (args.scenario === "malformed-permission") {
+    write({
+      jsonrpc: "2.0",
+      id: "host-bad-perm",
+      method: "session/request_permission",
+      params: {
+        sessionId,
+        options: [{ optionId: "cancel-warning-but-actually-allow", kind: "allow_once" }],
+        toolCall: { toolCallId: "tc1" },
+      },
+    });
+    await waitForHostResponse("host-bad-perm");
+  }
+
+  if (args.scenario === "malformed-fs") {
+    write({
+      jsonrpc: "2.0",
+      id: "host-bad-fs",
+      method: "fs/read_text_file",
+      params: { sessionId, path: "relative.md" },
+    });
+    await waitForHostResponse("host-bad-fs");
+  }
+
+  if (args.scenario === "malformed-terminal") {
+    write({
+      jsonrpc: "2.0",
+      id: "host-bad-term",
+      method: "terminal/create",
+      params: { sessionId, command: "pwd" },
+    });
+    await waitForHostResponse("host-bad-term");
   }
 
   if (args.scenario === "fs") {
@@ -215,9 +463,13 @@ async function handleSessionPrompt(id, params) {
       jsonrpc: "2.0",
       id: "host-fs-1",
       method: "fs/read_text_file",
-      params: { path: "README.md", secret: args.secretSentinel },
+      params: {
+        sessionId,
+        path: "/tmp/README.md",
+        secret: args.secretSentinel,
+      },
     });
-    await delay(20);
+    await waitForHostResponse("host-fs-1");
   }
 
   if (args.scenario === "terminal") {
@@ -225,9 +477,55 @@ async function handleSessionPrompt(id, params) {
       jsonrpc: "2.0",
       id: "host-term-1",
       method: "terminal/create",
-      params: { command: "pwd", args: [], cwd: ".", secret: args.secretSentinel },
+      params: {
+        sessionId,
+        command: "pwd",
+        args: [],
+        cwd: "/tmp",
+        secret: args.secretSentinel,
+      },
     });
-    await delay(20);
+    await waitForHostResponse("host-term-1");
+  }
+
+  if (args.scenario === "host-hang") {
+    write({
+      jsonrpc: "2.0",
+      id: "host-hang-1",
+      method: "terminal/create",
+      params: {
+        sessionId,
+        command: "sleep",
+        args: ["999"],
+        cwd: "/tmp",
+      },
+    });
+    await waitForHostResponse("host-hang-1", 10_000);
+  }
+
+  if (args.scenario === "host-secret-throw") {
+    write({
+      jsonrpc: "2.0",
+      id: "host-secret-1",
+      method: "fs/read_text_file",
+      params: {
+        sessionId,
+        path: "/tmp/x",
+      },
+    });
+    await waitForHostResponse("host-secret-1");
+  }
+
+  if (args.scenario === "host-concurrency") {
+    for (let i = 0; i < 20; i += 1) {
+      write({
+        jsonrpc: "2.0",
+        id: `host-conc-${i}`,
+        method: "terminal/output",
+        params: { sessionId, terminalId: `t${i}` },
+      });
+    }
+    await delay(100);
   }
 
   if (args.scenario === "unknown-method") {
@@ -237,11 +535,10 @@ async function handleSessionPrompt(id, params) {
       method: "totally/unknown",
       params: { secret: args.secretSentinel },
     });
-    await delay(20);
+    await waitForHostResponse("host-unknown-1");
   }
 
   if (args.scenario === "cancel") {
-    // Wait until cancel notification arrives, then settle cancelled.
     const deadline = Date.now() + 5_000;
     while (!cancelRequested && Date.now() < deadline) {
       await delay(20);
@@ -263,6 +560,11 @@ async function handleSessionPrompt(id, params) {
 
   if (args.scenario === "continue" && promptCount === 2) {
     await settlePrompt(id, sessionId, "end_turn", ["turn2:"]);
+    return;
+  }
+
+  if (args.scenario === "exact-bytes") {
+    await settlePrompt(id, sessionId, "end_turn", args.outputChunks);
     return;
   }
 
@@ -295,16 +597,15 @@ function handleNotification(msg) {
   }
 }
 
-function handleHostResponse(_msg) {
-  // Host responses to our server→client requests; ignore content.
+function handleHostResponse(msg) {
+  if (Object.prototype.hasOwnProperty.call(msg, "id")) {
+    seenResponseIds.add(msg.id);
+  }
+  recordHostResponse(msg);
 }
 
 async function onLine(line) {
   if (!line.trim()) return;
-
-  if (args.scenario === "malformed-json" && line.includes("initialize")) {
-    // Respond after initialize is attempted with a bad frame on next tick via special path.
-  }
 
   let msg;
   try {
@@ -345,5 +646,9 @@ process.stdin.on("data", (chunk) => {
 });
 
 process.stdin.on("end", () => {
+  if (initialized && args.scenario === "ignore-sigterm") {
+    // stay alive until SIGKILL
+    return;
+  }
   process.exit(0);
 });
