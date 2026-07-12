@@ -571,7 +571,9 @@ async function handleSessionPrompt(id, params) {
         params: { sessionId, path: "/tmp/duplicate.md" },
       });
     }
-    await waitForHostResponse("host-dup-1");
+    // Do not settle the prompt. The duplicated host ID is a fatal protocol
+    // violation; the runtime must reject the prompt and terminate the peer.
+    return;
   }
 
   if (args.scenario === "other-session") {

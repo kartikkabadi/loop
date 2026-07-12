@@ -65,8 +65,8 @@ publish_changes_with_strategy() {
 publish_changes() {
   local message="$1"
   shift
-  local target_slug="${TARGET_REPO,,}"
-  target_slug="${target_slug//\//-}"
+  local target_slug
+  target_slug=$(printf '%s' "$TARGET_REPO" | tr '[:upper:]' '[:lower:]' | tr '/' '-')
   local record_paths=()
   local other_paths=()
   local path
@@ -98,8 +98,8 @@ publish_status() {
 publish_reconciled_records() {
   local message="$1"
   local reconcile_json="$2"
-  local target_slug="${TARGET_REPO,,}"
-  target_slug="${target_slug//\//-}"
+  local target_slug
+  target_slug=$(printf '%s' "$TARGET_REPO" | tr '[:upper:]' '[:lower:]' | tr '/' '-')
   local publish_paths=()
   local record_file
   local number

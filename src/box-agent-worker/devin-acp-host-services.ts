@@ -457,28 +457,35 @@ export class DevinAcpToolCallCache {
   }
 
   merge(sessionId: string, toolCallId: string, update: Record<string, unknown>): void {
-    if (sessionId.length === 0 || toolCallId.length === 0) return;
+    this.mergeAndGet(sessionId, toolCallId, update);
+  }
+
+  mergeAndGet(
+    sessionId: string,
+    toolCallId: string,
+    update: Record<string, unknown>,
+  ): ToolCallCacheEntry | undefined {
+    if (sessionId.length === 0 || toolCallId.length === 0) return undefined;
+
     const bounded = boundCacheUpdate(update, this.maxEntryBytes);
-    if (!bounded) return;
+    if (!bounded) return undefined;
 
     const cacheKey = this.key(sessionId, toolCallId);
     const previous = this.entries.get(cacheKey);
     const merged = mergeToolCallEntry(previous, bounded);
 
     const stored = boundCacheUpdate(merged, this.maxEntryBytes);
-    if (!stored) return;
+    if (!stored) return undefined;
 
-    if (previous !== undefined) {
-      this.entries.set(cacheKey, stored);
-      return;
-    }
-
-    while (this.entries.size >= this.maxEntries) {
-      const oldest = this.entries.keys().next().value;
-      if (oldest === undefined) break;
-      this.entries.delete(oldest);
+    if (previous === undefined) {
+      while (this.entries.size >= this.maxEntries) {
+        const oldest = this.entries.keys().next().value;
+        if (oldest === undefined) break;
+        this.entries.delete(oldest);
+      }
     }
     this.entries.set(cacheKey, stored);
+    return stored;
   }
 
   get(sessionId: string, toolCallId: string): ToolCallCacheEntry | undefined {
@@ -504,17 +511,22 @@ function boundCacheUpdate(
   } catch {
     return null;
   }
-  if (Buffer.byteLength(serialized, "utf8") > maxEntryBytes) {
-    // Truncate to safe metadata only — never expose oversized content.
-    const safe: Record<string, unknown> = {};
-    if (typeof update.toolCallId === "string") safe.toolCallId = update.toolCallId;
-    if (typeof update.sessionUpdate === "string") safe.sessionUpdate = update.sessionUpdate;
-    if (typeof update.title === "string" && update.title.length <= 128) {
-      safe.title = update.title;
-    }
-    return safe;
+  if (Buffer.byteLength(serialized, "utf8") <= maxEntryBytes) {
+    return update;
   }
-  return update;
+
+  // Truncate to safe metadata only — never expose oversized content.
+  // If even the safe metadata exceeds the cap, reject the whole entry.
+  const safe: Record<string, unknown> = {};
+  if (typeof update.toolCallId === "string") safe.toolCallId = update.toolCallId;
+  if (typeof update.sessionUpdate === "string") safe.sessionUpdate = update.sessionUpdate;
+  if (typeof update.title === "string") safe.title = update.title;
+
+  const safeSerialized = JSON.stringify(safe);
+  if (Buffer.byteLength(safeSerialized, "utf8") > maxEntryBytes) {
+    return null;
+  }
+  return safe;
 }
 
 function mergeToolCallEntry(
@@ -542,16 +554,9 @@ export function mergePermissionParamsWithToolCallCache(
   params: DevinAcpPermissionParams,
   cache: DevinAcpToolCallCache,
 ): DevinAcpPermissionParams {
-  const toolCallId = params.toolCall.toolCallId;
-  const cached = cache.get(params.sessionId, toolCallId);
-  if (!cached) {
-    cache.merge(params.sessionId, toolCallId, params.toolCall);
-    return params;
+  const bounded = cache.mergeAndGet(params.sessionId, params.toolCall.toolCallId, params.toolCall);
+  if (!bounded) {
+    throw invalidParamsError();
   }
-  const mergedToolCall = mergeToolCallEntry(
-    { ...cached },
-    params.toolCall,
-  ) as DevinAcpPermissionParams["toolCall"];
-  cache.merge(params.sessionId, toolCallId, { ...mergedToolCall });
-  return { ...params, toolCall: mergedToolCall };
+  return { ...params, toolCall: bounded as DevinAcpPermissionParams["toolCall"] };
 }

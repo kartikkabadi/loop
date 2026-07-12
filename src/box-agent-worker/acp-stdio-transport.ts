@@ -259,25 +259,32 @@ export function createAcpStdioTransport(options: AcpStdioTransportOptions): AcpS
     params: unknown,
   ): Promise<void> {
     if (inFlightHost.has(id)) {
-      tryWriteHostMessage({
-        jsonrpc: "2.0",
-        id,
-        error: {
-          code: -32603,
-          message: CONTROLLED_RPC_MESSAGES.HOST_REQUEST_FAILED,
-        },
-      });
+      failTransport(
+        new AcpTransportError(
+          "E_ACP_PROTOCOL",
+          "Duplicate inbound host request id",
+        ),
+      );
       return;
     }
     if (inFlightHost.size >= maxInFlightHostRequests) {
-      tryWriteHostMessage({
-        jsonrpc: "2.0",
-        id,
-        error: {
-          code: -32603,
-          message: CONTROLLED_RPC_MESSAGES.HOST_REQUEST_FAILED,
-        },
-      });
+      if (
+        !tryWriteHostMessage({
+          jsonrpc: "2.0",
+          id,
+          error: {
+            code: -32603,
+            message: CONTROLLED_RPC_MESSAGES.HOST_REQUEST_FAILED,
+          },
+        })
+      ) {
+        failTransport(
+          new AcpTransportError(
+            "E_ACP_PROTOCOL",
+            "Failed to write host concurrency overflow response",
+          ),
+        );
+      }
       return;
     }
 
