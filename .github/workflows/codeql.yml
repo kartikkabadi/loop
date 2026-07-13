@@ -36,7 +36,7 @@ jobs:
           - actions
           - javascript-typescript
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           sparse-checkout: |
             .github
@@ -50,11 +50,11 @@ jobs:
             tsconfig.repair.json
           sparse-checkout-cone-mode: false
 
-      - uses: github/codeql-action/init@v4
+      - uses: github/codeql-action/init@99df26d4f13ea111d4ec1a7dddef6063f76b97e9
         with:
           languages: ${{ matrix.language }}
           build-mode: none
 
-      - uses: github/codeql-action/analyze@v4
+      - uses: github/codeql-action/analyze@99df26d4f13ea111d4ec1a7dddef6063f76b97e9
         with:
           category: "/language:${{ matrix.language }}"

@@ -35,7 +35,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       with:
         repository: openclaw/clawsweeper-state
         ref: state
@@ -50,7 +50,7 @@ runs:
       shell: bash
       run: echo "CLAWSWEEPER_STATE_DIR=$GITHUB_WORKSPACE/${{ inputs.state-path }}" >> "$GITHUB_ENV"
 
-    - uses: actions/setup-node@v6
+    - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
       with:
         node-version: ${{ inputs.node-version }}
 

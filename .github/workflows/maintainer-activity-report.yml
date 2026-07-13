@@ -76,7 +76,7 @@ jobs:
           permission-pull-requests: read
 
       - name: Check out maintainers
-        uses: actions/checkout@v7
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           repository: openclaw/maintainers
           path: maintainers
@@ -84,12 +84,12 @@ jobs:
           fetch-depth: 0
 
       - name: Set up Node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
         with:
           node-version: 24
 
       - name: Check out ClawSweeper
-        uses: actions/checkout@v7
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           path: clawsweeper
           filter: blob:none

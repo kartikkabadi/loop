@@ -81,7 +81,7 @@ jobs:
     outputs:
       proceed: ${{ steps.receipt.outputs.proceed }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           sparse-checkout: scripts/dispatch-receipt-owner.sh
           sparse-checkout-cone-mode: false
@@ -140,7 +140,7 @@ jobs:
       CLAWSWEEPER_CRABFLEET_URL: ${{ vars.CLAWSWEEPER_CRABFLEET_URL || 'https://crabfleet.openclaw.ai' }}
       OPENCLAW_LOCAL_CHECK: "0"
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           filter: blob:none
 
@@ -242,7 +242,7 @@ jobs:
       - name: Restore Codex session
         id: restore_codex_session
         if: ${{ steps.check_job.outputs.job_exists == '1' && env.CLAWSWEEPER_STEERABLE_CODEX == '1' }}
-        uses: actions/cache/restore@v6
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
         with:
           path: |
             ${{ steps.codex_session.outputs.codex_home }}/sessions
@@ -337,7 +337,7 @@ jobs:
 
       - name: Upload Codex debug logs
         if: ${{ always() && steps.check_job.outputs.job_exists == '1' }}
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: clawsweeper-codex-debug-cluster-${{ github.run_id }}-${{ github.run_attempt }}
           path: .clawsweeper-repair/codex-debug/cluster/**
@@ -346,7 +346,7 @@ jobs:
 
       - name: Upload worker transfer artifacts
         if: ${{ always() && (inputs.mode == 'execute' || inputs.mode == 'autonomous') && !inputs.dry_run }}
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: clawsweeper-repair-worker-${{ github.run_id }}-${{ github.run_attempt }}
           path: .clawsweeper-repair/runs
@@ -354,7 +354,7 @@ jobs:
 
       - name: Upload final worker artifacts
         if: ${{ always() && (!((inputs.mode == 'execute' || inputs.mode == 'autonomous') && !inputs.dry_run) || failure() || cancelled()) }}
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: clawsweeper-repair-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
@@ -363,7 +363,7 @@ jobs:
 
       - name: Save Codex session
         if: ${{ always() && steps.check_job.outputs.job_exists == '1' && env.CLAWSWEEPER_STEERABLE_CODEX == '1' }}
-        uses: actions/cache/save@v6
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
         with:
           path: |
             ${{ steps.codex_session.outputs.codex_home }}/sessions
@@ -419,7 +419,7 @@ jobs:
       CLAWSWEEPER_CRABFLEET_URL: ${{ vars.CLAWSWEEPER_CRABFLEET_URL || 'https://crabfleet.openclaw.ai' }}
       OPENCLAW_LOCAL_CHECK: "0"
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           filter: blob:none
 
@@ -522,7 +522,7 @@ jobs:
 
       - name: Restore Codex session
         if: ${{ steps.check_job.outputs.job_exists == '1' && env.CLAWSWEEPER_STEERABLE_CODEX == '1' }}
-        uses: actions/cache/restore@v6
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
         with:
           path: |
             ${{ steps.codex_session.outputs.codex_home }}/sessions
@@ -541,7 +541,7 @@ jobs:
 
       - name: Download worker artifacts
         if: ${{ steps.check_job.outputs.job_exists == '1' }}
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
           name: clawsweeper-repair-worker-${{ github.run_id }}-${{ github.run_attempt }}
           path: .clawsweeper-repair/runs
@@ -782,7 +782,7 @@ jobs:
 
       - name: Upload Codex debug logs
         if: ${{ always() && steps.check_job.outputs.job_exists == '1' }}
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: clawsweeper-codex-debug-execute-${{ github.run_id }}-${{ github.run_attempt }}
           path: .clawsweeper-repair/codex-debug/execute/**
@@ -791,7 +791,7 @@ jobs:
 
       - name: Upload final worker artifacts
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: clawsweeper-repair-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
@@ -800,7 +800,7 @@ jobs:
 
       - name: Save Codex session
         if: ${{ always() && steps.check_job.outputs.job_exists == '1' && env.CLAWSWEEPER_STEERABLE_CODEX == '1' }}
-        uses: actions/cache/save@v6
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
         with:
           path: |
             ${{ steps.codex_session.outputs.codex_home }}/sessions

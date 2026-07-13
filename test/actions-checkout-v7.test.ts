@@ -33,7 +33,7 @@ test("every checkout uses v7 without disabling its fork-PR guard", () => {
   assert.ok(checkoutReferences.length > 0, "expected checkout action references");
   assert.deepEqual(
     [...new Set(checkoutReferences.map(({ reference }) => reference))],
-    ["actions/checkout@v7"],
+    ["actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0"],
     checkoutReferences.map(({ path, reference }) => `${path}: ${reference}`).join("\n"),
   );
 
@@ -50,7 +50,7 @@ test("trusted-event workflows explicitly checkout the default branch", () => {
     const workflow = parse(readFileSync(path, "utf8")) as WorkflowDocument;
     const checkoutSteps = Object.values(workflow.jobs ?? {})
       .flatMap((job) => job.steps ?? [])
-      .filter((step) => step.uses === "actions/checkout@v7");
+      .filter((step) => step.uses === "actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0");
     assert.equal(checkoutSteps.length, 1, path);
     assert.equal(
       checkoutSteps[0]?.with?.ref,
@@ -64,7 +64,9 @@ test("trusted-event state checkout remains pinned to the state repository branch
   const action = parse(readFileSync(".github/actions/setup-state/action.yml", "utf8")) as {
     runs?: { steps?: CheckoutStep[] };
   };
-  const checkout = action.runs?.steps?.find((step) => step.uses === "actions/checkout@v7");
+  const checkout = action.runs?.steps?.find(
+    (step) => step.uses === "actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+  );
   assert.equal(checkout?.with?.repository, "openclaw/clawsweeper-state");
   assert.equal(checkout?.with?.ref, "state");
 });

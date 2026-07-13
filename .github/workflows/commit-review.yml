@@ -76,7 +76,7 @@ jobs:
       target_repo_name: ${{ steps.target.outputs.target_repo_name }}
       target_repo_owner: ${{ steps.target.outputs.target_repo_owner }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           path: clawsweeper
           filter: blob:none
@@ -346,7 +346,7 @@ jobs:
           echo "Selected $selected_count/$total_count commits at offset $COMMIT_OFFSET"
           printf 'Selected commits:\n%s\n' "$selected_commits"
 
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         if: always()
         with:
           name: skipped-commit-reports
@@ -366,7 +366,7 @@ jobs:
       matrix:
         include: ${{ fromJson(needs.plan.outputs.matrix) }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           path: clawsweeper
           filter: blob:none
@@ -485,7 +485,7 @@ jobs:
             --report-relative-path "$relative_path" \
             --report-repo "${{ github.repository }}"
 
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         if: always()
         with:
           name: commit-review-${{ matrix.sha }}
@@ -499,7 +499,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           filter: blob:none
           fetch-depth: 0
@@ -519,14 +519,14 @@ jobs:
         with:
           build-script: build:all
 
-      - uses: actions/download-artifact@v8
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         if: ${{ needs.plan.outputs.planned_count != '0' }}
         with:
           pattern: commit-review-*
           path: commit-artifacts
           merge-multiple: true
 
-      - uses: actions/download-artifact@v8
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         if: ${{ needs.plan.outputs.skipped_count != '0' }}
         with:
           name: skipped-commit-reports
