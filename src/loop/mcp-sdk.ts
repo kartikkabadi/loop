@@ -188,10 +188,9 @@ export async function handleLoopSdkMcpRequest(
           });
           return toolResult(value.value);
         } catch (error) {
-          const message = error instanceof Error ? error.message : "tool call failed";
           if (error instanceof LoopToolAuthorizationError) {
             return {
-              ...toolResult({ error: "forbidden", message }),
+              ...toolResult({ error: "forbidden", message: "required scope is missing" }),
               isError: true,
               _meta: {
                 "mcp/www_authenticate": `Bearer scope="${requiredScope}"${
@@ -202,7 +201,10 @@ export async function handleLoopSdkMcpRequest(
               },
             };
           }
-          return { ...toolResult({ error: "invalid_request", message }), isError: true };
+          return {
+            ...toolResult({ error: "invalid_request", message: "request rejected" }),
+            isError: true,
+          };
         }
       },
     );

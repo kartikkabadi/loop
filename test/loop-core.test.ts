@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { createHmac, generateKeyPairSync } from "node:crypto";
+import { createHmac, createSign, generateKeyPairSync } from "node:crypto";
 import { execFileSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -49,6 +49,7 @@ import {
   releaseLoopRepositoryLease,
   renewLoopRepositoryLease,
   planLoopSelfHealing,
+  Auth0LoopAuthenticator,
 } from "../dist/loop/index.js";
 import {
   LoopRunner,
@@ -508,6 +509,77 @@ test("gateway exposes protected-resource metadata and delegates authenticated in
   });
   assert.equal(denied.status, 401);
   assert.match(denied.headers["www-authenticate"] ?? "", /resource_metadata=/);
+});
+
+test("control-plane boundary validates principals, bounds inputs, and redacts failures", async () => {
+  const app = new LoopApplication();
+  assert.throws(
+    () => createLoopToolRouter(app, { subject: "", scopes: ["loop:read"] }),
+    /invalid authenticated principal/,
+  );
+  await assert.rejects(
+    createLoopToolRouter(app, { subject: "operator", scopes: ["loop:read"] }).invoke({
+      name: "loop.tasks.list",
+      arguments: { oversized: "x".repeat(64 * 1024 + 1) },
+    }),
+    /tool arguments exceed safety limits/,
+  );
+
+  const gateway = createLoopGateway({
+    application: app,
+    authenticator: {
+      async authenticate() {
+        return { subject: "operator", scopes: ["loop:read"] };
+      },
+    },
+    metadata: {
+      resource: "https://loop.test/mcp",
+      authorization_servers: ["https://auth.test"],
+      scopes_supported: ["loop:read"],
+      resource_documentation: "https://loop.test/docs",
+    },
+  });
+  const missing = await gateway.handle({
+    method: "POST",
+    path: "/mcp",
+    headers: {},
+    body: { name: "loop.tasks.get", arguments: { taskId: "secret-task-id" } },
+  });
+  assert.deepEqual(missing.body, {
+    error: "invalid_request",
+    message: "the request could not be completed",
+  });
+});
+
+test("Auth0 JWT boundary rejects malformed segments and accepts case-insensitive bearer", async () => {
+  const { privateKey, publicKey } = generateKeyPairSync("rsa", {
+    modulusLength: 2048,
+    publicExponent: 0x10001,
+  });
+  const header = { alg: "RS256", kid: "key-1", typ: "JWT" };
+  const claims = {
+    iss: "https://tenant.auth0.com/",
+    aud: ["loop-api"],
+    sub: "auth0|operator",
+    scope: "loop:read",
+    exp: 2_000_000_000,
+  };
+  const encode = (value: unknown) => Buffer.from(JSON.stringify(value)).toString("base64url");
+  const signingInput = `${encode(header)}.${encode(claims)}`;
+  const signer = createSign("RSA-SHA256");
+  signer.update(signingInput);
+  const token = `${signingInput}.${signer.sign(privateKey).toString("base64url")}`;
+  const jwk = publicKey.export({ format: "jwk" });
+  const authenticator = new Auth0LoopAuthenticator({
+    issuer: "https://tenant.auth0.com",
+    audience: "loop-api",
+    now: () => 1_700_000_000_000,
+    fetcher: async () =>
+      new Response(JSON.stringify({ keys: [{ ...jwk, kid: "key-1", use: "sig", alg: "RS256" }] })),
+  });
+  const principal = await authenticator.authenticate({ authorization: `bearer ${token}` });
+  assert.deepEqual(principal, { subject: "auth0|operator", scopes: ["loop:read"] });
+  assert.equal(await authenticator.authenticate({ authorization: `Bearer ${token}.extra` }), null);
 });
 
 test("MCP JSON-RPC initialize, tools/list, notifications, and tool calls work", async () => {

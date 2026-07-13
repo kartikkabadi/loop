@@ -40,6 +40,8 @@ function object(value: unknown, label: string): JsonObject {
 }
 
 function base64UrlBytes(value: string): Uint8Array {
+  if (!/^[A-Za-z0-9_-]+$/.test(value) || value.length % 4 === 1)
+    throw new Error("invalid base64url value");
   const normalized = value
     .replaceAll("-", "+")
     .replaceAll("_", "/")
@@ -64,8 +66,8 @@ function normalizeIssuer(value: string): string {
 
 function bearerToken(headers: Readonly<Record<string, string | undefined>>): string | null {
   const raw = Object.entries(headers).find(([name]) => name.toLowerCase() === "authorization")?.[1];
-  if (!raw?.startsWith("Bearer ")) return null;
-  const token = raw.slice("Bearer ".length).trim();
+  if (!raw || !/^Bearer\s+/i.test(raw)) return null;
+  const token = raw.replace(/^Bearer\s+/i, "").trim();
   return token && !/\s/.test(token) && !token.includes("\0") ? token : null;
 }
 
@@ -100,6 +102,7 @@ export class Auth0LoopAuthenticator implements LoopGatewayAuthenticator {
   #jwksExpiresAt = 0;
 
   constructor(options: Auth0LoopAuthenticatorOptions) {
+    if (!options.audience.trim()) throw new Error("Auth0 audience must be non-empty");
     this.#options = {
       ...options,
       issuer: normalizeIssuer(options.issuer),
@@ -115,7 +118,9 @@ export class Auth0LoopAuthenticator implements LoopGatewayAuthenticator {
     const token = bearerToken(headers);
     if (!token) return null;
     try {
-      const [encodedHeader, encodedClaims, encodedSignature] = token.split(".");
+      const parts = token.split(".");
+      if (parts.length !== 3) return null;
+      const [encodedHeader, encodedClaims, encodedSignature] = parts;
       if (!encodedHeader || !encodedClaims || !encodedSignature) return null;
       const header = base64UrlJson(encodedHeader, "JWT header");
       const claims = base64UrlJson(encodedClaims, "JWT claims");

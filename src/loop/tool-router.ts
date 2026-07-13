@@ -44,6 +44,18 @@ export const LOOP_TOOL_SCOPES: Readonly<Record<string, LoopScope>> = {
   "loop.tasks.complete": "loop:approve",
 };
 
+const LOOP_SCOPES = new Set<LoopScope>([
+  "loop:read",
+  "loop:plan",
+  "loop:dispatch",
+  "loop:repair",
+  "loop:approve",
+]);
+const MAX_TOOL_INPUT_BYTES = 256 * 1024;
+const MAX_TOOL_INPUT_DEPTH = 12;
+const MAX_TOOL_INPUT_NODES = 5_000;
+const MAX_TOOL_STRING_LENGTH = 64 * 1024;
+
 export type LoopToolRequest = Readonly<{
   name: string;
   arguments: unknown;
@@ -89,7 +101,12 @@ function record(value: unknown, label: string): Record<string, unknown> {
 
 function stringField(input: Record<string, unknown>, name: string): string {
   const value = input[name];
-  if (typeof value !== "string" || value.length === 0 || value.includes("\0"))
+  if (
+    typeof value !== "string" ||
+    value.length === 0 ||
+    value.length > MAX_TOOL_STRING_LENGTH ||
+    value.includes("\0")
+  )
     throw new Error(`${name} must be a non-empty string`);
   return value;
 }
@@ -150,7 +167,9 @@ function writeOptions(request: LoopToolRequest): LoopWriteOptions {
   }
   if (
     request.idempotencyKey !== undefined &&
-    (!request.idempotencyKey || request.idempotencyKey.includes("\0"))
+    (!request.idempotencyKey ||
+      request.idempotencyKey.length > 1024 ||
+      request.idempotencyKey.includes("\0"))
   ) {
     throw new Error("idempotencyKey must be a non-empty NUL-free string");
   }
@@ -158,6 +177,51 @@ function writeOptions(request: LoopToolRequest): LoopWriteOptions {
     ...(request.expectedVersion === undefined ? {} : { expectedVersion: request.expectedVersion }),
     ...(request.idempotencyKey === undefined ? {} : { idempotencyKey: request.idempotencyKey }),
   };
+}
+
+function assertSafeToolInput(value: unknown, depth = 0, state = { nodes: 0 }): void {
+  if (depth === 0) {
+    let serialized: string;
+    try {
+      serialized = JSON.stringify(value);
+    } catch {
+      throw new Error("tool arguments exceed safety limits");
+    }
+    if (
+      serialized === undefined ||
+      new TextEncoder().encode(serialized).byteLength > MAX_TOOL_INPUT_BYTES
+    )
+      throw new Error("tool arguments exceed safety limits");
+  }
+  if (++state.nodes > MAX_TOOL_INPUT_NODES || depth > MAX_TOOL_INPUT_DEPTH)
+    throw new Error("tool arguments exceed safety limits");
+  if (typeof value === "string") {
+    if (value.length > MAX_TOOL_STRING_LENGTH)
+      throw new Error("tool arguments exceed safety limits");
+    return;
+  }
+  if (Array.isArray(value)) {
+    for (const entry of value) assertSafeToolInput(entry, depth + 1, state);
+    return;
+  }
+  if (value && typeof value === "object") {
+    for (const [key, entry] of Object.entries(value as Record<string, unknown>)) {
+      if (key.length > 1024) throw new Error("tool arguments exceed safety limits");
+      assertSafeToolInput(entry, depth + 1, state);
+    }
+  }
+}
+
+function validatePrincipal(principal: LoopPrincipal): void {
+  if (
+    typeof principal.subject !== "string" ||
+    principal.subject.length === 0 ||
+    principal.subject.length > 1024 ||
+    principal.subject.includes("\0") ||
+    !Array.isArray(principal.scopes) ||
+    principal.scopes.some((scope) => !LOOP_SCOPES.has(scope))
+  )
+    throw new Error("invalid authenticated principal");
 }
 
 function taskId(request: LoopToolRequest): string {
@@ -179,10 +243,12 @@ export function createLoopToolRouter(
     capacity?: LoopCapacityReader;
   }> = {},
 ) {
+  validatePrincipal(principal);
   const scopes = new Set(principal.scopes);
   const rolloutMode = routerOptions.rolloutMode ?? parseLoopRolloutMode(undefined);
   return {
     async invoke(request: LoopToolRequest): Promise<LoopToolResponse> {
+      assertSafeToolInput(request.arguments);
       const required = LOOP_TOOL_SCOPES[request.name];
       if (!required) throw new Error(`unknown Loop tool: ${request.name}`);
       if (!scopes.has(required))

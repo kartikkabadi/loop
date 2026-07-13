@@ -408,11 +408,10 @@ export async function handleLoopMcpMessage(
       isError: false,
     });
   } catch (caught) {
-    const messageText = caught instanceof Error ? caught.message : "tool call failed";
     if (caught instanceof LoopToolAuthorizationError) {
       return response(id, {
-        content: [{ type: "text", text: messageText }],
-        structuredContent: { error: "forbidden", message: messageText },
+        content: [{ type: "text", text: "the authenticated principal lacks the required scope" }],
+        structuredContent: { error: "forbidden", message: "required scope is missing" },
         isError: true,
         _meta: {
           "mcp/www_authenticate": mcpAuthChallenge(caught.requiredScope, options.resourceMetadata),
@@ -420,8 +419,8 @@ export async function handleLoopMcpMessage(
       });
     }
     return response(id, {
-      content: [{ type: "text", text: messageText }],
-      structuredContent: { error: "invalid_request", message: messageText },
+      content: [{ type: "text", text: "the request could not be completed" }],
+      structuredContent: { error: "invalid_request", message: "request rejected" },
       isError: true,
     });
   }

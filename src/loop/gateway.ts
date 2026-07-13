@@ -178,17 +178,17 @@ export function createLoopGateway(
         return response(200, await router.invoke(toolRequest));
       } catch (error) {
         if (error instanceof LoopToolAuthorizationError)
-          return errorResponse(403, "forbidden", error.message);
+          return errorResponse(
+            403,
+            "forbidden",
+            "the authenticated principal lacks the required scope",
+          );
         if (
           error instanceof Error &&
           /version conflict|stale|terminal|invalid phase|must be/.test(error.message)
         )
-          return errorResponse(409, "conflict", error.message);
-        return errorResponse(
-          400,
-          "invalid_request",
-          error instanceof Error ? error.message : "request failed",
-        );
+          return errorResponse(409, "conflict", "the request conflicts with current Loop state");
+        return errorResponse(400, "invalid_request", "the request could not be completed");
       }
     },
   };
