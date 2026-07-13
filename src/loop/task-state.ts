@@ -365,6 +365,8 @@ export function transitionLoopTask(
           "task.review_replan_required",
           "review requires a new approved plan",
         );
+      if (state.requiredGateNames.some((name) => state.gates[name]?.state !== "PASSED"))
+        throw new Error("approved review requires every required gate to pass");
       return transition(
         state,
         { phase: "HUMAN_ACCEPTANCE", condition: "WAITING", findings: command.findings },

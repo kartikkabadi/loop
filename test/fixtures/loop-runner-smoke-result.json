@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "status": "candidate_complete",
+  "status": "candidate_unknown",
   "task_revision": 1,
   "contract_hash": "sha256:box-smoke",
   "acceptance_criteria": [],
   "commands_run": [],
   "assumptions": [],
-  "blockers": [],
+  "blockers": ["smoke fixture intentionally contains no publishable proof"],
   "scope_deviations": [],
   "risks_discovered": []
 }

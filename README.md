@@ -74,6 +74,8 @@ The product roles and environment-first model are in
 [`docs/PRODUCT-MODEL.md`](docs/PRODUCT-MODEL.md), and the self-host onboarding
 contract is in
 [`docs/SELF-HOSTING-SETUP.md`](docs/SELF-HOSTING-SETUP.md).
+The human and agent PR review layout is documented in
+[`docs/PR-REVIEW-SURFACE.md`](docs/PR-REVIEW-SURFACE.md).
 
 ## Safety boundary
 

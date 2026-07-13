@@ -4,6 +4,7 @@ import type {
   LoopRepositorySnapshot,
 } from "./orchestrator.js";
 import type { LoopTaskContract } from "./task-contract.js";
+import { renderLoopReviewSurface, type LoopReviewSurfaceInput } from "./review-surface.js";
 import {
   LOOP_DRAFT_LABEL,
   LOOP_READY_LABEL,
@@ -482,13 +483,10 @@ export class GitHubLoopRepositoryAdapter implements LoopRepositoryAdapter {
             head,
             base: input.contract.repository.baseBranch,
             draft: true,
-            body: [
-              `Loop task: ${input.contract.identity.taskId}`,
-              "",
-              input.contract.problem.desiredOutcome,
-              "",
-              "Completion remains gated by verification, review, and human acceptance.",
-            ].join("\n"),
+            body: renderLoopReviewSurface({
+              contract: input.contract,
+              status: "verification pending",
+            }),
           },
         }),
         "GitHub pull request response",
@@ -517,6 +515,36 @@ export class GitHubLoopPublicationAdapter {
 
   constructor(client: LoopGitHubClient) {
     this.#client = client;
+  }
+
+  async updatePullRequestReviewSurface(
+    contract: LoopTaskContract,
+    input: Readonly<{ pullRequestNumber: number } & Omit<LoopReviewSurfaceInput, "contract">>,
+  ): Promise<void> {
+    const repository = repositoryPath(contract);
+    const pullRequestNumber = positiveInteger(input.pullRequestNumber, "pull request number");
+    const pull = record(
+      await this.#client.request({
+        method: "GET",
+        path: `${repository}/pulls/${pullRequestNumber}`,
+      }),
+      "GitHub pull request response",
+    );
+    const head = record(pull.head, "GitHub pull request head");
+    const headSha = sha(head.sha, "pull request head SHA");
+    if (input.headSha && headSha !== sha(input.headSha, "review surface head SHA"))
+      throw new Error("refusing to update a pull request review surface at a different head SHA");
+    await this.#client.request({
+      method: "PATCH",
+      path: `${repository}/pulls/${pullRequestNumber}`,
+      body: {
+        body: renderLoopReviewSurface({
+          ...input,
+          contract,
+          headSha,
+        }),
+      },
+    });
   }
 
   /** Convert a verified draft PR into an explicit human-review handoff. */

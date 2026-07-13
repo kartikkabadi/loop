@@ -272,11 +272,14 @@ test("durable actor attribution blocks the approving actor from reviewing its ow
     /approving actor cannot submit/,
   );
   assert.equal(state.actors.approvedBy, "operator-a");
-  const reviewed = await app.submitReview(state.taskId, "approved", [], {
-    expectedVersion: state.version,
-    actorSubject: "reviewer-b",
-  });
-  assert.equal(reviewed.actors.reviewedBy, "reviewer-b");
+  await assert.rejects(
+    () =>
+      app.submitReview(state.taskId, "approved", [], {
+        expectedVersion: state.version,
+        actorSubject: "reviewer-b",
+      }),
+    /approved review requires every required gate to pass/,
+  );
 });
 
 test("changing the head invalidates a passing gate and rejects stale gate writes", async () => {
@@ -1358,7 +1361,7 @@ test("Loop Runner uses a fenced ACP boundary and requires a matching result file
       acceptance_criteria: [
         { id: "AC-1", claimed_status: "satisfied", evidence_paths: ["README.md"] },
       ],
-      commands_run: [],
+      commands_run: [{ command: "pnpm run check", exit_code: 0 }],
       assumptions: [],
       blockers: [],
       scope_deviations: [],

@@ -178,7 +178,8 @@ local-repository mode.
 
 `loop.runs.start` creates a deterministic Cloudflare Workflow instance for an
 approved task. The workflow persists phase transitions and waits for
-host-owned `box-ready`, `agent-outcome`, and `review-result` events. Box
+host-owned `box-ready`, `agent-outcome`, `verification-result`, and
+`review-result` events. Box
 provider invocation, Devin invocation, publication credentials, and clean-head
 independent verification remain explicit external adapters; scheduling the
 workflow records allocation intent but does not claim provider creation or
@@ -195,9 +196,9 @@ normal automatically retry approved queued R0-R2 dispatch through the scheduled
 reconciler. R3/R4 remain denied at Workflow admission until a distinct human
 approval gate is implemented.
 
-Host-owned runners can deliver those events through `/workflow-events` using a
+Host-owned runners and independent verifiers can deliver those events through `/workflow-events` using a
 dedicated HMAC secret and the `x-loop-signature-256` header. The route accepts
-only the typed box, agent, review, registration, and heartbeat event kinds,
+only the typed box, agent, verification, review, registration, and heartbeat event kinds,
 requires matching task IDs, bounds payloads, and remains unavailable until its
 secret is configured.
 
@@ -212,8 +213,9 @@ validate changed paths and staged secret patterns, create the deterministic
 `loop/<task>-<title>` branch, commit, push with `--force-with-lease`, and
 open/reuse the draft pull request through the GitHub App client. The ACP
 process is shut down before publication begins. The resulting event includes
-the published head SHA and preliminary gates; independent verification still
-owns final gate approval.
+the published head SHA and preliminary gates. The workflow then waits for a
+separate `verification-result` bound to that exact head, records every required
+gate, and only then accepts a `review-result`.
 
 ## Devin execution policy
 

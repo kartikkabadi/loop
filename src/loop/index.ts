@@ -18,6 +18,7 @@ export * from "./node-event-store.js";
 export * from "./orchestrator.js";
 export * from "./provider-capacity.js";
 export * from "./review-packet.js";
+export * from "./review-surface.js";
 export * from "./rollout-policy.js";
 export * from "./repair-policy.js";
 export * from "./run-record.js";

@@ -92,7 +92,7 @@ export function parseLoopRunnerResult(
     input.status !== "failed"
   )
     throw new Error("runner result status is invalid");
-  return {
+  const result: LoopRunnerResult = {
     schemaVersion: 1,
     status: input.status,
     taskRevision: expected.taskRevision,
@@ -104,6 +104,20 @@ export function parseLoopRunnerResult(
     scopeDeviations: stringArray(input.scope_deviations, "scope_deviations"),
     risksDiscovered: stringArray(input.risks_discovered, "risks_discovered"),
   };
+  if (result.status === "candidate_complete") {
+    if (result.acceptanceCriteria.length === 0)
+      throw new Error("candidate_complete requires acceptance criteria");
+    if (result.acceptanceCriteria.some((criterion) => criterion.claimedStatus !== "satisfied"))
+      throw new Error("candidate_complete requires every acceptance criterion to be satisfied");
+    if (result.commandsRun.length === 0)
+      throw new Error("candidate_complete requires at least one verification command");
+    if (result.commandsRun.some((command) => command.exitCode !== 0))
+      throw new Error("candidate_complete requires every verification command to pass");
+    if (result.blockers.length > 0) throw new Error("candidate_complete cannot include blockers");
+    if (result.scopeDeviations.length > 0)
+      throw new Error("candidate_complete cannot include scope deviations");
+  }
+  return result;
 }
 
 export function candidateUnknownResult(

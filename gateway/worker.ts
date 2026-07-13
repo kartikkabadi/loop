@@ -166,6 +166,12 @@ type LoopAgentResultEvent = Readonly<{
   headSha: string;
   gates: readonly LoopGate[];
 }>;
+type LoopVerificationResultEvent = Readonly<{
+  taskId: string;
+  runId: string;
+  headSha: string;
+  gates: readonly LoopGate[];
+}>;
 type LoopAgentOutcomeEvent = Readonly<{
   taskId: string;
   runId?: string;
@@ -1211,22 +1217,39 @@ export class TaskRunWorkflow extends WorkflowEntrypoint<
             });
           }
           await runs.update(runId, { status: "verifying", updatedAt: new Date().toISOString() });
-          const reviewing = await application.advance(state.taskId, "REVIEWING", {
-            expectedVersion: state.version,
-          });
-          const publication = reviewing.publishedChange;
-          const githubPublication = githubPublicationFor(this.env);
-          if (publication?.pullRequestNumber && reviewing.headSha && githubPublication) {
-            await githubPublication.markPullRequestReviewReady(reviewing.contract, {
-              pullRequestNumber: publication.pullRequestNumber,
-              headSha: reviewing.headSha,
-            });
-          }
-          return reviewing;
+          return state;
         });
         await releaseRepositoryLease(`release-repository-lease-published-${generation}`);
         break agentLoop;
       }
+      const verification = await step.waitForEvent<LoopVerificationResultEvent>(
+        `wait-for-verification-${repairRounds}`,
+        {
+          type: "verification-result",
+          timeout: "7 days",
+        },
+      );
+      state = await step.do(`record-verification-${repairRounds}`, async () => {
+        taskIdFromEvent(verification, event.payload.taskId);
+        if (verification.runId !== runId)
+          throw new Error("verification event does not match the workflow run");
+        if (verification.headSha !== state.headSha)
+          throw new Error("verification event is bound to a different head SHA");
+        const recordedNames = new Set(verification.gates.map((gate) => gate.name));
+        if (state.requiredGateNames.some((name) => !recordedNames.has(name)))
+          throw new Error("verification result is missing a required gate");
+        let verified = state;
+        for (const gate of verification.gates) {
+          verified = await application.recordGate(verified.taskId, gate, {
+            expectedVersion: verified.version,
+          });
+        }
+        verified = await application.advance(verified.taskId, "REVIEWING", {
+          expectedVersion: verified.version,
+        });
+        await runs.update(runId, { status: "reviewing", updatedAt: new Date().toISOString() });
+        return verified;
+      });
       const review = await step.waitForEvent<LoopReviewResultEvent>(
         `wait-for-review-${repairRounds}`,
         {
@@ -1245,6 +1268,38 @@ export class TaskRunWorkflow extends WorkflowEntrypoint<
         });
       });
       state = result;
+      const publication = state.publishedChange;
+      const githubPublication = githubPublicationFor(this.env);
+      if (publication?.pullRequestNumber && state.headSha && githubPublication) {
+        const status =
+          review.verdict === "approved"
+            ? "ready for human review"
+            : review.verdict === "changes_requested"
+              ? "changes requested"
+              : "replan required";
+        await step.do(`publish-review-surface-${repairRounds}`, () =>
+          githubPublication.updatePullRequestReviewSurface(state.contract, {
+            pullRequestNumber: publication.pullRequestNumber!,
+            status,
+            headSha: state.headSha!,
+            gates: Object.values(state.gates),
+            findings: review.findings,
+            agentDetails: [
+              `Review verdict: ${review.verdict}`,
+              `Run ID: ${runId}`,
+              `Generation: ${generation}`,
+            ],
+          }),
+        );
+        if (review.verdict === "approved") {
+          await step.do(`mark-pull-request-review-ready-${repairRounds}`, () =>
+            githubPublication.markPullRequestReviewReady(state.contract, {
+              pullRequestNumber: publication.pullRequestNumber!,
+              headSha: state.headSha!,
+            }),
+          );
+        }
+      }
       if (review.verdict === "changes_requested") {
         if (repairRounds >= state.contract.budget.maxRepairRounds) {
           await runs.update(runId, {
@@ -1378,6 +1433,7 @@ async function workflowEventRequest(
     payload.type !== "agent-rate-limited" &&
     payload.type !== "agent-failed" &&
     payload.type !== "review-result" &&
+    payload.type !== "verification-result" &&
     payload.type !== "runner-registered" &&
     payload.type !== "runner-heartbeat"
   )
@@ -1388,9 +1444,14 @@ async function workflowEventRequest(
   if (eventPayload.taskId !== payload.taskId)
     return { status: 400, headers: {}, body: { error: "event_task_mismatch" } };
   if (
-    ["box-ready", "agent-result", "agent-rate-limited", "agent-failed", "review-result"].includes(
-      payload.type,
-    ) &&
+    [
+      "box-ready",
+      "agent-result",
+      "agent-rate-limited",
+      "agent-failed",
+      "review-result",
+      "verification-result",
+    ].includes(payload.type) &&
     typeof (eventPayload as { runId?: unknown }).runId !== "string"
   )
     return { status: 400, headers: {}, body: { error: "run_id_required" } };
@@ -1548,6 +1609,56 @@ async function workflowEventRequest(
       status: 202,
       headers: {},
       body: { status: "accepted", workflowId, type: "agent-outcome" },
+    };
+  }
+  if (payload.type === "verification-result") {
+    const verification = eventPayload as {
+      runId?: unknown;
+      headSha?: unknown;
+      gates?: unknown;
+    };
+    const validStates = new Set([
+      "NOT_REQUIRED",
+      "PENDING",
+      "RUNNING",
+      "PASSED",
+      "FAILED",
+      "STALE",
+      "WAIVED",
+      "ERROR",
+    ]);
+    if (
+      typeof verification.runId !== "string" ||
+      typeof verification.headSha !== "string" ||
+      !Array.isArray(verification.gates) ||
+      verification.gates.length === 0
+    )
+      return { status: 400, headers: {}, body: { error: "verification_result_fields_required" } };
+    const validGates = verification.gates.every((entry) => {
+      if (!entry || typeof entry !== "object" || Array.isArray(entry)) return false;
+      const gate = entry as Record<string, unknown>;
+      return (
+        typeof gate.name === "string" &&
+        typeof gate.state === "string" &&
+        validStates.has(gate.state) &&
+        typeof gate.taskRevision === "number" &&
+        Number.isSafeInteger(gate.taskRevision) &&
+        typeof gate.contractHash === "string" &&
+        typeof gate.baseSha === "string" &&
+        typeof gate.headSha === "string" &&
+        typeof gate.updatedAt === "string"
+      );
+    });
+    if (!validGates)
+      return { status: 400, headers: {}, body: { error: "verification_gate_invalid" } };
+    const workflowId = verification.runId;
+    await env.TASK_RUN_WORKFLOW.get(workflowId).then((workflow) =>
+      workflow.sendEvent({ type: "verification-result", payload: eventPayload }),
+    );
+    return {
+      status: 202,
+      headers: {},
+      body: { status: "accepted", workflowId, type: "verification-result" },
     };
   }
   const workflowId = String((eventPayload as { runId: string }).runId);
