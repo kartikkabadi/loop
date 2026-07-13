@@ -121,7 +121,7 @@ export type LoopRunnerOptions = Readonly<{
   providerLeaseId?: string;
   repositoryLeaseId?: string;
   publish?: () => Promise<LoopRunnerPublication>;
-  /** Verify and repair the managed Box before starting Devin. */
+  /** Verify and repair the managed workspace before starting the provider. */
   bootstrap?: () => Promise<LoopBoxBootstrapReport>;
   commandPolicy?: LoopRunnerCommandPolicy;
   devinCommand?: string;
@@ -332,7 +332,7 @@ export class LoopRunner {
         const report = await options.bootstrap();
         if (!report.ready)
           throw new Error(
-            `Loop Box bootstrap failed: ${report.tools
+            `Loop workspace bootstrap failed: ${report.tools
               .filter((tool) => tool.status === "failed")
               .map((tool) => `${tool.name}: ${tool.detail ?? "verification failed"}`)
               .join("; ")}`,

@@ -104,7 +104,9 @@ function status(value: LoopRunStatus): LoopRunStatus {
 
 function model(value: LoopDevinModel | undefined): LoopDevinModel {
   if (value !== undefined && value !== LOOP_DEVIN_MODEL)
-    throw new Error(`Loop only permits Devin model ${String(LOOP_DEVIN_MODEL)}`);
+    throw new Error(
+      `Loop only permits the configured execution provider model ${String(LOOP_DEVIN_MODEL)}`,
+    );
   return LOOP_DEVIN_MODEL;
 }
 
@@ -264,7 +266,8 @@ type RunRow = Readonly<{
 }>;
 
 function fromRow(row: RunRow): LoopRunRecord {
-  if (row.model !== LOOP_DEVIN_MODEL) throw new Error(`unsupported Loop Devin model: ${row.model}`);
+  if (row.model !== LOOP_DEVIN_MODEL)
+    throw new Error(`unsupported Loop execution provider model: ${row.model}`);
   return {
     runId: row.run_id,
     taskId: row.task_id,

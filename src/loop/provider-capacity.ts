@@ -1,7 +1,8 @@
 import { LOOP_DEVIN_MODEL, type LoopDevinModel } from "../loop-runner/model.js";
 
 /**
- * Devin does not expose a stable account-wide concurrency value to the CLI.
+ * The configured execution provider does not expose a stable account-wide
+ * concurrency value to the CLI.
  * Start with the empirically safe floor and let the durable coordinator probe
  * a configured ceiling from observed completions instead of guessing.
  */
@@ -168,7 +169,9 @@ export function acquireLoopProviderSlot(
   positive(input.generation, "generation");
   timestamp(input.now, "now");
   if (input.model !== LOOP_DEVIN_MODEL)
-    throw new Error(`Loop only permits Devin model ${String(LOOP_DEVIN_MODEL)}`);
+    throw new Error(
+      `Loop only permits the configured execution provider model ${String(LOOP_DEVIN_MODEL)}`,
+    );
   const leaseSeconds = input.leaseSeconds ?? 90;
   positive(leaseSeconds, "leaseSeconds");
   const current = pruneExpired(state, input.now);

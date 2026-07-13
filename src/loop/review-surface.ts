@@ -125,7 +125,7 @@ export function renderLoopReviewSurface(input: LoopReviewSurfaceInput): string {
     "",
     "```mermaid",
     "flowchart LR",
-    "  Plan --> Box --> Devin --> Verify --> Review --> Human",
+    "  Plan --> Workspace --> Provider --> Verify --> Review --> Human",
     "```",
     "",
     "<details>",

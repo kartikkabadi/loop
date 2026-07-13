@@ -38,7 +38,7 @@ export const LOOP_MCP_INSTRUCTIONS = [
   "Start with loop.tasks.list or loop.tasks.get before changing state.",
   "Create and validate a task draft before approval; include expectedVersion and idempotencyKey on writes.",
   "Use review and evidence tools to inspect outcomes. Loop does not expose shell, raw provider controls, or merge operations.",
-  "ChatGPT is the planning, approval, steering, and review surface; durable execution runs through Loop's isolated workspace adapters.",
+  "ChatGPT is the planning, approval, steering, and review surface; durable execution runs through Loop's isolated workspace and provider adapters.",
 ].join("\n");
 
 const READ_ONLY_ANNOTATIONS = {
@@ -124,7 +124,7 @@ const LOOP_MCP_TOOL_DEFINITIONS: readonly LoopMcpToolDefinition[] = [
   ),
   tool(
     "loop.capacity.get",
-    "Read current Devin SWE-1.7 admission, cooldown, and observed rate-limit telemetry.",
+    "Read current execution-provider admission, cooldown, and observed rate-limit telemetry.",
     "loop:read",
     schema(),
   ),
@@ -224,7 +224,7 @@ const LOOP_MCP_TOOL_DEFINITIONS: readonly LoopMcpToolDefinition[] = [
   ),
   tool(
     "loop.runs.cancel",
-    "Cancel a task and fence late Box or agent events.",
+    "Cancel a task and fence late workspace or agent events.",
     "loop:dispatch",
     schema({ ...TASK_WRITE_SCHEMA, reason: { type: "string" } }, ["taskId"]),
     WRITE_ANNOTATIONS,

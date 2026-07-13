@@ -50,7 +50,9 @@ function validate(value: LoopRunnerCheckpointFile): void {
   positive(value.cancellationGeneration, "cancellationGeneration");
   positive(value.taskRevision, "taskRevision");
   if (value.model !== LOOP_DEVIN_MODEL)
-    throw new Error(`Loop only permits Devin model ${String(LOOP_DEVIN_MODEL)}`);
+    throw new Error(
+      `Loop only permits the configured execution provider model ${String(LOOP_DEVIN_MODEL)}`,
+    );
   nonEmpty(value.contractHash, "contractHash");
   nonEmpty(value.sessionId, "sessionId");
   if (loopRunnerSessionIdDigest(value.sessionId) !== value.sessionIdDigest)

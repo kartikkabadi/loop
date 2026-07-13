@@ -10,13 +10,13 @@ inside.
 | Role | Responsibility | Authority |
 | --- | --- | --- |
 | ChatGPT | Discover the repository, ask setup questions, form the plan, create the task, steer runs, and explain evidence | Planning and steering |
-| Loop | Build the environment contract, allocate the Box, enforce policy, persist state, reconcile failures, and project status | Execution policy and lifecycle |
-| Devin | Implement and test inside the prepared Box using the exact task context | Bounded code changes |
+| Loop | Build the environment contract, allocate the workspace, enforce policy, persist state, reconcile failures, and project status | Execution policy and lifecycle |
+| Execution provider | Implement and test inside the prepared workspace using the exact task context | Bounded code changes |
 | Humans | Approve the plan, resolve blockers, review the exact head, and accept completion | Final authorization |
 
-Review providers are adapters, not hidden authorities. A Claude review lane can
-be added behind the review-provider boundary, but no model—Devin, Claude, or
-ChatGPT—can self-approve or merge a change.
+Execution and review providers are adapters, not hidden authorities. A model
+review lane can be added behind the review-provider boundary, but no provider
+or operator can self-approve or merge a change.
 
 ## Environment-first execution
 
@@ -27,7 +27,7 @@ Every executable task should carry an environment context containing:
 - required tools and package manager;
 - verification commands and browser availability;
 - network policy and known constraints;
-- provider identity (`Devin`, model `SWE-1.7`);
+- execution provider identity and model, as configured for the deployment;
 - mandatory human gates for review and acceptance.
 
 The context is hashed with the task contract and rendered into the runner
@@ -65,7 +65,7 @@ gates, not through unreviewed writes to the default branch.
 ## Product boundary
 
 Self-hosted Loop owns the Cloudflare control plane, GitHub integration, and
-Boxes. A future hosted plan can own those operational resources for a monthly
+workspaces. A future hosted plan can own those operational resources for a monthly
 fee, while customers retain their GitHub repositories and provider accounts.
 The hosted version must preserve the same boundaries: customer-scoped secrets,
 tenant-isolated state, explicit human gates, and no provider credential copied

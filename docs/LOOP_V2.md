@@ -6,8 +6,9 @@ immutable contract, coordinates repository operations and an isolated coding
 runtime, collects evidence, and returns a review packet for human acceptance.
 
 ClawSweeper remains the repository-operations subsystem. Crabbox remains the
-workspace lifecycle adapter. Devin ACP remains an execution adapter. None of
-those adapters owns task authority, approval, or merge policy.
+workspace lifecycle adapter. The configured provider remains behind an
+execution adapter. None of those adapters owns task authority, approval, or
+merge policy.
 
 ## Product boundary
 
@@ -33,7 +34,7 @@ operations are deliberately outside the control-plane API.
 - Repository files, issue text, logs, dependencies, and test output are
   untrusted input; they cannot change Loop policy or authorization.
 - All loops have explicit attempt, repair, verifier, and lifetime budgets.
-- Box state is disposable; intent, events, evidence, and review state are
+- Workspace state is disposable; intent, events, evidence, and review state are
   durable outside the Box.
 - Human stop wins immediately before any external mutation.
 - Version one never exposes automatic merge.
@@ -138,7 +139,7 @@ gateway worker (REST/MCP/webhooks)
         ↓
 workflow worker (durable task progression and waits)
         ↓
-ClawSweeper + Crabbox → disposable Box → Devin ACP
+ClawSweeper + Crabbox → disposable workspace → execution provider
         ↓
 GitHub branch / PR / CI evidence
         ↓
@@ -217,9 +218,9 @@ the published head SHA and preliminary gates. The workflow then waits for a
 separate `verification-result` bound to that exact head, records every required
 gate, and only then accepts a `review-result`.
 
-## Devin execution policy
+## Execution provider policy
 
-The Devin adapter is intentionally narrow and durable:
+The execution-provider adapter is intentionally narrow and durable:
 
 - Loop always invokes SWE-1.7 through Devin ACP. A caller that selects another
   model is rejected before a process starts; Loop never falls back to another
