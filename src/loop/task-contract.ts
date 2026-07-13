@@ -1,5 +1,6 @@
 import { stableJson } from "../stable-json.js";
 import { sha256Hex } from "./sha256.js";
+import { validateLoopEnvironmentContext, type LoopEnvironmentContext } from "./environment.js";
 
 export type LoopRiskLevel = "R0" | "R1" | "R2" | "R3" | "R4";
 export type LoopRepositoryMode = "owned" | "external-contribution";
@@ -44,6 +45,7 @@ export type LoopTaskContract = Readonly<{
     decisions: readonly string[];
     openQuestions: readonly string[];
     relevantPaths: readonly string[];
+    environment?: LoopEnvironmentContext;
   }>;
   scope: Readonly<{ include: readonly string[]; exclude: readonly string[] }>;
   constraints: Readonly<{ required: readonly string[]; forbidden: readonly string[] }>;
@@ -234,6 +236,7 @@ export function validateLoopTaskContract(contract: LoopTaskContract): LoopContra
         decisions?: unknown;
         openQuestions?: unknown;
         relevantPaths?: unknown;
+        environment?: unknown;
       }>
     | undefined;
   if (
@@ -249,6 +252,26 @@ export function validateLoopTaskContract(contract: LoopTaskContract): LoopContra
         "decisions, openQuestions, and relevantPaths must be string arrays",
       ),
     );
+  } else if (context.environment !== undefined) {
+    if (
+      !context.environment ||
+      typeof context.environment !== "object" ||
+      Array.isArray(context.environment)
+    ) {
+      diagnostics.push(
+        diagnostic(
+          "E_CONTRACT_ENVIRONMENT",
+          "context.environment",
+          "environment must be an object",
+        ),
+      );
+    } else {
+      for (const message of validateLoopEnvironmentContext(
+        context.environment as LoopEnvironmentContext,
+      )) {
+        diagnostics.push(diagnostic("E_CONTRACT_ENVIRONMENT", "context.environment", message));
+      }
+    }
   }
   if (!isArrayOfStrings(contract.scope.include) || contract.scope.include.length === 0) {
     diagnostics.push(

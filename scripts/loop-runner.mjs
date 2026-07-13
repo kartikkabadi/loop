@@ -11,6 +11,7 @@ import {
   createLoopRunnerPublisher,
   readLoopRunnerCheckpoint,
 } from "../dist/loop-runner/index.js";
+import { buildLoopAgentContextPack, prependLoopAgentContext } from "../dist/loop/environment.js";
 import { bootstrapLoopBox } from "../dist/loop/box-bootstrap.js";
 import { createLoopGitHubAppClient } from "../dist/loop/github-adapter.js";
 import { assertValidLoopTaskContract } from "../dist/loop/task-contract.js";
@@ -83,7 +84,7 @@ async function main() {
     : 1;
   const taskRevision = positive(required(args, "task-revision"), "task-revision");
   const contractHash = required(args, "contract-hash");
-  const prompt = await readFile(required(args, "prompt-file"), "utf8");
+  let prompt = await readFile(required(args, "prompt-file"), "utf8");
   const resultPath = required(args, "result-file");
   const checkpointPath = args.get("checkpoint-file") ?? `.loop/checkpoints/${runId}.json`;
   let resumeSessionId;
@@ -151,6 +152,18 @@ async function main() {
       usage("publication contract revision does not match --task-revision");
     if (publicationContract.repository.baseSha !== baseSha)
       usage("publication contract base SHA does not match --base-sha");
+    if (publicationContract.context.environment) {
+      const contextPack = buildLoopAgentContextPack({
+        taskId,
+        project: publicationContract.identity.project,
+        repository: publicationContract.repository,
+        decisions: publicationContract.context.decisions,
+        openQuestions: publicationContract.context.openQuestions,
+        relevantPaths: publicationContract.context.relevantPaths,
+        environment: publicationContract.context.environment,
+      });
+      prompt = prependLoopAgentContext(prompt, contextPack);
+    }
     const appId = process.env.LOOP_GITHUB_APP_ID;
     const installationId = process.env.LOOP_GITHUB_INSTALLATION_ID;
     const privateKeyPem = process.env.LOOP_GITHUB_APP_PRIVATE_KEY;

@@ -11,18 +11,21 @@ security; it never hosts long-lived agents or consumes Devin capacity.
 
 ## Operating loop
 
-1. ChatGPT creates a complete, versioned Loop task contract.
-2. Loop stores the draft and can project it to a `loop:draft` GitHub issue.
-3. A human validates and approves the plan; marking the issue `loop:ready`
+1. ChatGPT discovers the repository and produces a setup plan for the
+   environment, tools, authority files, verification surfaces, and human gates.
+2. ChatGPT creates a complete, versioned Loop task contract carrying that
+   environment context.
+3. Loop stores the draft and can project it to a `loop:draft` GitHub issue.
+4. A human validates and approves the plan; marking the issue `loop:ready`
    enables webhook intake.
-4. Cloudflare allocates a disposable Box and bootstraps Node, pnpm, Devin,
+5. Cloudflare allocates a disposable Box and bootstraps Node, pnpm, Devin,
    `agent-browser`, and Socket Firewall (`sfw`) idempotently.
-5. The Box runner invokes Devin ACP with `SWE-1.7` enforced, publishes a
-   commit-bound PR and evidence, then waits for review.
-6. Passing exact-head gates convert a draft PR to ready-for-review and add
+6. The Box runner invokes Devin ACP with `SWE-1.7` enforced and the signed
+   context pack, publishes a commit-bound PR and evidence, then waits for review.
+7. Passing exact-head gates convert a draft PR to ready-for-review and add
    `loop:review-ready`. A human reviews the packet and either accepts it or
    requests one of the bounded repair paths.
-7. Loop self-heals stale runtime state and resumes from durable checkpoints;
+8. Loop self-heals stale runtime state and resumes from durable checkpoints;
    it never silently merges or treats model output as approval.
 
 ## Status vocabulary
@@ -65,8 +68,11 @@ pnpm run gateway:typecheck
 
 The authoritative architecture, threat model, failure policy, and rollout
 contract are in [`docs/LOOP_V2.md`](docs/LOOP_V2.md). Operational GitHub and
-Box behavior is documented in
-[`docs/WORKFLOW-OPERATIONS.md`](docs/WORKFLOW-OPERATIONS.md).
+Box behavior is documented in [`docs/WORKFLOW-OPERATIONS.md`](docs/WORKFLOW-OPERATIONS.md).
+The product roles and environment-first model are in
+[`docs/PRODUCT-MODEL.md`](docs/PRODUCT-MODEL.md), and the self-host onboarding
+contract is in
+[`docs/SELF-HOSTING-SETUP.md`](docs/SELF-HOSTING-SETUP.md).
 
 ## Safety boundary
 
