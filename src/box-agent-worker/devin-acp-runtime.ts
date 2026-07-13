@@ -376,7 +376,9 @@ class DevinAcpRuntimeImpl implements AgentSessionRuntime {
 
     const command = options.devinCommand ?? "devin";
     assertSafeString("devinCommand", command);
-    const args = options.devinArgs ?? ["acp"];
+    // Loop-owned ACP launches default to the only permitted Devin model. The
+    // Loop Runner still normalizes explicit arguments and rejects overrides.
+    const args = options.devinArgs ?? ["--model", "SWE-1.7", "acp"];
     for (const arg of args) assertSafeString("devinArgs", arg);
 
     this.#command = command;

@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "status": "candidate_complete",
+  "task_revision": 1,
+  "contract_hash": "sha256:box-smoke",
+  "acceptance_criteria": [],
+  "commands_run": [],
+  "assumptions": [],
+  "blockers": [],
+  "scope_deviations": [],
+  "risks_discovered": []
+}

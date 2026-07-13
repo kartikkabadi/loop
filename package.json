@@ -1,5 +1,5 @@
 {
-  "name": "@openclaw/clawsweeper",
+  "name": "loop",
   "version": "0.3.1",
   "private": true,
   "license": "MIT",
@@ -71,6 +71,14 @@
     "dashboard:dev": "npx wrangler@4.107.0 dev --config dashboard/wrangler.toml",
     "dashboard:refresh-ci": "node scripts/dashboard-refresh-ci.mjs",
     "dashboard:smoke": "node scripts/dashboard-smoke.mjs",
+    "gateway:typecheck": "tsc -p tsconfig.gateway.json",
+    "gateway:dev": "wrangler dev --config gateway/wrangler.toml",
+    "gateway:deploy": "wrangler deploy --config gateway/wrangler.toml",
+    "gateway:migrate:local": "wrangler d1 migrations apply loop-control-plane --local --config gateway/wrangler.toml",
+    "gateway:migrate:remote": "wrangler d1 migrations apply loop-control-plane --remote --config gateway/wrangler.toml",
+    "loop": "node scripts/loop.mjs",
+    "loop:runner": "node scripts/loop-runner.mjs",
+    "loop:box": "node scripts/loop-box.mjs",
     "smoke:pr-close-coverage": "pnpm run build && node scripts/pr-close-coverage-smoke.mjs",
     "test": "pnpm run build:all && node --test test/*.test.ts test/repair/*.test.ts dist/repair/*.test.js",
     "test:unit": "node --test test/*.test.ts",
@@ -84,8 +92,8 @@
     "lint:repair": "oxlint src/repair --tsconfig tsconfig.repair.json --deny-warnings --report-unused-disable-directives -D correctness",
     "lint:scripts": "oxlint scripts test --deny-warnings --report-unused-disable-directives -D correctness",
     "lint:dashboard": "oxlint dashboard --tsconfig tsconfig.dashboard.json --deny-warnings --report-unused-disable-directives -D correctness",
-    "format": "oxfmt --write src scripts test dashboard package.json tsconfig.json tsconfig.repair.json tsconfig.dashboard.json .oxfmtrc.json config schema .github/actions .github/workflows",
-    "format:check": "oxfmt --check src scripts test dashboard package.json tsconfig.json tsconfig.repair.json tsconfig.dashboard.json .oxfmtrc.json config schema .github/actions .github/workflows",
+    "format": "oxfmt --write src scripts test dashboard gateway package.json tsconfig.json tsconfig.repair.json tsconfig.dashboard.json tsconfig.gateway.json .oxfmtrc.json config schema .github/actions .github/workflows",
+    "format:check": "oxfmt --check src scripts test dashboard gateway package.json tsconfig.json tsconfig.repair.json tsconfig.dashboard.json tsconfig.gateway.json .oxfmtrc.json config schema .github/actions .github/workflows",
     "oxformat": "pnpm run format",
     "oxformat:check": "pnpm run format:check",
     "check": "pnpm run check:active-surface && pnpm run check:limits && pnpm run build:all && pnpm run lint && pnpm run test:unit && pnpm run test:repair && pnpm run test:coverage:changed && pnpm run test:coverage && pnpm run format:check",
@@ -98,8 +106,10 @@
     "repair:pr-intake": "node dist/repair/pr-repair-intake.js"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "1.29.0",
     "ajv": "^8.20.0",
-    "yaml": "^2.9.0"
+    "yaml": "^2.9.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/node": "^26.1.1",

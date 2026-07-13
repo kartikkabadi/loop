@@ -1,0 +1,28 @@
+name: Loop security
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  schedule:
+    - cron: "17 3 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: loop-security-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dependency-audit:
+    name: Production dependency audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup-pnpm
+      - name: Audit production dependencies
+        run: pnpm audit --prod --audit-level=high

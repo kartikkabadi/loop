@@ -1,0 +1,64 @@
+name = "loop-gateway"
+main = "worker.ts"
+compatibility_date = "2026-07-13"
+workers_dev = true
+compatibility_flags = ["nodejs_compat"]
+
+[observability]
+enabled = true
+head_sampling_rate = 1.0
+
+[triggers]
+crons = ["*/15 * * * *"]
+
+[[d1_databases]]
+binding = "LOOP_DB"
+database_name = "loop-control-plane"
+database_id = "2b24946f-3346-4cfe-b61e-88c3a0cfc659"
+migrations_dir = "../schema/migrations"
+
+[[r2_buckets]]
+binding = "LOOP_EVIDENCE"
+bucket_name = "loop-evidence"
+
+[[queues.producers]]
+binding = "LOOP_WEBHOOK_QUEUE"
+queue = "loop-webhook-fanout"
+
+[[queues.consumers]]
+queue = "loop-webhook-fanout"
+max_batch_size = 10
+max_batch_timeout = 5
+max_retries = 5
+dead_letter_queue = "loop-webhook-fanout-dlq"
+
+[[durable_objects.bindings]]
+name = "REPO_COORDINATOR"
+class_name = "RepoCoordinator"
+
+[[durable_objects.bindings]]
+name = "PROVIDER_CAPACITY"
+class_name = "ProviderCapacityCoordinator"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["RepoCoordinator"]
+
+[[migrations]]
+tag = "v2"
+new_sqlite_classes = ["ProviderCapacityCoordinator"]
+
+[[workflows]]
+name = "loop-task-run"
+binding = "TASK_RUN_WORKFLOW"
+class_name = "TaskRunWorkflow"
+
+[vars]
+# Set these through `wrangler secret`/environment-specific configuration before
+# enabling authenticated writes. Missing Auth0 values fail closed to 401.
+LOOP_REQUIRE_VERIFIED_EMAIL = "true"
+# Shadow is the safe default; promote explicitly after the live soak.
+LOOP_ROLLOUT_MODE = "shadow"
+# Deployment ceiling; admission starts at two and ramps only on observed
+# successful SWE-1.7 completions. Lower immediately on provider rate/quota errors.
+LOOP_DEVIN_MAX_CONCURRENT = "10"

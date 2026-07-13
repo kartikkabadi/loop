@@ -1,0 +1,1 @@
+Reply exactly LOOP_RUNNER_SMOKE_OK and do not use tools.
