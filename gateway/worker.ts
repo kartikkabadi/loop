@@ -36,7 +36,12 @@ import {
 } from "../src/loop/gateway.ts";
 import { LoopApplication } from "../src/loop/application.ts";
 import { D1R2LoopEvidenceStore, type LoopR2Bucket } from "../src/loop/evidence.ts";
-import { D1LoopWebhookDedupStore, verifyGithubWebhookSignature } from "../src/loop/webhook.ts";
+import {
+  D1LoopWebhookDedupStore,
+  LOOP_MAX_WEBHOOK_BODY_BYTES,
+  verifyGithubWebhookSignature,
+  verifyGithubWebhookSignatureBytes,
+} from "../src/loop/webhook.ts";
 import type {
   LoopCapacityReader,
   LoopPrincipal,
@@ -1350,21 +1355,34 @@ async function githubWebhookRequest(
     };
   }
   const deliveryId = request.headers.get("x-github-delivery");
-  if (!deliveryId) {
+  if (!deliveryId || !/^[A-Za-z0-9._:-]{1,256}$/.test(deliveryId)) {
     return { status: 400, headers: {}, body: { error: "delivery_id_required" } };
   }
-  const body = await request.text();
-  const verified = await verifyGithubWebhookSignature(
+  const contentLength = request.headers.get("content-length");
+  if (
+    contentLength &&
+    (!/^\d+$/.test(contentLength) || Number(contentLength) > LOOP_MAX_WEBHOOK_BODY_BYTES)
+  )
+    return { status: 413, headers: {}, body: { error: "payload_too_large" } };
+  const bodyBytes = await request.arrayBuffer();
+  if (bodyBytes.byteLength > LOOP_MAX_WEBHOOK_BODY_BYTES)
+    return { status: 413, headers: {}, body: { error: "payload_too_large" } };
+  const verified = await verifyGithubWebhookSignatureBytes(
     env.GITHUB_WEBHOOK_SECRET,
-    body,
+    bodyBytes,
     request.headers.get("x-hub-signature-256") ?? undefined,
   );
   if (!verified) return { status: 401, headers: {}, body: { error: "invalid_signature" } };
-  if (body.length > 128 * 1024)
-    return { status: 413, headers: {}, body: { error: "payload_too_large" } };
+  const body = new TextDecoder("utf-8", { fatal: true });
+  let bodyText: string;
+  try {
+    bodyText = body.decode(bodyBytes);
+  } catch {
+    return { status: 400, headers: {}, body: { error: "invalid_utf8" } };
+  }
   let payload: unknown;
   try {
-    payload = JSON.parse(body);
+    payload = JSON.parse(bodyText);
   } catch {
     return { status: 400, headers: {}, body: { error: "invalid_json" } };
   }
@@ -1372,6 +1390,12 @@ async function githubWebhookRequest(
     return { status: 400, headers: {}, body: { error: "payload_object_required" } };
   const receivedAt = new Date().toISOString();
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+  const claim = await new D1LoopWebhookDedupStore(env.LOOP_DB).claim({
+    deliveryId,
+    receivedAt,
+    expiresAt,
+  });
+  if (claim === "duplicate") return { status: 202, headers: {}, body: { status: "duplicate" } };
   await env.LOOP_WEBHOOK_QUEUE.send(
     {
       deliveryId,
@@ -1381,12 +1405,6 @@ async function githubWebhookRequest(
     },
     { contentType: "json" },
   );
-  const claim = await new D1LoopWebhookDedupStore(env.LOOP_DB).claim({
-    deliveryId,
-    receivedAt,
-    expiresAt,
-  });
-  if (claim === "duplicate") return { status: 202, headers: {}, body: { status: "duplicate" } };
   return {
     status: 202,
     headers: {},
@@ -1840,6 +1858,12 @@ async function processGitHubCommandEvent(
     });
     try {
       const task = await application.getTask(taskId);
+      if (
+        task.contract.repository.owner !== event.owner ||
+        task.contract.repository.name !== event.repository
+      ) {
+        throw new Error("GitHub command repository does not match the linked Loop task");
+      }
       const actorSubject = `github:${event.actor}`;
       switch (command.command) {
         case "dispatch": {

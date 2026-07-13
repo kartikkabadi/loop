@@ -11,6 +11,14 @@ export interface LoopSubtleCrypto {
   sign(algorithm: "HMAC", key: unknown, data: ArrayBuffer): Promise<ArrayBuffer>;
 }
 
+export const LOOP_MAX_WEBHOOK_BODY_BYTES = 128 * 1024;
+
+function bytes(value: ArrayBuffer | Uint8Array): ArrayBuffer {
+  if (value instanceof Uint8Array)
+    return value.buffer.slice(value.byteOffset, value.byteOffset + value.byteLength) as ArrayBuffer;
+  return value;
+}
+
 function hex(bytes: ArrayBuffer): string {
   return [...new Uint8Array(bytes)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
@@ -31,18 +39,33 @@ export async function verifyGithubWebhookSignature(
   signature: string | undefined,
   subtle: LoopSubtleCrypto = globalThis.crypto.subtle as unknown as LoopSubtleCrypto,
 ): Promise<boolean> {
+  return verifyGithubWebhookSignatureBytes(
+    secret,
+    new TextEncoder().encode(body),
+    signature,
+    subtle,
+  );
+}
+
+/** Verify the signature over the exact bytes received from the network. */
+export async function verifyGithubWebhookSignatureBytes(
+  secret: string,
+  body: ArrayBuffer | Uint8Array,
+  signature: string | undefined,
+  subtle: LoopSubtleCrypto = globalThis.crypto.subtle as unknown as LoopSubtleCrypto,
+): Promise<boolean> {
   if (!secret || !signature?.startsWith("sha256=")) return false;
   const expected = signature.slice("sha256=".length).toLowerCase();
   if (!/^[0-9a-f]{64}$/.test(expected)) return false;
   const encoder = new TextEncoder();
   const key = await subtle.importKey(
     "raw",
-    encoder.encode(secret).buffer,
+    bytes(encoder.encode(secret)),
     { name: "HMAC", hash: "SHA-256" },
     false,
     ["sign"],
   );
-  const actual = hex(await subtle.sign("HMAC", key, encoder.encode(body).buffer));
+  const actual = hex(await subtle.sign("HMAC", key, bytes(body)));
   return equalHex(actual, expected);
 }
 
@@ -60,6 +83,13 @@ export class InMemoryLoopWebhookDedupStore implements LoopWebhookDedupStore {
   async claim(
     input: Readonly<{ deliveryId: string; receivedAt: string; expiresAt: string }>,
   ): Promise<LoopWebhookClaimResult> {
+    if (!/^[A-Za-z0-9._:-]{1,256}$/.test(input.deliveryId))
+      throw new Error("delivery ID is invalid");
+    if (
+      !Number.isFinite(Date.parse(input.receivedAt)) ||
+      !Number.isFinite(Date.parse(input.expiresAt))
+    )
+      throw new Error("delivery timestamps are invalid");
     const existing = this.#deliveries.get(input.deliveryId);
     if (existing && existing > input.receivedAt) return "duplicate";
     this.#deliveries.set(input.deliveryId, input.expiresAt);
@@ -76,6 +106,13 @@ export class D1LoopWebhookDedupStore implements LoopWebhookDedupStore {
   async claim(
     input: Readonly<{ deliveryId: string; receivedAt: string; expiresAt: string }>,
   ): Promise<LoopWebhookClaimResult> {
+    if (!/^[A-Za-z0-9._:-]{1,256}$/.test(input.deliveryId))
+      throw new Error("delivery ID is invalid");
+    if (
+      !Number.isFinite(Date.parse(input.receivedAt)) ||
+      !Number.isFinite(Date.parse(input.expiresAt))
+    )
+      throw new Error("delivery timestamps are invalid");
     const existing = await this.database
       .prepare(
         "SELECT delivery_id, expires_at FROM loop_webhook_deliveries WHERE delivery_id = ?1 LIMIT 1",

@@ -56,12 +56,24 @@ export class D1LoopTaskEventStore implements LoopTaskEventStore {
       if (existing) return eventFromRow(existing);
     }
 
-    await this.database
-      .prepare(
-        "INSERT INTO loop_task_events (task_id, sequence, type, message, idempotency_key, state_json) SELECT ?1, COALESCE(MAX(sequence), 0) + 1, ?2, ?3, ?4, ?5 FROM loop_task_events WHERE task_id = ?1",
-      )
-      .bind(event.taskId, event.type, event.message, idempotencyKey, JSON.stringify(event.state))
-      .run();
+    try {
+      await this.database
+        .prepare(
+          "INSERT INTO loop_task_events (task_id, sequence, type, message, idempotency_key, state_json) SELECT ?1, COALESCE(MAX(sequence), 0) + 1, ?2, ?3, ?4, ?5 FROM loop_task_events WHERE task_id = ?1",
+        )
+        .bind(event.taskId, event.type, event.message, idempotencyKey, JSON.stringify(event.state))
+        .run();
+    } catch (error) {
+      if (idempotencyKey === null) throw error;
+      const raced = await this.database
+        .prepare(
+          "SELECT task_id, sequence, type, message, idempotency_key, state_json FROM loop_task_events WHERE task_id = ?1 AND idempotency_key = ?2 LIMIT 1",
+        )
+        .bind(event.taskId, idempotencyKey)
+        .first<StoredEventRow>();
+      if (raced) return eventFromRow(raced);
+      throw error;
+    }
 
     const inserted = idempotencyKey
       ? await this.database

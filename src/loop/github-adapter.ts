@@ -50,6 +50,43 @@ function nonEmpty(value: unknown, label: string): string {
   return value;
 }
 
+function githubApiOrigin(value: string | undefined): string {
+  const origin = value ?? "https://api.github.com";
+  let parsed: URL;
+  try {
+    parsed = new URL(origin);
+  } catch {
+    throw new Error("GitHub API origin must be https://api.github.com");
+  }
+  if (
+    parsed.protocol !== "https:" ||
+    parsed.hostname !== "api.github.com" ||
+    parsed.pathname !== "/" ||
+    parsed.search ||
+    parsed.hash
+  )
+    throw new Error("GitHub API origin must be https://api.github.com");
+  return parsed.origin;
+}
+
+function safeHttpsUrl(value: unknown, label: string): string {
+  const url = nonEmpty(value, label);
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    throw new Error(`${label} must be an absolute HTTPS URL`);
+  }
+  if (
+    parsed.protocol !== "https:" ||
+    parsed.username ||
+    parsed.password ||
+    (parsed.hostname !== "github.com" && !parsed.hostname.endsWith(".github.com"))
+  )
+    throw new Error(`${label} must be an absolute HTTPS URL`);
+  return parsed.href;
+}
+
 function sha(value: unknown, label: string): string {
   const result = nonEmpty(value, label);
   if (!/^[0-9a-f]{7,64}$/i.test(result)) throw new Error(`${label} must be a git SHA`);
@@ -67,6 +104,12 @@ function repositoryPath(contract: LoopTaskContract): string {
 }
 
 function branchPath(branch: string): string {
+  if (
+    branch.length > 256 ||
+    branch.includes("\0") ||
+    branch.split("/").some((part) => !part || part === "." || part === "..")
+  )
+    throw new Error("GitHub branch must be a safe ref");
   return branch
     .split("/")
     .map((segment) => encodeURIComponent(segment))
@@ -177,7 +220,9 @@ function checkPayload(input: LoopCheckPublication, externalId: string): Record<s
     status,
     ...(input.conclusion ? { conclusion: input.conclusion } : {}),
     external_id: externalId,
-    ...(input.detailsUrl ? { details_url: nonEmpty(input.detailsUrl, "check details URL") } : {}),
+    ...(input.detailsUrl
+      ? { details_url: safeHttpsUrl(input.detailsUrl, "check details URL") }
+      : {}),
     output: {
       title: `Loop / ${input.name}`,
       summary: nonEmpty(input.summary, "check summary"),
@@ -192,7 +237,7 @@ function checkPayload(input: LoopCheckPublication, externalId: string): Record<s
 export function createLoopGitHubFetchClient(options: GitHubFetchClientOptions): LoopGitHubClient {
   const token = nonEmpty(options.token, "GitHub token");
   const request = options.fetch ?? globalThis.fetch;
-  const origin = options.apiOrigin ?? "https://api.github.com";
+  const origin = githubApiOrigin(options.apiOrigin);
   return {
     async request(input) {
       const response = await request(`${origin}/${input.path}`, {
@@ -214,7 +259,7 @@ export function createLoopGitHubFetchClient(options: GitHubFetchClientOptions): 
           body = text;
         }
       }
-      if (!response.ok) throw new Error(`GitHub API ${response.status}: ${JSON.stringify(body)}`);
+      if (!response.ok) throw new Error(`GitHub API request failed with HTTP ${response.status}`);
       return body;
     },
   };
@@ -332,7 +377,7 @@ export function createLoopGitHubAppClient(options: LoopGitHubAppClientOptions): 
     throw new Error("GitHub App ID and installation ID must be numeric");
   const privateKeyPem = nonEmpty(options.privateKeyPem, "GitHub App private key");
   const request = options.fetch ?? globalThis.fetch;
-  const origin = options.apiOrigin ?? "https://api.github.com";
+  const origin = githubApiOrigin(options.apiOrigin);
   const now = options.now ?? (() => Date.now());
   let cached: { token: string; expiresAt: number } | undefined;
   let pending: Promise<string> | undefined;

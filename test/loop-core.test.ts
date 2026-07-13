@@ -19,6 +19,7 @@ import {
   sha256Hex,
   InMemoryLoopWebhookDedupStore,
   verifyGithubWebhookSignature,
+  verifyGithubWebhookSignatureBytes,
   GitHubLoopPublicationAdapter,
   createLoopGitHubAppClient,
   InMemoryLoopBoxAllocationStore,
@@ -759,6 +760,23 @@ test("GitHub webhook signatures verify and delivery claims deduplicate", async (
   });
   assert.equal(first, "claimed");
   assert.equal(second, "duplicate");
+});
+
+test("GitHub webhook verification signs raw bytes and rejects malformed delivery IDs", async () => {
+  const secret = "loop-test-secret";
+  const raw = Uint8Array.from([0x7b, 0x22, 0x6f, 0x6b, 0x22, 0x3a, 0x22, 0xc3, 0xa9, 0x22, 0x7d]);
+  const signature = `sha256=${createHmac("sha256", secret).update(raw).digest("hex")}`;
+  assert.equal(await verifyGithubWebhookSignatureBytes(secret, raw, signature), true);
+  assert.equal(await verifyGithubWebhookSignatureBytes(secret, raw.slice(0, -1), signature), false);
+  const store = new InMemoryLoopWebhookDedupStore();
+  await assert.rejects(
+    store.claim({
+      deliveryId: "delivery with spaces",
+      receivedAt: "2026-07-13T00:00:00.000Z",
+      expiresAt: "2026-07-20T00:00:00.000Z",
+    }),
+    /delivery ID is invalid/,
+  );
 });
 
 test("GitHub publication updates deterministic checks and one status comment", async () => {
