@@ -91,7 +91,7 @@ export function validateLoopEnvironmentContext(context: LoopEnvironmentContext):
     context.provider.executor !== "devin" ||
     context.provider.model !== "SWE-1.7"
   )
-    errors.push("Loop execution must use the configured execution provider model");
+    errors.push("Loop execution must use Devin SWE-1.7");
   return errors;
 }
 

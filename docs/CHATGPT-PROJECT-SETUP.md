@@ -52,6 +52,6 @@ fallback questions when inspection cannot answer them.
 ## What this setup does not promise
 
 Project sources improve consistency. They do not give ChatGPT access to a
-repository, GitHub account, workspace, or Loop state by themselves. Live data and
+repository, GitHub account, Box, or Loop state by themselves. Live data and
 mutations require the connected MCP tools and their scopes. If a source or tool
 is missing, ChatGPT should say that it is missing rather than guessing.

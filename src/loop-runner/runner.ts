@@ -332,7 +332,7 @@ export class LoopRunner {
         const report = await options.bootstrap();
         if (!report.ready)
           throw new Error(
-            `Loop workspace bootstrap failed: ${report.tools
+            `Loop Box bootstrap failed: ${report.tools
               .filter((tool) => tool.status === "failed")
               .map((tool) => `${tool.name}: ${tool.detail ?? "verification failed"}`)
               .join("; ")}`,

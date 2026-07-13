@@ -60,9 +60,7 @@ function validate(record: LoopRunCheckpoint): void {
   positive(record.cancellationGeneration, "cancellationGeneration");
   positive(record.taskRevision, "taskRevision");
   if (record.model !== LOOP_DEVIN_MODEL)
-    throw new Error(
-      `Loop only permits the configured execution provider model ${String(LOOP_DEVIN_MODEL)}`,
-    );
+    throw new Error(`Loop only permits Devin model ${String(LOOP_DEVIN_MODEL)}`);
   nonEmpty(record.contractHash, "contractHash");
   nonEmpty(record.sessionIdDigest, "sessionIdDigest");
   status(record.status);

@@ -2,7 +2,7 @@
 
 Loop turns a conversation into a reviewable software change through explicit
 states. ChatGPT is the interface. Loop is the durable state machine. GitHub is
-the code and review ledger. Workspaces are disposable execution environments.
+the code and review ledger. Boxes are disposable execution environments.
 
 ```text
 user goal
@@ -13,8 +13,8 @@ user goal
   -> draft task or issue
   -> validate contract
   -> human approves dispatch
-  -> workspace bootstrap
-  -> execution provider implements and tests
+  -> Box bootstrap
+  -> Devin SWE-1.7 implements and tests
   -> exact-head independent verification
   -> draft PR and review packet
   -> human reviews or requests repair
@@ -32,16 +32,16 @@ user goal
 | "What is happening?" | Read workday, task, capacity, and review state | No mutation |
 | "Review this PR" | Read exact-head review packet and evidence | Review decision in chat |
 | "Fix these findings" | Show repair scope, then request bounded repair after approval | Repair attempt |
-| Rate limit or workspace failure | Read durable checkpoint and capacity state | Waiting, paused, or blocked |
+| Rate limit or Box failure | Read durable checkpoint and capacity state | Waiting, paused, or blocked |
 
 ## Draft versus ready
 
 Drafts are safe planning artifacts. They may contain a proposed title, body,
 labels, acceptance criteria, and verification plan. They must not trigger a
-workspace, execution provider, GitHub branch, PR, or production action.
+Box, Devin, GitHub branch, PR, or production action.
 
 Ready means the complete contract passed validation and a human approved the
-next transition. A task can still wait for provider capacity or a workspace without
+next transition. A task can still wait for provider capacity or a Box without
 being broken.
 
 ## What the user should see
@@ -60,7 +60,7 @@ read them to understand the current state.
 
 ## Recovery
 
-If an agent or workspace stops, Loop preserves the task contract, checkpoint, exact
+If an agent or Box stops, Loop preserves the task contract, checkpoint, exact
 head, failure reason, and next retry time. A replacement run resumes from that
 durable handoff after re-running environment bootstrap. A rate limit changes
 capacity and cooldown state. It does not discard the task or switch to a paid

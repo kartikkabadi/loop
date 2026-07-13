@@ -49,8 +49,8 @@ checks, comments, and PR draft state are projections that can be reconciled.
 
 ## Execution provider capacity
 
-The execution provider’s public interfaces do not expose a universal account
-concurrency limit. Loop therefore starts at two active provider admissions, persists a deployment
+Devin’s public interfaces do not expose a universal account concurrency limit.
+Loop therefore starts at two active SWE-1.7 admissions, persists a deployment
 ceiling (currently ten), and ramps one slot after observed successful
 completions. A rate, quota, or provider failure halves the active admission
 limit and records a cooldown. Waiting tasks retain their contract, checkpoint,

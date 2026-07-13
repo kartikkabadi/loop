@@ -46,11 +46,11 @@ verified yet.
 
 ## Provider and environment defaults
 
-- Execution provider: `configured provider`
-- Execution model: `configured model`
-- Workspace: `isolated workspace`
+- Execution provider: `Devin`
+- Execution model: `SWE-1.7`
+- Workspace: `isolated Box`
 - Browser tool: `agent-browser when required by the contract`
-- Firewall: `sfw when available and required by the workspace bootstrap`
+- Firewall: `sfw when available and required by the Box bootstrap`
 - Network policy: `needs discovery`
 - Review provider: `human, with optional independent model review`
 
