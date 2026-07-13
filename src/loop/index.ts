@@ -7,6 +7,7 @@ export * from "./crabbox-box-client.js";
 export * from "./d1-event-store.js";
 export * from "./event-store.js";
 export * from "./environment.js";
+export * from "./human-summary.js";
 export * from "./evidence.js";
 export * from "./gateway.js";
 export * from "./github-adapter.js";

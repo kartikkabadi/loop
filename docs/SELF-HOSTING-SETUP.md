@@ -5,6 +5,10 @@ into ChatGPT and asks to set up Loop for the project. ChatGPT should inspect
 the repository first, ask only the questions that inspection cannot answer,
 then produce a reviewable setup plan.
 
+For the daily workflow, ChatGPT starts with `loop.workday.get`. It returns a
+short human summary and a structured list of tasks needing attention. ChatGPT
+drills into a task only when approval, review, or a blocker needs it.
+
 ## The six questions
 
 1. Is this an owned repository or an external contribution through a fork?

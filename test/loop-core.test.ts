@@ -383,6 +383,8 @@ test("intent tool router enforces scopes and exposes no raw execution tool", asy
     idempotencyKey: "create-tool-task",
   });
   assert.equal((created.value as LoopTaskState).taskId, "loop_tool_1");
+  const workday = await router.invoke({ name: "loop.workday.get", arguments: {} });
+  assert.match((workday.value as { humanSummary: string }).humanSummary, /Loop workday: 1 task\./);
   await assert.rejects(
     () => router.invoke({ name: "loop.tasks.approve", arguments: { taskId: "loop_tool_1" } }),
     LoopToolAuthorizationError,
@@ -524,7 +526,7 @@ test("MCP JSON-RPC initialize, tools/list, notifications, and tool calls work", 
     method: "tools/list",
   });
   assert.ok(listed);
-  assert.equal((listed.result as { tools: readonly unknown[] }).tools.length, 23);
+  assert.equal((listed.result as { tools: readonly unknown[] }).tools.length, 24);
   const createTool = (
     listed.result as {
       tools: ReadonlyArray<{
@@ -629,7 +631,7 @@ test("official MCP SDK Streamable HTTP transport negotiates tools and scope chal
   );
   const toolsBody = (await tools.json()) as { result?: { tools?: readonly unknown[] } };
   assert.equal(tools.status, 200);
-  assert.equal(toolsBody.result?.tools?.length, 23);
+  assert.equal(toolsBody.result?.tools?.length, 24);
 
   const forbidden = await handleLoopSdkMcpRequest(
     new Request("https://loop.test/mcp", {

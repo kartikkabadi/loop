@@ -2,6 +2,7 @@ import { LoopApplication, type LoopWriteOptions } from "./application.js";
 import type { LoopTaskContract } from "./task-contract.js";
 import type { LoopFinding } from "./task-state.js";
 import type { LoopGitHubIssuePublisher } from "./github-adapter.js";
+import { buildLoopWorkdayView } from "./human-summary.js";
 import {
   assertLoopWorkflowAllowed,
   parseLoopRolloutMode,
@@ -18,6 +19,7 @@ export type LoopPrincipal = Readonly<{ subject: string; scopes: readonly LoopSco
 
 export const LOOP_TOOL_SCOPES: Readonly<Record<string, LoopScope>> = {
   "loop.tasks.list": "loop:read",
+  "loop.workday.get": "loop:read",
   "loop.capacity.get": "loop:read",
   "loop.tasks.get": "loop:read",
   "loop.review.get": "loop:read",
@@ -196,6 +198,16 @@ export function createLoopToolRouter(
             name: request.name,
             subject: principal.subject,
             value: await application.listTasks(),
+          };
+        case "loop.workday.get":
+          return {
+            name: request.name,
+            subject: principal.subject,
+            value: buildLoopWorkdayView(
+              await application.listTasks(),
+              new Date().toISOString(),
+              routerOptions.capacity ? await routerOptions.capacity.get() : undefined,
+            ),
           };
         case "loop.capacity.get":
           if (!routerOptions.capacity) throw new Error("provider capacity is not configured");

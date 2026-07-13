@@ -111,6 +111,12 @@ const TASK_WRITE_SCHEMA = {
 
 const LOOP_MCP_TOOL_DEFINITIONS: readonly LoopMcpToolDefinition[] = [
   tool(
+    "loop.workday.get",
+    "Read one compact human-friendly view of active work, review items, blockers, and capacity.",
+    "loop:read",
+    schema(),
+  ),
+  tool(
     "loop.tasks.list",
     "List durable Loop tasks and their current lifecycle states.",
     "loop:read",

@@ -11,8 +11,9 @@ security; it never hosts long-lived agents or consumes Devin capacity.
 
 ## Operating loop
 
-1. ChatGPT discovers the repository and produces a setup plan for the
-   environment, tools, authority files, verification surfaces, and human gates.
+1. ChatGPT calls `loop.workday.get` for one compact status read, then discovers
+   the repository and produces a setup plan for the environment, tools,
+   authority files, verification surfaces, and human gates.
 2. ChatGPT creates a complete, versioned Loop task contract carrying that
    environment context.
 3. Loop stores the draft and can project it to a `loop:draft` GitHub issue.
