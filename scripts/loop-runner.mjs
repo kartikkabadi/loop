@@ -8,6 +8,7 @@ import { promisify } from "node:util";
 import { createDevinAcpRuntimeController } from "../dist/box-agent-worker/devin-acp-runtime.js";
 import {
   LoopRunner,
+  assertSafeLoopEventUrl,
   createLoopRunnerPublisher,
   readLoopRunnerCheckpoint,
 } from "../dist/loop-runner/index.js";
@@ -23,10 +24,10 @@ function usage(message, exitCode = 2) {
   console.error(
     "usage: loop-runner --workspace DIR --task-id ID --run-id ID --box-id ID " +
       "--generation N --task-revision N --contract-hash HASH --prompt-file FILE " +
-      "--result-file FILE [--devin-bin PATH] [--devin-args-json JSON] " +
+      "--result-file FILE [--devin-args-json JSON] " +
       "[--base-sha SHA] [--required-gates-json JSON] [--cancellation-generation N] " +
       "[--checkpoint-file FILE] [--provider-lease-id ID] [--repository-lease-id ID] " +
-      "[--resume] [--events-file FILE] [--event-url URL] [--event-secret-file FILE] " +
+      "[--resume] [--events-file FILE] [--event-url HTTPS_URL] [--event-secret-file FILE] " +
       "[--publication-contract-file FILE --publish] [--dangerous] [--skip-bootstrap]",
   );
   process.exit(exitCode);
@@ -128,7 +129,9 @@ async function main() {
       usage("required-gates-json must be a non-empty array of strings");
   }
   const eventsFile = args.get("events-file");
-  const eventUrl = args.get("event-url");
+  const eventUrl = args.has("event-url")
+    ? assertSafeLoopEventUrl(required(args, "event-url"))
+    : undefined;
   const eventSecret =
     process.env.LOOP_WORKFLOW_EVENT_SECRET ??
     (eventUrl && args.get("event-secret-file")
@@ -283,7 +286,14 @@ async function main() {
             }),
         }),
     ...(resumeSessionId ? { resumeSessionId } : {}),
-    ...(args.get("devin-bin") ? { devinCommand: args.get("devin-bin") } : {}),
+    ...(args.has("devin-bin")
+      ? (() => {
+          const value = required(args, "devin-bin");
+          if (value !== "devin")
+            usage("--devin-bin is not configurable; use the managed devin executable");
+          return { devinCommand: value };
+        })()
+      : {}),
     ...(devinArgs ? { devinArgs } : {}),
     runtimeFactory({ workspaceRoot, hostServices, devinCommand, devinArgs }) {
       return createDevinAcpRuntimeController({
