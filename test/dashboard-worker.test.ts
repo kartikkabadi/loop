@@ -3309,7 +3309,7 @@ test("dashboard reads stored CI status for active PR rows", async () => {
       CACHE_TTL_SECONDS: "0",
     };
     const ingest = await worker.fetch(
-      new Request("<private-ingest-endpoint>", {
+      new Request("https://example.invalid/api/events", {
         method: "POST",
         headers: {
           Authorization: "Bearer test-token",
@@ -3373,7 +3373,7 @@ test("dashboard falls back to edge cache storage when KV is not bound", async ()
       CACHE_TTL_SECONDS: "0",
     };
     const ingest = await worker.fetch(
-      new Request("<private-ingest-endpoint>", {
+      new Request("https://example.invalid/api/events", {
         method: "POST",
         headers: {
           Authorization: "Bearer test-token",
@@ -3747,7 +3747,7 @@ test("dashboard preserves repeated untargeted activity events", async () => {
     };
     for (const title of ["Probe one", "Probe two"]) {
       const ingest = await worker.fetch(
-        new Request("<private-ingest-endpoint>", {
+        new Request("https://example.invalid/api/events", {
           method: "POST",
           headers: {
             Authorization: "Bearer test-token",
@@ -3819,7 +3819,7 @@ test("dashboard counts cluster-fixer operation events", async () => {
     ];
     for (const event of events) {
       const ingest = await worker.fetch(
-        new Request("<private-ingest-endpoint>", {
+        new Request("https://example.invalid/api/events", {
           method: "POST",
           headers: {
             Authorization: "Bearer test-token",
@@ -4317,7 +4317,7 @@ test("dashboard exposes ClawSweeper-owned recent closes and 24h stats", async ()
       CACHE_TTL_SECONDS: "0",
     };
     const ingest = await worker.fetch(
-      new Request("<private-ingest-endpoint>", {
+      new Request("https://example.invalid/api/events", {
         method: "POST",
         headers: {
           Authorization: "Bearer test-token",
@@ -4337,7 +4337,7 @@ test("dashboard exposes ClawSweeper-owned recent closes and 24h stats", async ()
     );
     assert.equal(ingest.status, 200);
     const prClose = await worker.fetch(
-      new Request("<private-ingest-endpoint>", {
+      new Request("https://example.invalid/api/events", {
         method: "POST",
         headers: {
           Authorization: "Bearer test-token",
@@ -4357,7 +4357,7 @@ test("dashboard exposes ClawSweeper-owned recent closes and 24h stats", async ()
     );
     assert.equal(prClose.status, 200);
     const blocked = await worker.fetch(
-      new Request("<private-ingest-endpoint>", {
+      new Request("https://example.invalid/api/events", {
         method: "POST",
         headers: {
           Authorization: "Bearer test-token",

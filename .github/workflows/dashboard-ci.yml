@@ -19,7 +19,7 @@ jobs:
     timeout-minutes: 8
     env:
       CLAWSWEEPER_STATUS_URL: https://clawsweeper.openclaw.ai
-      CLAWSWEEPER_STATUS_INGEST_URL: <private-ingest-endpoint>
+      CLAWSWEEPER_STATUS_INGEST_URL: ${{ vars.CLAWSWEEPER_STATUS_INGEST_URL }}
       CLAWSWEEPER_STATUS_INGEST_TOKEN: ${{ secrets.CLAWSWEEPER_STATUS_INGEST_TOKEN }}
       CLAWSWEEPER_STATUS_CI_LIMIT: "30"
       GITHUB_TOKEN: ${{ github.token }}

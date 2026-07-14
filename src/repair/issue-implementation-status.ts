@@ -198,9 +198,12 @@ export function renderIssueImplementationStatusComment(
 async function postDashboardStatus(options: StatusOptions) {
   const token = String(process.env.CLAWSWEEPER_STATUS_INGEST_TOKEN ?? "").trim();
   if (!token) return "skipped";
+  const statusUrl =
+    String(process.env.CLAWSWEEPER_STATUS_URL ?? "")
+      .trim()
+      .replace(/\/+$/, "") || "https://clawsweeper.openclaw.ai";
   const url =
-    String(process.env.CLAWSWEEPER_STATUS_INGEST_URL ?? "").trim() ||
-    "<private-ingest-endpoint>";
+    String(process.env.CLAWSWEEPER_STATUS_INGEST_URL ?? "").trim() || `${statusUrl}/api/events`;
   const state = options.state.trim().toLowerCase();
   const response = await fetch(url, {
     method: "POST",

@@ -424,10 +424,11 @@ test("dashboard syncs Worker secrets with durable lifecycle storage", () => {
   assert.match(config, /name = "STATUS_STORE"/);
   assert.match(config, /class_name = "StatusStore"/);
   assert.match(config, /new_sqlite_classes = \["StatusStore"\]/);
-  assert.match(workflow, /workers\/scripts\/\$CLOUDFLARE_WORKER_NAME\/secrets-bulk/);
-  assert.match(workflow, /Content-Type: application\/merge-patch\+json/);
-  assert.match(workflow, /jq -e '\.success == true'/);
-  assert.doesNotMatch(workflow, /wrangler@[^\s]+ secret bulk/);
+  assert.match(config, /\[secrets\]/);
+  assert.match(config, /"INGEST_TOKEN"/);
+  assert.match(workflow, /wrangler@[^\s]+ secret bulk/);
+  assert.doesNotMatch(workflow, /workers\/scripts\/\$CLOUDFLARE_WORKER_NAME\/secrets-bulk/);
+  assert.doesNotMatch(workflow, /application\/merge-patch\+json/);
   assert.match(smoke, /\/internal\/exact-review\/reconcile/);
   assert.match(smoke, /method: "POST"/);
   assert.match(smoke, /reconcileResponse\.status !== 401/);

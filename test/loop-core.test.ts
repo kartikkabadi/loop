@@ -1131,12 +1131,7 @@ test("Crabbox Box client normalizes warmup, list, stop, and delete commands", as
   await client.delete("bx-1");
   assert.deepEqual(
     calls.map((call) => call.command),
-    [
-      "crabbox",
-      "box",
-      "box",
-      "box",
-    ],
+    ["crabbox", "box", "box", "box"],
   );
 });
 
