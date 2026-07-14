@@ -7,7 +7,6 @@ import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 
 const execFile = promisify(execFileCallback);
-const DEFAULT_GATEWAY = "https://loop-gateway.1kartikkabadi1.workers.dev";
 let requestId = 0;
 
 function usage(message, exitCode = 2) {
@@ -29,7 +28,7 @@ function usage(message, exitCode = 2) {
   loop budget|audit
 
 Options:
-  --gateway URL       Loop gateway URL (default: LOOP_GATEWAY_URL or ${DEFAULT_GATEWAY})
+  --gateway URL       Loop gateway URL (or set LOOP_GATEWAY_URL)
   --token-file FILE   Read an OAuth access token from a protected local file
   --json              Print machine-readable JSON where supported
   --help              Show this help
@@ -71,7 +70,8 @@ function required(flags, name) {
 }
 
 function gatewayUrl(flags) {
-  const raw = flags.get("gateway") ?? process.env.LOOP_GATEWAY_URL ?? DEFAULT_GATEWAY;
+  const raw = flags.get("gateway") ?? process.env.LOOP_GATEWAY_URL;
+  if (!raw) usage("set --gateway or LOOP_GATEWAY_URL");
   try {
     const url = new URL(raw);
     if (url.protocol !== "https:" && url.hostname !== "localhost" && url.hostname !== "127.0.0.1")
