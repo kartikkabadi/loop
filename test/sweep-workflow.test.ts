@@ -322,7 +322,10 @@ test("exact event workflow binds all work to the canonical queue claim", () => {
   const eventEnd = workflow.indexOf("\n  target-fanout:", eventStart);
   const eventJob = workflow.slice(eventStart, eventEnd);
   const claimStart = eventJob.indexOf("- name: Claim exact-review queue lease");
-  const checkoutStart = eventJob.indexOf("- uses: actions/checkout@v7", claimStart);
+  const checkoutStart = eventJob.indexOf(
+    "- uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+    claimStart,
+  );
   const claimStep = eventJob.slice(claimStart, checkoutStart);
   const claimedWork = eventJob.slice(checkoutStart);
 
@@ -391,7 +394,10 @@ test("exact event workflow keeps both queue protocol versions live during rollin
   const eventEnd = workflow.indexOf("\n  target-fanout:", eventStart);
   const eventJob = workflow.slice(eventStart, eventEnd);
   const claimStart = eventJob.indexOf("- name: Claim exact-review queue lease");
-  const checkoutStart = eventJob.indexOf("- uses: actions/checkout@v7", claimStart);
+  const checkoutStart = eventJob.indexOf(
+    "- uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0",
+    claimStart,
+  );
   const claimStep = eventJob.slice(claimStart, checkoutStart);
   const completeStart = eventJob.indexOf("- name: Complete exact-review queue lease");
   const completeEnd = eventJob.indexOf("\n      - ", completeStart + 1);
@@ -418,10 +424,11 @@ test("dashboard syncs Worker secrets with durable lifecycle storage", () => {
   assert.match(config, /name = "STATUS_STORE"/);
   assert.match(config, /class_name = "StatusStore"/);
   assert.match(config, /new_sqlite_classes = \["StatusStore"\]/);
-  assert.match(workflow, /workers\/scripts\/\$CLOUDFLARE_WORKER_NAME\/secrets-bulk/);
-  assert.match(workflow, /Content-Type: application\/merge-patch\+json/);
-  assert.match(workflow, /jq -e '\.success == true'/);
-  assert.doesNotMatch(workflow, /wrangler@[^\s]+ secret bulk/);
+  assert.match(config, /\[secrets\]/);
+  assert.match(config, /"INGEST_TOKEN"/);
+  assert.match(workflow, /wrangler@[^\s]+ secret bulk/);
+  assert.doesNotMatch(workflow, /workers\/scripts\/\$CLOUDFLARE_WORKER_NAME\/secrets-bulk/);
+  assert.doesNotMatch(workflow, /application\/merge-patch\+json/);
   assert.match(smoke, /\/internal\/exact-review\/reconcile/);
   assert.match(smoke, /method: "POST"/);
   assert.match(smoke, /reconcileResponse\.status !== 401/);
@@ -568,7 +575,7 @@ test("apply workflow isolates Codex proof from the credentialed mutation runner"
   assert.doesNotMatch(applyJob, /setup-codex|OPENAI_API_KEY|CLAWSWEEPER_INTERNAL_MODEL/);
   assert.match(applyJob, /Create target write token/);
   assert.match(applyJob, /Create state token/);
-  assert.match(applyJob, /actions\/download-artifact@v8/);
+  assert.match(applyJob, /actions\/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c/);
   assert.match(applyJob, /name: \$\{\{ needs\.apply-proof\.outputs\.artifact_name \}\}/);
   assert.match(applyJob, /validate_coverage_proof_tree .* 8 262144 2097152/);
   assert.doesNotMatch(applyJob, /COVERAGE_PROOF_TRUSTED_STARTED_AT|proof-trust/);
@@ -1125,12 +1132,18 @@ test("apply proof and mutation start from fresh non-persisted source checkouts",
   const proofJob = workflow.slice(proofJobStart, applyJobStart);
   const applyJob = workflow.slice(applyJobStart);
 
-  assert.match(proofJob, /actions\/checkout@v7[\s\S]*?persist-credentials: false/);
+  assert.match(
+    proofJob,
+    /actions\/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0[\s\S]*?persist-credentials: false/,
+  );
   assert.match(
     proofJob,
     /uses: \.\/\.github\/actions\/setup-state[\s\S]*?persist-credentials: "false"/,
   );
-  assert.match(applyJob, /actions\/checkout@v7[\s\S]*?persist-credentials: false/);
+  assert.match(
+    applyJob,
+    /actions\/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0[\s\S]*?persist-credentials: false/,
+  );
   assert.doesNotMatch(proofJob, /git pull --rebase/);
   assert.doesNotMatch(applyJob, /git pull --rebase/);
 });

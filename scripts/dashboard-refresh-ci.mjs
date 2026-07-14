@@ -3,7 +3,8 @@
 const statusUrl = trimTrailingSlash(
   process.env.CLAWSWEEPER_STATUS_URL || "https://clawsweeper.openclaw.ai",
 );
-const ingestUrl = process.env.CLAWSWEEPER_STATUS_INGEST_URL || `${statusUrl}/api/events`;
+const ingestUrl =
+  String(process.env.CLAWSWEEPER_STATUS_INGEST_URL || "").trim() || `${statusUrl}/api/events`;
 const ingestToken = process.env.CLAWSWEEPER_STATUS_INGEST_TOKEN || "";
 const githubToken = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "";
 const limit = positiveInt(process.env.CLAWSWEEPER_STATUS_CI_LIMIT, 25);

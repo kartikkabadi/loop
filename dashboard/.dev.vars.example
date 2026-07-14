@@ -1,0 +1,5 @@
+# Copy this file to dashboard/.dev.vars for local-only Worker development.
+# These values are intentionally non-production examples.
+INGEST_TOKEN=local-dashboard-token
+CLAWSWEEPER_APP_PRIVATE_KEY=not-a-real-private-key
+CLAWSWEEPER_WEBHOOK_SECRET=local-dashboard-webhook-secret

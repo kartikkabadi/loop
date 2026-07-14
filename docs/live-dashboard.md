@@ -16,33 +16,23 @@ rows, see
 
 ## Deployment
 
-Cloudflare account:
+The public dashboard is served at `https://clawsweeper.openclaw.ai/`.
+Deployment account identifiers and ingest credentials are intentionally kept
+out of this public repository. The complete configuration contract is in
+[`SECRETS-AND-DEPLOYMENT.md`](SECRETS-AND-DEPLOYMENT.md).
 
-- account: `<redacted-org-email>`
-- account id: `<cloudflare-account-id>`
-- zone: `openclaw.ai`
-
-Worker:
-
-- name: `clawsweeper-status`
-- current deployment: `https://clawsweeper.openclaw.ai/`
-- fallback workers.dev deployment: `<private-fallback-endpoint>`
-- machine ingest: `<private-ingest-endpoint>`
-
-Deploy with the OpenClaw Cloudflare token:
+Production deploys run through the repository's GitHub Actions workflow. For a
+local validation that does not contact Cloudflare:
 
 ```bash
-source ~/.profile
-CLOUDFLARE_ACCOUNT_ID="$OPENCLAW_CLOUDFLARE_ACCOUNT_ID" \
-CLOUDFLARE_API_TOKEN="$OPENCLAW_CLOUDFLARE_API_TOKEN" \
-pnpm run dashboard:deploy
+pnpm exec wrangler@4.107.0 deploy --dry-run --config dashboard/wrangler.toml
 ```
 
 GitHub deploys use `.github/workflows/dashboard.yml`. Configure either
 `OPENCLAW_CLOUDFLARE_WORKERS_API_TOKEN` or `OPENCLAW_CLOUDFLARE_API_TOKEN` with
 Workers Scripts edit permission before enabling the workflow as the production
-deploy path. The deploy workflow injects the `CLAWSWEEPER_STATUS_INGEST_TOKEN`
-GitHub secret into a temporary Wrangler config as the Worker `INGEST_TOKEN`.
+deploy path. The deploy workflow syncs the GitHub secrets into encrypted
+Cloudflare Worker secrets with Wrangler, then deploys the checked-in config.
 Its smoke test also verifies the durable exact-review queue binding, not only
 the dashboard response.
 
@@ -76,7 +66,7 @@ binding exists, events and CI status use KV. Without KV, the Worker falls back
 to Cloudflare edge cache so badges stay fast but less durable across colos.
 
 ```bash
-curl -X POST <private-ingest-endpoint> \
+curl -X POST "$CLAWSWEEPER_STATUS_INGEST_URL" \
   -H "Authorization: Bearer $CLAWSWEEPER_STATUS_INGEST_TOKEN" \
   -H "Content-Type: application/json" \
   --data '{"event_type":"status.test","mode":"e2e","stage":"probe","status":"ok"}'

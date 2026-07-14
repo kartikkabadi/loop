@@ -87,7 +87,7 @@ jobs:
           repositories: gitcrawl-store
           permission-contents: read
 
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           token: ${{ steps.central-token.outputs.token }}
           filter: blob:none
@@ -109,7 +109,7 @@ jobs:
           token: ${{ steps.state-token.outputs.token }}
           fetch-depth: 1
 
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           repository: openclaw/gitcrawl-store
           token: ${{ steps.store-token.outputs.token }}

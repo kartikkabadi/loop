@@ -1,8 +1,10 @@
 name = "clawsweeper-status"
 main = "worker.ts"
-account_id = "<cloudflare-account-id>"
 compatibility_date = "2026-05-11"
 workers_dev = true
+
+[secrets]
+required = ["INGEST_TOKEN", "CLAWSWEEPER_APP_PRIVATE_KEY", "CLAWSWEEPER_WEBHOOK_SECRET"]
 
 [[durable_objects.bindings]]
 name = "STATUS_STORE"

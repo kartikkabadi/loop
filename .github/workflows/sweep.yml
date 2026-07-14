@@ -435,7 +435,7 @@ jobs:
           done
           exit 1
 
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           filter: blob:none
           fetch-depth: 0
@@ -625,7 +625,7 @@ jobs:
           }
           react "eyes"
 
-      - uses: actions/cache@v6
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
         if: ${{ steps.live-item.outputs.proceed == 'true' }}
         with:
           path: ${{ steps.target.outputs.target_checkout_dir }}-cache.git
@@ -1233,7 +1233,7 @@ jobs:
       actions: write
       contents: write
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           filter: blob:none
           fetch-depth: 0
@@ -1326,7 +1326,7 @@ jobs:
       target_repo_name: ${{ steps.target.outputs.target_repo_name }}
       target_repo_owner: ${{ steps.target.outputs.target_repo_owner }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           path: clawsweeper
           filter: blob:none
@@ -1396,7 +1396,7 @@ jobs:
           working-directory: clawsweeper
           build-script: build:all
 
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: clawsweeper-runtime-dist
           path: clawsweeper/dist
@@ -1716,7 +1716,7 @@ jobs:
       matrix:
         include: ${{ fromJson(needs.plan.outputs.matrix) }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           path: clawsweeper
           filter: blob:none
@@ -1749,11 +1749,11 @@ jobs:
           permission-issues: read
           permission-pull-requests: read
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
         with:
           node-version: 24
 
-      - uses: actions/download-artifact@v8
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
           name: clawsweeper-runtime-dist
           path: clawsweeper/dist
@@ -1765,7 +1765,7 @@ jobs:
         with:
           login-status: "true"
 
-      - uses: actions/cache@v6
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
         with:
           path: ${{ needs.plan.outputs.target_checkout_dir }}-cache.git
           key: ${{ needs.plan.outputs.target_repo_name }}-git-${{ runner.os }}-${{ github.run_id }}
@@ -1900,7 +1900,7 @@ jobs:
           }
           JSON
 
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         if: always()
         with:
           name: review-shard-${{ matrix.shard }}
@@ -1908,21 +1908,21 @@ jobs:
             review-artifacts/shard-${{ matrix.shard }}/*.md
           if-no-files-found: ignore
 
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         if: always()
         with:
           name: review-failed-shard-${{ matrix.shard }}
           path: review-artifacts/failed-shards/shard-${{ matrix.shard }}.json
           if-no-files-found: ignore
 
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         if: always()
         with:
           name: review-metrics-${{ matrix.shard }}
           path: review-artifacts/metrics/shard-${{ matrix.shard }}.json
           if-no-files-found: ignore
 
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         if: ${{ always() && github.event_name == 'repository_dispatch' && github.event.client_payload.expected_source_revision != '' }}
         with:
           name: review-source-revision-mismatch-${{ matrix.shard }}
@@ -1938,7 +1938,7 @@ jobs:
       actions: read
       contents: write
     steps:
-      - uses: actions/download-artifact@v8
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         continue-on-error: true
         with:
           pattern: review-source-revision-mismatch-*
@@ -2005,7 +2005,7 @@ jobs:
       cancel-in-progress: false
       queue: max
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           filter: blob:none
           fetch-depth: 0
@@ -2039,13 +2039,13 @@ jobs:
         with:
           build-script: build:all
 
-      - uses: actions/download-artifact@v8
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
           pattern: review-shard-*
           path: artifacts
           merge-multiple: true
 
-      - uses: actions/download-artifact@v8
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         continue-on-error: true
         with:
           pattern: review-metrics-*
@@ -2414,7 +2414,7 @@ jobs:
       actions: write
       contents: read
     steps:
-      - uses: actions/download-artifact@v8
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         id: failed-shards
         continue-on-error: true
         with:
@@ -2510,7 +2510,7 @@ jobs:
       issues: read
       pull-requests: read
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           filter: blob:none
           fetch-depth: 0
@@ -2569,7 +2569,7 @@ jobs:
             --path results/failed-review-retries/openclaw-openclaw \
             --rebase-strategy theirs
 
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         if: ${{ always() }}
         with:
           name: failed-review-retry-report
@@ -2583,7 +2583,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           filter: blob:none
           fetch-depth: 0
@@ -2714,7 +2714,7 @@ jobs:
       target_repo: ${{ steps.target.outputs.target_repo }}
       artifact_name: ${{ steps.proof-artifact.outputs.name }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           filter: blob:none
           fetch-depth: 1
@@ -2854,7 +2854,7 @@ jobs:
 
       - name: Upload bound close coverage proofs
         if: ${{ always() && steps.proof-select.outputs.item_numbers != '' }}
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: ${{ steps.proof-artifact.outputs.name }}
           path: .artifacts/apply-proof/pr-close-coverage-proof/*.proof.json
@@ -2874,7 +2874,7 @@ jobs:
     env:
       CLAWSWEEPER_UNCONFIRMED_PRODUCT_DIRECTION_CLOSE_ENABLED: ${{ vars.CLAWSWEEPER_UNCONFIRMED_PRODUCT_DIRECTION_CLOSE_ENABLED || 'false' }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           filter: blob:none
           fetch-depth: 0
@@ -2937,7 +2937,7 @@ jobs:
         with:
           build-script: build:all
 
-      - uses: actions/download-artifact@v8
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         continue-on-error: true
         with:
           name: ${{ needs.apply-proof.outputs.artifact_name }}

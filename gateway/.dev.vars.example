@@ -1,0 +1,11 @@
+# Copy this file to gateway/.dev.vars for local-only Worker development.
+# These values are intentionally non-production examples.
+AUTH0_ISSUER=https://example.invalid/
+AUTH0_AUDIENCE=https://example.invalid/loop
+LOOP_ALLOWED_SUBJECT=local-operator
+LOOP_ALLOWED_EMAIL=operator@example.invalid
+GITHUB_WEBHOOK_SECRET=local-github-webhook-secret
+LOOP_WORKFLOW_EVENT_SECRET=local-workflow-event-secret
+LOOP_GITHUB_APP_ID=123456
+LOOP_GITHUB_INSTALLATION_ID=12345678
+LOOP_GITHUB_APP_PRIVATE_KEY=not-a-real-private-key
