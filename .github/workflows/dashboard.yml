@@ -25,7 +25,7 @@ jobs:
     name: Deploy dashboard Worker
     runs-on: ubuntu-latest
     env:
-      CLOUDFLARE_ACCOUNT_ID: <cloudflare-account-id>
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.OPENCLAW_CLOUDFLARE_ACCOUNT_ID }}
       CLOUDFLARE_WORKER_NAME: clawsweeper-status
       CLAWSWEEPER_STATUS_URL: https://clawsweeper.openclaw.ai
     steps:
@@ -36,15 +36,20 @@ jobs:
       - name: Verify Cloudflare token is configured
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.OPENCLAW_CLOUDFLARE_WORKERS_API_TOKEN || secrets.OPENCLAW_CLOUDFLARE_API_TOKEN }}
-        run: test -n "$CLOUDFLARE_API_TOKEN"
+        run: |
+          test -n "$CLOUDFLARE_API_TOKEN"
+          test -n "$CLOUDFLARE_ACCOUNT_ID"
 
       - name: Prepare deploy config
         id: dashboard-config
         env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.OPENCLAW_CLOUDFLARE_ACCOUNT_ID }}
           CLAWSWEEPER_STATUS_INGEST_TOKEN: ${{ secrets.CLAWSWEEPER_STATUS_INGEST_TOKEN }}
         run: |
           test -n "$CLAWSWEEPER_STATUS_INGEST_TOKEN"
+          test -n "$CLOUDFLARE_ACCOUNT_ID"
           cp dashboard/wrangler.toml dashboard/wrangler.deploy.toml
+          printf 'account_id = "%s"\n' "$CLOUDFLARE_ACCOUNT_ID" >> dashboard/wrangler.deploy.toml
           printf 'INGEST_TOKEN = "%s"\n' "$CLAWSWEEPER_STATUS_INGEST_TOKEN" >> dashboard/wrangler.deploy.toml
           echo "config=dashboard/wrangler.deploy.toml" >> "$GITHUB_OUTPUT"
 

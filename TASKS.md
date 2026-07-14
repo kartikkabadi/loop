@@ -36,9 +36,9 @@ by optimistic release language.
       router as the policy boundary.
 - [x] Expose the same authenticated intent router through a bounded REST tool
       transport and public MCP documentation metadata.
-- [x] Provision the remote `loop-control-plane` D1 database, apply migration
-      `0001_loop.sql`, and deploy `loop-gateway` at
-      `https://loop-gateway.1kartikkabadi1.workers.dev`.
+- [x] Provision the remote control-plane storage, apply the initial migrations,
+      and deploy the Loop gateway through the configured Cloudflare
+      environment.
 - [x] Add the D1 event-store adapter, GitHub repository adapter, structural
       Crabbox workspace adapter, and durable execution coordinator through review
       and human acceptance.

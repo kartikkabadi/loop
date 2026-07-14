@@ -72,7 +72,7 @@ export function createCrabboxLoopBoxBootstrapExecutor(
   }>,
 ): LoopBoxBootstrapExecutor {
   const boxIdValue = nonEmpty(options.boxId, "boxId");
-  const boxCommand = nonEmpty(options.boxCommand ?? "/Users/user/.ascii/bin/box", "Box command");
+  const boxCommand = nonEmpty(options.boxCommand ?? "box", "Box command");
   return {
     async execute(input) {
       const command = safeBootstrapArgument(input.command);

@@ -40,7 +40,7 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
   CLAWSWEEPER_APP_CLIENT_ID: Iv23liOECG0slfuhz093
   CLAWSWEEPER_MODEL: internal
-  CLOUDFLARE_ACCOUNT_ID: <cloudflare-account-id>
+  CLOUDFLARE_ACCOUNT_ID: ${{ vars.OPENCLAW_CLOUDFLARE_ACCOUNT_ID }}
   REPORTS_DOMAIN: reports.openclaw.ai
   REPORTS_PROJECT: openclaw-maintainer-reports
 
@@ -111,6 +111,10 @@ jobs:
           if [ -z "${CLOUDFLARE_API_TOKEN:-}" ]; then
             echo "::notice title=Cloudflare Access not configured::Set OPENCLAW_CLOUDFLARE_CONFIG_API_TOKEN with Pages, DNS, and Zero Trust Access write scope to enforce GitHub org login for reports.openclaw.ai."
             exit 0
+          fi
+          if [ -z "${CLOUDFLARE_ACCOUNT_ID:-}" ]; then
+            echo "::error title=Cloudflare account not configured::Set the OPENCLAW_CLOUDFLARE_ACCOUNT_ID repository variable."
+            exit 1
           fi
           node scripts/ensure-cloudflare-maintainer-reports.mjs \
             --domain "$REPORTS_DOMAIN" \

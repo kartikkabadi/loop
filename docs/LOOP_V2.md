@@ -151,22 +151,12 @@ coordination adapters, not replacements for the domain model. Authentication is
 OAuth resource-server behavior at the gateway edge; the domain core receives a
 verified subject and scope, never raw bearer tokens.
 
-The current gateway deployment is live at
-`https://loop-gateway.1kartikkabadi1.workers.dev`. Its D1 database is
-`loop-control-plane`, the evidence bucket is `loop-evidence`, and webhook
-fanout uses `loop-webhook-fanout` with `loop-webhook-fanout-dlq`. Migrations
-`0001_loop.sql` through `0010_github_commands.sql` are applied remotely. A
-repository-keyed SQLite Durable Object serializes authenticated MCP writes and
-a 15-minute cron performs retention cleanup. Public metadata and tool
-discovery are available; authenticated POSTs intentionally return `401` until
-`AUTH0_ISSUER` and `AUTH0_AUDIENCE` are configured for a real Auth0 tenant.
-The public `/healthz` probe reports only service status, rollout mode, and time;
-the `loop doctor` command uses it alongside MCP metadata.
-The GitHub webhook secret is configured and a signed live test event was
-accepted by the Worker and persisted by the Queue consumer in remote D1.
-The workflow-event HMAC secret is configured on the Worker and the existing
-Box runner snapshot; unsigned runner events fail closed. Auth0 remains
-intentionally unconfigured.
+The gateway has a deployed integration environment. Public documentation keeps
+the live endpoint, account identifiers, storage binding names, and Auth0 tenant
+details out of source control; configure those values through the deployment
+environment and repository secrets. The public `/healthz` probe should report
+only service status, rollout mode, and time, while authenticated writes remain
+behind the configured resource-server checks.
 
 The MCP contract adopts the useful parts of the CodexPro local bridge: server
 instructions, bounded structured results, concrete per-tool schemas, tool
@@ -270,7 +260,7 @@ Every new Box runs the idempotent Loop bootstrap manifest before Devin starts.
 It verifies Node, npm, git, Devin, pinned pnpm, pinned `agent-browser`, and
 Socket Firewall Free (`sfw`). The pinned Linux `sfw` release is downloaded over
 HTTPS, verified against its SHA-256 digest, installed under the persistent
-`/home/user/.local/bin` path, and used to wrap package-manager installs. It
+managed user-bin path, and used to wrap package-manager installs. It
 repairs known managed binary links after resume, installs the browser runtime,
 and runs the offline doctor. The bootstrap command surface is a fixed
 allowlist; agents cannot turn it into arbitrary SSH or package-manager access.

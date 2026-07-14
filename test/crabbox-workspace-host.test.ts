@@ -19,7 +19,7 @@ import type * as CrabboxWorkspaceHostModule from "../src/crabbox-workspace-host.
 const createCrabboxCliWorkspaceHost =
   createCrabboxCliWorkspaceHostJs as typeof CrabboxWorkspaceHostModule.createCrabboxCliWorkspaceHost;
 
-const BOX_CLI = "/Users/user/.ascii/bin/box";
+const BOX_CLI = "box";
 const REQUESTED_SLUG = "My Worker";
 const CANONICAL_ID = "cbx_0123456789ab";
 const ACTUAL_SLUG = "my-worker-a1b2";

@@ -17,3 +17,14 @@ jobs/
 records/
 results/
 triage-dashboard-dev*.log
+
+# Local deployment and operator evidence; never publish these from a clone.
+dashboard/wrangler.deploy.toml
+operator-evidence/
+private-evidence/
+credentials/
+credentials.*
+*.pem
+*.key
+*.p12
+*.pfx

@@ -16,25 +16,14 @@ rows, see
 
 ## Deployment
 
-Cloudflare account:
+The public dashboard is served at `https://clawsweeper.openclaw.ai/`.
+Deployment account identifiers, fallback hostnames, and machine-ingest details
+are intentionally kept out of this public repository.
 
-- account: `<redacted-org-email>`
-- account id: `<cloudflare-account-id>`
-- zone: `openclaw.ai`
-
-Worker:
-
-- name: `clawsweeper-status`
-- current deployment: `https://clawsweeper.openclaw.ai/`
-- fallback workers.dev deployment: `<private-fallback-endpoint>`
-- machine ingest: `<private-ingest-endpoint>`
-
-Deploy with the OpenClaw Cloudflare token:
+Deploy through the repository's GitHub Actions workflow using the configured
+Cloudflare and GitHub secrets:
 
 ```bash
-source ~/.profile
-CLOUDFLARE_ACCOUNT_ID="$OPENCLAW_CLOUDFLARE_ACCOUNT_ID" \
-CLOUDFLARE_API_TOKEN="$OPENCLAW_CLOUDFLARE_API_TOKEN" \
 pnpm run dashboard:deploy
 ```
 

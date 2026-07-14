@@ -1094,7 +1094,7 @@ test("Box allocation persists intent, reconciles uncertain creates, and classifi
 test("Crabbox Box client normalizes warmup, list, stop, and delete commands", async () => {
   const calls: Array<{ command: string; args: readonly string[] }> = [];
   const client = createCrabboxLoopBoxClient({
-    asciiBoxCliPath: "/Users/user/.ascii/bin/box",
+    asciiBoxCliPath: "box",
     executor: {
       async execute(input) {
         calls.push(input);
@@ -1133,9 +1133,9 @@ test("Crabbox Box client normalizes warmup, list, stop, and delete commands", as
     calls.map((call) => call.command),
     [
       "crabbox",
-      "/Users/user/.ascii/bin/box",
-      "/Users/user/.ascii/bin/box",
-      "/Users/user/.ascii/bin/box",
+      "box",
+      "box",
+      "box",
     ],
   );
 });

@@ -119,7 +119,7 @@ async function buildContext(repo) {
     "## Identity",
     "",
     `- repository directory: ${repoName}`,
-    `- repository root: ${repo}`,
+    "- repository root: <checkout>",
     `- current branch: ${branch}`,
     `- current head: ${head}`,
     `- default branch: ${defaultBranch}`,
