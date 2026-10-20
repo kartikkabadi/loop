@@ -108,7 +108,7 @@
     "repair:pr-intake": "node dist/repair/pr-repair-intake.js"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "1.29.0",
+    "@modelcontextprotocol/sdk": "1.31.0",
     "ajv": "^8.20.0",
     "yaml": "^2.9.0",
     "zod": "^4.4.3"
