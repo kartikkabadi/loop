@@ -195,8 +195,12 @@ test("apply-decisions does not promote unrelated linked open PRs", () => {
         title: "Related activity PR",
         pr_rating_overall: "D",
         pr_rating_proof: "D",
+        pr_rating_patch: "D",
         work_cluster_refs: JSON.stringify(["https://github.com/openclaw/openclaw/pull/401"]),
-      }),
+      }).replace(
+        "Overall tier: F\nProof tier: F\nPatch tier: F",
+        "Overall tier: D\nProof tier: D\nPatch tier: D",
+      ),
       333,
       "none",
     );
@@ -263,8 +267,12 @@ test("apply-decisions does not promote unrelated linked merged PRs", () => {
         title: "Related merged activity PR",
         pr_rating_overall: "D",
         pr_rating_proof: "D",
+        pr_rating_patch: "D",
         work_cluster_refs: JSON.stringify(["https://github.com/openclaw/openclaw/pull/402"]),
-      }),
+      }).replace(
+        "Overall tier: F\nProof tier: F\nPatch tier: F",
+        "Overall tier: D\nProof tier: D\nPatch tier: D",
+      ),
       334,
       "none",
     );
